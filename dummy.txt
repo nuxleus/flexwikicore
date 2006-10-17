@@ -25,3 +25,5 @@ A change after installing the new version of ccnet, in the 1.8 branch to check t
 A change after updating the build machine to reflect the CVS changes at SourceForge.
 
 A change after moving the source to subversion. 
+
+Another change after moving the source to subversion. 
