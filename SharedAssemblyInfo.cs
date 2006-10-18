@@ -11,6 +11,6 @@ using System.Reflection;
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: AssemblyVersionAttribute("2.0.0.0")]
+[assembly: AssemblyVersionAttribute("2.0.0.5")]
 [assembly: AssemblyCopyrightAttribute("Copyright (c) 2005 Microsoft Corporation")]
 
