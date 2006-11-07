@@ -220,6 +220,13 @@ namespace FlexWiki.UnitTests
             revisionToWrite.Contents = content; 
         }
 
+
+        internal void DeleteHistory(string topicName)
+        {
+            MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
+            topic.History.Clear(); 
+        }
+
 #if false
         private IEnumerable<MockTopic> AllTopics(ExistencePolicy existencePolicy)
         {
@@ -280,5 +287,6 @@ namespace FlexWiki.UnitTests
             }
             return topic;
         }
+
     }
 }

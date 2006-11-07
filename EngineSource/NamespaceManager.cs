@@ -817,6 +817,12 @@ namespace FlexWiki
 
             TopicChangeCollection changes = AllChangesForTopic(topic);
 
+            // Sometimes topics don't have history. This can happen, for example, 
+            // if someone deletes the .awiki files from the file system provider.
+            if (changes.Latest == null)
+            {
+                return DateTime.MinValue; 
+            }
             return changes.Latest.Modified;
 
         }

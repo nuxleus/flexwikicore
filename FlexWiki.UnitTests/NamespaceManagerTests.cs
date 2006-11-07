@@ -1129,6 +1129,19 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(expectedModificationTime, modificationTime, "Checking that modification time was correct.");
         }
         [Test]
+        public void GetTopicLastModificationTimeNoHistory()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            MockContentStore store = (MockContentStore) manager.GetProvider(typeof(MockContentStore));
+
+            // Delete the history but leave the topic - this happens with the FileSystemProvider
+            store.DeleteHistory("TopicOne");
+
+            Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("TopicOne")); 
+        }
+        [Test]
         [ExpectedException(typeof(ArgumentException), "Could not locate a topic named NamespaceOne.NoSuchTopic")]
         public void GetTopicLastModificationTimeNonExistent()
         {
