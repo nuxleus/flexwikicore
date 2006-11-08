@@ -305,17 +305,15 @@ request.AreDifferencesShown.IfTrue
             }
             else if (topicRevision.Version == null)
             {
-                TopicChangeCollection changes = Next.AllChangesForTopicSince(
-                    topicRevision.AsUnqualifiedTopicName(), DateTime.MinValue);
-                if (changes == null || changes.Count == 0)
+                TextReader textReader = Next.TextReaderForTopic(topicRevision);
+
+                if (textReader == null)
                 {
                     string defaultContent = DefaultContentFor(topicRevision.LocalName);
                     return new StringReader(defaultContent);
                 }
-                else
-                {
-                    return Next.TextReaderForTopic(topicRevision);
-                }
+
+                return textReader; 
             }
             else if (topicRevision.Version == TopicRevision.NewVersionStringForUser(c_builtInAuthor, DateTime.MinValue))
             {

@@ -219,6 +219,26 @@ namespace FlexWiki.UnitTests
 
         }
         [Test]
+        public void TextReaderForTopicNoHistory()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://BuiltInTopicsProviderTests/",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            string newContents = "new content"; 
+            manager.WriteTopicAndNewVersion("HomePage", newContents, "test"); 
+
+            BuiltinTopicsProvider provider = (BuiltinTopicsProvider) manager.GetProvider(typeof(BuiltinTopicsProvider));
+            MockContentStore store = (MockContentStore) manager.GetProvider(typeof(MockContentStore));
+
+            store.DeleteHistory("HomePage");
+
+            string actualContents = manager.TextReaderForTopic("HomePage").ReadToEnd();
+
+            Assert.AreEqual(newContents, actualContents,
+                "Checking to make sure that an absence of history does not prevent the contents from appearing."); 
+        }
+        [Test]
         public void TopicExists()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://BuiltInTopicsProviderTests/",
