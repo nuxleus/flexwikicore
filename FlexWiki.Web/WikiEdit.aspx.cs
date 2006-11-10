@@ -25,6 +25,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
+using FlexWiki.Collections; 
 using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
@@ -272,8 +273,8 @@ Add your wiki text here.
             NamespaceManager currentContentBase = Federation.NamespaceManagerForNamespace(TheTopic.Namespace);
 
             // Process the topics looking for topics beginning with '_Template'.
-            ArrayList templates = new ArrayList();
-            foreach (TopicName topic in currentContentBase.AllTopics(ImportPolicy.DoNotIncludeImports))
+            QualifiedTopicNameCollection templates = new QualifiedTopicNameCollection();
+            foreach (QualifiedTopicName topic in currentContentBase.AllTopics(ImportPolicy.DoNotIncludeImports))
             {
                 if (topic.LocalName.StartsWith("_Template"))
                 {
@@ -290,7 +291,7 @@ Add your wiki text here.
             {
                 // Build up a combo box for selecting the template.
                 StringBuilder builder = new StringBuilder("<select name=\"templateSelect\" id=\"templateSelect\">\n");
-                foreach (QualifiedTopicRevision topic in templates)
+                foreach (QualifiedTopicName topic in templates)
                 {
                     builder.Append("\t<option value=\"");
                     builder.Append(Formatter.EscapeHTML(Federation.Read(topic)));
