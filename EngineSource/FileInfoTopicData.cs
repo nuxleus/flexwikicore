@@ -109,7 +109,7 @@ namespace FlexWiki
             int p = filename.IndexOf("(");
             if (p == -1)
             {
-                return filename;
+                return null;
             }
             int close = filename.LastIndexOf(")");
             return filename.Substring(p + 1, close - p - 1);

@@ -157,6 +157,21 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
+        public void AllChangesForTopicSinceNoHistory()
+        {
+            TopicChangeCollection changes = _provider.AllChangesForTopicSince(new UnqualifiedTopicName("TopicOne"), DateTime.MinValue);
+
+            Assert.AreEqual(1, changes.Count,
+                "Checking that the absence of .awiki files doesn't break the change history");
+            Assert.AreEqual(new DateTime(2004, 10, 28), changes[0].Created,
+                "Checking that creation time is correct.");
+            Assert.AreEqual(new DateTime(2004, 10, 28), changes[0].Modified,
+                "Checking that modification time is correct.");
+            Assert.AreEqual("", changes[0].Author,
+                "Checking that author is blank when no history is available."); 
+        }
+
+        [Test]
         public void AllTopics()
         {
             QualifiedTopicNameCollection topics = _provider.AllTopics();

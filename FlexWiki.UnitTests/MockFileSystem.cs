@@ -105,8 +105,8 @@ namespace FlexWiki.UnitTests
                 return null; 
             }
 
-            string firstPart = "";
-            string lastPart = ""; 
+            string firstPart = pattern;
+            string lastPart = pattern; 
 
             int starIndex = pattern.IndexOf("*");
 

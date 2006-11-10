@@ -111,8 +111,17 @@ namespace FlexWiki
                 }
                 QualifiedTopicRevision name = new QualifiedTopicRevision(topic.ResolveRelativeTo(Namespace));
                 name.Version = each.Version;
-                TopicChange change = TopicChangeFromName(name);
-                answer.Add(change);
+
+                // Version might be null if we grabbed the .wiki file instead of a .awiki file
+                if (each.Version == null)
+                {
+                    answer.Add(new TopicChange(name, each.LastModificationTime, ""));
+                }
+                else
+                {
+                    TopicChange change = TopicChangeFromName(name);
+                    answer.Add(change);
+                }
             }
             return answer;
         }
@@ -311,6 +320,14 @@ namespace FlexWiki
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }
+
+            // If someone deleted the .awiki files, we still need to return info about the 
+            // topic. Use the .wiki file instead.
+            if (answer.Count == 0)
+            {
+                answer = FileSystem.GetFiles(Root, topic + ".wiki"); 
+            }
+
             return answer;
         }
         /// <summary>

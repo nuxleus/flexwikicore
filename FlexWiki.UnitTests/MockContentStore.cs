@@ -219,29 +219,13 @@ namespace FlexWiki.UnitTests
 
             revisionToWrite.Contents = content; 
         }
-
-
+        
         internal void DeleteHistory(string topicName)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
             topic.History.Clear(); 
         }
 
-#if false
-        private IEnumerable<MockTopic> AllTopics(ExistencePolicy existencePolicy)
-        {
-            MockTopicCollection topics = new MockTopicCollection(); 
-            foreach (MockTopic topic in _topics)
-            {
-                if (existencePolicy == ExistencePolicy.All || topic.IsDeleted == false)
-                {
-                    topics.Add(topic); 
-                }
-            }
-
-            return topics; 
-        }
-#else
         private IEnumerable<MockTopic> AllTopics(ExistencePolicy existencePolicy)
         {
             foreach (MockTopic topic in _topics)
@@ -252,7 +236,6 @@ namespace FlexWiki.UnitTests
                 }
             }
         }
-#endif
 
         private MockTopic GetTopic(UnqualifiedTopicName topicName, ExistencePolicy existencePolicy)
         {
@@ -287,6 +270,5 @@ namespace FlexWiki.UnitTests
             }
             return topic;
         }
-
     }
 }

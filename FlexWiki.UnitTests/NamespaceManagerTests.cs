@@ -153,7 +153,7 @@ namespace FlexWiki.UnitTests
             WikiTestUtilities.AssertTopicsCorrectUnordered(topics,
                 new TopicName("NamespaceOne.TopicOne"),
                 new TopicName("NamespaceTwo.TopicOne"),
-                new TopicName("NamespaceThree.TopicOne")); 
+                new TopicName("NamespaceThree.TopicOne"));
         }
         [Test]
         public void AllQualifiedTopicNamesThatExistNoImport()
@@ -1216,23 +1216,23 @@ PropertyOne: List, of, values")
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
                 new TestContentSet(
-                    new TestNamespace("NamespaceOne", 
-                        new TestTopic("TopicOne", "author", @"PropertyOne: ValueOne"), 
+                    new TestNamespace("NamespaceOne",
+                        new TestTopic("TopicOne", "author", @"PropertyOne: ValueOne"),
                         new TestTopic("TopicOne", "author", @"PropertyOne: ValueTwo")
                     )
                 )
             );
 
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne"); 
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            UnqualifiedTopicRevision oldRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-02.0000-author"); 
+            UnqualifiedTopicRevision oldRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-02.0000-author");
             UnqualifiedTopicRevision newRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-06.0000-author");
-            
+
             TopicProperty property = manager.GetTopicProperty(oldRevision, "PropertyOne");
             Assert.AreEqual(property.LastValue, "ValueOne", "Checking that old revision has old value.");
 
             property = manager.GetTopicProperty(newRevision, "PropertyOne");
-            Assert.AreEqual(property.LastValue, "ValueTwo", "Checking that new revision has new value."); 
+            Assert.AreEqual(property.LastValue, "ValueTwo", "Checking that new revision has new value.");
         }
         [Test]
         public void GetTopicPropertyNonExistentProperty()
@@ -1526,11 +1526,11 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write."); 
+            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write.");
             manager.MakeTopicReadOnly(topic);
             Assert.IsFalse(manager.IsExistingTopicWritable(topic), "Checking that topic is now read-only.");
             manager.MakeTopicReadOnly(topic);
-            Assert.IsFalse(manager.IsExistingTopicWritable(topic), 
+            Assert.IsFalse(manager.IsExistingTopicWritable(topic),
                 "Checking that calling MakeTopicReadOnly on read-only topic has no effect.");
         }
         [Test]
@@ -1542,7 +1542,7 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("NoSuchTopic");
-            manager.MakeTopicReadOnly(topic); 
+            manager.MakeTopicReadOnly(topic);
         }
         [Test]
         public void MakeTopicWritable()
@@ -1558,7 +1558,7 @@ PropertyOne: List, of, values")
             manager.MakeTopicWritable(topic);
             Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic is read-write again.");
             manager.MakeTopicWritable(topic);
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), 
+            Assert.IsTrue(manager.IsExistingTopicWritable(topic),
                 "Checking that calling MakeTopicWritable on read-write topic has no effect.");
         }
         [Test]
