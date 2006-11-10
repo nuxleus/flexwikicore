@@ -238,10 +238,10 @@ function tbinput()
 
 </script>
 ";
-						
-			NamespaceManager storeManager = DefaultNamespaceManager;
+
+            QualifiedTopicRevision topic = GetTopicVersionKey();
+            NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
 			LinkMaker lm = TheLinkMaker;
-			QualifiedTopicRevision topic = GetTopicVersionKey();	
 			bool diffs = Request.QueryString["diff"] == "y";
 			QualifiedTopicRevision diffVersion = null;
 			bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
@@ -261,7 +261,7 @@ function tbinput()
 			}
 
 			// Go edit if we try to view it and it doesn't exist
-			if (!storeManager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
+			if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
 			{ 
 				Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
 				return;
@@ -269,7 +269,7 @@ function tbinput()
 
 			if (diffs)
 			{
-				diffVersion = storeManager.VersionPreviousTo(topic.LocalName, topic.Version);
+				diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
 			}
 
             editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick; 
