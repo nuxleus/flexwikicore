@@ -46,8 +46,8 @@ namespace FlexWiki.UnitTests
                 new MockTimeProvider(TimeSpan.FromSeconds(1))); 
 
             _federation = new Federation(application);
-
-            MockAuthorizationConfigurationProvider configProvider = new MockAuthorizationConfigurationProvider();
+            /*
+            //MockAuthorizationConfigurationProvider configProvider = new MockAuthorizationConfigurationProvider();
             configProvider.AddWikiPermission("Alice", Permission.Read);
             configProvider.AddWikiPermission("Alice", Permission.Edit);
             configProvider.AddWikiPermission("Alice", Permission.Administer);
@@ -69,7 +69,8 @@ namespace FlexWiki.UnitTests
             configProvider.AddNamespacePermission("*", "NamespaceFive", Permission.Read);
             configProvider.AddNamespacePermission("?", "NamespaceFive", Permission.Edit);
 
-            _federation.AuthorizationConfigurationProvider = configProvider;
+            //_federation.AuthorizationConfigurationProvider = configProvider;
+             */
         }
 
         [Test]
@@ -240,6 +241,8 @@ namespace FlexWiki.UnitTests
 
         private void AssertPermission(string nmspc, Permission permission, bool shouldHave, IPrincipal principal)
         {
+            Assert.Fail("Not implemented"); 
+            /*
             Thread.CurrentPrincipal = principal;
 
             if (shouldHave)
@@ -252,6 +255,7 @@ namespace FlexWiki.UnitTests
                 string message = string.Format("Checking that user '{0}' DOES NOT HAVE permission {1} on namespace {2}", principal.Identity.Name, permission, nmspc);
                 Assert.IsFalse(_federation.HasPermission(nmspc, permission), message);
             }
+             */
         }
 
 

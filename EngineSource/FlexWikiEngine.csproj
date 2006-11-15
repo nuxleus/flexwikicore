@@ -118,15 +118,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AuthorizationConfiguration.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AuthorizationConfigurationProviderBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AuthorizationPolicy.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="BackingTopic.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -218,9 +209,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CustomSorter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DefaultAuthorizationConfigurationProvider.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DefaultSorter.cs">
@@ -505,9 +493,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scanner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SecurityAdministration.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Set.cs">

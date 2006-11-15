@@ -67,7 +67,6 @@ namespace FlexWiki
 
         private string _aboutWikiString;
         private IWikiApplication _application; 
-        private readonly AuthorizationPolicy _authorizationPolicy = new AuthorizationPolicy();
         private Set _blacklistedExternalLinkPrefixes = new Set();
         private string _borders;
         private DateTime _created = DateTime.Now;
@@ -119,11 +118,6 @@ namespace FlexWiki
         public IWikiApplication Application
         {
             get { return _application; }
-        }
-        public AuthorizationConfigurationProviderBase AuthorizationConfigurationProvider
-        {
-            get { return _authorizationPolicy.ConfigurationProvider; }
-            set { _authorizationPolicy.ConfigurationProvider = value; }
         }
         /// <summary>
         /// Answer the set of blacklisted link prefixes.  Treat this set as read-only, please, and use AddBlacklistedExternalLink() and RemoveBlacklistedExternalLink().
@@ -718,10 +712,6 @@ namespace FlexWiki
         {
             throw new NotImplementedException();
         }
-        public bool HasPermission(string nmspc, Permission permission)
-        {
-            return _authorizationPolicy.HasPermission(nmspc, permission);
-        }
         public bool IsBlacklisted(string wikiText)
         {
             if (wikiText == null)
@@ -1184,7 +1174,6 @@ namespace FlexWiki
             // FederationConfiguration configuration, OutputFormat format, LinkMaker linker)
             _application = application; 
             InitializePerformanceCounters();
-            _authorizationPolicy.Initialize(this);
 
             LoadFromConfiguration();
 
@@ -1290,8 +1279,5 @@ namespace FlexWiki
                 UpdateGenerator.Pop();
             }
         }
-
-
-        
     }
 }

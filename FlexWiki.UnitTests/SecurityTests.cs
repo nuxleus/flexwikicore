@@ -58,11 +58,14 @@ namespace FlexWiki.UnitTests
             Federation = new Federation(application);
             Federation.WikiTalkVersion = 1;
 
+            _storeOne = WikiTestUtilities.CreateMockStore(Federation, _storeOneId);
+            _storeTwo = WikiTestUtilities.CreateMockStore(Federation, _storeTwoId);
+
             // Don't read from the config files on disk - the ability to do that gets tested separately. Using the 
             // mock provider keeps everything right here in the test, without the need to worry about files on 
             // disk or the content of topics.
-            MockAuthorizationConfigurationProvider configProvider = new MockAuthorizationConfigurationProvider();
-
+            //MockAuthorizationConfigurationProvider configProvider = new MockAuthorizationConfigurationProvider();
+/*
             configProvider.AddWikiPermission("WikiReaders", Permission.Read);
             configProvider.AddWikiPermission("WikiEditors", Permission.Edit);
             configProvider.AddWikiPermission("WikiAdministrators", Permission.Administer);
@@ -79,10 +82,8 @@ namespace FlexWiki.UnitTests
             configProvider.AddNamespacePermission("NamespaceThreeEditors", "NamespaceThree", Permission.Edit);
             configProvider.AddNamespacePermission("NamespaceThreeAdministrators", "NamespaceThree", Permission.Administer);
 
-            Federation.AuthorizationConfigurationProvider = configProvider;
+            //Federation.AuthorizationConfigurationProvider = configProvider;
 
-            _storeOne = WikiTestUtilities.CreateMockStore(Federation, _storeOneId);
-            _storeTwo = WikiTestUtilities.CreateMockStore(Federation, _storeTwoId);
 
             // Create the _ContentBaseDefinition topics so the wiki will actually work
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, _storeOne.DefinitionTopicName.LocalName,
@@ -100,7 +101,7 @@ ImageURL: http://localhost/wiki/images/",
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, _storeTwo.DefinitionTopicName.LocalName, "Test content", "SecurityTests");
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "TopicOne", "NamespaceTwo.TopicOne test content", "SecurityTests");
             WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "NamespaceTwoTopic", "Foo: Bar\nNamespaceTwo.TopicOne test content", "SecurityTests");
-
+            */
         }
 
         /// <summary>
