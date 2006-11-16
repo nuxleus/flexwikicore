@@ -2097,7 +2097,13 @@ namespace FlexWiki.Formatting
                             {
                                 tipHTML = "<span class=\"DefaultTopicTipText\">" + tipHTML + "</span>";
                             }
-                            tipHTML += "<div class=\"TopicTipStats\">" + Federation.GetTopicLastModificationTime(abs).ToString() + " - " + Federation.GetTopicLastModifiedBy(abs) + "</div>";
+                            tipHTML += "<div class=\"TopicTipStats\">" + Federation.GetTopicLastModificationTime(abs).ToString();
+                            string lastAuthor = Federation.GetTopicLastModifiedBy(abs);
+                            if (string.IsNullOrEmpty(lastAuthor))
+                            {
+                                lastAuthor = "author unknown"; 
+                            } 
+                            tipHTML += " - " + lastAuthor + "</div>";
                             tipHTML = "<div id=" + tipid + " style=\"display: none\">" + tipHTML + "</div>";
                             Output.AddToFooter(tipHTML);
                             string replacement = "<a ";
