@@ -169,6 +169,13 @@ request.AreDifferencesShown.IfTrue
   ]
 
   ]
+----
+@@
+Presentations.Image(""http://cs.bme.hu/~szama/images/flexwikirss.png"",
+		  [""RSS feed for the "", namespace.Name, "" namespace""].ToString,
+		federation.LinkMaker.SimpleLinkTo([""rss.aspx?namespace="", namespace.Name].ToString))
+@@
+]
 }
 ";
         #endregion Constants
