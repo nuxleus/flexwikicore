@@ -6,28 +6,42 @@ namespace FlexWiki.UnitTests
     {
         private readonly MockFileCollection _children = new MockFileCollection();
         private string _contents;
-        private DateTime _created; 
+        private DateTime _created;
+        private bool _denyRead;
+        private bool _denyWrite;
         private DateTime _lastModified; 
         private string _name;
-        private bool _readOnly; 
-
+        
         public MockFile(string name, DateTime created, string contents)
-            : this(name, created, created, contents, false)
+            : this(name, created, created, contents, false, false)
         {
         }
 
-        public MockFile(string name, DateTime created, string contents, bool readOnly)
-            : this(name, created, created, contents, readOnly)
+        public MockFile(string name, DateTime created, string contents, bool denyRead, bool denyWrite)
+            : this(name, created, created, contents, denyRead, denyWrite)
         {
         }
 
-        public MockFile(string name, DateTime created, DateTime lastModified, string contents, bool readOnly)
+        public MockFile(string name, DateTime created, DateTime lastModified, string contents, bool denyRead, bool denyWrite)
         {
             _name = name;
             _created = created; 
             _lastModified = lastModified; 
             _contents = contents;
-            _readOnly = readOnly; 
+            _denyRead = denyRead;
+            _denyWrite = denyWrite; 
+        }
+
+        public bool CanRead
+        {
+            get { return !_denyRead; }
+            set { _denyRead = !value; }
+        }
+
+        public bool CanWrite
+        {
+            get { return !_denyWrite; }
+            set { _denyWrite = !value; }
         }
 
         public MockFileCollection Children
@@ -50,12 +64,6 @@ namespace FlexWiki.UnitTests
         public virtual bool IsDirectory
         {
             get { return false; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return _readOnly; }
-            set { _readOnly = value; }
         }
 
         public DateTime LastModified

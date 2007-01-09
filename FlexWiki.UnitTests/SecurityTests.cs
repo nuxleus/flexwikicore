@@ -17,7 +17,7 @@ using System.Security;
 using System.Security.Principal;
 using System.Threading;
 
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 using FlexWiki.Formatting;
 
 using NUnit.Framework;
@@ -65,43 +65,43 @@ namespace FlexWiki.UnitTests
             // mock provider keeps everything right here in the test, without the need to worry about files on 
             // disk or the content of topics.
             //MockAuthorizationConfigurationProvider configProvider = new MockAuthorizationConfigurationProvider();
-/*
-            configProvider.AddWikiPermission("WikiReaders", Permission.Read);
-            configProvider.AddWikiPermission("WikiEditors", Permission.Edit);
-            configProvider.AddWikiPermission("WikiAdministrators", Permission.Administer);
+            /*
+                        configProvider.AddWikiPermission("WikiReaders", Permission.Read);
+                        configProvider.AddWikiPermission("WikiEditors", Permission.Edit);
+                        configProvider.AddWikiPermission("WikiAdministrators", Permission.Administer);
 
-            // NamespaceOne has explicit permissions
-            configProvider.AddNamespacePermission("NamespaceOneReaders", _storeOneId, Permission.Read);
-            configProvider.AddNamespacePermission("NamespaceOneEditors", _storeOneId, Permission.Edit);
-            configProvider.AddNamespacePermission("NamespaceOneAdministrators", _storeOneId, Permission.Administer);
+                        // NamespaceOne has explicit permissions
+                        configProvider.AddNamespacePermission("NamespaceOneReaders", _storeOneId, Permission.Read);
+                        configProvider.AddNamespacePermission("NamespaceOneEditors", _storeOneId, Permission.Edit);
+                        configProvider.AddNamespacePermission("NamespaceOneAdministrators", _storeOneId, Permission.Administer);
 
-            // NamespaceTwo has default permissions that come from the wiki itself      
+                        // NamespaceTwo has default permissions that come from the wiki itself      
 
-            // NamespaceThree is like NamespaceOne
-            configProvider.AddNamespacePermission("NamespaceThreeReaders", "NamespaceThree", Permission.Read);
-            configProvider.AddNamespacePermission("NamespaceThreeEditors", "NamespaceThree", Permission.Edit);
-            configProvider.AddNamespacePermission("NamespaceThreeAdministrators", "NamespaceThree", Permission.Administer);
+                        // NamespaceThree is like NamespaceOne
+                        configProvider.AddNamespacePermission("NamespaceThreeReaders", "NamespaceThree", Permission.Read);
+                        configProvider.AddNamespacePermission("NamespaceThreeEditors", "NamespaceThree", Permission.Edit);
+                        configProvider.AddNamespacePermission("NamespaceThreeAdministrators", "NamespaceThree", Permission.Administer);
 
-            //Federation.AuthorizationConfigurationProvider = configProvider;
+                        //Federation.AuthorizationConfigurationProvider = configProvider;
 
 
-            // Create the _ContentBaseDefinition topics so the wiki will actually work
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, _storeOne.DefinitionTopicName.LocalName,
-      @"Import: SecurityTestsTwo
-Contact: CraigAndera
-Description: A test namespace
-ImageURL: http://localhost/wiki/images/",
-              "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "TopicOne", "NamespaceOne.TopicOne test content", "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "NamespaceOneTopic", "Foo: Bar\nNamespaceOne.TopicOne test content", "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencingTopic", "References ReferencedTopicOne and ReferencedTopicTwo and SecurityTestsTwo.TopicOne and NonExistentTopic", "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencedTopicOne", "Referenced by another topicName", "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencedTopicTwo", "Referenced by another topicName", "SecurityTests");
+                        // Create the _ContentBaseDefinition topics so the wiki will actually work
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, _storeOne.DefinitionTopicName.LocalName,
+                  @"Import: SecurityTestsTwo
+            Contact: CraigAndera
+            Description: A test namespace
+            ImageURL: http://localhost/wiki/images/",
+                          "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "TopicOne", "NamespaceOne.TopicOne test content", "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "NamespaceOneTopic", "Foo: Bar\nNamespaceOne.TopicOne test content", "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencingTopic", "References ReferencedTopicOne and ReferencedTopicTwo and SecurityTestsTwo.TopicOne and NonExistentTopic", "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencedTopicOne", "Referenced by another topicName", "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeOne, "ReferencedTopicTwo", "Referenced by another topicName", "SecurityTests");
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, _storeTwo.DefinitionTopicName.LocalName, "Test content", "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "TopicOne", "NamespaceTwo.TopicOne test content", "SecurityTests");
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "NamespaceTwoTopic", "Foo: Bar\nNamespaceTwo.TopicOne test content", "SecurityTests");
-            */
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, _storeTwo.DefinitionTopicName.LocalName, "Test content", "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "TopicOne", "NamespaceTwo.TopicOne test content", "SecurityTests");
+                        WikiTestUtilities.WriteTestTopicAndNewVersion(_storeTwo, "NamespaceTwoTopic", "Foo: Bar\nNamespaceTwo.TopicOne test content", "SecurityTests");
+                        */
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ ImageURL: http://localhost/wiki/images/",
             // references
             EstablishRoles("NamespaceOneReaders", "WikiReaders");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
-            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName,
                 ExistencePolicy.ExistingOnly);
             Assert.AreEqual(3, references.Count, "Checking that all extant references were returned");
         }
@@ -210,7 +210,7 @@ ImageURL: http://localhost/wiki/images/",
             // references
             EstablishRoles("NamespaceOneReaders");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
-            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName,
                 ExistencePolicy.ExistingOnly);
             Assert.AreEqual(2, references.Count, "Checking that all extant references were returned");
         }
@@ -222,7 +222,7 @@ ImageURL: http://localhost/wiki/images/",
             // be able to find out what references it might have. 
             EstablishRoles();
             QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
-            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName,
                 ExistencePolicy.All);
             Assert.AreEqual(0, references.Count, "Checking that no references were retrieved");
         }
@@ -234,7 +234,7 @@ ImageURL: http://localhost/wiki/images/",
             // know that a potential reference exists
             EstablishRoles("NamespaceOneReaders");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("ReferencingTopic", _storeOne.Namespace);
-            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName, 
+            QualifiedTopicRevisionCollection references = _storeOne.AllReferencesByTopic(topic.LocalName,
                 ExistencePolicy.All);
             Assert.AreEqual(4, references.Count, "Checking that all references were retrieved");
         }
@@ -293,7 +293,7 @@ ImageURL: http://localhost/wiki/images/",
             //int countWithImport = CountEnumerable(_storeOne.AllTopicsInfo(new ExecutionContext()));
 
             //Assert.AreEqual(countOneOnly, countWithImport, "Checking that correct number of topics was returned");
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
 
         [Test]
@@ -308,7 +308,7 @@ ImageURL: http://localhost/wiki/images/",
 
             //Assert.AreEqual(countOneOnly + countTwoOnly, countWithImport,
             //  "Checking that all imported topics were included");
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
 
         [Test]
@@ -388,7 +388,7 @@ ImageURL: http://localhost/wiki/images/",
             //// administrative privilege, and therefore should fail for writers
             //EstablishRoles("NamespaceOneWriters");
             //_storeOne.Contact = "ShouldThrow";
-            Assert.Fail(); 
+            Assert.Fail();
         }
 
         [Test]
@@ -396,7 +396,7 @@ ImageURL: http://localhost/wiki/images/",
         {
             //EstablishRoles("NamespaceOneAdministrators");
             //_storeOne.Contact = "ShouldNotThrow";
-            Assert.Fail(); 
+            Assert.Fail();
         }
 
         [Test]
@@ -655,8 +655,8 @@ ImageURL: http://localhost/wiki/images/",
             return storeThree;
 
         }
-        private TopicContext CreateTopicContext(Federation federation, NamespaceManager storeManager, 
-      string topicName)
+        private TopicContext CreateTopicContext(Federation federation, NamespaceManager storeManager,
+            string topicName)
         {
             return new TopicContext(federation, storeManager, new TopicVersionInfo(federation,
               new QualifiedTopicRevision(topicName, storeManager.Namespace)));

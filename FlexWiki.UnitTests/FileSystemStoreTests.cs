@@ -73,7 +73,7 @@ namespace FlexWiki.UnitTests
                                     new DateTime(2004, 11, 04), @"Oldest"),
 
                                 new MockFile(@"ReadOnlyTopic.wiki", 
-                                    new DateTime(2004, 11, 05), @"", true), 
+                                    new DateTime(2004, 11, 05), @"", true, false), 
                                 new MockFile(@"ReadOnlyTopic(2004-11-05-00-00-00-Name).awiki", 
                                     new DateTime(2004, 11, 05), @""),
 
@@ -290,21 +290,30 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
-        public void IsExistingTopicWritable()
+        public void HasPermission()
         {
-            Assert.IsTrue(_provider.IsExistingTopicWritable(
-                new UnqualifiedTopicName("HomePage")),
-                "Checking that a read-write topic shows as writable."); 
-            Assert.IsFalse(_provider.IsExistingTopicWritable(
-                new UnqualifiedTopicName("ReadOnlyTopic")), 
-                "Checking that a read-write topic shows as read-only."); 
+            Assert.IsTrue(_provider.HasPermission(
+                new UnqualifiedTopicName("HomePage"), TopicPermission.Edit),
+                "Checking that a read-write topic shows as writable.");
+            Assert.IsTrue(_provider.HasPermission(
+                new UnqualifiedTopicName("HomePage"), TopicPermission.Read),
+                "Checking that a read-write topic shows as readable."); 
+            Assert.IsFalse(_provider.HasPermission(
+                new UnqualifiedTopicName("ReadOnlyTopic"), TopicPermission.Edit), 
+                "Checking that a read-write topic shows as non-writable.");
+            Assert.IsTrue(_provider.HasPermission(
+                new UnqualifiedTopicName("ReadOnlyTopic"), TopicPermission.Read),
+                "Checking that a read-only topic shows as readable."); 
         }
 
         [Test]
         public void IsExistingTopicWritableNonexistentTopic()
         {
-            Assert.IsFalse(_provider.IsExistingTopicWritable(new UnqualifiedTopicName("NoSuchTopic")),
+            Assert.IsFalse(_provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"), TopicPermission.Edit),
                 "Checking that a nonexistent topic is reported as not writable.");
+            Assert.IsFalse(_provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"), TopicPermission.Read),
+                "Checking that a nonexistent topic is reported as not readable.");
+
         }
 
         [Test]
@@ -317,11 +326,15 @@ namespace FlexWiki.UnitTests
         [Test]
         public void MakeTopicReadOnly()
         {
-            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
-                "Checking that file starts out read-write."); 
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file starts out readable.");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file starts out writable.");
             _provider.MakeTopicReadOnly(new UnqualifiedTopicName("TopicOne"));
-            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
-                "Checking that file was set read-only by a call to MakeTopicReadOnly"); 
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file is still readable after a call to MakeTopicReadOnly");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file was set non-writable by a call to MakeTopicReadOnly");
         }
 
         [Test]
@@ -335,11 +348,15 @@ namespace FlexWiki.UnitTests
         public void MakeTopicWritable()
         {
             _provider.MakeTopicReadOnly(new UnqualifiedTopicName("TopicOne"));
-            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
-                "Checking that file starts out read-only");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file starts out readable");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file starts out non-writable");
             _provider.MakeTopicWritable(new UnqualifiedTopicName("TopicOne")); 
-            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
-                "Checking that file starts out read-write");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file ends up readable");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file ends up writable");
         }
 
         [Test]

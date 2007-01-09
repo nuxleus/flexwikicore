@@ -63,13 +63,32 @@ namespace FlexWiki
             return File.GetLastWriteTimeUtc(path); 
         }
 
+        public bool HasReadPermission(string path)
+        {
+            try
+            {
+                // Hacky implementation, but there's no better way 
+                // to do this that just to try and see what happens!!!
+                FileStream stream = File.OpenRead(path);
+                stream.Close();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false; 
+            }
+
+            return true; 
+        }
         public bool HasWritePermission(string path)
         {
             try
             {
-                // Hacky implementation, but there's no better with the framework to do this that just to try and see what happens!!!
+                DateTime old = GetLastWriteTimeUtc(path);
+                // Hacky implementation, but there's no better way 
+                // to do this that just to try and see what happens!!!
                 FileStream stream = File.OpenWrite(path);
                 stream.Close();
+                SetLastWriteTimeUtc(path, old);
             }
             catch (UnauthorizedAccessException)
             {

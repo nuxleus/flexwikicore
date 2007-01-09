@@ -123,13 +123,15 @@
     <Compile Include="Formatting\NonExistentNamespaceTests.cs" />
     <Compile Include="Formatting\TableFormattingTests.cs" />
     <Compile Include="Formatting\WikiPagePropertyTests.cs" />
+    <Compile Include="HasPermissionTests.cs" />
     <Compile Include="MockDirectory.cs" />
     <Compile Include="MockFile.cs" />
     <Compile Include="MockFileCollection.cs" />
     <Compile Include="MockFileInformation.cs" />
     <Compile Include="MockFileSystem.cs" />
     <Compile Include="QualifiedTopicRevisionTests.cs" />
-    <Compile Include="SecurityProviderTests.cs" />
+    <Compile Include="SecurityTestContentSets.cs" />
+    <Compile Include="TestSecurityContext.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicRevision.cs" />

@@ -57,7 +57,7 @@ namespace FlexWiki.UnitTests
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();

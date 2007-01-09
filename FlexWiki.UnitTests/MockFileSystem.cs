@@ -139,9 +139,14 @@ namespace FlexWiki.UnitTests
             return this[path].LastModified; 
         }
 
+        public bool HasReadPermission(string path)
+        {
+            return this[path].CanRead; 
+        }
+
         public bool HasWritePermission(string path)
         {
-            return !this[path].IsReadOnly; 
+            return this[path].CanWrite; 
         }
 
         public void MakeReadOnly(string path)
@@ -150,7 +155,8 @@ namespace FlexWiki.UnitTests
             {
                 throw new FileNotFoundException("Couldn't find file " + path); 
             }
-            this[path].IsReadOnly = true; 
+            this[path].CanRead = true;
+            this[path].CanWrite = false; 
         }
 
         public void MakeWritable(string path)
@@ -160,7 +166,7 @@ namespace FlexWiki.UnitTests
                 throw new FileNotFoundException("Couldn't find file " + path);
             }
 
-            this[path].IsReadOnly = false;
+            this[path].CanWrite = true;
         }
 
         public void SetLastWriteTimeUtc(string path, DateTime time)

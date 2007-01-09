@@ -445,6 +445,7 @@
     </Compile>
     <EmbeddedResource Include="AccessDenied.aspx.resx">
       <DependentUpon>AccessDenied.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="admin\Config.aspx.resx">
       <DependentUpon>Config.aspx.cs</DependentUpon>
@@ -472,72 +473,95 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Blade.aspx.resx">
       <DependentUpon>Blade.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Compare.aspx.resx">
       <DependentUpon>Compare.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="default.aspx.resx">
       <DependentUpon>default.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DoSearch.aspx.resx">
       <DependentUpon>DoSearch.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EditService.asmx.resx">
       <DependentUpon>EditService.asmx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Global.asax.resx">
       <DependentUpon>Global.asax.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LastModified.aspx.resx">
       <DependentUpon>LastModified.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.aspx.resx">
       <DependentUpon>Login.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Logoff.aspx.resx">
       <DependentUpon>Logoff.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LostAndFound.aspx.resx">
       <DependentUpon>LostAndFound.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Preview.aspx.resx">
       <DependentUpon>Preview.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Print.aspx.resx">
       <DependentUpon>Print.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="QuickLink.aspx.resx">
       <DependentUpon>QuickLink.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Rename.aspx.resx">
       <DependentUpon>Rename.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RequestNamespace.aspx.resx">
       <DependentUpon>RequestNamespace.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Rss.aspx.resx">
       <DependentUpon>Rss.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RssFace.aspx.resx">
       <DependentUpon>RssFace.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SafeMode.aspx.resx">
       <DependentUpon>SafeMode.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Search.aspx.resx">
       <DependentUpon>Search.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ShowNewsletter.aspx.resx">
       <DependentUpon>ShowNewsletter.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UpgradeConfigurationFile.aspx.resx">
       <DependentUpon>UpgradeConfigurationFile.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Versions.aspx.resx">
       <DependentUpon>Versions.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WikiEdit.aspx.resx">
       <DependentUpon>WikiEdit.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="config\flexwiki.config" />
     <None Include="security.config" />

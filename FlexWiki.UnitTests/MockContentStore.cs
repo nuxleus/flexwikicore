@@ -140,14 +140,26 @@ namespace FlexWiki.UnitTests
             _created = manager.Federation.TimeProvider.Now;
         }
 
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             if (mockTopic == null)
             {
-                return false; 
+                return false;
             }
-            return !mockTopic.Latest.IsReadOnly; 
+
+            if (permission == TopicPermission.Edit)
+            {
+                return mockTopic.Latest.CanWrite; 
+            }
+            else if (permission == TopicPermission.Read)
+            {
+                return mockTopic.Latest.CanRead;
+            }
+            else
+            {
+                throw new ArgumentException("Unrecognized TopicPermission " + permission.ToString()); 
+            }
         }
 
         public override void MakeTopicReadOnly(UnqualifiedTopicName topic)

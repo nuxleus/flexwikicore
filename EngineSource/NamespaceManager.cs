@@ -894,7 +894,7 @@ namespace FlexWiki
         }
         public bool IsExistingTopicWritable(UnqualifiedTopicName topic)
         {
-            return ContentProviderChain.IsExistingTopicWritable(topic);
+            return ContentProviderChain.HasPermission(topic, TopicPermission.Edit);
         }
         /// <summary>
         /// Returns the most recent version for the given topic

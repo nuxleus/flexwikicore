@@ -125,7 +125,7 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(3, provider.AllTopics().Count, "Checking that default topics do not interfere with the topic count.");
         }
         [Test]
-        public void IsExistingTopicWritable()
+        public void HasPermission()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://BuiltInTopicsProviderTests/",
                TestContentSets.SingleEmptyNamespace);
@@ -133,19 +133,25 @@ namespace FlexWiki.UnitTests
 
             BuiltinTopicsProvider provider = (BuiltinTopicsProvider) manager.GetProvider(typeof(BuiltinTopicsProvider));
 
-            Assert.IsTrue(provider.IsExistingTopicWritable(new UnqualifiedTopicName(manager.HomePage)),
+            Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Edit),
                 "Checking that the HomePage is writable when it does not exist in the underlying provider.");
+            Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Read),
+                "Checking that the HomePage is readable when it does not exist in the underlying provider."); 
 
             manager.WriteTopicAndNewVersion(manager.HomePage, "Some new content", "BuiltInTopicsProviderTests");
             manager.MakeTopicReadOnly(new UnqualifiedTopicName(manager.HomePage));
 
-            Assert.IsFalse(provider.IsExistingTopicWritable(new UnqualifiedTopicName(manager.HomePage)),
+            Assert.IsFalse(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Edit),
                 "Checking that the HomePage is not writable when it exists and is read-only.");
+            Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Read),
+                "Checking that the HomePage is readable when it exists and is read-only.");
 
             manager.MakeTopicWritable(new UnqualifiedTopicName(manager.HomePage));
 
-            Assert.IsTrue(provider.IsExistingTopicWritable(new UnqualifiedTopicName(manager.HomePage)),
-                "Checking that the HomePage is writable when it exists and is not read-only."); 
+            Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Edit),
+                "Checking that the HomePage is writable when it exists and is not read-only.");
+            Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Read),
+                "Checking that the HomePage is readable when it exists and is not read-only.");
         }
         [Test]
         public void TextReaderForTopic()

@@ -84,32 +84,32 @@ namespace FlexWiki.UnitTests
         public void AdministerRole()
         {
             // Allowed by explicit namespace permissions
-            AssertPermission("NamespaceFour", Permission.Administer, true, "Dale", "NS4Admins");
+            AssertPermission("NamespaceFour", Permission.ManageNamespace, true, "Dale", "NS4Admins");
 
             // Not allowed by explicit namespace permissions
-            AssertPermission("NamespaceFour", Permission.Administer, false, "Dale", "NS4Readers");
+            AssertPermission("NamespaceFour", Permission.ManageNamespace, false, "Dale", "NS4Readers");
 
             // Allowed by wiki permissions
-            AssertPermission("NamespaceThree", Permission.Administer, true, "Dale", "WikiAdmins");
+            AssertPermission("NamespaceThree", Permission.ManageNamespace, true, "Dale", "WikiAdmins");
 
             // Not allowed by wiki permissions
-            AssertPermission("NamespaceFour", Permission.Administer, false, "Dale", "WikiReaders");
+            AssertPermission("NamespaceFour", Permission.ManageNamespace, false, "Dale", "WikiReaders");
         }
 
         [Test]
         public void AdministerUser()
         {
             // Allowed by explicit namespace permissions
-            AssertPermission("NamespaceTwo", Permission.Administer, true, "Bob");
+            AssertPermission("NamespaceTwo", Permission.ManageNamespace, true, "Bob");
 
             // Not allowed by explicit namespace permissions
-            AssertPermission("NamespaceTwo", Permission.Administer, false, "Alice");
+            AssertPermission("NamespaceTwo", Permission.ManageNamespace, false, "Alice");
 
             // Allowed by wiki permissions
-            AssertPermission("NamespaceThree", Permission.Administer, true, "Alice");
+            AssertPermission("NamespaceThree", Permission.ManageNamespace, true, "Alice");
 
             // Not allowed by wiki permissions
-            AssertPermission("NamespaceThree", Permission.Administer, false, "Bob");
+            AssertPermission("NamespaceThree", Permission.ManageNamespace, false, "Bob");
 
         }
 
@@ -131,7 +131,7 @@ namespace FlexWiki.UnitTests
             AssertPermission("NamespaceFive", Permission.Read, true, "Alice");
 
             // Authenticated users should not have admin access in namespaces that allow authenticated edits
-            AssertPermission("NamespaceFive", Permission.Administer, false, "Alice");
+            AssertPermission("NamespaceFive", Permission.ManageNamespace, false, "Alice");
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace FlexWiki.UnitTests
             AssertPermission("NamespaceFive", Permission.Edit, true, "Evelyn");
 
             // Check that any authenticated user is denied admin access
-            AssertPermission("NamespaceFive", Permission.Administer, false, "Evelyn");
+            AssertPermission("NamespaceFive", Permission.ManageNamespace, false, "Evelyn");
 
             // Check that anonymous user is denied edit access
             AssertPermission("NamespaceFive", Permission.Edit, false, new MockAnonymousPrincipal());

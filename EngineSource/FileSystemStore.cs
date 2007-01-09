@@ -199,22 +199,29 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic">The topic (must directly be in this content base)</param>
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
-
             string path = TopicPath(topic, null);
             if (!FileSystem.FileExists(path))
             {
                 return false;
             }
-            DateTime old = FileSystem.GetLastWriteTimeUtc(path);
 
-            if (!FileSystem.HasWritePermission(path))
+            if (permission == TopicPermission.Edit)
             {
-                return false;
+                if (!FileSystem.HasWritePermission(path))
+                {
+                    return false;
+                }
+            }
+            else if (permission == TopicPermission.Read)
+            {
+                if (!FileSystem.HasReadPermission(path))
+                {
+                    return false; 
+                }
             }
 
-            FileSystem.SetLastWriteTimeUtc(path, old);
             return true;
         }
         /// <summary>

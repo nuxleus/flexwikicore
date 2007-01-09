@@ -204,6 +204,8 @@
     <Compile Include="ExpressionChainPTN.cs" />
     <Compile Include="FlexWikiException.cs" />
     <Compile Include="IWikiApplication.cs" />
+    <Compile Include="SecurityProvider.cs" />
+    <Compile Include="TopicPermission.cs" />
     <Compile Include="UnqualifiedTopicName.cs" />
     <Compile Include="NamespaceManager.cs">
       <SubType>Code</SubType>

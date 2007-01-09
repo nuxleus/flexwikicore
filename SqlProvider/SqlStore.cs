@@ -218,14 +218,15 @@ namespace FlexWiki.SqlProvider
         /// </summary>
         /// <param name="topic">The topic (must directly be in this content base)</param>
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
-            if (!SqlHelper.TopicExists(Namespace, topic.LocalName, _connectionString))
-            {
-                return false;
-            }
+            throw new NotImplementedException(); 
+            //if (!SqlHelper.TopicExists(Namespace, topic.LocalName, _connectionString))
+            //{
+            //    return false;
+            //}
 
-            return SqlHelper.IsExistingTopicWritable(Namespace, topic.LocalName, _connectionString);
+            //return SqlHelper.IsExistingTopicWritable(Namespace, topic.LocalName, _connectionString);
         }
 
         private SqlInfoForTopic[] SqlTopicInfosForTopic(UnqualifiedTopicRevision topic)

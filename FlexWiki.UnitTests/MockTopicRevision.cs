@@ -9,6 +9,8 @@ namespace FlexWiki.UnitTests
         private string _author;
         private string _contents;
         private DateTime _created;
+        private bool _denyRead;
+        private bool _denyWrite; 
         private bool _isReadOnly; 
         private DateTime _modified; 
         private string _version;
@@ -25,6 +27,18 @@ namespace FlexWiki.UnitTests
         internal string Author
         {
             get { return _author; }
+        }
+
+        internal bool CanRead
+        {
+            get { return !_denyRead; }
+            set { _denyRead = !value; }
+        }
+
+        internal bool CanWrite
+        {
+            get { return !_denyWrite; }
+            set { _denyWrite = !value; }
         }
 
         internal string Contents

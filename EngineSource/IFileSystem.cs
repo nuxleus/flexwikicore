@@ -15,7 +15,8 @@ namespace FlexWiki
         FileInformationCollection GetFiles(string directory); 
         FileInformationCollection GetFiles(string directory, string pattern);
         DateTime GetLastWriteTime(string path); 
-        DateTime GetLastWriteTimeUtc(string path); 
+        DateTime GetLastWriteTimeUtc(string path);
+        bool HasReadPermission(string path); 
         bool HasWritePermission(string path);
         void MakeReadOnly(string path);
         void MakeWritable(string path);

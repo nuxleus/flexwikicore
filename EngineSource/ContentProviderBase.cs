@@ -115,6 +115,15 @@ namespace FlexWiki
         {
             return _next.GetParsedTopic(topicRevision);
         }
+        /// <summary>
+        /// Answer whether the current user has the given permission for the specified topic.
+        /// </summary>
+        /// <param name="topic">The topic </param>
+        /// <returns>true if the topic exists AND the specified permission is allowed for the current user; else false</returns>
+        public virtual bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
+        {
+            return _next.HasPermission(topic, permission);
+        }
         public virtual void Initialize(NamespaceManager namespaceManager)
         {
             _namespaceManager = namespaceManager;
@@ -122,15 +131,6 @@ namespace FlexWiki
             {
                 _next.Initialize(namespaceManager);
             }
-        }
-        /// <summary>
-        /// Answer whether a topic exists and is writable
-        /// </summary>
-        /// <param name="topic">The topic (must directly be in this content base)</param>
-        /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public virtual bool IsExistingTopicWritable(UnqualifiedTopicName topic)
-        {
-            return _next.IsExistingTopicWritable(topic); 
         }
         /// <summary>
         /// Makes an existing topic read-only. 

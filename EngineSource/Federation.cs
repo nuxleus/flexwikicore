@@ -873,6 +873,7 @@ namespace FlexWiki
             // want to make these configurable
             ContentProviderBase providerChain = new BuiltinTopicsProvider(contentStore); 
             providerChain = new ParsingProvider(providerChain);
+            providerChain = new SecurityProvider(providerChain); 
             
             NamespaceManager namespaceManager = new NamespaceManager(this, providerChain, ns, parameters);
 
