@@ -34,14 +34,20 @@ namespace FlexWiki
 
             if (permission == TopicPermission.Edit)
             {
-                return explicitlyAllowedEdit; 
+                return explicitlyAllowedEdit && (!explicitlyDeniedRead || !explicityDeniedEdit); 
             }
             else if (permission == TopicPermission.Read)
             {
-                return explicitlyAllowedRead || explicitlyAllowedEdit; 
+                return (explicitlyAllowedRead || explicitlyAllowedEdit) && !explicitlyDeniedRead; 
             }
 
             return false; 
+        }
+
+
+        private bool CaseInsenstiveEquivalent(string s1, string s2)
+        {
+            return string.Compare(s1, s2, true) == 0;
         }
 
         private bool IsPrincipalListedUnderProperty(ParsedTopic parsedTopic, IPrincipal principal, string propertyName)
@@ -57,13 +63,27 @@ namespace FlexWiki
                 return false; 
             }
 
-            if (property.AsList().Contains("user:" + principal.Identity.Name))
+            foreach (string value in property.AsList())
             {
-                return true;
+                if (value.ToLower().StartsWith("user:"))
+                {
+                    if (CaseInsenstiveEquivalent(value, "user:" + principal.Identity.Name))
+                    {
+                        return true; 
+                    }
+                }
+                else if (value.ToLower().StartsWith("role:"))
+                {
+                    if (principal.IsInRole(value.Substring("role:".Length)))
+                    {
+                        return true; 
+                    }
+                }
             }
 
             return false; 
 
         }
+
     }
 }
