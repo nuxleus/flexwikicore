@@ -4,7 +4,10 @@ using System.Text;
 
 namespace FlexWiki.UnitTests
 {
-    internal static class SecurityTestContentSets
+    public enum MockTopicStorePermissions
     {
+        NoAccess,
+        ReadOnly, 
+        ReadWrite,
     }
 }

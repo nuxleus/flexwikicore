@@ -77,10 +77,6 @@ namespace FlexWiki.SqlProvider
 
         // Private properties
         
-        private Federation Federation
-        {
-            get { return StoreManager.Federation; }
-        }
         public override bool IsReadOnly
         {
             get { throw new NotImplementedException(); }

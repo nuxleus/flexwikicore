@@ -25,6 +25,7 @@ using NUnit.Framework;
 
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki.UnitTests
 {
@@ -1421,9 +1422,14 @@ PropertyOne: List, of, values")
         [Test]
         public void IsExistingTopicWritable()
         {
-            // Nothing in the default content provider chain should deny write permission.
+            // Nothing in the default content provider chain (except the security layer) should deny write permission.
+            FederationConfiguration configuration = new FederationConfiguration();
+            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0); 
+            WikiAuthorizationRule allowAllRule = new WikiAuthorizationRule(rule); 
+            configuration.AuthorizationRules.Add(allowAllRule); 
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-              TestContentSets.SingleTopicNoImports);
+              TestContentSets.SingleTopicNoImports, configuration);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             bool isWritable = manager.IsExistingTopicWritable("TopicOne");

@@ -65,11 +65,6 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        private Federation Federation
-        {
-            get { return NamespaceManager.Federation; }
-        }
-
         public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topicName, DateTime stamp)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
@@ -165,13 +160,14 @@ namespace FlexWiki.UnitTests
         public override void MakeTopicReadOnly(UnqualifiedTopicName topic)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
-            mockTopic.Latest.IsReadOnly = true; 
+            mockTopic.Latest.CanRead = true;
+            mockTopic.Latest.CanWrite = false; 
         }
 
         public override void MakeTopicWritable(UnqualifiedTopicName topic)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
-            mockTopic.Latest.IsReadOnly = false;
+            mockTopic.Latest.CanWrite = true; 
         }
 
         public override bool TopicExists(UnqualifiedTopicName name)

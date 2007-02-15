@@ -123,15 +123,19 @@
     <Compile Include="Formatting\NonExistentNamespaceTests.cs" />
     <Compile Include="Formatting\TableFormattingTests.cs" />
     <Compile Include="Formatting\WikiPagePropertyTests.cs" />
-    <Compile Include="HasPermissionTests.cs" />
+    <Compile Include="MockTopicStorePermissions.cs" />
+    <Compile Include="Security\SecurityProviderTests.cs" />
     <Compile Include="MockDirectory.cs" />
     <Compile Include="MockFile.cs" />
     <Compile Include="MockFileCollection.cs" />
     <Compile Include="MockFileInformation.cs" />
     <Compile Include="MockFileSystem.cs" />
     <Compile Include="QualifiedTopicRevisionTests.cs" />
-    <Compile Include="SecurityTestContentSets.cs" />
-    <Compile Include="TestSecurityContext.cs" />
+    <Compile Include="Security\SecurityRules.cs" />
+    <Compile Include="Security\SecurityTestContentSets.cs" />
+    <Compile Include="Security\TestAnonymousIdentity.cs" />
+    <Compile Include="Security\TestIdentity.cs" />
+    <Compile Include="Security\TestSecurityContext.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicRevision.cs" />
@@ -190,7 +194,7 @@
     <Compile Include="ScopeTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SecurityTests.cs">
+    <Compile Include="Security\SecurityTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TestContent.cs">
@@ -227,9 +231,6 @@
     <EmbeddedResource Include="TestContent\meerkat.rss.xml" />
     <EmbeddedResource Include="TestContent\rsstest.xml" />
     <EmbeddedResource Include="TestContent\rsstest.xsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Security\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

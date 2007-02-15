@@ -9,10 +9,8 @@ namespace FlexWiki.UnitTests
         private string _author;
         private string _contents;
         private DateTime _created;
-        private bool _denyRead;
-        private bool _denyWrite; 
-        private bool _isReadOnly; 
-        private DateTime _modified; 
+        private DateTime _modified;
+        private MockTopicStorePermissions _permissions = MockTopicStorePermissions.ReadWrite; 
         private string _version;
 
         internal MockTopicRevision(string contents, string author, DateTime created)
@@ -31,14 +29,54 @@ namespace FlexWiki.UnitTests
 
         internal bool CanRead
         {
-            get { return !_denyRead; }
-            set { _denyRead = !value; }
+            get 
+            {
+                if (_permissions == MockTopicStorePermissions.NoAccess)
+                {
+                    return false;
+                }
+                return true; 
+            }
+            set 
+            {
+                if (value == true)
+                {
+                    if (_permissions == MockTopicStorePermissions.NoAccess)
+                    {
+                        _permissions = MockTopicStorePermissions.ReadOnly;
+                    }
+                }
+                else
+                {
+                    _permissions = MockTopicStorePermissions.NoAccess;
+                }
+            }
         }
 
         internal bool CanWrite
         {
-            get { return !_denyWrite; }
-            set { _denyWrite = !value; }
+            get 
+            {
+                if (_permissions == MockTopicStorePermissions.ReadWrite)
+                {
+                    return true; 
+                }
+                return false; 
+            }
+            set 
+            {
+                if (value == true)
+                {
+                    _permissions = MockTopicStorePermissions.ReadWrite;
+                }
+                else
+                {
+                    if (_permissions == MockTopicStorePermissions.ReadWrite)
+                    {
+                        _permissions = MockTopicStorePermissions.ReadOnly; 
+                    }
+                }
+            }
         }
 
         internal string Contents
@@ -50,12 +88,6 @@ namespace FlexWiki.UnitTests
         internal DateTime Created
         {
             get { return _created; }
-        }
-
-        internal bool IsReadOnly
-        {
-            get { return _isReadOnly; }
-            set { _isReadOnly = value; }
         }
 
         internal DateTime Modified

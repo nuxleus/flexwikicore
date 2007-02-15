@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki
 {

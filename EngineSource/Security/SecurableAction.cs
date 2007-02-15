@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FlexWiki
+namespace FlexWiki.Security
 {
-    public enum TopicPermission
+    public enum SecurableAction
     {
-        // ManageNamespace = 0,
-        Edit = 1, 
+        ManageNamespace = 0,
+        Edit = 1,
         Read = 2,
     }
 }

@@ -4,7 +4,8 @@ namespace FlexWiki.UnitTests
 {
     public class MockDirectory : MockFile
     {
-        public MockDirectory(string name, params MockFile[] children) : base(name, DateTime.MinValue, DateTime.MinValue, "", false, false)
+        public MockDirectory(string name, params MockFile[] children) : base(name, DateTime.MinValue, DateTime.MinValue, "", 
+            MockTopicStorePermissions.ReadWrite)
         {
             foreach (MockFile child in children)
             {

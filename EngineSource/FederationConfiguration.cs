@@ -18,6 +18,9 @@ using System.Xml.Serialization;
 using System.Collections;
 using System.IO;
 
+using FlexWiki.Collections; 
+using FlexWiki.Security; 
+
 namespace FlexWiki
 {
     /// <summary>
@@ -28,6 +31,7 @@ namespace FlexWiki
         private static Regex s_namespaceDefinitionRegex = new Regex("^([a-zA-Z0-9\\.]+)=(.*)$");
 
         private string _aboutWikiString;
+        private readonly WikiAuthorizationRuleCollection _authorizationRules = new WikiAuthorizationRuleCollection(); 
         private readonly ArrayList _blacklistedExternalLinks = new ArrayList();
         private string _borders;
         private string _defaultImportedNamespaces; 
@@ -50,6 +54,11 @@ namespace FlexWiki
         {
             get { return _aboutWikiString; }
             set { _aboutWikiString = value; }
+        }
+        [XmlArray("authorization")]
+        public WikiAuthorizationRuleCollection AuthorizationRules
+        {
+            get { return _authorizationRules; }
         }
         [XmlArray(ElementName = "BlacklistedExternalLinks")]
         [XmlArrayItem(ElementName = "Link", Type = typeof(string))]

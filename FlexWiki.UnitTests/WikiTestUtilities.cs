@@ -16,8 +16,8 @@ using System.Collections.Generic;
 
 using NUnit.Framework; 
 
-using FlexWiki.Collections; 
-
+using FlexWiki.Collections;
+using FlexWiki.Security; 
 
 namespace FlexWiki.UnitTests
 {
@@ -153,7 +153,14 @@ namespace FlexWiki.UnitTests
 
         internal static Federation SetupFederation(string siteUrl, TestContentSet content, MockSetupOptions options)
         {
-            return SetupFederation(siteUrl, content, options, new FederationConfiguration());
+            // We need to turn off security by default so there are no surprises during the tests. 
+            FederationConfiguration configuration = new FederationConfiguration();
+            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
+            WikiAuthorizationRule allowAll = new WikiAuthorizationRule(rule);
+            configuration.AuthorizationRules.Add(allowAll);
+            
+            return SetupFederation(siteUrl, content, options, configuration);
         }
 
         internal static Federation SetupFederation(string siteUrl, TestContentSet content, MockSetupOptions options,

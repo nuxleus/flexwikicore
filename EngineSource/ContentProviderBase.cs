@@ -41,6 +41,10 @@ namespace FlexWiki
                 return _next.Exists;
             }
         }
+        public Federation Federation
+        {
+            get { return _namespaceManager.Federation; }
+        }
         /// <summary>
         /// Returns true if the content store is read-only.
         /// </summary>

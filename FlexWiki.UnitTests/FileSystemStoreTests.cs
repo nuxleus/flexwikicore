@@ -73,7 +73,7 @@ namespace FlexWiki.UnitTests
                                     new DateTime(2004, 11, 04), @"Oldest"),
 
                                 new MockFile(@"ReadOnlyTopic.wiki", 
-                                    new DateTime(2004, 11, 05), @"", true, false), 
+                                    new DateTime(2004, 11, 05), @"", MockTopicStorePermissions.ReadOnly), 
                                 new MockFile(@"ReadOnlyTopic(2004-11-05-00-00-00-Name).awiki", 
                                     new DateTime(2004, 11, 05), @""),
 
