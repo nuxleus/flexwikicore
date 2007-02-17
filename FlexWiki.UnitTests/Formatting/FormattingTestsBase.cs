@@ -5,7 +5,8 @@ using System.Text;
 using NUnit.Framework;
 
 using FlexWiki.Collections;
-using FlexWiki.Formatting; 
+using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki.UnitTests.Formatting
 {
@@ -29,8 +30,12 @@ namespace FlexWiki.UnitTests.Formatting
         public void SetUp()
         {
             _lm = new LinkMaker(c_siteUrl);
+            FederationConfiguration configuration = new FederationConfiguration();
+            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
+            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule));
             MockWikiApplication application = new MockWikiApplication(
-                new FederationConfiguration(),
+                configuration,
                 _lm,
                 OutputFormat.HTML,
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));

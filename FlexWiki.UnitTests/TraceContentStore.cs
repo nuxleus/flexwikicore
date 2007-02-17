@@ -10,7 +10,7 @@ namespace FlexWiki.UnitTests
 {
     internal class TraceContentProvider : ContentProviderBase
     {
-        public TraceContentProvider(ContentProviderBase next)
+        public TraceContentProvider(IContentProvider next)
             : base(next)
         {
         }

@@ -103,6 +103,7 @@
     <Compile Include="Collections\NamespaceManagerMap.cs" />
     <Compile Include="FileInformation.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="IContentProvider.cs" />
     <Compile Include="IFileInformation.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="QualifiedTopicName.cs" />
@@ -204,8 +205,7 @@
     <Compile Include="ExpressionChainPTN.cs" />
     <Compile Include="FlexWikiException.cs" />
     <Compile Include="IWikiApplication.cs" />
-    <Compile Include="Security\SecurityProperty.cs" />
-    <Compile Include="Security\SecurityPropertyCollection.cs" />
+    <Compile Include="Security\FlexWikiSecurityException.cs" />
     <Compile Include="Security\SecurityProvider.cs" />
     <Compile Include="Security\SecurityRule.cs" />
     <Compile Include="Security\SecurableAction.cs" />

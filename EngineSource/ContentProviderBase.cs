@@ -18,12 +18,12 @@ using FlexWiki.Collections;
 
 namespace FlexWiki
 {
-    public abstract class ContentProviderBase
+    public abstract class ContentProviderBase : IContentProvider
     {
         private NamespaceManager _namespaceManager; 
-        private ContentProviderBase _next;
+        private IContentProvider _next;
 
-        public ContentProviderBase(ContentProviderBase next)
+        public ContentProviderBase(IContentProvider next)
         {
             _next = next; 
         }
@@ -69,7 +69,7 @@ namespace FlexWiki
             get { return _namespaceManager; }
         }
 
-        public virtual ContentProviderBase Next
+        public virtual IContentProvider Next
         {
             get { return _next; }
             set { _next = value; }

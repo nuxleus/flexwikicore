@@ -4,6 +4,7 @@ using System.Security.Principal;
 
 using NUnit.Framework;
 
+using FlexWiki.Collections; 
 using FlexWiki.Security;
 
 namespace FlexWiki.UnitTests.Security
@@ -11,6 +12,61 @@ namespace FlexWiki.UnitTests.Security
     [TestFixture]
     public class SecurityProviderTests
     {
+        [Test]
+        public void AllChangesForTopicSinceAllowed()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              new TestContentSet(new TestNamespace("NamespaceOne")));
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            manager.WriteTopicAndNewVersion("TopicOne", GetAllowReadRule().ToString("T"), "test"); 
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                TopicChangeCollection changes = provider.AllChangesForTopicSince(
+                    new UnqualifiedTopicName("TopicOne"), DateTime.MinValue);
+
+                Assert.AreEqual(1, changes.Count, "Checking that the proper number of changes were returned.");
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
+        public void AllChangesForTopicSinceDenied()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              new TestContentSet(new TestNamespace("NamespaceOne")));
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            manager.WriteTopicAndNewVersion("TopicOne", GetDenyReadRule().ToString("T"), "test");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                TopicChangeCollection changes = provider.AllChangesForTopicSince(
+                    new UnqualifiedTopicName("TopicOne"), DateTime.MinValue);
+            }
+        }
+
+        [Test]
+        public void AllChangesForTopicSinceAllowWhenDeniedInHistory()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              new TestContentSet(new TestNamespace("NamespaceOne")));
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            // Make sure that a deny somewhere in the history does not deny permission to read the topic
+            manager.WriteTopicAndNewVersion("TopicOne", GetDenyReadRule().ToString("T"), "test");
+            manager.WriteTopicAndNewVersion("TopicOne", GetAllowReadRule().ToString("T"), "test");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                TopicChangeCollection changes = provider.AllChangesForTopicSince(
+                    new UnqualifiedTopicName("TopicOne"), DateTime.MinValue);
+
+                Assert.AreEqual(2, changes.Count, "Checking that the proper number of changes were returned.");
+            }
+        }
+
         [Test]
         public void HasPermission()
         {
@@ -100,6 +156,20 @@ namespace FlexWiki.UnitTests.Security
         {
             Assert.IsFalse(provider.HasPermission(new UnqualifiedTopicName(topic), topicPermission),
                 string.Format("Checking that user is denied permission {0} on topic {1}", topicPermission, topic));
+        }
+        private SecurityRule GetAllowReadRule()
+        {
+            return new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Topic, SecurableAction.Read, 0); 
+        }
+        private SecurityRule GetDenyReadRule()
+        {
+            return new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Deny, SecurityRuleScope.Topic, SecurableAction.Read, 0);
+        }
+        private static SecurityProvider GetSecurityProvider(NamespaceManager manager)
+        {
+            return (SecurityProvider)manager.GetProvider(typeof(SecurityProvider));
         }
         private static SecurityProvider GetSecurityProvider(Federation federation, string ns)
         {

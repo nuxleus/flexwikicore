@@ -47,7 +47,7 @@ namespace FlexWiki
         /// </summary>
         private static string s_externalWikisTopic = "ExternalWikis";
 
-        private ContentProviderBase _contentProviderChain;
+        private IContentProvider _contentProviderChain;
         private ExternalReferencesMap _emptyExternalReferencesMap = new ExternalReferencesMap();
         private Federation _federation;
         private readonly NamespaceProviderParameterCollection _parameters = new NamespaceProviderParameterCollection();
@@ -56,7 +56,7 @@ namespace FlexWiki
 
         // Constructors
 
-        internal NamespaceManager(Federation federation, ContentProviderBase contentProvider,
+        internal NamespaceManager(Federation federation, IContentProvider contentProvider,
             string ns, NamespaceProviderParameterCollection parameters)
         {
             _federation = federation;
@@ -403,7 +403,7 @@ namespace FlexWiki
             }
         }
 
-        private ContentProviderBase ContentProviderChain
+        private IContentProvider ContentProviderChain
         {
             get
             {
@@ -702,9 +702,9 @@ namespace FlexWiki
         /// method is intended to be used primarily by unit test codes. Use of this 
         /// method in production code is a likely sign that you are doing something 
         /// wrong, and may well result in incorrect behavior. </remarks>
-        public ContentProviderBase GetProvider(Type type)
+        public IContentProvider GetProvider(Type type)
         {
-            ContentProviderBase provider = ContentProviderChain;
+            IContentProvider provider = ContentProviderChain;
 
             while (provider != null)
             {

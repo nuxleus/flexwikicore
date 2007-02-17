@@ -21,12 +21,15 @@ namespace FlexWiki
     public interface IContentProvider
     {
         /// <summary>
-        /// Gets a rawValue indicating whether the namespace actually exists. 
+        /// Gets a value indicating whether the namespace actually exists. 
         /// </summary>
-        /// <remarks>Note that this rawValue could change dynamically, depending on 
+        /// <remarks>Note that this value could change dynamically, depending on 
         /// (for instance) the security context of the calling user.
         /// </remarks>
-        bool Exists { get; }
+        bool Exists
+        {
+            get;
+        }
         /// <summary>
         /// Returns true if the content store is read-only.
         /// </summary>
@@ -35,8 +38,15 @@ namespace FlexWiki
         /// some users may find a content store to be read-only, while others 
         /// will find it writable.
         /// </remarks>
-        bool IsReadOnly { get; }
-        DateTime LastRead { get; }
+        bool IsReadOnly
+        {
+            get;
+        }
+        IContentProvider Next
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// A list of TopicChanges to a topic since a given date [sorted by date]
@@ -44,13 +54,13 @@ namespace FlexWiki
         /// <param name="topic">A given date</param>
         /// <param name="stamp">A non-null timestamp; changes before this time won't be included in the answer </param>
         /// <param name="rule">A composite cache rule to fill with rules that represented accumulated dependencies (or null)</param>
-        /// <returns>List of <see cref=TopicChange" /> objects.</returns>
-        TopicChangeCollection AllChangesForTopicSince(string topic, DateTime stamp);
+        /// <returns>List of <see cref="TopicChange" /> objects, sorted so that the newest appears first in the list.</returns>
+        TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp);
         /// <summary>
         /// Gets a list of all the <see cref="LocalTopicName"/>s in this content store.
         /// </summary>
         /// <returns>A list of all the <see cref="LocalTopicName"/>s in this content store</returns>
-        NamespaceQualifiedTopicNameCollection AllTopics();
+        QualifiedTopicNameCollection AllTopics();
         /// <summary>
         /// Delete the contents of a namespace (kills everything inside recursively).  Note that this does *not* include unregistering
         /// the content base within the federation.
@@ -60,34 +70,49 @@ namespace FlexWiki
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        void DeleteTopic(string topic);
+        void DeleteTopic(UnqualifiedTopicName topic);
         /// <summary>
-        /// Perform initial setup of the content store chain. 
+        /// Returns the parsed representation of the specified topic. 
         /// </summary>
-        /// <param name="manager">The <see cref="NamespaceManager"/> that manages
-        /// the content store chain.</param>
-        void Initialize(NamespaceManager manager);
+        /// <param name="topic">The topic for which to return the parsed representation.</param>
+        /// <returns>A <see cref="ParsedTopic"/> object containing the parsed representation of the topic.</returns>
+        ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision);
         /// <summary>
-        /// Answer whether a topic exists and is writable
+        /// Answer whether the current user has the given permission for the specified topic.
         /// </summary>
-        /// <param name="topic">The topic (must directly be in this content base)</param>
-        /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        bool IsExistingTopicWritable(string topic);
+        /// <param name="topic">The topic </param>
+        /// <returns>true if the topic exists AND the specified permission is allowed for the current user; else false</returns>
+        bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission);
+        void Initialize(NamespaceManager namespaceManager);
+        /// <summary>
+        /// Makes an existing topic read-only. 
+        /// </summary>
+        /// <param name="topic">The topic to modify.</param>
+        /// <exception cref="TopicNotFoundException">
+        /// Thrown if the specified topic does not exist.
+        /// </exception>
+        void MakeTopicReadOnly(UnqualifiedTopicName topic);
+        /// <summary>
+        /// Makes an existing topic read-write. 
+        /// </summary>
+        /// <param name="topic">The topic to modify.</param>
+        /// <exception cref="TopicNotFoundException">
+        /// Thrown if the specified topic does not exist.
+        /// </exception>
+        void MakeTopicWritable(UnqualifiedTopicName topic);
         /// <summary>
         /// Answer a TextReader for the given topic
         /// </summary>
         /// <param name="topic"></param>
         /// <exception cref="TopicNotFoundException">Thrown when the topic doesn't exist</exception>
         /// <returns>TextReader</returns>
-        TextReader TextReaderForTopic(string topic, string version);
+        TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision);
         /// <summary>
         /// Answer true if a topic exists in this namespace
         /// </summary>
         /// <param name="name">Name of the topic</param>
         /// <returns>true if it exists</returns>
-        bool TopicExists(string name);
-        void WriteTopic(string topic, string version, string content);
-        void WriteTopicAndNewVersion(string topic, string content, string author);
-
+        bool TopicExists(UnqualifiedTopicName name);
+        void WriteTopic(UnqualifiedTopicRevision topicRevision, string content);
     }
 }

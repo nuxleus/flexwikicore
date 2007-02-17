@@ -10,7 +10,7 @@ namespace FlexWiki
 {
     internal sealed class ParsingProvider : ContentProviderBase
     {
-        internal ParsingProvider(ContentProviderBase next)
+        internal ParsingProvider(IContentProvider next)
             : base(next)
         {
         }

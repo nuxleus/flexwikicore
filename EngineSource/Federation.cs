@@ -860,19 +860,19 @@ namespace FlexWiki
         /// <summary>
         /// Register the given content store in the federation.
         /// </summary>
-        public NamespaceManager RegisterNamespace(ContentProviderBase contentStore, string ns)
+        public NamespaceManager RegisterNamespace(IContentProvider contentStore, string ns)
         {
             return RegisterNamespace(contentStore, ns, null); 
         }
         /// <summary>
         /// Register the given content store in the federation.
         /// </summary>
-        public NamespaceManager RegisterNamespace(ContentProviderBase contentStore, string ns, 
+        public NamespaceManager RegisterNamespace(IContentProvider contentStore, string ns, 
             NamespaceProviderParameterCollection parameters)
         {
             // These are the default providers that every namespace gets. Later we might
             // want to make these configurable
-            ContentProviderBase providerChain = new BuiltinTopicsProvider(contentStore); 
+            IContentProvider providerChain = new BuiltinTopicsProvider(contentStore); 
             providerChain = new ParsingProvider(providerChain);
             providerChain = new SecurityProvider(providerChain); 
             

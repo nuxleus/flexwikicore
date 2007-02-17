@@ -188,7 +188,7 @@ Presentations.Image(""images/flexwikirss.png"",
 
         // Constructors
 
-        public BuiltinTopicsProvider(ContentProviderBase next)
+        public BuiltinTopicsProvider(IContentProvider next)
             : base(next)
         {
         }

@@ -18,8 +18,9 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-using FlexWiki.Formatting;
 using FlexWiki;
+using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 using NUnit.Framework;
 
@@ -50,8 +51,12 @@ namespace FlexWiki.UnitTests.Formatting
         {
             string author = "tester-joebob";
             _lm = new LinkMaker("http://bogusville");
+            FederationConfiguration configuration = new FederationConfiguration();
+            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
+            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule)); 
             MockWikiApplication application = new MockWikiApplication(
-                new FederationConfiguration(),
+                configuration,
                 _lm,
                 OutputFormat.HTML,
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
