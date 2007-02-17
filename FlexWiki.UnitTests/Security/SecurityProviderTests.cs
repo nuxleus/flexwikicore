@@ -68,6 +68,27 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void AllTopicsAllowed()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // We should be able to get the list of topics even if we can't read some of them. 
+            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll), 
+                SecurityRulePolarity.Deny, SecurityRuleScope.Topic, SecurableAction.Read, 0); 
+            manager.WriteTopicAndNewVersion("DeniedTopic", rule.ToString("T"), "test"); 
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                QualifiedTopicNameCollection topics = provider.AllTopics();
+
+                Assert.AreEqual(4, topics.Count, "Checking that the right number of topics were returned."); 
+            }
+        }
+
+        [Test]
         public void HasPermission()
         {
             foreach (SecurityRule firstRule in SecurityRules.GetAll("someuser", "somerole", 0))

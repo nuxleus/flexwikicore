@@ -9,10 +9,29 @@ namespace FlexWiki.Security
         private string _name;
         private SecurityRuleWhoType _whoType;
 
+        public SecurityRuleWho(SecurityRuleWhoType whoType) : this(whoType, null)
+        {
+        }
+
         public SecurityRuleWho(SecurityRuleWhoType whoType, string who)
         {
             _name = who;
-            _whoType = whoType; 
+            _whoType = whoType;
+
+            if (IsGeneric(_whoType))
+            {
+                if (who != null)
+                {
+                    throw new ArgumentException("who must be null when whoType is generic");
+                }
+            }
+            else
+            {
+                if (who == null)
+                {
+                    throw new ArgumentException("who may not be null when whoType is not generic"); 
+                }
+            }
         }
 
         public string Who
@@ -128,5 +147,26 @@ namespace FlexWiki.Security
                 throw new NotImplementedException("Principal type not supported: " + _whoType.ToString()); 
             }
         }
+
+        private static bool IsGeneric(SecurityRuleWhoType whoType)
+        {
+            if (whoType == SecurityRuleWhoType.GenericAll ||
+                whoType == SecurityRuleWhoType.GenericAnonymous ||
+                whoType == SecurityRuleWhoType.GenericAuthenticated)
+            {
+                return true; 
+            }
+            else if (whoType == SecurityRuleWhoType.Role ||
+                whoType == SecurityRuleWhoType.User)
+            {
+                return false;
+            }
+            else
+            {
+                throw new ArgumentException("Unsupported whoType " + whoType.ToString()); 
+            }
+
+        }
+
     }
 }
