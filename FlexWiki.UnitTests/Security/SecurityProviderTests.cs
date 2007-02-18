@@ -4,7 +4,7 @@ using System.Security.Principal;
 
 using NUnit.Framework;
 
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 using FlexWiki.Security;
 
 namespace FlexWiki.UnitTests.Security
@@ -18,7 +18,7 @@ namespace FlexWiki.UnitTests.Security
             Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
               new TestContentSet(new TestNamespace("NamespaceOne")));
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-            manager.WriteTopicAndNewVersion("TopicOne", GetAllowReadRule().ToString("T"), "test"); 
+            manager.WriteTopicAndNewVersion("TopicOne", GetAllowReadRule().ToString("T"), "test");
             SecurityProvider provider = GetSecurityProvider(manager);
 
             using (new TestSecurityContext("someuser", "somerole"))
@@ -76,17 +76,69 @@ namespace FlexWiki.UnitTests.Security
             SecurityProvider provider = GetSecurityProvider(manager);
 
             // We should be able to get the list of topics even if we can't read some of them. 
-            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll), 
-                SecurityRulePolarity.Deny, SecurityRuleScope.Topic, SecurableAction.Read, 0); 
-            manager.WriteTopicAndNewVersion("DeniedTopic", rule.ToString("T"), "test"); 
+            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll),
+                SecurityRulePolarity.Deny, SecurityRuleScope.Topic, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion("DeniedTopic", rule.ToString("T"), "test");
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 QualifiedTopicNameCollection topics = provider.AllTopics();
 
-                Assert.AreEqual(4, topics.Count, "Checking that the right number of topics were returned."); 
+                Assert.AreEqual(4, topics.Count, "Checking that the right number of topics were returned.");
             }
         }
+
+        [Test]
+        public void DeleteAllTopicsAndHistoryAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration(); 
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the ManageNamespace permission, which should be what is needed.
+            SecurityRule allowManageNamespace = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allowManageNamespace.ToString("T"), "test"); 
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
+                    "Checking that the right number of topics were returned after deletion"); 
+                provider.DeleteAllTopicsAndHistory();
+                // Only built-in topics should remain
+                Assert.AreEqual(2, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count, 
+                    "Checking that the right number of topics were returned after deletion");
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        public void DeleteAllTopicsAndHistoryDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Edit permission, which shouldn't be enough: ManageNamespace is required.
+            SecurityRule allowEdit = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allowEdit.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
+                    "Checking that the right number of topics were returned after deletion");
+                provider.DeleteAllTopicsAndHistory();
+                Assert.Fail("DeleteAllTopicsAndHistory should have thrown an exception"); 
+            }
+        }
+
 
         [Test]
         public void HasPermission()
@@ -181,7 +233,7 @@ namespace FlexWiki.UnitTests.Security
         private SecurityRule GetAllowReadRule()
         {
             return new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
-                SecurityRulePolarity.Allow, SecurityRuleScope.Topic, SecurableAction.Read, 0); 
+                SecurityRulePolarity.Allow, SecurityRuleScope.Topic, SecurableAction.Read, 0);
         }
         private SecurityRule GetDenyReadRule()
         {

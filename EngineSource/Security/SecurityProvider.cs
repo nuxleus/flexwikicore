@@ -48,23 +48,8 @@ namespace FlexWiki.Security
 
         public TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
-            AssertPermission(topic, TopicPermission.Read);
+            AssertTopicPermission(topic, TopicPermission.Read);
             return Next.AllChangesForTopicSince(topic, stamp);
-        }
-
-        private void AssertPermission(UnqualifiedTopicName topic, TopicPermission topicPermission)
-        {
-            // We don't throw if the topic doesn't exist.
-            if (!_next.TopicExists(topic))
-            {
-                return;
-            }
-
-            if (!HasPermission(topic, TopicPermission.Read))
-            {
-                throw new FlexWikiSecurityException(SecurableAction.Read, SecurityRuleScope.Topic,
-                    new QualifiedTopicName(topic.LocalName, Namespace).DottedName);
-            }
         }
         public QualifiedTopicNameCollection AllTopics()
         {
@@ -72,6 +57,7 @@ namespace FlexWiki.Security
         }
         public void DeleteAllTopicsAndHistory()
         {
+            AssertManageNamespace(); 
             _next.DeleteAllTopicsAndHistory();
         }
         public void DeleteTopic(UnqualifiedTopicName topic)
@@ -97,53 +83,13 @@ namespace FlexWiki.Security
 
             // Assemble the rules. First wiki, then namespace, then topic
             SecurityRuleCollection rules = new SecurityRuleCollection();
-            int lexicalOrder = 0;
-            foreach (WikiAuthorizationRule wikiRule in this.Federation.Configuration.AuthorizationRules)
-            {
-                SecurityRule rule = new SecurityRule(new SecurityRuleWho(wikiRule.WhoType, wikiRule.Who),
-                    wikiRule.Polarity, SecurityRuleScope.Wiki, wikiRule.Action, lexicalOrder++);
-                rules.Add(rule);
-            }
+            rules.AddRange(GetWikiScopeRules());
+            rules.AddRange(GetNamespaceScopeRules());
+            rules.AddRange(GetTopicScopeRules(topic)); 
 
-            ParsedTopic parsedDefinitionTopic = Next.GetParsedTopic(
-                new UnqualifiedTopicRevision(_namespaceManager.DefinitionTopicName.LocalName));
-            if (parsedDefinitionTopic != null)
-            {
-                rules.AddRange(GetSecurityRules(parsedDefinitionTopic, SecurityRuleScope.Namespace));
-            }
-
-            ParsedTopic parsedTopic = Next.GetParsedTopic(new UnqualifiedTopicRevision(topic));
-            rules.AddRange(GetSecurityRules(parsedTopic, SecurityRuleScope.Topic));
-
-            bool allowed = false;
-
-            foreach (SecurityRule rule in rules)
-            {
-                if (rule.Who.IsMatch(Thread.CurrentPrincipal))
-                {
-                    if (rule.Polarity == SecurityRulePolarity.Allow)
-                    {
-                        if ((int)permission >= (int)rule.Action)
-                        {
-                            allowed = true;
-                        }
-                    }
-                    else if (rule.Polarity == SecurityRulePolarity.Deny)
-                    {
-                        if ((int)permission <= (int)rule.Action)
-                        {
-                            allowed = false;
-                        }
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-            }
-
-            return allowed;
+            return IsAllowed(permission, rules);
         }
+
         public void Initialize(NamespaceManager namespaceManager)
         {
             _namespaceManager = namespaceManager;
@@ -170,9 +116,45 @@ namespace FlexWiki.Security
             _next.WriteTopic(topicRevision, content);
         }
 
+        private void AssertManageNamespace()
+        {
+            SecurityRuleCollection rules = new SecurityRuleCollection();
+            rules.AddRange(GetWikiScopeRules());
+            rules.AddRange(GetNamespaceScopeRules());
+
+            if (!IsAllowed(SecurableAction.ManageNamespace, rules))
+            {
+                throw new FlexWikiSecurityException(SecurableAction.ManageNamespace, SecurityRuleScope.Namespace, Namespace); 
+            }
+        }
+        private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission topicPermission)
+        {
+            // We don't throw if the topic doesn't exist.
+            if (!_next.TopicExists(topic))
+            {
+                return;
+            }
+
+            if (!HasPermission(topic, TopicPermission.Read))
+            {
+                throw new FlexWikiSecurityException(SecurableAction.Read, SecurityRuleScope.Topic,
+                    new QualifiedTopicName(topic.LocalName, Namespace).DottedName);
+            }
+        }
         private bool CaseInsenstiveEquivalent(string s1, string s2)
         {
             return string.Compare(s1, s2, true) == 0;
+        }
+        private SecurityRuleCollection GetNamespaceScopeRules()
+        {
+            SecurityRuleCollection rules = new SecurityRuleCollection();
+            ParsedTopic parsedDefinitionTopic = Next.GetParsedTopic(
+                new UnqualifiedTopicRevision(_namespaceManager.DefinitionTopicName.LocalName));
+            if (parsedDefinitionTopic != null)
+            {
+                rules.AddRange(GetSecurityRules(parsedDefinitionTopic, SecurityRuleScope.Namespace));
+            }
+            return rules;
         }
         private SecurityRuleCollection GetSecurityRules(ParsedTopic parsedTopic, SecurityRuleScope scope)
         {
@@ -196,6 +178,74 @@ namespace FlexWiki.Security
             }
 
             return rules;
+        }
+        private SecurityRuleCollection GetTopicScopeRules(UnqualifiedTopicName topic)
+        {
+            SecurityRuleCollection rules = new SecurityRuleCollection();
+            ParsedTopic parsedTopic = Next.GetParsedTopic(new UnqualifiedTopicRevision(topic));
+            rules.AddRange(GetSecurityRules(parsedTopic, SecurityRuleScope.Topic));
+            return rules; 
+        }
+        private SecurityRuleCollection GetWikiScopeRules()
+        {
+            SecurityRuleCollection rules = new SecurityRuleCollection();
+            int lexicalOrder = 0;
+            foreach (WikiAuthorizationRule wikiRule in this.Federation.Configuration.AuthorizationRules)
+            {
+                SecurityRule rule = new SecurityRule(new SecurityRuleWho(wikiRule.WhoType, wikiRule.Who),
+                    wikiRule.Polarity, SecurityRuleScope.Wiki, wikiRule.Action, lexicalOrder++);
+                rules.Add(rule);
+            }
+            return rules;
+        }
+        private static bool IsAllowed(TopicPermission permission, SecurityRuleCollection rules)
+        {
+            SecurableAction action;
+            if (permission == TopicPermission.Read)
+            {
+                action = SecurableAction.Read; 
+            }
+            else if (permission == TopicPermission.Edit)
+            {
+                action = SecurableAction.Edit;
+            }
+            else
+            {
+                throw new ArgumentException("Unexpected TopicPermission " + permission.ToString()); 
+            }
+
+            return IsAllowed(action, rules); 
+        }
+        private static bool IsAllowed(SecurableAction action, SecurityRuleCollection rules)
+        {
+            bool allowed = false;
+
+            foreach (SecurityRule rule in rules)
+            {
+                if (rule.Who.IsMatch(Thread.CurrentPrincipal))
+                {
+                    if (rule.Polarity == SecurityRulePolarity.Allow)
+                    {
+                        if ((int)action >= (int)rule.Action)
+                        {
+                            allowed = true;
+                        }
+                    }
+                    else if (rule.Polarity == SecurityRulePolarity.Deny)
+                    {
+                        if ((int)action <= (int)rule.Action)
+                        {
+                            allowed = false;
+                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+            }
+
+            return allowed;
         }
         private bool IsPrincipalListedUnderProperty(ParsedTopic parsedTopic, IPrincipal principal, string propertyName)
         {
