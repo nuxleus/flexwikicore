@@ -19,7 +19,11 @@ namespace FlexWiki.Security
 
         public bool Exists
         {
-            get { return _next.Exists; }
+            get 
+            {
+                AssertNamespacePermission(SecurableAction.Read); 
+                return _next.Exists; 
+            }
         }
         public bool IsReadOnly
         {
@@ -57,7 +61,7 @@ namespace FlexWiki.Security
         }
         public void DeleteAllTopicsAndHistory()
         {
-            AssertManageNamespace(); 
+            AssertNamespacePermission(SecurableAction.ManageNamespace); 
             _next.DeleteAllTopicsAndHistory();
         }
         public void DeleteTopic(UnqualifiedTopicName topic)
@@ -116,15 +120,15 @@ namespace FlexWiki.Security
             _next.WriteTopic(topicRevision, content);
         }
 
-        private void AssertManageNamespace()
+        private void AssertNamespacePermission(SecurableAction action)
         {
             SecurityRuleCollection rules = new SecurityRuleCollection();
             rules.AddRange(GetWikiScopeRules());
             rules.AddRange(GetNamespaceScopeRules());
 
-            if (!IsAllowed(SecurableAction.ManageNamespace, rules))
+            if (!IsAllowed(action, rules))
             {
-                throw new FlexWikiSecurityException(SecurableAction.ManageNamespace, SecurityRuleScope.Namespace, Namespace); 
+                throw new FlexWikiSecurityException(action, SecurityRuleScope.Namespace, Namespace); 
             }
         }
         private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission permission)

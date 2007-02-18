@@ -190,6 +190,45 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void ExistsAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission at namespace, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.Exists);
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Namespace NamespaceOne is denied.")]
+        public void ExistsDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                bool exists = provider.Exists;
+                Assert.Fail("A security exception should have been thrown");
+            }
+        }
+
+        [Test]
         public void HasPermission()
         {
             foreach (SecurityRule firstRule in SecurityRules.GetAll("someuser", "somerole", 0))
