@@ -106,7 +106,7 @@ namespace FlexWiki.UnitTests.Security
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
-                    "Checking that the right number of topics were returned after deletion"); 
+                    "Checking that the right number of topics were returned before deletion"); 
                 provider.DeleteAllTopicsAndHistory();
                 // Only built-in topics should remain
                 Assert.AreEqual(2, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count, 
@@ -133,12 +133,61 @@ namespace FlexWiki.UnitTests.Security
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
-                    "Checking that the right number of topics were returned after deletion");
+                    "Checking that the right number of topics were returned before deletion");
                 provider.DeleteAllTopicsAndHistory();
                 Assert.Fail("DeleteAllTopicsAndHistory should have thrown an exception"); 
             }
         }
 
+        [Test]
+        public void DeleteTopicAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Edit permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
+                    "Checking that the right number of topics were returned before deletion");
+                provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"));
+                Assert.AreEqual(3, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
+                    "Checking that the right number of topics were returned after deletion");
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Edit Topic NamespaceOne.TopicOne is denied.")]
+        public void DeleteTopicDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission, which should be insufficient.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
+                    "Checking that the right number of topics were returned before deletion");
+                provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"));
+                Assert.Fail("A security exception should have been thrown"); 
+            }
+        }
 
         [Test]
         public void HasPermission()

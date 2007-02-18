@@ -62,6 +62,7 @@ namespace FlexWiki.Security
         }
         public void DeleteTopic(UnqualifiedTopicName topic)
         {
+            AssertTopicPermission(topic, TopicPermission.Edit); 
             _next.DeleteTopic(topic);
         }
         public ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
@@ -89,7 +90,6 @@ namespace FlexWiki.Security
 
             return IsAllowed(permission, rules);
         }
-
         public void Initialize(NamespaceManager namespaceManager)
         {
             _namespaceManager = namespaceManager;
@@ -127,7 +127,7 @@ namespace FlexWiki.Security
                 throw new FlexWikiSecurityException(SecurableAction.ManageNamespace, SecurityRuleScope.Namespace, Namespace); 
             }
         }
-        private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission topicPermission)
+        private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             // We don't throw if the topic doesn't exist.
             if (!_next.TopicExists(topic))
@@ -135,15 +135,31 @@ namespace FlexWiki.Security
                 return;
             }
 
-            if (!HasPermission(topic, TopicPermission.Read))
+            if (!HasPermission(topic, permission))
             {
-                throw new FlexWikiSecurityException(SecurableAction.Read, SecurityRuleScope.Topic,
+                SecurableAction action = GetActionFromPermission(permission); 
+                throw new FlexWikiSecurityException(action, SecurityRuleScope.Topic,
                     new QualifiedTopicName(topic.LocalName, Namespace).DottedName);
             }
         }
         private bool CaseInsenstiveEquivalent(string s1, string s2)
         {
             return string.Compare(s1, s2, true) == 0;
+        }
+        private SecurableAction GetActionFromPermission(TopicPermission permission)
+        {
+            if (permission == TopicPermission.Edit)
+            {
+                return SecurableAction.Edit;
+            }
+            else if (permission == TopicPermission.Read)
+            {
+                return SecurableAction.Read;
+            }
+            else
+            {
+                throw new ArgumentException("Unexpected permission " + permission.ToString());
+            }
         }
         private SecurityRuleCollection GetNamespaceScopeRules()
         {
