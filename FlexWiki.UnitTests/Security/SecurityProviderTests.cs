@@ -429,7 +429,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        public void MakeTopicReadOnlyAllowed()
+        public void LockTopicAllowed()
         {
             // Use the default configuration, where everything is denied
             FederationConfiguration configuration = new FederationConfiguration();
@@ -447,20 +447,20 @@ namespace FlexWiki.UnitTests.Security
             {
                 UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Edit),
-                    "Checking that topic is editable before MakeTopicReadOnly.");
+                    "Checking that topic is editable before LockTopic.");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
-                    "Checking that topic is readable before MakeTopicReadOnly.");
-                provider.MakeTopicReadOnly(topic);
+                    "Checking that topic is readable before LockTopic.");
+                provider.LockTopic(topic);
                 Assert.IsFalse(provider.HasPermission(topic, TopicPermission.Edit),
-                    "Checking that topic is not editable after MakeTopicReadOnly.");
+                    "Checking that topic is not editable after LockTopic.");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
-                    "Checking that topic is still readable after MakeTopicReadOnly.");
+                    "Checking that topic is still readable after LockTopic.");
             }
         }
 
         [Test]
         [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
-        public void MakeTopicReadOnlyDenied()
+        public void LockTopicDenied()
         {
             // Use the default configuration, where everything is denied
             FederationConfiguration configuration = new FederationConfiguration();
@@ -478,17 +478,17 @@ namespace FlexWiki.UnitTests.Security
             {
                 UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Edit),
-                    "Checking that topic is editable before MakeTopicReadOnly.");
+                    "Checking that topic is editable before LockTopic.");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
-                    "Checking that topic is readable before MakeTopicReadOnly.");
-                provider.MakeTopicReadOnly(topic);
+                    "Checking that topic is readable before LockTopic.");
+                provider.LockTopic(topic);
 
                 Assert.Fail("A security exception should have been thrown.");
             }
         }
 
         [Test]
-        public void MakeTopicWritableAllowed()
+        public void UnlockTopicAllowed()
         {
             // Use the default configuration, where everything is denied
             FederationConfiguration configuration = new FederationConfiguration();
@@ -505,22 +505,22 @@ namespace FlexWiki.UnitTests.Security
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
-                provider.MakeTopicReadOnly(topic);
+                provider.LockTopic(topic);
                 Assert.IsFalse(provider.HasPermission(topic, TopicPermission.Edit),
-                    "Checking that topic is not editable before MakeTopicWritable.");
+                    "Checking that topic is not editable before UnlockTopic.");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
-                    "Checking that topic is readable before MakeTopicWritable.");
-                provider.MakeTopicWritable(topic);
+                    "Checking that topic is readable before UnlockTopic.");
+                provider.UnlockTopic(topic);
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Edit),
-                    "Checking that topic is editable after MakeTopicWritable.");
+                    "Checking that topic is editable after UnlockTopic.");
                 Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
-                    "Checking that topic is still readable after MakeTopicWritable.");
+                    "Checking that topic is still readable after UnlockTopic.");
             }
         }
 
         [Test]
         [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
-        public void MakeTopicWritableDenied()
+        public void UnlockTopicDenied()
         {
             // Use the default configuration, where everything is denied
             FederationConfiguration configuration = new FederationConfiguration();
@@ -537,7 +537,7 @@ namespace FlexWiki.UnitTests.Security
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
-                provider.MakeTopicWritable(topic);
+                provider.UnlockTopic(topic);
 
                 Assert.Fail("A security exception should have been thrown.");
             }

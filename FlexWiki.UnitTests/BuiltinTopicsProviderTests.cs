@@ -139,14 +139,14 @@ namespace FlexWiki.UnitTests
                 "Checking that the HomePage is readable when it does not exist in the underlying provider."); 
 
             manager.WriteTopicAndNewVersion(manager.HomePage, "Some new content", "BuiltInTopicsProviderTests");
-            manager.MakeTopicReadOnly(new UnqualifiedTopicName(manager.HomePage));
+            manager.LockTopic(new UnqualifiedTopicName(manager.HomePage));
 
             Assert.IsFalse(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Edit),
                 "Checking that the HomePage is not writable when it exists and is read-only.");
             Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Read),
                 "Checking that the HomePage is readable when it exists and is read-only.");
 
-            manager.MakeTopicWritable(new UnqualifiedTopicName(manager.HomePage));
+            manager.UnlockTopic(new UnqualifiedTopicName(manager.HomePage));
 
             Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.HomePage), TopicPermission.Edit),
                 "Checking that the HomePage is writable when it exists and is not read-only.");

@@ -937,23 +937,11 @@ namespace FlexWiki
 
             return lastModified;
         }
-        public void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public void LockTopic(UnqualifiedTopicName topic)
         {
             if (TopicExists(topic, ImportPolicy.DoNotIncludeImports))
             {
-                ContentProviderChain.MakeTopicReadOnly(topic);
-            }
-            else
-            {
-                throw TopicNotFoundException.ForTopic(topic, Namespace); 
-            }
-        }
-
-        public void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            if (TopicExists(topic, ImportPolicy.DoNotIncludeImports))
-            {
-                ContentProviderChain.MakeTopicWritable(topic);
+                ContentProviderChain.LockTopic(topic);
             }
             else
             {
@@ -1257,6 +1245,17 @@ namespace FlexWiki
                 throw TopicIsAmbiguousException.ForTopic(new TopicRevision(topic));
             }
             return new TopicName(topic, (string)list[0]);
+        }
+        public void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            if (TopicExists(topic, ImportPolicy.DoNotIncludeImports))
+            {
+                ContentProviderChain.UnlockTopic(topic);
+            }
+            else
+            {
+                throw TopicNotFoundException.ForTopic(topic, Namespace);
+            }
         }
         /// <summary>
         /// Find the version of a topic immediately previous to another version

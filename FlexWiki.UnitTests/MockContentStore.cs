@@ -157,17 +157,11 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        public override void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public override void LockTopic(UnqualifiedTopicName topic)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             mockTopic.Latest.CanRead = true;
             mockTopic.Latest.CanWrite = false; 
-        }
-
-        public override void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
-            mockTopic.Latest.CanWrite = true; 
         }
 
         public override bool TopicExists(UnqualifiedTopicName name)
@@ -191,6 +185,12 @@ namespace FlexWiki.UnitTests
             }
 
             return new StringReader(history.Contents);
+        }
+
+        public override void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
+            mockTopic.Latest.CanWrite = true;
         }
 
         public override void WriteTopic(UnqualifiedTopicRevision revision, string content)

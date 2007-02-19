@@ -225,20 +225,12 @@ namespace FlexWiki
             return true;
         }
         /// <summary>
-        /// Implements <see cref="ContentProviderBase.MakeTopicReadOnly"/>. 
+        /// Implements <see cref="ContentProviderBase.LockTopic"/>. 
         /// </summary>
         /// <param name="topic"></param>
-        public override void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public override void LockTopic(UnqualifiedTopicName topic)
         {
             FileSystem.MakeReadOnly(MakePath(Root, topic.LocalName)); 
-        }
-        /// <summary>
-        /// Implements <see cref="ContentProviderBase.MakeTopicReadOnly"/>.
-        /// </summary>
-        /// <param name="topic"></param>
-        public override void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            FileSystem.MakeWritable(MakePath(Root, topic.LocalName)); 
         }
         /// <summary>
         /// Answer a TextReader for the given topic
@@ -263,6 +255,14 @@ namespace FlexWiki
         public override bool TopicExists(UnqualifiedTopicName topicName)
         {
             return FileSystem.FileExists(MakePath(Root, topicName.LocalName));
+        }
+        /// <summary>
+        /// Implements <see cref="ContentProviderBase.LockTopic"/>.
+        /// </summary>
+        /// <param name="topic"></param>
+        public override void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            FileSystem.MakeWritable(MakePath(Root, topic.LocalName));
         }
         /// <summary>
         /// Write a new version of the topic (doesn't write a new version).  Generate all needed federation update changes via the supplied generator.

@@ -139,20 +139,12 @@ namespace FlexWiki.Security
                 _next.Initialize(namespaceManager);
             }
         }
-        public void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public void LockTopic(UnqualifiedTopicName topic)
         {
             AssertNamespacePermission(SecurableAction.ManageNamespace); 
             using (CreateRecursionContext())
             {
-                _next.MakeTopicReadOnly(topic);
-            }
-        }
-        public void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            AssertNamespacePermission(SecurableAction.ManageNamespace); 
-            using (CreateRecursionContext())
-            {
-                _next.MakeTopicWritable(topic);
+                _next.LockTopic(topic);
             }
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
@@ -167,6 +159,14 @@ namespace FlexWiki.Security
             using (CreateRecursionContext())
             {
                 return _next.TopicExists(name);
+            }
+        }
+        public void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            AssertNamespacePermission(SecurableAction.ManageNamespace);
+            using (CreateRecursionContext())
+            {
+                _next.UnlockTopic(topic);
             }
         }
         public void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)

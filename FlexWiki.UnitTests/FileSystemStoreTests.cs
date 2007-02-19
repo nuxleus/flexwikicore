@@ -324,46 +324,24 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
-        public void MakeTopicReadOnly()
+        public void LockTopic()
         {
             Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
                 "Checking that file starts out readable.");
             Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
                 "Checking that file starts out writable.");
-            _provider.MakeTopicReadOnly(new UnqualifiedTopicName("TopicOne"));
+            _provider.LockTopic(new UnqualifiedTopicName("TopicOne"));
             Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
-                "Checking that file is still readable after a call to MakeTopicReadOnly");
+                "Checking that file is still readable after a call to LockTopic");
             Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
-                "Checking that file was set non-writable by a call to MakeTopicReadOnly");
+                "Checking that file was set non-writable by a call to LockTopic");
         }
 
         [Test]
         [ExpectedException(typeof(FileNotFoundException))]
-        public void MakeTopicReadOnlyNonexistentTopic()
+        public void LockTopicNonexistentTopic()
         {
-            _provider.MakeTopicReadOnly(new UnqualifiedTopicName("NoSuchTopic")); 
-        }
-
-        [Test]
-        public void MakeTopicWritable()
-        {
-            _provider.MakeTopicReadOnly(new UnqualifiedTopicName("TopicOne"));
-            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
-                "Checking that file starts out readable");
-            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
-                "Checking that file starts out non-writable");
-            _provider.MakeTopicWritable(new UnqualifiedTopicName("TopicOne")); 
-            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
-                "Checking that file ends up readable");
-            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
-                "Checking that file ends up writable");
-        }
-
-        [Test]
-        [ExpectedException(typeof(FileNotFoundException))]
-        public void MakeTopicWritableNonexistentTopic()
-        {
-            _provider.MakeTopicWritable(new UnqualifiedTopicName("NoSuchTopic")); 
+            _provider.LockTopic(new UnqualifiedTopicName("NoSuchTopic")); 
         }
 
         [Test]
@@ -394,6 +372,28 @@ namespace FlexWiki.UnitTests
                 "Checking that a deleted topic returns false.");
             Assert.IsTrue(_provider.TopicExists(new UnqualifiedTopicName("HomePage")),
                 "Checking that an existing topic returns true."); 
+        }
+
+        [Test]
+        public void UnlockTopic()
+        {
+            _provider.LockTopic(new UnqualifiedTopicName("TopicOne"));
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file starts out readable");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file starts out non-writable");
+            _provider.UnlockTopic(new UnqualifiedTopicName("TopicOne"));
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file ends up readable");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file ends up writable");
+        }
+
+        [Test]
+        [ExpectedException(typeof(FileNotFoundException))]
+        public void UnlockTopicNonexistentTopic()
+        {
+            _provider.UnlockTopic(new UnqualifiedTopicName("NoSuchTopic"));
         }
 
         [Test]

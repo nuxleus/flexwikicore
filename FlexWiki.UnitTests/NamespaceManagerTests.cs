@@ -1525,7 +1525,7 @@ PropertyOne: List, of, values")
             Assert.IsNull(version, "Checking that version comes back null when the topic does not exist.");
         }
         [Test]
-        public void MakeTopicReadOnly()
+        public void LockTopic()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
                 TestContentSets.SingleTopicNoImports);
@@ -1533,50 +1533,22 @@ PropertyOne: List, of, values")
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
             Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write.");
-            manager.MakeTopicReadOnly(topic);
+            manager.LockTopic(topic);
             Assert.IsFalse(manager.IsExistingTopicWritable(topic), "Checking that topic is now read-only.");
-            manager.MakeTopicReadOnly(topic);
+            manager.LockTopic(topic);
             Assert.IsFalse(manager.IsExistingTopicWritable(topic),
-                "Checking that calling MakeTopicReadOnly on read-only topic has no effect.");
+                "Checking that calling LockTopic on read-only topic has no effect.");
         }
         [Test]
         [ExpectedException(typeof(TopicNotFoundException))]
-        public void MakeTopicReadOnlyNonexistentTopic()
+        public void LockTopicNonexistentTopic()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
                 TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("NoSuchTopic");
-            manager.MakeTopicReadOnly(topic);
-        }
-        [Test]
-        public void MakeTopicWritable()
-        {
-            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-                TestContentSets.SingleTopicNoImports);
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-
-            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write.");
-            manager.MakeTopicReadOnly(topic);
-            Assert.IsFalse(manager.IsExistingTopicWritable(topic), "Checking that topic is now read-only.");
-            manager.MakeTopicWritable(topic);
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic is read-write again.");
-            manager.MakeTopicWritable(topic);
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic),
-                "Checking that calling MakeTopicWritable on read-write topic has no effect.");
-        }
-        [Test]
-        [ExpectedException(typeof(TopicNotFoundException))]
-        public void MakeTopicWritableNonexistentTopic()
-        {
-            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-                TestContentSets.SingleTopicNoImports);
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-
-            UnqualifiedTopicName topic = new UnqualifiedTopicName("NoSuchTopic");
-            manager.MakeTopicWritable(topic);
+            manager.LockTopic(topic);
         }
         [Test]
         public void Namespace()
@@ -2112,6 +2084,34 @@ PropertyOne: List, of, values")
 
             Assert.AreEqual("NamespaceOne._ContentBaseDefinition", topicName.DottedName,
                 "Checking that the right topic was returned.");
+        }
+        [Test]
+        public void UnlockTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write.");
+            manager.LockTopic(topic);
+            Assert.IsFalse(manager.IsExistingTopicWritable(topic), "Checking that topic is now read-only.");
+            manager.UnlockTopic(topic);
+            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic is read-write again.");
+            manager.UnlockTopic(topic);
+            Assert.IsTrue(manager.IsExistingTopicWritable(topic),
+                "Checking that calling UnlockTopic on read-write topic has no effect.");
+        }
+        [Test]
+        [ExpectedException(typeof(TopicNotFoundException))]
+        public void UnlockTopicNonexistentTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("NoSuchTopic");
+            manager.UnlockTopic(topic);
         }
         [Test]
         public void VersionPreviousTo()

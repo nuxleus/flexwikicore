@@ -91,15 +91,7 @@ namespace FlexWiki
         /// <exception cref="TopicNotFoundException">
         /// Thrown if the specified topic does not exist.
         /// </exception>
-        void MakeTopicReadOnly(UnqualifiedTopicName topic);
-        /// <summary>
-        /// Makes an existing topic read-write. 
-        /// </summary>
-        /// <param name="topic">The topic to modify.</param>
-        /// <exception cref="TopicNotFoundException">
-        /// Thrown if the specified topic does not exist.
-        /// </exception>
-        void MakeTopicWritable(UnqualifiedTopicName topic);
+        void LockTopic(UnqualifiedTopicName topic);
         /// <summary>
         /// Answer a TextReader for the given topic
         /// </summary>
@@ -113,6 +105,14 @@ namespace FlexWiki
         /// <param name="name">Name of the topic</param>
         /// <returns>true if it exists</returns>
         bool TopicExists(UnqualifiedTopicName name);
+        /// <summary>
+        /// Makes an existing topic read-write. 
+        /// </summary>
+        /// <param name="topic">The topic to modify.</param>
+        /// <exception cref="TopicNotFoundException">
+        /// Thrown if the specified topic does not exist.
+        /// </exception>
+        void UnlockTopic(UnqualifiedTopicName topic);
         void WriteTopic(UnqualifiedTopicRevision topicRevision, string content);
     }
 }
