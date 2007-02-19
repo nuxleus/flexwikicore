@@ -344,23 +344,28 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        public void IsReadOnlySecurityProviderNegative()
+        public void IsReadOnlyContentStoreReadOnlySecurityReadWrite()
         {
             FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.ReadOnlyStore, configuration);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
             SecurityProvider provider = GetSecurityProvider(manager);
 
+            // Grant the Read permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
             using (new TestSecurityContext("someuser", "somerole"))
             {
-                Assert.IsTrue(provider.IsReadOnly, "Checking that the namespace being read-only causes a true return.");
+                Assert.IsTrue(provider.IsReadOnly, "Checking that the store being read-only causes a true return.");
             }
-        
+
         }
 
         [Test]
-        public void IsReadOnlyContentStoreNegative()
+        public void IsReadOnlyContentStoreReadOnlySecurityReadOnly()
         {
             FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
@@ -375,13 +380,35 @@ namespace FlexWiki.UnitTests.Security
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
-                Assert.IsTrue(provider.IsReadOnly, "Checking that the store being read-only causes a true return.");
+                Assert.IsTrue(provider.IsReadOnly,
+                    "Checking that content store is read only when security and store are both read-only");
+            }
+        }
+
+        [Test]
+        public void IsReadOnlyContentStoreReadWriteSecurityReadWrite()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsFalse(provider.IsReadOnly,
+                    "Checking that the store is read-write when store and security policy are read-write.");
             }
 
         }
 
         [Test]
-        public void IsReadOnlyPositive()
+        public void IsReadOnlyContentStoreReadWriteSecurityReadOnly()
         {
             FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
@@ -396,7 +423,8 @@ namespace FlexWiki.UnitTests.Security
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
-                Assert.IsFalse(provider.IsReadOnly, "Checking that the namespace and store being read-write causes a false return.");
+                Assert.IsFalse(provider.IsReadOnly,
+                    "Checking that content store is read-write only when security is read-only and store is read-write.");
             }
         }
 
