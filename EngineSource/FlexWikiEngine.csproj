@@ -206,6 +206,8 @@
     <Compile Include="FlexWikiException.cs" />
     <Compile Include="IWikiApplication.cs" />
     <Compile Include="Security\FlexWikiSecurityException.cs" />
+    <Compile Include="Security\RecursionContext.cs" />
+    <Compile Include="Security\RecursionContextHelper.cs" />
     <Compile Include="Security\SecurityProvider.cs" />
     <Compile Include="Security\SecurityRule.cs" />
     <Compile Include="Security\SecurableAction.cs" />

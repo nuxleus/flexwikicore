@@ -229,6 +229,47 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void GetParsedTopicAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                ParsedTopic parsedTopic = provider.GetParsedTopic(new UnqualifiedTopicRevision("TopicOne"));
+                Assert.IsNotNull(parsedTopic,
+                    "Checking that the parsed topic was returned.");
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
+        public void GetParsedTopicDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                ParsedTopic parsedTopic = provider.GetParsedTopic(new UnqualifiedTopicRevision("TopicOne"));
+                Assert.Fail("A security exception should have been thrown");
+            }
+        }
+
+        [Test]
         public void HasPermission()
         {
             foreach (SecurityRule firstRule in SecurityRules.GetAll("someuser", "somerole", 0))
