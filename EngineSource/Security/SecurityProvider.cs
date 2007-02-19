@@ -149,6 +149,7 @@ namespace FlexWiki.Security
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
         {
+            AssertTopicPermission(topicRevision.AsUnqualifiedTopicName(), TopicPermission.Read); 
             using (CreateRecursionContext())
             {
                 return _next.TextReaderForTopic(topicRevision);

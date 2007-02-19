@@ -488,6 +488,48 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void TextReaderForTopicAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission, which should be enough.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                string contents = provider.TextReaderForTopic(new UnqualifiedTopicRevision("TopicOne")).ReadToEnd();
+                Assert.AreEqual(7, contents.Length, "Checking that the right contents were returned."); 
+            }
+
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
+        public void TextReaderForTopicDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                string contents = provider.TextReaderForTopic(new UnqualifiedTopicRevision("TopicOne")).ReadToEnd();
+                Assert.Fail("A security exception should have been thrown."); 
+            }
+
+        }
+
+        [Test]
         public void UnlockTopicAllowed()
         {
             // Use the default configuration, where everything is denied
