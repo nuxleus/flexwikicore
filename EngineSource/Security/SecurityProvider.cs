@@ -141,6 +141,7 @@ namespace FlexWiki.Security
         }
         public void MakeTopicReadOnly(UnqualifiedTopicName topic)
         {
+            AssertNamespacePermission(SecurableAction.ManageNamespace); 
             using (CreateRecursionContext())
             {
                 _next.MakeTopicReadOnly(topic);
@@ -148,6 +149,7 @@ namespace FlexWiki.Security
         }
         public void MakeTopicWritable(UnqualifiedTopicName topic)
         {
+            AssertNamespacePermission(SecurableAction.ManageNamespace); 
             using (CreateRecursionContext())
             {
                 _next.MakeTopicWritable(topic);

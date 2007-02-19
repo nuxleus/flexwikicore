@@ -92,7 +92,7 @@ namespace FlexWiki.UnitTests.Security
         public void DeleteAllTopicsAndHistoryAllowed()
         {
             // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration(); 
+            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
               TestContentSets.SingleTopicNoImports, configuration);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
@@ -101,15 +101,15 @@ namespace FlexWiki.UnitTests.Security
             // Grant the ManageNamespace permission, which should be what is needed.
             SecurityRule allowManageNamespace = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
                 SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
-            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allowManageNamespace.ToString("T"), "test"); 
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allowManageNamespace.ToString("T"), "test");
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
-                    "Checking that the right number of topics were returned before deletion"); 
+                    "Checking that the right number of topics were returned before deletion");
                 provider.DeleteAllTopicsAndHistory();
                 // Only built-in topics should remain
-                Assert.AreEqual(2, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count, 
+                Assert.AreEqual(2, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
                     "Checking that the right number of topics were returned after deletion");
             }
         }
@@ -135,7 +135,7 @@ namespace FlexWiki.UnitTests.Security
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
                     "Checking that the right number of topics were returned before deletion");
                 provider.DeleteAllTopicsAndHistory();
-                Assert.Fail("DeleteAllTopicsAndHistory should have thrown an exception"); 
+                Assert.Fail("DeleteAllTopicsAndHistory should have thrown an exception");
             }
         }
 
@@ -185,7 +185,7 @@ namespace FlexWiki.UnitTests.Security
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
                     "Checking that the right number of topics were returned before deletion");
                 provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"));
-                Assert.Fail("A security exception should have been thrown"); 
+                Assert.Fail("A security exception should have been thrown");
             }
         }
 
@@ -425,6 +425,121 @@ namespace FlexWiki.UnitTests.Security
             {
                 Assert.IsFalse(provider.IsReadOnly,
                     "Checking that content store is read-write only when security is read-only and store is read-write.");
+            }
+        }
+
+        [Test]
+        public void MakeTopicReadOnlyAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the ManageNamespace permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Edit),
+                    "Checking that topic is editable before MakeTopicReadOnly.");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
+                    "Checking that topic is readable before MakeTopicReadOnly.");
+                provider.MakeTopicReadOnly(topic);
+                Assert.IsFalse(provider.HasPermission(topic, TopicPermission.Edit),
+                    "Checking that topic is not editable after MakeTopicReadOnly.");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
+                    "Checking that topic is still readable after MakeTopicReadOnly.");
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        public void MakeTopicReadOnlyDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Edit permission, which should not be enough.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Edit),
+                    "Checking that topic is editable before MakeTopicReadOnly.");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
+                    "Checking that topic is readable before MakeTopicReadOnly.");
+                provider.MakeTopicReadOnly(topic);
+
+                Assert.Fail("A security exception should have been thrown.");
+            }
+        }
+
+        [Test]
+        public void MakeTopicWritableAllowed()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the ManageNamespace permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+                provider.MakeTopicReadOnly(topic);
+                Assert.IsFalse(provider.HasPermission(topic, TopicPermission.Edit),
+                    "Checking that topic is not editable before MakeTopicWritable.");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
+                    "Checking that topic is readable before MakeTopicWritable.");
+                provider.MakeTopicWritable(topic);
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Edit),
+                    "Checking that topic is editable after MakeTopicWritable.");
+                Assert.IsTrue(provider.HasPermission(topic, TopicPermission.Read),
+                    "Checking that topic is still readable after MakeTopicWritable.");
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        public void MakeTopicWritableDenied()
+        {
+            // Use the default configuration, where everything is denied
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Edit permission, which should not be enough.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+                provider.MakeTopicWritable(topic);
+
+                Assert.Fail("A security exception should have been thrown.");
             }
         }
 
