@@ -343,6 +343,64 @@ namespace FlexWiki.UnitTests.Security
             }
         }
 
+        [Test]
+        public void IsReadOnlySecurityProviderNegative()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.IsReadOnly, "Checking that the namespace being read-only causes a true return.");
+            }
+        
+        }
+
+        [Test]
+        public void IsReadOnlyContentStoreNegative()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.ReadOnlyStore, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.IsReadOnly, "Checking that the store being read-only causes a true return.");
+            }
+
+        }
+
+        [Test]
+        public void IsReadOnlyPositive()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleTopicNoImports, configuration);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Grant the Read permission, which should be what is needed.
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Read, 0);
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsFalse(provider.IsReadOnly, "Checking that the namespace and store being read-write causes a false return.");
+            }
+        }
+
+
         private void AddWikiRule(FederationConfiguration federationConfiguration, SecurityRule rule)
         {
             federationConfiguration.AuthorizationRules.Add(new WikiAuthorizationRule(rule));

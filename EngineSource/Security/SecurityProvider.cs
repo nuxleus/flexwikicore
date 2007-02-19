@@ -32,6 +32,17 @@ namespace FlexWiki.Security
         {
             get 
             {
+                // If the namespace security policy is read-only, then return true no matter
+                // what the rest of the chain says. 
+                SecurityRuleCollection rules = new SecurityRuleCollection(); 
+                rules.AddRange(GetWikiScopeRules()); 
+                rules.AddRange(GetNamespaceScopeRules());
+                if (!IsAllowed(SecurableAction.Read, rules))
+                {
+                    return true; 
+                }
+
+                // Otherwise, it's whatever the next provider says it is
                 using (CreateRecursionContext())
                 {
                     return _next.IsReadOnly;
