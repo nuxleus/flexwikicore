@@ -12,12 +12,14 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Reflection; 
 
 using NUnit.Framework; 
 
 using FlexWiki.Collections;
-using FlexWiki.Security; 
+using FlexWiki.Security;
+using FlexWiki.UnitTests.Security; 
 
 namespace FlexWiki.UnitTests
 {
@@ -140,6 +142,26 @@ namespace FlexWiki.UnitTests
             return federation.RegisterNamespace(store, ns, parameters);
         }
 
+        internal static NamespaceManager GetNamespaceManagerBypassingSecurity(Federation federation, string ns)
+        {
+            // We use reflection to retrieve the NamespaceManager for a particular namespace, 
+            // because we want to bypass the existence check that results in namespaces being 
+            // hidden if permission is denied. If someone screws with the internals of Federation,
+            // they'll have to come over here and adjust this as necessary. 
+            Type type = federation.GetType();
+            FieldInfo mapInfo = type.GetField("_namespaceToNamespaceManagerMap", BindingFlags.NonPublic | BindingFlags.Instance);
+            NamespaceManagerMap map = (NamespaceManagerMap) mapInfo.GetValue(federation);
+
+            if (map.ContainsKey(ns))
+            {
+                return map[ns];
+            }
+            else
+            {
+                return null; 
+            }
+        }
+
         internal static Federation SetupFederation(string siteUrl, TestContentSet content)
         {
             return SetupFederation(siteUrl, content, MockSetupOptions.Default);
@@ -198,7 +220,27 @@ namespace FlexWiki.UnitTests
             return name;
         }
 
-
+        internal static void WriteTopicAndNewVersionBypassingSecurity(NamespaceManager manager, string topic, 
+            string content, string author)
+        {
+            NamespaceProviderParameter oldValue = null;
+            if (manager.Parameters.Contains("security.disabled"))
+            {
+                oldValue = manager.Parameters["security.disabled"]; 
+            }
+            NamespaceProviderParameter newValue = new NamespaceProviderParameter("security.disabled", "true");
+            if (oldValue != null)
+            {
+                manager.Parameters.Remove(oldValue); 
+            }
+            manager.Parameters.Add(newValue); 
+            manager.WriteTopicAndNewVersion(topic, content, author);
+            manager.Parameters.Remove(newValue); 
+            if (oldValue != null)
+            {
+                manager.Parameters.Add(oldValue); 
+            }
+        }
 
     }
 }

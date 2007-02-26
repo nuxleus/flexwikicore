@@ -21,7 +21,17 @@ namespace FlexWiki.Security
         {
             get
             {
-                AssertNamespacePermission(SecurableAction.Read);
+                SecurityRuleCollection rules = new SecurityRuleCollection();
+                rules.AddRange(GetWikiScopeRules());
+                rules.AddRange(GetNamespaceScopeRules());
+
+                // If the user does not have read permission on the namespace, then 
+                // it doesn't exist as far as they're concerned.
+                if (!IsAllowed(SecurableAction.Read, rules))
+                {
+                    return false; 
+                }
+
                 using (CreateRecursionContext())
                 {
                     return _next.Exists;
@@ -172,6 +182,21 @@ namespace FlexWiki.Security
         }
         public void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
+            string definitionTopicName = null;
+            using (CreateRecursionContext())
+            {
+                definitionTopicName = _namespaceManager.DefinitionTopicName.LocalName; 
+            }
+            // You need ManageNamespace permission to edit the definition topic
+            if (topicRevision.LocalName.Equals(definitionTopicName))
+            {
+                AssertNamespacePermission(SecurableAction.ManageNamespace);
+            }
+            // For all other topics, Edit will do.
+            else
+            {
+                AssertTopicPermission(topicRevision.AsUnqualifiedTopicName(), TopicPermission.Edit);
+            }
             using (CreateRecursionContext())
             {
                 _next.WriteTopic(topicRevision, content);
@@ -306,6 +331,15 @@ namespace FlexWiki.Security
             if (IsRecursing)
             {
                 return true; 
+            }
+
+            // If the security provider is disabled, always return true. 
+            if (_namespaceManager.Parameters.Contains("security.disabled"))
+            {
+                if (_namespaceManager.Parameters["security.disabled"].Value.Equals("true", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true; 
+                }
             }
 
             bool allowed = false;

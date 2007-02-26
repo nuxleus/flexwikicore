@@ -193,14 +193,31 @@ namespace FlexWiki
         {
             get
             {
-                return _namespaceToNamespaceManagerMap.Values;
+                // Only existing namespaces are exposed. 
+                foreach (NamespaceManager manager in _namespaceToNamespaceManagerMap.Values)
+                {
+                    if (manager.Exists)
+                    {
+                        yield return manager; 
+                    }
+                }
             }
         }
         public ICollection<string> Namespaces
         {
             get
             {
-                return _namespaceToNamespaceManagerMap.Keys;
+                // Only existing namespaces are exposed. 
+                List<string> namespaces = new List<string>();
+                foreach (NamespaceManager manager in _namespaceToNamespaceManagerMap.Values)
+                {
+                    if (manager.Exists)
+                    {
+                        namespaces.Add(manager.Namespace); 
+                    }
+                }
+
+                return namespaces; 
             }
         }
         public bool NoFollowExternalHyperlinks
@@ -776,7 +793,17 @@ namespace FlexWiki
                 return null;
             }
 
-            return (NamespaceManager) (_namespaceToNamespaceManagerMap[ns]);
+            NamespaceManager manager = _namespaceToNamespaceManagerMap[ns];
+            // Providers like the security provider can mask the existence of a namespace. So we need to 
+            // remove any registered namespaces from the list if they return false from Exists. 
+            if (!manager.Exists)
+            {
+                return null;
+            }
+            else
+            {
+                return manager; 
+            }
         }
         /// <summary>
         /// Answer the NamespaceManager for the given topic (will be based on its namespace)
@@ -1281,5 +1308,6 @@ namespace FlexWiki
                 UpdateGenerator.Pop();
             }
         }
+
     }
 }

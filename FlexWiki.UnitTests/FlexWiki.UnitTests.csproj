@@ -109,9 +109,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AuthorizationPolicyTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="BuiltinTopicsProviderTests.cs" />
     <Compile Include="CachingTests.cs">
       <SubType>Code</SubType>
@@ -192,9 +189,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ScopeTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Security\SecurityTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TestContent.cs">

@@ -89,7 +89,9 @@ namespace FlexWiki.UnitTests
                 new NamespaceProviderParameterCollection(
                     new NamespaceProviderParameter("Root", Root)));
 
-            NamespaceManager manager = _federation.NamespaceManagerForNamespace("NamespaceOne");
+            // Necessary to bypass security because a non-existent manager can't be
+            // retrieved directly from the federation
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(_federation, "NamespaceOne");
 
             _provider = (FileSystemStore) manager.GetProvider(typeof(FileSystemStore));
         }
@@ -248,7 +250,9 @@ namespace FlexWiki.UnitTests
                 new NamespaceProviderParameterCollection(
                     new NamespaceProviderParameter("Root", Root)));
 
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            // Necessary to bypass security because a non-existent manager can't be
+            // retrieved directly from the federation
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
 
             FileSystemStore provider = (FileSystemStore) manager.GetProvider(typeof(FileSystemStore));
 

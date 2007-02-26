@@ -626,7 +626,9 @@ namespace FlexWiki.UnitTests
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
                 TestContentSets.SingleEmptyNamespace, MockSetupOptions.StoreDoesNotExist);
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            // Necessary to bypass security because a nonexistent namespace can't be retrieved
+            // directly from the federation. 
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
 
             Assert.IsFalse(manager.Exists,
                 "Checking that Exists returns false when store does not exist.");
@@ -691,7 +693,9 @@ namespace FlexWiki.UnitTests
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
                 TestContentSets.SingleEmptyNamespace, MockSetupOptions.StoreDoesNotExist);
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            // Necessary to bypass security because a non-existent manager can't be
+            // retrieved directly from the federation
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
 
             Assert.IsFalse(manager.ExposedExists,
                 "Checking that Exists returns false when store does not exist.");
