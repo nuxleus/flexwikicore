@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki
 {
@@ -67,7 +68,6 @@ namespace FlexWiki
 
         private string _aboutWikiString;
         private IWikiApplication _application; 
-        private readonly AuthorizationPolicy _authorizationPolicy = new AuthorizationPolicy();
         private Set _blacklistedExternalLinkPrefixes = new Set();
         private string _borders;
         private DateTime _created = DateTime.Now;
@@ -119,11 +119,6 @@ namespace FlexWiki
         public IWikiApplication Application
         {
             get { return _application; }
-        }
-        public AuthorizationConfigurationProviderBase AuthorizationConfigurationProvider
-        {
-            get { return _authorizationPolicy.ConfigurationProvider; }
-            set { _authorizationPolicy.ConfigurationProvider = value; }
         }
         /// <summary>
         /// Answer the set of blacklisted link prefixes.  Treat this set as read-only, please, and use AddBlacklistedExternalLink() and RemoveBlacklistedExternalLink().
@@ -198,14 +193,31 @@ namespace FlexWiki
         {
             get
             {
-                return _namespaceToNamespaceManagerMap.Values;
+                // Only existing namespaces are exposed. 
+                foreach (NamespaceManager manager in _namespaceToNamespaceManagerMap.Values)
+                {
+                    if (manager.Exists)
+                    {
+                        yield return manager; 
+                    }
+                }
             }
         }
         public ICollection<string> Namespaces
         {
             get
             {
-                return _namespaceToNamespaceManagerMap.Keys;
+                // Only existing namespaces are exposed. 
+                List<string> namespaces = new List<string>();
+                foreach (NamespaceManager manager in _namespaceToNamespaceManagerMap.Values)
+                {
+                    if (manager.Exists)
+                    {
+                        namespaces.Add(manager.Namespace); 
+                    }
+                }
+
+                return namespaces; 
             }
         }
         public bool NoFollowExternalHyperlinks
@@ -718,10 +730,6 @@ namespace FlexWiki
         {
             throw new NotImplementedException();
         }
-        public bool HasPermission(string nmspc, Permission permission)
-        {
-            return _authorizationPolicy.HasPermission(nmspc, permission);
-        }
         public bool IsBlacklisted(string wikiText)
         {
             if (wikiText == null)
@@ -785,7 +793,17 @@ namespace FlexWiki
                 return null;
             }
 
-            return (NamespaceManager) (_namespaceToNamespaceManagerMap[ns]);
+            NamespaceManager manager = _namespaceToNamespaceManagerMap[ns];
+            // Providers like the security provider can mask the existence of a namespace. So we need to 
+            // remove any registered namespaces from the list if they return false from Exists. 
+            if (!manager.Exists)
+            {
+                return null;
+            }
+            else
+            {
+                return manager; 
+            }
         }
         /// <summary>
         /// Answer the NamespaceManager for the given topic (will be based on its namespace)
@@ -869,20 +887,21 @@ namespace FlexWiki
         /// <summary>
         /// Register the given content store in the federation.
         /// </summary>
-        public NamespaceManager RegisterNamespace(ContentProviderBase contentStore, string ns)
+        public NamespaceManager RegisterNamespace(IContentProvider contentStore, string ns)
         {
             return RegisterNamespace(contentStore, ns, null); 
         }
         /// <summary>
         /// Register the given content store in the federation.
         /// </summary>
-        public NamespaceManager RegisterNamespace(ContentProviderBase contentStore, string ns, 
+        public NamespaceManager RegisterNamespace(IContentProvider contentStore, string ns, 
             NamespaceProviderParameterCollection parameters)
         {
             // These are the default providers that every namespace gets. Later we might
             // want to make these configurable
-            ContentProviderBase providerChain = new BuiltinTopicsProvider(contentStore); 
+            IContentProvider providerChain = new BuiltinTopicsProvider(contentStore); 
             providerChain = new ParsingProvider(providerChain);
+            providerChain = new SecurityProvider(providerChain); 
             
             NamespaceManager namespaceManager = new NamespaceManager(this, providerChain, ns, parameters);
 
@@ -1184,7 +1203,6 @@ namespace FlexWiki
             // FederationConfiguration configuration, OutputFormat format, LinkMaker linker)
             _application = application; 
             InitializePerformanceCounters();
-            _authorizationPolicy.Initialize(this);
 
             LoadFromConfiguration();
 
@@ -1291,7 +1309,5 @@ namespace FlexWiki
             }
         }
 
-
-        
     }
 }

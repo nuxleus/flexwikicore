@@ -16,11 +16,13 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
-using FlexWiki.Formatting;
 using System.Xml;
 using System.Xml.Serialization;
 
+using NUnit.Framework;
+
+using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki.UnitTests
 {
@@ -41,8 +43,13 @@ namespace FlexWiki.UnitTests
         [SetUp]
         public void SetUp()
         {
+            FederationConfiguration configuration = new FederationConfiguration();
+            // Grant everyone full control so we don't have security issues for the test. 
+            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(
+                new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll), SecurityRulePolarity.Allow,
+                    SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
             MockWikiApplication application = new MockWikiApplication(
-                new FederationConfiguration(),
+                configuration,
                 new LinkMaker("http://boobar"), OutputFormat.HTML,
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
             Federation = new Federation(application);

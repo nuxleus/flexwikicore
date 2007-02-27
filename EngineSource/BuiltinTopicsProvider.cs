@@ -188,7 +188,7 @@ Presentations.Image(""images/flexwikirss.png"",
 
         // Constructors
 
-        public BuiltinTopicsProvider(ContentProviderBase next)
+        public BuiltinTopicsProvider(IContentProvider next)
             : base(next)
         {
         }
@@ -281,23 +281,32 @@ Presentations.Image(""images/flexwikirss.png"",
 
             return topics; 
         }
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             // If it's not a built-in topic, just pass the question along
             if (!IsBuiltInTopic(topic))
             {
-                return Next.IsExistingTopicWritable(topic); 
+                return Next.HasPermission(topic, permission); 
             }
 
             // Otherwise, if it is a built-in topic, does it exist in the next provider? 
             if (Next.TopicExists(topic))
             {
-                // If it does, it's only writable if it's writable there
-                return Next.IsExistingTopicWritable(topic); 
+                // If it does, whatever is true here is true there
+                return Next.HasPermission(topic, permission); 
             }
             
+            if (permission == TopicPermission.Read)
+            {
+                return true; 
+            }
             // Otherwise, it's writable only if the next provider is writable as a whole.
-            return !Next.IsReadOnly; 
+            else if (permission == TopicPermission.Edit)
+            {
+                return !Next.IsReadOnly;
+            }
+
+            return false; 
 
         }
         public override TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)

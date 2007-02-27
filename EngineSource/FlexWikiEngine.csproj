@@ -103,6 +103,7 @@
     <Compile Include="Collections\NamespaceManagerMap.cs" />
     <Compile Include="FileInformation.cs" />
     <Compile Include="FileSystem.cs" />
+    <Compile Include="IContentProvider.cs" />
     <Compile Include="IFileInformation.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="QualifiedTopicName.cs" />
@@ -116,15 +117,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AuthorizationConfiguration.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AuthorizationConfigurationProviderBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AuthorizationPolicy.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BackingTopic.cs">
@@ -213,14 +205,26 @@
     <Compile Include="ExpressionChainPTN.cs" />
     <Compile Include="FlexWikiException.cs" />
     <Compile Include="IWikiApplication.cs" />
+    <Compile Include="Security\FlexWikiSecurityException.cs" />
+    <Compile Include="Security\RecursionContext.cs" />
+    <Compile Include="Security\RecursionContextHelper.cs" />
+    <Compile Include="Security\SecurityProvider.cs" />
+    <Compile Include="Security\SecurityRule.cs" />
+    <Compile Include="Security\SecurableAction.cs" />
+    <Compile Include="Security\SecurityRuleCollection.cs" />
+    <Compile Include="Security\SecurityRulePolarity.cs" />
+    <Compile Include="Security\SecurityRuleScope.cs" />
+    <Compile Include="Security\SecurityRuleWho.cs" />
+    <Compile Include="Security\SecurityRuleWhoType.cs" />
+    <Compile Include="Security\StringLiterals.cs" />
+    <Compile Include="Security\WikiAuthorizationRule.cs" />
+    <Compile Include="Security\WikiAuthorizationRuleCollection.cs" />
+    <Compile Include="TopicPermission.cs" />
     <Compile Include="UnqualifiedTopicName.cs" />
     <Compile Include="NamespaceManager.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CustomSorter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DefaultAuthorizationConfigurationProvider.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DefaultSorter.cs">
@@ -505,9 +509,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scanner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SecurityAdministration.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Set.cs">

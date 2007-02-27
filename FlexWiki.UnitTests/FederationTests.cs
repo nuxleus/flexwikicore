@@ -302,6 +302,18 @@ namespace FlexWiki.UnitTests
 
             Assert.IsNull(manager, "Checking that a null manager is returned when namespace does not exist.");
         }
+        [Test]
+        public void NamespaceManagerForTopicNegativeNonExistentContentStore()
+        {
+            // If a content provider returns false from Exists, the namespace shouldn't show up in the list
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
+                TestContentSets.SingleTopicNoImports, MockSetupOptions.StoreDoesNotExist);
+            NamespaceManager manager = federation.NamespaceManagerForTopic(
+                new QualifiedTopicRevision("TopicOne", "NamespaceOne"));
+
+            Assert.IsNull(manager, "Checking that a null manager is returned when content store does not exist.");
+            
+        }
 
         [Test]
         public void NamespaceManagerForTopicNegativeNullTopic()
@@ -329,12 +341,65 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
+        public void NamespaceManagerForNonExistentContentStore()
+        {
+            // If a content provider returns false from Exists, the namespace shouldn't show up in the list
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
+                TestContentSets.SingleTopicNoImports, MockSetupOptions.StoreDoesNotExist);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            Assert.IsNull(manager, "Checking that a null manager is returned when content store does not exist.");
+        }
+
+        [Test]
         public void NamespaceManagerForNullNamespace()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://federationtests",
                 TestContentSets.SingleEmptyNamespace); 
             Assert.IsNull(federation.NamespaceManagerForNamespace(null),
               "Checking that NamespaceManagerForNamespace returns null rather than throwing an exception when passed a null namespace.");
+        }
+
+        [Test]
+        public void NamespaceManagers()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests", new TestContentSet());
+            NamespaceManager namespaceOne = federation.RegisterNamespace(
+                new MockContentStore(), "NamespaceOne");
+            NamespaceManager namespaceTwo = federation.RegisterNamespace(
+                new MockContentStore(MockSetupOptions.StoreDoesNotExist), "NamespaceTwo");
+
+            int count = 0; 
+            NamespaceManager last = null;
+            foreach (NamespaceManager manager in federation.NamespaceManagers)
+            {
+                last = manager;
+                ++count; 
+            }
+
+            Assert.AreEqual(1, count, "Checking that only existing namespaces were returned.");
+            Assert.AreEqual(last, namespaceOne, "Checking that the nonexistent manager was not returned."); 
+        }
+
+        [Test]
+        public void Namespaces()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://federationtests", new TestContentSet());
+            NamespaceManager namespaceOne = federation.RegisterNamespace(
+                new MockContentStore(), "NamespaceOne");
+            NamespaceManager namespaceTwo = federation.RegisterNamespace(
+                new MockContentStore(MockSetupOptions.StoreDoesNotExist), "NamespaceTwo");
+
+            int count = 0;
+            string last = null;
+            foreach (string ns in federation.Namespaces)
+            {
+                last = ns;
+                ++count;
+            }
+
+            Assert.AreEqual(1, count, "Checking that only existing namespaces were returned.");
+            Assert.AreEqual(last, "NamespaceOne", "Checking that the nonexistent manager was not returned.");
         }
 
         [Test]

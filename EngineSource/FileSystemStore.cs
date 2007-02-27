@@ -199,39 +199,38 @@ namespace FlexWiki
         /// </summary>
         /// <param name="topic">The topic (must directly be in this content base)</param>
         /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
-
             string path = TopicPath(topic, null);
             if (!FileSystem.FileExists(path))
             {
                 return false;
             }
-            DateTime old = FileSystem.GetLastWriteTimeUtc(path);
 
-            if (!FileSystem.HasWritePermission(path))
+            if (permission == TopicPermission.Edit)
             {
-                return false;
+                if (!FileSystem.HasWritePermission(path))
+                {
+                    return false;
+                }
+            }
+            else if (permission == TopicPermission.Read)
+            {
+                if (!FileSystem.HasReadPermission(path))
+                {
+                    return false; 
+                }
             }
 
-            FileSystem.SetLastWriteTimeUtc(path, old);
             return true;
         }
         /// <summary>
-        /// Implements <see cref="ContentProviderBase.MakeTopicReadOnly"/>. 
+        /// Implements <see cref="ContentProviderBase.LockTopic"/>. 
         /// </summary>
         /// <param name="topic"></param>
-        public override void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public override void LockTopic(UnqualifiedTopicName topic)
         {
             FileSystem.MakeReadOnly(MakePath(Root, topic.LocalName)); 
-        }
-        /// <summary>
-        /// Implements <see cref="ContentProviderBase.MakeTopicReadOnly"/>.
-        /// </summary>
-        /// <param name="topic"></param>
-        public override void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            FileSystem.MakeWritable(MakePath(Root, topic.LocalName)); 
         }
         /// <summary>
         /// Answer a TextReader for the given topic
@@ -256,6 +255,14 @@ namespace FlexWiki
         public override bool TopicExists(UnqualifiedTopicName topicName)
         {
             return FileSystem.FileExists(MakePath(Root, topicName.LocalName));
+        }
+        /// <summary>
+        /// Implements <see cref="ContentProviderBase.LockTopic"/>.
+        /// </summary>
+        /// <param name="topic"></param>
+        public override void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            FileSystem.MakeWritable(MakePath(Root, topic.LocalName));
         }
         /// <summary>
         /// Write a new version of the topic (doesn't write a new version).  Generate all needed federation update changes via the supplied generator.

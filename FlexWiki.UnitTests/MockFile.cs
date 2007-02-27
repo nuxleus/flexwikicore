@@ -6,28 +6,89 @@ namespace FlexWiki.UnitTests
     {
         private readonly MockFileCollection _children = new MockFileCollection();
         private string _contents;
-        private DateTime _created; 
+        private DateTime _created;
         private DateTime _lastModified; 
         private string _name;
-        private bool _readOnly; 
-
+        private MockTopicStorePermissions _permissions; 
+        
         public MockFile(string name, DateTime created, string contents)
-            : this(name, created, created, contents, false)
+            : this(name, created, created, contents, MockTopicStorePermissions.ReadWrite)
         {
         }
 
-        public MockFile(string name, DateTime created, string contents, bool readOnly)
-            : this(name, created, created, contents, readOnly)
+        public MockFile(string name, DateTime created, string contents, MockTopicStorePermissions permissions)
+            : this(name, created, created, contents, permissions)
         {
         }
 
-        public MockFile(string name, DateTime created, DateTime lastModified, string contents, bool readOnly)
+        public MockFile(string name, DateTime created, DateTime lastModified, string contents, MockTopicStorePermissions permissions)
         {
             _name = name;
             _created = created; 
             _lastModified = lastModified; 
             _contents = contents;
-            _readOnly = readOnly; 
+            _permissions = permissions; 
+        }
+
+        public bool CanRead
+        {
+            get 
+            {
+                if (_permissions == MockTopicStorePermissions.NoAccess)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true; 
+                }
+            }
+            set 
+            {
+                if (value == true)
+                {
+                    if (_permissions == MockTopicStorePermissions.NoAccess)
+                    {
+                        _permissions = MockTopicStorePermissions.ReadOnly;
+                    }
+                }
+                else
+                {
+                    if (_permissions == MockTopicStorePermissions.ReadWrite)
+                    {
+                        _permissions = MockTopicStorePermissions.ReadOnly; 
+                    }
+                }
+            }
+        }
+
+        public bool CanWrite
+        {
+            get 
+            {
+                if (_permissions == MockTopicStorePermissions.ReadWrite)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false; 
+                }
+            }
+            set 
+            {
+                if (value == true)
+                {
+                    _permissions = MockTopicStorePermissions.ReadWrite;
+                }
+                else
+                {
+                    if (_permissions == MockTopicStorePermissions.ReadWrite)
+                    {
+                        _permissions = MockTopicStorePermissions.ReadOnly; 
+                    }
+                }
+            }
         }
 
         public MockFileCollection Children
@@ -50,12 +111,6 @@ namespace FlexWiki.UnitTests
         public virtual bool IsDirectory
         {
             get { return false; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return _readOnly; }
-            set { _readOnly = value; }
         }
 
         public DateTime LastModified

@@ -65,11 +65,6 @@ namespace FlexWiki.UnitTests
             }
         }
 
-        private Federation Federation
-        {
-            get { return NamespaceManager.Federation; }
-        }
-
         public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topicName, DateTime stamp)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
@@ -140,26 +135,33 @@ namespace FlexWiki.UnitTests
             _created = manager.Federation.TimeProvider.Now;
         }
 
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topic)
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             if (mockTopic == null)
             {
-                return false; 
+                return false;
             }
-            return !mockTopic.Latest.IsReadOnly; 
+
+            if (permission == TopicPermission.Edit)
+            {
+                return mockTopic.Latest.CanWrite; 
+            }
+            else if (permission == TopicPermission.Read)
+            {
+                return mockTopic.Latest.CanRead;
+            }
+            else
+            {
+                throw new ArgumentException("Unrecognized TopicPermission " + permission.ToString()); 
+            }
         }
 
-        public override void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public override void LockTopic(UnqualifiedTopicName topic)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
-            mockTopic.Latest.IsReadOnly = true; 
-        }
-
-        public override void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
-            mockTopic.Latest.IsReadOnly = false;
+            mockTopic.Latest.CanRead = true;
+            mockTopic.Latest.CanWrite = false; 
         }
 
         public override bool TopicExists(UnqualifiedTopicName name)
@@ -183,6 +185,12 @@ namespace FlexWiki.UnitTests
             }
 
             return new StringReader(history.Contents);
+        }
+
+        public override void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
+            mockTopic.Latest.CanWrite = true;
         }
 
         public override void WriteTopic(UnqualifiedTopicRevision revision, string content)

@@ -14,19 +14,19 @@ using System;
 
 namespace FlexWiki
 {
-	public enum Permission
-	{
-    /// <summary>
-    /// User/role has rights to read, write, lock topics, and to edit _ContentBaseDefinition
-    /// </summary>
-    Administer,
-    /// <summary>
-    /// User/role has rights to read or write
-    /// </summary>
-    Edit,
-    /// <summary>
-    /// User/role has rights to read
-    /// </summary>
-    Read
-	}
+    public enum Permission
+    {
+        /// <summary>
+        /// User/role has rights to read, write, lock topics, and to edit _ContentBaseDefinition
+        /// </summary>
+        ManageNamespace,
+        /// <summary>
+        /// User/role has rights to read or write
+        /// </summary>
+        Edit,
+        /// <summary>
+        /// User/role has rights to read
+        /// </summary>
+        Read
+    }
 }

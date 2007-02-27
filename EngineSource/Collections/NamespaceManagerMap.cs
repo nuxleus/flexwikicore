@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FlexWiki.Collections
 {
-    internal class NamespaceManagerMap : Dictionary<string, NamespaceManager>
+    public class NamespaceManagerMap : Dictionary<string, NamespaceManager>
     {
     }
 }

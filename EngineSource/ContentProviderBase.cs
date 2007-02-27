@@ -18,12 +18,12 @@ using FlexWiki.Collections;
 
 namespace FlexWiki
 {
-    public abstract class ContentProviderBase
+    public abstract class ContentProviderBase : IContentProvider
     {
         private NamespaceManager _namespaceManager; 
-        private ContentProviderBase _next;
+        private IContentProvider _next;
 
-        public ContentProviderBase(ContentProviderBase next)
+        public ContentProviderBase(IContentProvider next)
         {
             _next = next; 
         }
@@ -40,6 +40,10 @@ namespace FlexWiki
             {
                 return _next.Exists;
             }
+        }
+        public Federation Federation
+        {
+            get { return _namespaceManager.Federation; }
         }
         /// <summary>
         /// Returns true if the content store is read-only.
@@ -65,7 +69,7 @@ namespace FlexWiki
             get { return _namespaceManager; }
         }
 
-        public virtual ContentProviderBase Next
+        public virtual IContentProvider Next
         {
             get { return _next; }
             set { _next = value; }
@@ -115,6 +119,15 @@ namespace FlexWiki
         {
             return _next.GetParsedTopic(topicRevision);
         }
+        /// <summary>
+        /// Answer whether the current user has the given permission for the specified topic.
+        /// </summary>
+        /// <param name="topic">The topic </param>
+        /// <returns>true if the topic exists AND the specified permission is allowed for the current user; else false</returns>
+        public virtual bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
+        {
+            return _next.HasPermission(topic, permission);
+        }
         public virtual void Initialize(NamespaceManager namespaceManager)
         {
             _namespaceManager = namespaceManager;
@@ -124,35 +137,15 @@ namespace FlexWiki
             }
         }
         /// <summary>
-        /// Answer whether a topic exists and is writable
-        /// </summary>
-        /// <param name="topic">The topic (must directly be in this content base)</param>
-        /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public virtual bool IsExistingTopicWritable(UnqualifiedTopicName topic)
-        {
-            return _next.IsExistingTopicWritable(topic); 
-        }
-        /// <summary>
         /// Makes an existing topic read-only. 
         /// </summary>
         /// <param name="topic">The topic to modify.</param>
         /// <exception cref="TopicNotFoundException">
         /// Thrown if the specified topic does not exist.
         /// </exception>
-        public virtual void MakeTopicReadOnly(UnqualifiedTopicName topic)
+        public virtual void LockTopic(UnqualifiedTopicName topic)
         {
-            Next.MakeTopicReadOnly(topic); 
-        }
-        /// <summary>
-        /// Makes an existing topic read-write. 
-        /// </summary>
-        /// <param name="topic">The topic to modify.</param>
-        /// <exception cref="TopicNotFoundException">
-        /// Thrown if the specified topic does not exist.
-        /// </exception>
-        public virtual void MakeTopicWritable(UnqualifiedTopicName topic)
-        {
-            Next.MakeTopicWritable(topic); 
+            Next.LockTopic(topic); 
         }
         /// <summary>
         /// Answer a TextReader for the given topic
@@ -172,6 +165,17 @@ namespace FlexWiki
         public virtual bool TopicExists(UnqualifiedTopicName name)
         {
             return _next.TopicExists(name); 
+        }
+        /// <summary>
+        /// Makes an existing topic read-write. 
+        /// </summary>
+        /// <param name="topic">The topic to modify.</param>
+        /// <exception cref="TopicNotFoundException">
+        /// Thrown if the specified topic does not exist.
+        /// </exception>
+        public virtual void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            Next.UnlockTopic(topic);
         }
         public virtual void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {

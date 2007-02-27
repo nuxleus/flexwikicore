@@ -109,9 +109,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AuthorizationPolicyTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="BuiltinTopicsProviderTests.cs" />
     <Compile Include="CachingTests.cs">
       <SubType>Code</SubType>
@@ -123,21 +120,25 @@
     <Compile Include="Formatting\NonExistentNamespaceTests.cs" />
     <Compile Include="Formatting\TableFormattingTests.cs" />
     <Compile Include="Formatting\WikiPagePropertyTests.cs" />
+    <Compile Include="MockTopicStorePermissions.cs" />
+    <Compile Include="Security\SecurityProviderTests.cs" />
     <Compile Include="MockDirectory.cs" />
     <Compile Include="MockFile.cs" />
     <Compile Include="MockFileCollection.cs" />
     <Compile Include="MockFileInformation.cs" />
     <Compile Include="MockFileSystem.cs" />
     <Compile Include="QualifiedTopicRevisionTests.cs" />
+    <Compile Include="Security\SecurityRules.cs" />
+    <Compile Include="Security\SecurityTestContentSets.cs" />
+    <Compile Include="Security\TestAnonymousIdentity.cs" />
+    <Compile Include="Security\TestIdentity.cs" />
+    <Compile Include="Security\TestSecurityContext.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicRevision.cs" />
     <Compile Include="MockTopicRevisionCollection.cs" />
     <Compile Include="MockWikiApplication.cs" />
     <Compile Include="NamespaceManagerTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DefaultAuthorizationConfigurationProviderTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dummy.cs">
@@ -177,9 +178,6 @@
     <Compile Include="MockTopic.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MockWikiAuthorizationConfigurationProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MoreNamespaceManagerTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -191,9 +189,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ScopeTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SecurityTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TestContent.cs">

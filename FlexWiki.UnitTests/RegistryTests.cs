@@ -22,6 +22,7 @@ using System.Xml.Serialization;
 using NUnit.Framework;
 
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki.UnitTests
 {
@@ -48,7 +49,14 @@ namespace FlexWiki.UnitTests
         {
             string author = "tester-joebob";
             _lm = new LinkMaker(_bh);
-            MockWikiApplication application = new MockWikiApplication(new FederationConfiguration(),
+            
+            // Allow everyone all permissions
+            FederationConfiguration configuration = new FederationConfiguration();
+            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(
+                new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null), SecurityRulePolarity.Allow,
+                SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
+            MockWikiApplication application = new MockWikiApplication(
+                configuration,
                 _lm,
                 OutputFormat.HTML,
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));

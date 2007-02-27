@@ -145,7 +145,7 @@ namespace FlexWiki.CalendarProvider
             //_Topics[a] = DateTime.MinValue;
         }
 
-        public override bool IsExistingTopicWritable(UnqualifiedTopicName topicName)
+        public override bool HasPermission(UnqualifiedTopicName topicName, TopicPermission permission)
         {
             throw new NotImplementedException();
         }
