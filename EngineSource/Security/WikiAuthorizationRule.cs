@@ -9,6 +9,7 @@ namespace FlexWiki.Security
      <allow action="Edit" who="role:editors" />
      <deny action="ManageNamespace" who="all" />
      */
+    [XmlRoot("rule")]
     public class WikiAuthorizationRule : IXmlSerializable
     {
         private SecurableAction _action;
@@ -63,32 +64,35 @@ namespace FlexWiki.Security
                 return; 
             }
 
-            if (reader.LocalName == "allow")
+            string type = reader.GetAttribute("type"); 
+
+            if (type == "allow")
             {
                 _polarity = SecurityRulePolarity.Allow; 
             }
-            else if (reader.LocalName == "deny")
+            else if (type == "deny")
             {
                 _polarity = SecurityRulePolarity.Deny;
             }
             else
             {
-                return; 
+                throw new NotSupportedException("Unsupported or missing rule type: " + ((type == null) ? "<<null>>" : type)); 
             }
 
             _action = (SecurableAction) Enum.Parse(typeof(SecurableAction), reader.GetAttribute("action"));
-            _who = SecurityRuleWho.Parse(reader.GetAttribute("who")); 
+            _who = SecurityRuleWho.Parse(reader.GetAttribute("principal"));
+            reader.Read(); 
         }
 
         void IXmlSerializable.WriteXml(System.Xml.XmlWriter writer)
         {
             if (_polarity == SecurityRulePolarity.Allow)
             {
-                writer.WriteStartElement("allow"); 
+                writer.WriteAttributeString("type", "allow"); 
             }
             else if (_polarity == SecurityRulePolarity.Deny)
             {
-                writer.WriteStartElement("deny");
+                writer.WriteAttributeString("type", "deny");
             }
             else
             {
@@ -97,8 +101,6 @@ namespace FlexWiki.Security
 
             writer.WriteAttributeString("action", _action.ToString());
             writer.WriteAttributeString("principal", _who.ToString());
-
-            writer.WriteEndElement(); 
         }
     }
 }

@@ -107,7 +107,7 @@ namespace FlexWiki.Web
 
             if (configPath == null)
             {
-                configPath = Path.Combine("config", "flexwiki.config");
+                configPath = "flexwiki.config";
             }
 
             string basedir = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
@@ -120,9 +120,9 @@ namespace FlexWiki.Web
             }
 
             throw new Exception("No configuration file was found. The configuration file should " +
-                "either be at config/flexwiki.config or in the location specified by the " +
+                "either be at flexwiki.config in the application root or in the location specified by the " +
                 "FlexWikiConfigurationPath app setting. All paths are relative to the directory " +
-                "containing web.config (or app.config, as appropriate.");
+                "containing web.config (or app.config, as appropriate).");
         }
         private void LoadConfiguration()
         {

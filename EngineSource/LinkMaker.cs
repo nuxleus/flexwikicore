@@ -241,6 +241,14 @@ namespace FlexWiki
         {
             return SimpleLinkTo("versions.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : ""));
         }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer an absolute link on this site.")]
+        public string SimpleLinkTo(string target)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL);
+            builder.Append(target);
+            return builder.ToString();
+        }
 
         private string EditLink(string top)
         {
@@ -273,13 +281,6 @@ namespace FlexWiki
             NameValueCollection extras = new NameValueCollection();
             extras.Add("restore", "y");
             return TopicLink(top, false, extras);
-        }
-        private string SimpleLinkTo(string s)
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(SiteURL);
-            builder.Append(s);
-            return builder.ToString();
         }
         private string TopicLink(string top, bool showDiffs, NameValueCollection extraQueryParms)
         {

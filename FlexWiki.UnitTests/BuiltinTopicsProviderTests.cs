@@ -166,7 +166,7 @@ namespace FlexWiki.UnitTests
 
             Assert.AreEqual(457, GetContent(provider, manager.HomePage).Length, 
                 "Checking that home page has correct default content.");
-            Assert.AreEqual(4144, GetContent(provider, NamespaceManager.BordersTopicLocalName).Length,
+            Assert.AreEqual(4208, GetContent(provider, NamespaceManager.BordersTopicLocalName).Length,
                 "Checking that borders topic has correct default content.");
 
             WriteBuiltInTopics(manager);
@@ -178,7 +178,7 @@ namespace FlexWiki.UnitTests
 
             Assert.AreEqual(457, GetDefaultContent(provider, manager.HomePage).Length,
                 "Checking that home page has correct default content.");
-            Assert.AreEqual(4144, GetDefaultContent(provider, NamespaceManager.BordersTopicLocalName).Length,
+            Assert.AreEqual(4208, GetDefaultContent(provider, NamespaceManager.BordersTopicLocalName).Length,
                 "Checking that borders topic has correct default content.");
 
             UnqualifiedTopicRevision homePageDefaultRevision = new UnqualifiedTopicRevision(
@@ -201,7 +201,7 @@ namespace FlexWiki.UnitTests
             Assert.IsNull(provider.TextReaderForTopic(homePageNoSuchRevison),
                 "Checking that home page returns null when retrieving non existent revision.");
 
-            Assert.AreEqual(4144, GetContent(provider, bordersDefaultRevision).Length,
+            Assert.AreEqual(4208, GetContent(provider, bordersDefaultRevision).Length,
                 "Checking that borders topic has correct content when retrieving default content revision explicitly.");
             Assert.AreEqual(19, GetContent(provider, bordersNewRevision).Length,
                 "Checking that borders topic has correct content when retrieiving new content revision explicitly.");

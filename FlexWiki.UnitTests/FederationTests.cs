@@ -23,6 +23,7 @@ using NUnit.Framework;
 
 using FlexWiki.Collections; 
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki.UnitTests
 {
@@ -399,7 +400,7 @@ namespace FlexWiki.UnitTests
             }
 
             Assert.AreEqual(1, count, "Checking that only existing namespaces were returned.");
-            Assert.AreEqual(last, "NamespaceOne", "Checking that the nonexistent manager was not returned.");
+            Assert.AreEqual(last, "NamespaceOne", "Checking that the nonexistent namespace was not returned.");
         }
 
         [Test]
@@ -419,6 +420,7 @@ namespace FlexWiki.UnitTests
             Assert.AreSame(storeManager, store.NamespaceManager,
               "Checking that the MockContentStore is at the end of the content store chain.");
         }
+
 
         private void AssertChangesAreEqual(TopicChangeCollection expectedChanges, TopicChangeCollection actualChanges)
         {
