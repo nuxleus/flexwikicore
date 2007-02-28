@@ -883,18 +883,9 @@ namespace FlexWiki
                 return new TopicProperty(propertyName);
             }
         }
-        /// <summary>
-        /// Answer whether a topic exists and is writable
-        /// </summary>
-        /// <param name="topic">The topic (must directly be in this content base)</param>
-        /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
-        public bool IsExistingTopicWritable(string topic)
+        public bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
-            return IsExistingTopicWritable(new UnqualifiedTopicName(topic)); 
-        }
-        public bool IsExistingTopicWritable(UnqualifiedTopicName topic)
-        {
-            return ContentProviderChain.HasPermission(topic, TopicPermission.Edit);
+            return ContentProviderChain.HasPermission(topic, permission);
         }
         /// <summary>
         /// Returns the most recent version for the given topic
@@ -1525,6 +1516,7 @@ namespace FlexWiki
 
             return false; 
         }
+
 
     }
 }

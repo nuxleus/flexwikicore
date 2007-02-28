@@ -1264,6 +1264,46 @@ PropertyOne: List, of, values")
             Assert.IsNull(property, "Checking that property comes back null when topic does not exist.");
         }
         [Test]
+        public void HasPermissionAllowedEdit()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            Assert.IsTrue(manager.HasPermission(new UnqualifiedTopicName("TopicOne"), TopicPermission.Edit)); 
+        }
+        [Test]
+        public void HasPermissionAllowedRead()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            Assert.IsTrue(manager.HasPermission(new UnqualifiedTopicName("TopicOne"), TopicPermission.Read));
+        }
+        [Test]
+        public void HasPermissionDeniedEdit()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+            manager.LockTopic(topic);
+
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit)); 
+        }
+        [Test]
+        public void HasPermissionDeniedRead()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicTwo");
+            manager.WriteTopicAndNewVersion(topic, "DenyRead: all", "test");
+
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Read));
+        }
+        [Test]
         public void HomePageDefault()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
@@ -1424,35 +1464,6 @@ PropertyOne: List, of, values")
             Assert.AreEqual("NamespaceTwo", importedNamespaces[0], "Checking that the right namespace was imported.");
         }
         [Test]
-        public void IsExistingTopicWritable()
-        {
-            // Nothing in the default content provider chain (except the security layer) should deny write permission.
-            FederationConfiguration configuration = new FederationConfiguration();
-            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
-                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0); 
-            WikiAuthorizationRule allowAllRule = new WikiAuthorizationRule(rule); 
-            configuration.AuthorizationRules.Add(allowAllRule); 
-            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-              TestContentSets.SingleTopicNoImports, configuration);
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-
-            bool isWritable = manager.IsExistingTopicWritable("TopicOne");
-
-            Assert.IsTrue(isWritable, "Checking that existing topic is writable.");
-        }
-        [Test]
-        public void IsExistingTopicWritableNonExistent()
-        {
-            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
-                TestContentSets.SingleTopicNoImports);
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-
-            bool isWritable = manager.IsExistingTopicWritable("NoSuchTopic");
-
-            Assert.IsFalse(isWritable, "Checking that false is returned for nonexistent topicName.");
-
-        }
-        [Test]
         public void IsReadOnlyNegative()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
@@ -1536,11 +1547,11 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write.");
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic starts read-write.");
             manager.LockTopic(topic);
-            Assert.IsFalse(manager.IsExistingTopicWritable(topic), "Checking that topic is now read-only.");
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic is now read-only.");
             manager.LockTopic(topic);
-            Assert.IsFalse(manager.IsExistingTopicWritable(topic),
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit),
                 "Checking that calling LockTopic on read-only topic has no effect.");
         }
         [Test]
@@ -2097,13 +2108,13 @@ PropertyOne: List, of, values")
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic starts read-write.");
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic starts read-write.");
             manager.LockTopic(topic);
-            Assert.IsFalse(manager.IsExistingTopicWritable(topic), "Checking that topic is now read-only.");
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic is now read-only.");
             manager.UnlockTopic(topic);
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic), "Checking that topic is read-write again.");
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic is read-write again.");
             manager.UnlockTopic(topic);
-            Assert.IsTrue(manager.IsExistingTopicWritable(topic),
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit),
                 "Checking that calling UnlockTopic on read-write topic has no effect.");
         }
         [Test]

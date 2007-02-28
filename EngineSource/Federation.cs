@@ -730,6 +730,19 @@ namespace FlexWiki
         {
             throw new NotImplementedException();
         }
+        public bool HasPermission(QualifiedTopicRevision revision, TopicPermission permission)
+        {
+            NamespaceManager manager = NamespaceManagerForTopic(revision);
+            // It seems odd to say that we have permission for a nonexistent namespace, but we don't 
+            // want to indicate that there's a security constraint when the real issue is that 
+            // the namespace can't be found. 
+            if (manager == null)
+            {
+                return true;
+            }
+
+            return manager.HasPermission(revision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(), permission);
+        }
         public bool IsBlacklisted(string wikiText)
         {
             if (wikiText == null)
@@ -758,7 +771,7 @@ namespace FlexWiki
             {
                 return false;
             }
-            return namespaceManager.IsExistingTopicWritable(topic.LocalName);
+            return namespaceManager.HasPermission(topic.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(), TopicPermission.Edit);
         }
         /// <summary>
         /// Answer whether or not a link is blacklisted.  You pass in a full URL and this does checking against all blacklist rules.
@@ -1308,6 +1321,5 @@ namespace FlexWiki
                 UpdateGenerator.Pop();
             }
         }
-
     }
 }

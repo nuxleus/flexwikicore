@@ -68,8 +68,8 @@ namespace FlexWiki.Web
                 NamespaceManager storeManager = Federation.NamespaceManagerForTopic(AbsTopicName);
                 if (storeManager == null)
                     return true;
-                return !storeManager.IsExistingTopicWritable(AbsTopicName.LocalName);
-
+                return !storeManager.HasPermission(AbsTopicName.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(), 
+                    TopicPermission.Edit);
             }
 
         }

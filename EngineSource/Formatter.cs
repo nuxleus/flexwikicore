@@ -1997,8 +1997,12 @@ namespace FlexWiki.Formatting
         #region TipForTopic
         private string TipForTopic(TopicName topic)
         {
-            string answer = Federation.GetTopicPropertyValue(
-                new QualifiedTopicRevision(topic.LocalName, topic.Namespace), "Summary");
+            QualifiedTopicRevision revision = new QualifiedTopicRevision(topic.LocalName, topic.Namespace); 
+            if (!Federation.HasPermission(revision, TopicPermission.Read))
+            {
+                return "You do not have read permission on topic " + topic.DottedName;
+            }
+            string answer = Federation.GetTopicPropertyValue(revision, "Summary");
             if (answer == "")
                 answer = null;
             return answer;
@@ -2097,13 +2101,19 @@ namespace FlexWiki.Formatting
                             {
                                 tipHTML = "<span class=\"DefaultTopicTipText\">" + tipHTML + "</span>";
                             }
-                            tipHTML += "<div class=\"TopicTipStats\">" + Federation.GetTopicLastModificationTime(abs).ToString();
-                            string lastAuthor = Federation.GetTopicLastModifiedBy(abs);
-                            if (string.IsNullOrEmpty(lastAuthor))
+                            // No point in trying to show author and modification time if we don't have 
+                            // read permission on the link target: it'll just throw an exception if we 
+                            // try to get them. 
+                            if (Federation.HasPermission(new QualifiedTopicRevision(abs.DottedName), TopicPermission.Read))
                             {
-                                lastAuthor = "author unknown"; 
-                            } 
-                            tipHTML += " - " + lastAuthor + "</div>";
+                                tipHTML += "<div class=\"TopicTipStats\">" + Federation.GetTopicLastModificationTime(abs).ToString();
+                                string lastAuthor = Federation.GetTopicLastModifiedBy(abs);
+                                if (string.IsNullOrEmpty(lastAuthor))
+                                {
+                                    lastAuthor = "author unknown";
+                                }
+                                tipHTML += " - " + lastAuthor + "</div>";
+                            }
                             tipHTML = "<div id=" + tipid + " style=\"display: none\">" + tipHTML + "</div>";
                             Output.AddToFooter(tipHTML);
                             string replacement = "<a ";
