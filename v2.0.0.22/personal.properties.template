@@ -1,4 +1,0 @@
-<project name="personal.properties">
-  <property name="cvs.root"
-	    value=":local:C:\data\cvsroot" />
-</project>
