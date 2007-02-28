@@ -1,0 +1,165 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.UnitTests", "FlexWiki.UnitTests\FlexWiki.UnitTests.csproj", "{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web", "FlexWiki.Web\FlexWiki.Web.csproj", "{0EE80D53-C65E-4AFE-953A-AB9160521890}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5F81B8BC-C8F3-491A-8680-9531350E1744} = {5F81B8BC-C8F3-491A-8680-9531350E1744}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexBehaviorDebugger", "FlexBehaviorDebugger\FlexBehaviorDebugger.csproj", "{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintTopic", "PrintTopic\PrintTopic.csproj", "{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalendarProvider", "CalendarProvider\CalendarProvider.csproj", "{5F81B8BC-C8F3-491A-8680-9531350E1744}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web.Services", "FlexWiki.Web.Service\FlexWiki.Web.Services.csproj", "{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatePerfCounters", "CreatePerformanceCounters\CreatePerfCounters.csproj", "{4F58F3F4-204B-47CB-9C4E-4576C758F742}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildVerificationTests", "BuildVerificationTests\BuildVerificationTests.csproj", "{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlProvider", "SqlProvider\SqlProvider.csproj", "{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlProvider.UnitTests", "SqlProvider.UnitTests\SqlProvider.UnitTests.csproj", "{2D24D9A9-884E-42AD-A643-2A988993ECE8}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreManagerLib", "SqlStoreManagerLib\SqlStoreManagerLib.csproj", "{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreManagerGui", "SqlStoreManagerGui\SqlStoreManagerGui.csproj", "{2D3D6848-3BCF-4FAB-B73D-859692867616}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreManagerConsole", "SqlStoreManagerConsole\SqlStoreManagerConsole.csproj", "{C5AF9776-B696-42C8-876A-692A95AB9FEE}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7B504BD4-FDE4-474B-9087-3D48350E232E}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		Download NUnit.url = Download NUnit.url
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWikiEngine", "EngineSource\FlexWikiEngine.csproj", "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3452C68D-ED7B-4976-94B1-D6DBF3F7B723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9BCD915-BA03-48C7-89C9-0B542BE76FDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F81B8BC-C8F3-491A-8680-9531350E1744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F58F3F4-204B-47CB-9C4E-4576C758F742}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98161BF9-0C24-4E74-AE7B-B6E0FB70700D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D24D9A9-884E-42AD-A643-2A988993ECE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
