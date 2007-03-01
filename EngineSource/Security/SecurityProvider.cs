@@ -334,9 +334,9 @@ namespace FlexWiki.Security
             }
 
             // If the security provider is disabled, always return true. 
-            if (_namespaceManager.Parameters.Contains("security.disabled"))
+            if (_namespaceManager.Parameters.Contains("Security.Disabled"))
             {
-                if (_namespaceManager.Parameters["security.disabled"].Value.Equals("true", StringComparison.InvariantCultureIgnoreCase))
+                if (_namespaceManager.Parameters["Security.Disabled"].Value.Equals("true", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return true; 
                 }

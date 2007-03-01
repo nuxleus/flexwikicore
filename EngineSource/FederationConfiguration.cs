@@ -26,7 +26,6 @@ namespace FlexWiki
     /// <summary>
     /// A FederationConfiguration is a persistable representation of all the configuration information needed for a Federation
     /// </summary>
-    [XmlRoot("configuration")]
     public class FederationConfiguration
     {
         private static Regex s_namespaceDefinitionRegex = new Regex("^([a-zA-Z0-9\\.]+)=(.*)$");
@@ -56,8 +55,8 @@ namespace FlexWiki
             get { return _aboutWikiString; }
             set { _aboutWikiString = value; }
         }
-        [XmlArray("authorization")]
-        [XmlArrayItem("rule")]
+        [XmlArray("AuthorizationRules")]
+        [XmlArrayItem("Rule")]
         public WikiAuthorizationRuleCollection AuthorizationRules
         {
             get { return _authorizationRules; }

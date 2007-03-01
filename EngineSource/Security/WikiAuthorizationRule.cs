@@ -9,7 +9,7 @@ namespace FlexWiki.Security
      <allow action="Edit" who="role:editors" />
      <deny action="ManageNamespace" who="all" />
      */
-    [XmlRoot("rule")]
+    [XmlRoot("Rule")]
     public class WikiAuthorizationRule : IXmlSerializable
     {
         private SecurableAction _action;
@@ -64,13 +64,13 @@ namespace FlexWiki.Security
                 return; 
             }
 
-            string type = reader.GetAttribute("type"); 
+            string type = reader.GetAttribute("Type"); 
 
-            if (type == "allow")
+            if (type == "Allow")
             {
                 _polarity = SecurityRulePolarity.Allow; 
             }
-            else if (type == "deny")
+            else if (type == "Deny")
             {
                 _polarity = SecurityRulePolarity.Deny;
             }
@@ -79,8 +79,8 @@ namespace FlexWiki.Security
                 throw new NotSupportedException("Unsupported or missing rule type: " + ((type == null) ? "<<null>>" : type)); 
             }
 
-            _action = (SecurableAction) Enum.Parse(typeof(SecurableAction), reader.GetAttribute("action"));
-            _who = SecurityRuleWho.Parse(reader.GetAttribute("principal"));
+            _action = (SecurableAction) Enum.Parse(typeof(SecurableAction), reader.GetAttribute("Action"));
+            _who = SecurityRuleWho.Parse(reader.GetAttribute("Principal"));
             reader.Read(); 
         }
 

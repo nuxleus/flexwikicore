@@ -224,11 +224,11 @@ namespace FlexWiki.UnitTests
             string content, string author)
         {
             NamespaceProviderParameter oldValue = null;
-            if (manager.Parameters.Contains("security.disabled"))
+            if (manager.Parameters.Contains("Security.Disabled"))
             {
-                oldValue = manager.Parameters["security.disabled"]; 
+                oldValue = manager.Parameters["Security.Disabled"]; 
             }
-            NamespaceProviderParameter newValue = new NamespaceProviderParameter("security.disabled", "true");
+            NamespaceProviderParameter newValue = new NamespaceProviderParameter("Security.Disabled", "true");
             if (oldValue != null)
             {
                 manager.Parameters.Remove(oldValue); 

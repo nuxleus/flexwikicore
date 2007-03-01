@@ -28,12 +28,12 @@ namespace FlexWiki.UnitTests
         {
             XmlSerializer serializer = new XmlSerializer(typeof(FederationConfiguration));
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(@"<configuration>
-<authorization>
-    <rule type='allow' action='ManageNamespace' principal='all' />
-    <rule type='deny' action='Edit' principal='user:candera' />
-</authorization>
-</configuration>");
+            doc.LoadXml(@"<FederationConfiguration>
+<AuthorizationRules>
+    <Rule Type='Allow' Action='ManageNamespace' Principal='all' />
+    <Rule Type='Deny' Action='Edit' Principal='user:candera' />
+</AuthorizationRules>
+</FederationConfiguration>");
 
             XmlNodeReader reader = new XmlNodeReader(doc.DocumentElement);
             FederationConfiguration configuration = (FederationConfiguration)serializer.Deserialize(reader);
