@@ -11,8 +11,9 @@ namespace FlexWiki
     {
         // Constants
         #region Constants
-        private const string c_builtInAuthor = "FlexWiki"; 
-        private const string c_defaultHomePageContent = @"@flexWiki=http://www.flexwiki.com/default.aspx/FlexWiki/$$$.html
+        private const string c_builtInAuthor = "FlexWiki";
+        // This is public to support the unit tests
+        public const string DefaultHomePageContent = @"@flexWiki=http://www.flexwiki.com/default.aspx/FlexWiki/$$$.html
 
 !About Wiki
 If you're new to WikiWiki@flexWiki, you should read the VisitorWelcome@flexWiki or OneMinuteWiki@flexWiki .  The two most important things to know are 
@@ -21,7 +22,8 @@ If you're new to WikiWiki@flexWiki, you should read the VisitorWelcome@flexWiki 
 
 Check out the FlexWikiFaq@flexWiki as a means  to collaborate on questions you may have on FlexWiki@flexWiki
 ";
-        private const string c_defaultNormalBordersContent = @"
+        // This is public to support the unit tests
+        public const string DefaultNormalBordersContent = @"
 :MenuItem:{ tip, command, url |
   with (Presentations) 
   {[
@@ -166,8 +168,6 @@ request.AreDifferencesShown.IfTrue
       """"
     },
     Newline
-  ]
-
   ],
   Newline, ""----"", Newline,
   Presentations.Image(
@@ -356,11 +356,11 @@ request.AreDifferencesShown.IfTrue
 
             if (topicName.Equals(HomePageTopicName))
             {
-                return c_defaultHomePageContent; 
+                return DefaultHomePageContent; 
             }
             else if (topicName.Equals(BordersTopicName))
             {
-                return c_defaultNormalBordersContent;
+                return DefaultNormalBordersContent;
             }
             else
             {

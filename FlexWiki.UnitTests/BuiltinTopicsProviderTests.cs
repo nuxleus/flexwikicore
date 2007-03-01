@@ -164,9 +164,10 @@ namespace FlexWiki.UnitTests
 
             string content = provider.TextReaderForTopic(new UnqualifiedTopicRevision(manager.HomePage)).ReadToEnd();
 
-            Assert.AreEqual(457, GetContent(provider, manager.HomePage).Length, 
+            Assert.AreEqual(BuiltinTopicsProvider.DefaultHomePageContent.Length, GetContent(provider, manager.HomePage).Length, 
                 "Checking that home page has correct default content.");
-            Assert.AreEqual(4208, GetContent(provider, NamespaceManager.BordersTopicLocalName).Length,
+            Assert.AreEqual(BuiltinTopicsProvider.DefaultNormalBordersContent.Length, 
+                GetContent(provider, NamespaceManager.BordersTopicLocalName).Length,
                 "Checking that borders topic has correct default content.");
 
             WriteBuiltInTopics(manager);
@@ -176,9 +177,10 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(19, GetContent(provider, NamespaceManager.BordersTopicLocalName).Length,
                 "Checking that borders topic has correct non-default content.");
 
-            Assert.AreEqual(457, GetDefaultContent(provider, manager.HomePage).Length,
+            Assert.AreEqual(BuiltinTopicsProvider.DefaultHomePageContent.Length, GetDefaultContent(provider, manager.HomePage).Length,
                 "Checking that home page has correct default content.");
-            Assert.AreEqual(4208, GetDefaultContent(provider, NamespaceManager.BordersTopicLocalName).Length,
+            Assert.AreEqual(BuiltinTopicsProvider.DefaultNormalBordersContent.Length, 
+                GetDefaultContent(provider, NamespaceManager.BordersTopicLocalName).Length,
                 "Checking that borders topic has correct default content.");
 
             UnqualifiedTopicRevision homePageDefaultRevision = new UnqualifiedTopicRevision(
@@ -194,14 +196,16 @@ namespace FlexWiki.UnitTests
             UnqualifiedTopicRevision bordersNoSuchRevision = new UnqualifiedTopicRevision(
                 manager.BordersTopicName.LocalName, "NoSuchVersion");
 
-            Assert.AreEqual(457, GetContent(provider, homePageDefaultRevision).Length,
+            Assert.AreEqual(BuiltinTopicsProvider.DefaultHomePageContent.Length, 
+                GetContent(provider, homePageDefaultRevision).Length,
                 "Checking that home page has correct content when retrieving default content revision explicitly.");
             Assert.AreEqual(20, GetContent(provider, homePageNewRevision).Length,
                 "Checking that home page has correct content when retrieiving new content revision explicitly.");
             Assert.IsNull(provider.TextReaderForTopic(homePageNoSuchRevison),
                 "Checking that home page returns null when retrieving non existent revision.");
 
-            Assert.AreEqual(4208, GetContent(provider, bordersDefaultRevision).Length,
+            Assert.AreEqual(BuiltinTopicsProvider.DefaultNormalBordersContent.Length, 
+                GetContent(provider, bordersDefaultRevision).Length,
                 "Checking that borders topic has correct content when retrieving default content revision explicitly.");
             Assert.AreEqual(19, GetContent(provider, bordersNewRevision).Length,
                 "Checking that borders topic has correct content when retrieiving new content revision explicitly.");
