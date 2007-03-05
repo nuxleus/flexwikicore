@@ -31,7 +31,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
         public void AllChangesForTopicSinceDenied()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
@@ -116,7 +116,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void DeleteAllTopicsAndHistoryDenied()
         {
             // Use the default configuration, where everything is denied
@@ -167,7 +167,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Edit Topic NamespaceOne.TopicOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Edit Topic NamespaceOne.TopicOne is denied.")]
         public void DeleteTopicDenied()
         {
             // Use the default configuration, where everything is denied
@@ -297,7 +297,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
         public void GetParsedTopicDenied()
         {
             // Use the default configuration, where everything is denied
@@ -510,7 +510,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void LockTopicDenied()
         {
             // Use the default configuration, where everything is denied
@@ -563,7 +563,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
         public void TextReaderForTopicDenied()
         {
             // Use the default configuration, where everything is denied
@@ -658,7 +658,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void UnlockTopicDenied()
         {
             // Use the default configuration, where everything is denied
@@ -703,7 +703,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to Edit Topic NamespaceOne.TopicOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Edit Topic NamespaceOne.TopicOne is denied.")]
         public void WriteTopicRegularTopicDenied()
         {
             FederationConfiguration configuration = new FederationConfiguration();
@@ -744,7 +744,7 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        [ExpectedException(typeof(FlexWikiSecurityException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void WriteTopicDefinitionTopicDenied()
         {
             FederationConfiguration configuration = new FederationConfiguration();

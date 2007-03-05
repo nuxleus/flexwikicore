@@ -4,13 +4,13 @@ using System.Text;
 
 namespace FlexWiki.Security
 {
-    public class FlexWikiSecurityException : Exception
+    public class FlexWikiAuthorizationException : Exception
     {
         private SecurableAction _action;
         private string _name; 
         private SecurityRuleScope _scope; 
 
-        public FlexWikiSecurityException(SecurableAction action, SecurityRuleScope scope, string name)
+        public FlexWikiAuthorizationException(SecurableAction action, SecurityRuleScope scope, string name)
         {
             _action = action;
             _scope = scope;

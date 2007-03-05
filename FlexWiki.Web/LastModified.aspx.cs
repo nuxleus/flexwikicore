@@ -23,7 +23,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 
 namespace FlexWiki.Web
 {
@@ -40,7 +40,7 @@ namespace FlexWiki.Web
             _uniqueNamespaces = new ArrayList();
             foreach (string ns in Federation.Namespaces)
             {
-                _uniqueNamespaces.Add(ns); 
+                _uniqueNamespaces.Add(ns);
             }
             _uniqueNamespaces.Sort();
 
@@ -104,18 +104,29 @@ namespace FlexWiki.Web
 
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(_preferredNamespace);
 
-            // Get the list of topics and authors from the cache (or generate if needed)
+            // Get the complete list of topics and authors 
             QualifiedTopicNameCollection topics = storeManager.AllTopicsSortedLastModifiedDescending();
 
-            Dictionary<QualifiedTopicName, string> authorMap = new Dictionary<QualifiedTopicName,string>();
-            SortedList<string, string> authors = new SortedList<string,string>(); 
+            // Omit topics for which we don't have read permission - we're not going to be able 
+            // to access information about them anyway. 
+            QualifiedTopicNameCollection permittedTopics = new QualifiedTopicNameCollection();
             foreach (QualifiedTopicName topic in topics)
+            {
+                if (storeManager.HasPermission(new UnqualifiedTopicName(topic.LocalName), TopicPermission.Read))
+                {
+                    permittedTopics.Add(topic); 
+                }
+            }
+
+            Dictionary<QualifiedTopicName, string> authorMap = new Dictionary<QualifiedTopicName, string>();
+            SortedList<string, string> authors = new SortedList<string, string>();
+            foreach (QualifiedTopicName topic in permittedTopics)
             {
                 string author = storeManager.GetTopicLastAuthor(topic.LocalName);
                 authorMap[topic] = author;
                 // Overwrites the entry for author if it already exists, thus giving
                 // us only unique authors. 
-                authors[author] = author; 
+                authors[author] = author;
             }
 
             Response.Write("<table cellspacing='0' cellpadding='2' border='0'>");
@@ -135,7 +146,7 @@ namespace FlexWiki.Web
             Response.Write("</thead><tbody id=\"MainTable\">");
 
             int row = 0;
-            foreach (QualifiedTopicName topic in topics)
+            foreach (QualifiedTopicName topic in permittedTopics)
             {
                 Response.Write("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
                 row++;
@@ -158,7 +169,7 @@ namespace FlexWiki.Web
                 }
                 Response.Write("</td>");
                 Response.Write("<td>");
-                Response.Write(Escape((string) (authorMap[topic])));
+                Response.Write(Escape((string)(authorMap[topic])));
                 Response.Write("</td>");
                 Response.Write("</tr>");
             }

@@ -211,7 +211,7 @@ namespace FlexWiki.Security
 
             if (!IsAllowed(action, rules))
             {
-                throw new FlexWikiSecurityException(action, SecurityRuleScope.Namespace, Namespace);
+                throw new FlexWikiAuthorizationException(action, SecurityRuleScope.Namespace, Namespace);
             }
         }
         private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission permission)
@@ -225,7 +225,7 @@ namespace FlexWiki.Security
             if (!HasPermission(topic, permission))
             {
                 SecurableAction action = GetActionFromPermission(permission);
-                throw new FlexWikiSecurityException(action, SecurityRuleScope.Topic,
+                throw new FlexWikiAuthorizationException(action, SecurityRuleScope.Topic,
                     new QualifiedTopicName(topic.LocalName, Namespace).DottedName);
             }
         }

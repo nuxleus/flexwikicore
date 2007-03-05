@@ -1374,8 +1374,19 @@ namespace FlexWiki
             NamespaceManager managerA = Federation.NamespaceManagerForNamespace(topicA.Namespace);
             NamespaceManager managerB = Federation.NamespaceManagerForNamespace(topicB.Namespace);
 
-            DateTime modifiedA = managerA.GetTopicLastModificationTime(topicA.LocalName);
-            DateTime modifiedB = managerB.GetTopicLastModificationTime(topicB.LocalName);
+            // If we don't have permission to read the topic, we're not going to be able to 
+            // find out the modification date. So just default it to DateTime.MinValue. This has 
+            // the effect of sorting all no-permission topics to the end of the list. 
+            DateTime modifiedA = DateTime.MinValue;
+            DateTime modifiedB = DateTime.MinValue;
+            if (managerA.HasPermission(new UnqualifiedTopicName(topicA.LocalName), TopicPermission.Read))
+            {
+                modifiedA = managerA.GetTopicLastModificationTime(topicA.LocalName);
+            }
+            if (managerB.HasPermission(new UnqualifiedTopicName(topicB.LocalName), TopicPermission.Read))
+            {
+                modifiedB = managerB.GetTopicLastModificationTime(topicB.LocalName);
+            }
 
             return modifiedB.CompareTo(modifiedA);
         }
