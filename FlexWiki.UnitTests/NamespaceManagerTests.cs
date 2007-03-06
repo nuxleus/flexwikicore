@@ -1147,6 +1147,16 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("TopicOne")); 
         }
         [Test]
+        public void GetTopicLastModificationTimeNoReadPermission()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SecuredTopicsSet);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            MockContentStore store = (MockContentStore)manager.GetProvider(typeof(MockContentStore));
+
+            Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("NoAccess")); 
+        }
+        [Test]
         [ExpectedException(typeof(ArgumentException), "Could not locate a topic named NamespaceOne.NoSuchTopic")]
         public void GetTopicLastModificationTimeNonExistent()
         {

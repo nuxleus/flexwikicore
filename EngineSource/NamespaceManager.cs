@@ -815,6 +815,11 @@ namespace FlexWiki
                 throw new ArgumentException(message);
             }
 
+            if (!HasPermission(new UnqualifiedTopicName(topic), TopicPermission.Read))
+            {
+                return DateTime.MinValue; 
+            }
+
             TopicChangeCollection changes = AllChangesForTopic(topic);
 
             // Sometimes topics don't have history. This can happen, for example, 

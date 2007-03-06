@@ -143,6 +143,25 @@ namespace FlexWiki.UnitTests
             Assert.IsNull(federation.GetTopicChanges(new TopicName("NamespaceOne.NoSuchTopic"))); 
         }
         [Test]
+        public void GetTopicCreationTime()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",
+                TestContentSets.SingleTopicNoImports);
+
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 02),
+                federation.GetTopicCreationTime(new QualifiedTopicName("NamespaceOne.TopicOne")),
+                "Checking that creation time is correct."); 
+        }
+        [Test]
+        [ExpectedException(typeof(ArgumentException), "Could not find the namespace NoSuchNamespace")]
+        public void GetTopicCreationTimeNonexistentNamespace()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",
+                TestContentSets.SingleTopicNoImports);
+
+            DateTime creationTime = federation.GetTopicCreationTime(new QualifiedTopicName("NoSuchNamespace.TopicOne"));
+        }
+        [Test]
         public void GetTopicLastModificationTimeLatestVersion()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",

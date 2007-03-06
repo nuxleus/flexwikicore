@@ -109,10 +109,10 @@ namespace FlexWiki.Web
             newsletter.WriteElementString("link", link.AbsoluteUri);
 
             DateTime last = DateTime.MinValue;
-            foreach (TopicName topic in nm.AllTopicsForNewsletter(info.TopicRevision))
+            foreach (QualifiedTopicName topic in nm.AllTopicsForNewsletter(info.TopicRevision))
             {
                 FormatRssItem(topic, newsletter);
-                TopicVersionInfo each = new TopicVersionInfo(Federation, new QualifiedTopicRevision(topic));
+                TopicVersionInfo each = new TopicVersionInfo(Federation, topic.AsQualifiedTopicRevision());
                 DateTime lm = each.LastModified;
                 if (lm > last)
                 {
@@ -129,6 +129,11 @@ namespace FlexWiki.Web
 
         private void NamespaceFeed(string preferredNamespace, XmlWriter newsletter)
         {
+            if (preferredNamespace == null)
+            {
+                throw new ArgumentException("preferredNamespace may not be null"); 
+            }
+
             ImportPolicy importPolicy = ImportPolicy.DoNotIncludeImports;
 
             if ("y".Equals(Request.QueryString["inherited"]))
@@ -137,6 +142,11 @@ namespace FlexWiki.Web
             }
 
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
+
+            if (storeManager == null)
+            {
+                throw new ArgumentException("Could not locate namespace " + preferredNamespace); 
+            }
 
             newsletter.WriteStartDocument();
             newsletter.WriteStartElement("rss");
@@ -163,9 +173,14 @@ namespace FlexWiki.Web
                 storeManager.LastModified(ImportPolicy.IncludeImports).ToUniversalTime().ToString("r")
                 );
 
-            foreach (TopicName topic in storeManager.AllTopics(importPolicy))
+            foreach (QualifiedTopicName topic in storeManager.AllTopics(importPolicy))
             {
-                FormatRssItem(topic, newsletter);
+                // Don't include topics for which we don't have read permission - no point, 
+                // as we won't be able to get any information about them. 
+                if (Federation.HasPermission(topic.AsQualifiedTopicRevision(), TopicPermission.Read))
+                {
+                    FormatRssItem(topic, newsletter);
+                }
             }
 
             newsletter.WriteEndElement();
@@ -177,7 +192,7 @@ namespace FlexWiki.Web
         /// </summary>
         /// <param name="topic"></param>
         /// <returns></returns>
-        public void FormatRssItem(TopicName topic, XmlWriter newsletter)
+        public void FormatRssItem(QualifiedTopicName topic, XmlWriter newsletter)
         {
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(topic.Namespace);
 

@@ -519,7 +519,14 @@ namespace FlexWiki
         //}
         public DateTime GetTopicCreationTime(QualifiedTopicRevision name)
         {
-            throw new NotImplementedException();
+            NamespaceManager manager = NamespaceManagerForNamespace(name.Namespace);
+
+            if (manager == null)
+            {
+                throw new ArgumentException("Could not find the namespace " + name.Namespace); 
+            }
+
+            return manager.GetTopicCreationTime(name.AsUnqualifiedTopicRevision()); 
         }
         public DateTime GetTopicCreationTime(TopicName name)
         {

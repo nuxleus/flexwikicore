@@ -110,6 +110,19 @@ HomePage: DifferentHomePage")
                 );
             }
         }
+        internal static TestContentSet SecuredTopicsSet
+        {
+            get
+            {
+                return new TestContentSet(
+                    new TestNamespace("NamespaceOne",
+                        new TestTopic("ReadWrite", "author", "This topic can be read and written."),
+                        new TestTopic("ReadOnly", "author", "DenyEdit: all\nThis topic can be read but not written."),
+                        new TestTopic("NoAccess", "author", "DenyRead: all\nThis topic can be neither read nor written.")
+                    )
+                ); 
+            }
+        }
         internal static TestContentSet SimpleImport
         {
             get
