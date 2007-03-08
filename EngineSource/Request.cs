@@ -94,11 +94,13 @@ namespace FlexWiki
 				if (ctx == null)
 					return answer;
 				IEnumerable events = (IEnumerable)(ctx.Session["VisitorEvents"]);
-				Set seen = new Set();
+				Set<QualifiedTopicRevision> seen = new Set<QualifiedTopicRevision>();
 				foreach (VisitorEvent currentEvent in events)
 				{
-					if (seen.Contains(currentEvent.Topic))
-						continue;
+                    if (seen.Contains(currentEvent.Topic))
+                    {
+                        continue;
+                    }
 					seen.Add(currentEvent.Topic);
 					answer.Add(currentEvent);
 				}

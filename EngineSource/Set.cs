@@ -12,58 +12,63 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 
 namespace FlexWiki
 {
-	public class Set : IEnumerable
+	public class Set<T> : IEnumerable<T>
 	{
-		private HybridDictionary hash = new HybridDictionary();
+		private Dictionary<T, object> _hash = new Dictionary<T, object>();
 
-		public void Add(object obj)
+        public int Count
+        {
+            get
+            {
+                return _hash.Count;
+            }
+        }
+        public T First
+        {
+            get
+            {
+                foreach (T item in _hash.Keys)
+                {
+                    return item;
+                }
+                return default(T);
+            }
+        }
+
+		public void Add(T item)
 		{
-			if (hash.Contains(obj))
-				return;
-			hash[obj] = null;
+            if (_hash.ContainsKey(item))
+            {
+                return;
+            }
+			_hash[item] = null;
 		}
-
 		public void AddRange(ICollection c)
 		{
-			foreach (object obj in c)
-				Add(obj);
+            foreach (object obj in c)
+            {
+                Add((T)obj);
+            }
 		}
-
-		public bool Contains(object obj)
+		public bool Contains(T item)
 		{
-			return hash.Contains(obj);
+			return _hash.ContainsKey(item);
 		}
-
-		public int Count
+		IEnumerator IEnumerable.GetEnumerator()
 		{
-			get
-			{
-				return hash.Count;
-			}
+			return _hash.Keys.GetEnumerator();
 		}
-
-		public IEnumerator GetEnumerator()
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return _hash.Keys.GetEnumerator(); 
+        }
+		public void Remove(T item)
 		{
-			return hash.Keys.GetEnumerator();
-		}
-
-		public void Remove(object obj)
-		{
-			hash.Remove(obj);
-		}
-
-		public object First
-		{
-			get
-			{
-				foreach (object obj in hash.Keys)
-					return obj;
-				return null;
-			}
+			_hash.Remove(item);
 		}
 	}
 }

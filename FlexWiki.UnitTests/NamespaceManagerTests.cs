@@ -25,7 +25,7 @@ using NUnit.Framework;
 
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
-using FlexWiki.Security; 
+using FlexWiki.Security;
 
 namespace FlexWiki.UnitTests
 {
@@ -226,7 +226,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.NonImportingReferencingSet);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic((string) null, ExistencePolicy.ExistingOnly);
+            QualifiedTopicRevisionCollection referencedTopics = manager.AllReferencesByTopic((string)null, ExistencePolicy.ExistingOnly);
         }
         [Test]
         public void AllReferencesByTopicWithImportExistingOnly()
@@ -421,9 +421,9 @@ namespace FlexWiki.UnitTests
             TopicInfoArray topics = manager.AllTopicsWith(new ExecutionContext(), "OtherProperty", null);
 
             Assert.AreEqual(2, topics.Count, "Checking that two topics were found.");
-            Assert.AreEqual("TopicOne", ((TopicVersionInfo) topics.Array[0]).Name,
+            Assert.AreEqual("TopicOne", ((TopicVersionInfo)topics.Array[0]).Name,
                 "Checking that the first topic is correct.");
-            Assert.AreEqual("TopicTwo", ((TopicVersionInfo) topics.Array[1]).Name,
+            Assert.AreEqual("TopicTwo", ((TopicVersionInfo)topics.Array[1]).Name,
                 "Checking that the second topic is correct.");
         }
         [Test]
@@ -436,9 +436,9 @@ namespace FlexWiki.UnitTests
             TopicInfoArray topics = manager.AllTopicsWith(new ExecutionContext(), "PropertyTwo", "Value two");
 
             Assert.AreEqual(2, topics.Count, "Checking that a two topics were found.");
-            Assert.AreEqual("TopicOne", ((TopicVersionInfo) topics.Array[0]).Name,
+            Assert.AreEqual("TopicOne", ((TopicVersionInfo)topics.Array[0]).Name,
                 "Checking that the first topic is correct.");
-            Assert.AreEqual("TopicTwo", ((TopicVersionInfo) topics.Array[1]).Name,
+            Assert.AreEqual("TopicTwo", ((TopicVersionInfo)topics.Array[1]).Name,
                 "Checking that the second topic is correct.");
         }
         [Test]
@@ -930,7 +930,7 @@ namespace FlexWiki.UnitTests
               TestContentSets.SingleEmptyNamespace);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            MockContentStore provider = (MockContentStore) manager.GetProvider(typeof(MockContentStore));
+            MockContentStore provider = (MockContentStore)manager.GetProvider(typeof(MockContentStore));
 
             Assert.IsNotNull(provider, "Checking that a provider could be successfully retrieved.");
 
@@ -988,6 +988,18 @@ namespace FlexWiki.UnitTests
 
             Assert.AreEqual(0, map["ReferencedTopic"].Count,
                 "Checking that ReferenedTopic does not reference any other topics.");
+        }
+        [Test]
+        public void GetReferenceMapNoReadPermission()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+               TestContentSets.SecuredTopicsSet);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            ReferenceMap map = manager.GetReferenceMap(ExistencePolicy.ExistingOnly);
+
+            // 4 = Two built-in plus two that have read permission
+            Assert.AreEqual(4, map.Count, "Checking that the right number of entries are in the map.");
         }
         [Test]
         public void GetTopicCreationTimeFirstVersion()
@@ -1139,12 +1151,12 @@ namespace FlexWiki.UnitTests
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
                 TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
-            MockContentStore store = (MockContentStore) manager.GetProvider(typeof(MockContentStore));
+            MockContentStore store = (MockContentStore)manager.GetProvider(typeof(MockContentStore));
 
             // Delete the history but leave the topic - this happens with the FileSystemProvider
             store.DeleteHistory("TopicOne");
 
-            Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("TopicOne")); 
+            Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("TopicOne"));
         }
         [Test]
         public void GetTopicLastModificationTimeNoReadPermission()
@@ -1154,7 +1166,7 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
             MockContentStore store = (MockContentStore)manager.GetProvider(typeof(MockContentStore));
 
-            Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("NoAccess")); 
+            Assert.AreEqual(DateTime.MinValue, manager.GetTopicLastModificationTime("NoAccess"));
         }
         [Test]
         [ExpectedException(typeof(ArgumentException), "Could not locate a topic named NamespaceOne.NoSuchTopic")]
@@ -1280,7 +1292,7 @@ PropertyOne: List, of, values")
               TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            Assert.IsTrue(manager.HasPermission(new UnqualifiedTopicName("TopicOne"), TopicPermission.Edit)); 
+            Assert.IsTrue(manager.HasPermission(new UnqualifiedTopicName("TopicOne"), TopicPermission.Edit));
         }
         [Test]
         public void HasPermissionAllowedRead()
@@ -1300,7 +1312,7 @@ PropertyOne: List, of, values")
             UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
             manager.LockTopic(topic);
 
-            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit)); 
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit));
         }
         [Test]
         public void HasPermissionDeniedRead()
@@ -2050,9 +2062,9 @@ PropertyOne: List, of, values")
             TopicInfoArray topics = manager.TopicsWith(new ExecutionContext(), "OtherProperty", null);
 
             Assert.AreEqual(2, topics.Count, "Checking that two topics were returned.");
-            Assert.AreEqual("NamespaceOne.TopicOne", ((TopicVersionInfo) (topics.Array[0])).ExposedFullname,
+            Assert.AreEqual("NamespaceOne.TopicOne", ((TopicVersionInfo)(topics.Array[0])).ExposedFullname,
                 "Checking that the first topic returned was correct.");
-            Assert.AreEqual("NamespaceOne.TopicTwo", ((TopicVersionInfo) (topics.Array[1])).ExposedFullname,
+            Assert.AreEqual("NamespaceOne.TopicTwo", ((TopicVersionInfo)(topics.Array[1])).ExposedFullname,
                 "Checking that the first topic returned was correct.");
         }
         [Test]
@@ -2065,7 +2077,7 @@ PropertyOne: List, of, values")
             TopicInfoArray topics = manager.TopicsWith(new ExecutionContext(), "OtherProperty", "Some value");
 
             Assert.AreEqual(1, topics.Count, "Checking that only one topic was returned.");
-            Assert.AreEqual("NamespaceOne.TopicOne", ((TopicVersionInfo) (topics.Array[0])).ExposedFullname,
+            Assert.AreEqual("NamespaceOne.TopicOne", ((TopicVersionInfo)(topics.Array[0])).ExposedFullname,
                 "Checking that the right topic was returned.");
         }
         [Test]

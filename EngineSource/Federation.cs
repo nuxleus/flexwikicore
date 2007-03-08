@@ -68,7 +68,7 @@ namespace FlexWiki
 
         private string _aboutWikiString;
         private IWikiApplication _application; 
-        private Set _blacklistedExternalLinkPrefixes = new Set();
+        private Set<string> _blacklistedExternalLinkPrefixes = new Set<string>();
         private string _borders;
         private DateTime _created = DateTime.Now;
         private ILogEventFactory _logEventFactory;
@@ -123,7 +123,7 @@ namespace FlexWiki
         /// <summary>
         /// Answer the set of blacklisted link prefixes.  Treat this set as read-only, please, and use AddBlacklistedExternalLink() and RemoveBlacklistedExternalLink().
         /// </summary>
-        public Set BlacklistedExternalLinkPrefixes
+        public Set<string> BlacklistedExternalLinkPrefixes
         {
             get
             {
@@ -1133,7 +1133,7 @@ namespace FlexWiki
             }
 
 
-            Set done = new Set();
+            Set<QualifiedTopicRevision> done = new Set<QualifiedTopicRevision>();
             foreach (string borderTopicName in borderTopics)
             {
                 // Figure out what the qualified topic name is that we're going to get this topic from

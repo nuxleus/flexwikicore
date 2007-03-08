@@ -177,6 +177,8 @@
     <Content Include="emoticons\whatchutalkingabout_smile.gif" />
     <Content Include="emoticons\wilted_rose.gif" />
     <Content Include="emoticons\wink_smile.gif" />
+    <Compile Include="Analysis\Island.cs" />
+    <Compile Include="Analysis\Ocean.cs" />
     <Compile Include="FlexWikiApplicationConfiguration.cs" />
     <Content Include="Global.asax">
     </Content>
@@ -213,7 +215,7 @@
     </Content>
     <Content Include="RequestNamespace.aspx" />
     <Content Include="Rss.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RssFace.aspx">
       <SubType>Form</SubType>
@@ -310,7 +312,7 @@
       <DependentUpon>Compare.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ContentStoreAnalysis.cs">
+    <Compile Include="Analysis\ContentStoreAnalysis.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="default.aspx.cs">
@@ -410,7 +412,7 @@
       <DependentUpon>ShowNewsletter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="TopicAnalysis.cs">
+    <Compile Include="Analysis\TopicAnalysis.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UIColumn.cs">

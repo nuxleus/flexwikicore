@@ -727,9 +727,14 @@ namespace FlexWiki
         {
             ReferenceMap map = new ReferenceMap();
 
-            foreach (TopicName topicName in AllTopics(ImportPolicy.DoNotIncludeImports))
+            foreach (QualifiedTopicName topicName in AllTopics(ImportPolicy.DoNotIncludeImports))
             {
-                map[topicName.LocalName] = AllReferencesByTopic(topicName.LocalName, existencePolicy);
+                // We don't try to map topics that don't grant read permission - we're not 
+                // going to be able to parse them anyway. 
+                if (HasPermission(new UnqualifiedTopicName(topicName.LocalName), TopicPermission.Read))
+                {
+                    map[topicName.LocalName] = AllReferencesByTopic(topicName.LocalName, existencePolicy);
+                }
             }
 
             return map;
