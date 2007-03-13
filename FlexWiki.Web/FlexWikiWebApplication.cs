@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+using log4net;
+using log4net.Config;
+using log4net.Core;
+
 namespace FlexWiki.Web
 {
     public class FlexWikiWebApplication : IWikiApplication
@@ -38,6 +42,13 @@ namespace FlexWiki.Web
             WatchConfiguration();
 
             _linkMaker.MakeAbsoluteUrls = _applicationConfiguration.MakeAbsoluteUrls;
+
+            string log4NetConfigPath = "log4net.config";
+            if (_applicationConfiguration.Log4NetConfigPath != null)
+            {
+                log4NetConfigPath = _applicationConfiguration.Log4NetConfigPath;
+            }
+            XmlConfigurator.ConfigureAndWatch(new FileInfo(ResolveRelativePath(log4NetConfigPath)));
         }
 
         // Properties 
@@ -77,14 +88,52 @@ namespace FlexWiki.Web
 
         // Methods
 
-        public void AppendToLog(string logfile, string message)
-        {
-            string logpath = Path.Combine(Path.GetDirectoryName(_configPath), logfile);
+        //public void AppendToLog(string logfile, string message)
+        //{
+        //    string logpath = Path.Combine(Path.GetDirectoryName(_configPath), logfile);
 
-            using (StreamWriter streamWriter = File.AppendText(logpath))
+        //    using (StreamWriter streamWriter = File.AppendText(logpath))
+        //    {
+        //        streamWriter.WriteLine(message);
+        //    }
+        //}
+        public void Log(string source, LogLevel level, string message)
+        {
+            if (level == LogLevel.Debug)
             {
-                streamWriter.WriteLine(message);
+                LogDebug(source, message);
             }
+            else if (level == LogLevel.Error)
+            {
+                LogError(source, message);
+            }
+            else if (level == LogLevel.Info)
+            {
+                LogInfo(source, message);
+            }
+            else if (level == LogLevel.Warn)
+            {
+                LogWarning(source, message);
+            }
+
+            // Otherwise we fail silently. While normally I would throw an argument exception here, 
+            // that's not a good idea in your error handling code, which the logging code generally is. 
+        }
+        public void LogDebug(string source, string message)
+        {
+            LogManager.GetLogger(source).Debug(message);
+        }
+        public void LogError(string source, string message)
+        {
+            LogManager.GetLogger(source).Error(message);
+        }
+        public void LogInfo(string source, string message)
+        {
+            LogManager.GetLogger(source).Info(message);
+        }
+        public void LogWarning(string source, string message)
+        {
+            LogManager.GetLogger(source).Warn(message);
         }
         public string ResolveRelativePath(string path)
         {
@@ -126,12 +175,14 @@ namespace FlexWiki.Web
         }
         private void LoadConfiguration()
         {
+            LogInfo(this.GetType().ToString(), "Loading wiki configuration from: " + _configPath);
             XmlSerializer ser = new XmlSerializer(typeof(FlexWikiWebApplicationConfiguration));
             using (FileStream fileStream = new FileStream(_configPath, FileMode.Open,
                 FileAccess.Read, FileShare.Read))
             {
-                _applicationConfiguration = (FlexWikiWebApplicationConfiguration) ser.Deserialize(fileStream);
+                _applicationConfiguration = (FlexWikiWebApplicationConfiguration)ser.Deserialize(fileStream);
             }
+            LogInfo(this.GetType().ToString(), "Successfully loaded wiki configuration from: " + _configPath);
         }
         private void WatchConfiguration()
         {
@@ -144,10 +195,12 @@ namespace FlexWiki.Web
         }
         private void WatcherChanged(object sender, FileSystemEventArgs e)
         {
+            LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
             LoadConfiguration();
         }
         private void WatcherRenamed(object sender, RenamedEventArgs e)
         {
+            LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
             LoadConfiguration();
         }
 

@@ -109,7 +109,7 @@ namespace FlexWiki.Web
             newsletter.WriteElementString("link", link.AbsoluteUri);
 
             DateTime last = DateTime.MinValue;
-            foreach (QualifiedTopicName topic in nm.AllTopicsForNewsletter(info.TopicRevision))
+            foreach (QualifiedTopicName topic in nm.AllTopicsForNewsletter(info.TopicRevision.AsQualifiedTopicName()))
             {
                 FormatRssItem(topic, newsletter);
                 TopicVersionInfo each = new TopicVersionInfo(Federation, topic.AsQualifiedTopicRevision());

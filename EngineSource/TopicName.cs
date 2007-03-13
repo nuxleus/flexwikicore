@@ -193,6 +193,9 @@ namespace FlexWiki
                 return new QualifiedTopicName(LocalName, ns);
             }
         }
-
+        public override string ToString()
+        {
+            return DottedName;
+        }
     }
 }

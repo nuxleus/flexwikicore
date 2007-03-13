@@ -71,5 +71,35 @@ namespace FlexWiki.BeL.Debugger
 
 
 
+
+        #region IWikiApplication Members
+
+
+        public void Log(string source, LogLevel level, string message)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public void LogDebug(string source, string message)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public void LogError(string source, string message)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public void LogInfo(string source, string message)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public void LogWarning(string source, string message)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion
     }
 }

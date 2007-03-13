@@ -18,8 +18,9 @@ using System.Web.Mail;
 using System.Web;
 using System.Threading;
 using System.Text;
-using FlexWiki.Web;
-using FlexWiki;
+using System.Security.Principal;
+
+using FlexWiki.Security;
 
 namespace FlexWiki.Web.Newsletters
 {
@@ -38,35 +39,49 @@ namespace FlexWiki.Web.Newsletters
         private Thread _monitorThread;
         private string _newslettersFrom;
         private DateTime _nextWorkDue = DateTime.MinValue;
-        private readonly ArrayList _Results = new ArrayList();
+        private GenericPrincipal _principal;
+        private readonly ArrayList _results = new ArrayList();
         private string _rootUrl;
         private bool _sendAsAttachments;
         private string _smtpPassword;
         private string _smtpServer;
         private string _smtpUser;
-
         private DateTime _started = DateTime.MinValue;
         private DateTime _workLastCompleted = DateTime.MinValue;
         private DateTime _workLastStarted = DateTime.MinValue;
         private bool _workUnderway = false;
 
-        
+
         public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom,
-            string headInsert)
-            : this(fed, rootURL, newslettersFrom, headInsert, false)
+            string headInsert, string authenticateAs)
+            : this(fed, rootURL, newslettersFrom, headInsert, false, authenticateAs)
         { }
 
         public NewsletterDaemon(Federation fed, string rootURL, string newslettersFrom,
-            string headInsert, bool sendAsAttachments)
+            string headInsert, bool sendAsAttachments, string authenticateAs)
         {
             _federation = fed;
             _rootUrl = rootURL;
             _newslettersFrom = newslettersFrom;
             _headInsert = headInsert;
             _sendAsAttachments = sendAsAttachments;
+
+            SecurityRuleWho who = SecurityRuleWho.Parse(authenticateAs);
+
+            if (who.WhoType == SecurityRuleWhoType.GenericAnonymous)
+            {
+                _principal = new GenericPrincipal(new GenericIdentity(""), null);
+            }
+            else if (who.WhoType == SecurityRuleWhoType.User)
+            {
+                _principal = new GenericPrincipal(new GenericIdentity(who.Who), null);
+            }
+            else
+            {
+                throw new ArgumentException("Newsletters can only authenticate as 'anonymous' or as a particular user. Illegal value: " +
+                    authenticateAs, "authenticateAs");
+            }
         }
-
-
 
         public DateTime LastCheckin
         {
@@ -89,7 +104,7 @@ namespace FlexWiki.Web.Newsletters
         {
             get
             {
-                return _Results;
+                return _results;
             }
         }
         public string SmtpPassword
@@ -185,9 +200,11 @@ namespace FlexWiki.Web.Newsletters
         }
         private void LogResult(StringBuilder b)
         {
-            _Results.Insert(0, b);
-            while (_Results.Count > c_maxResults)
-                _Results.RemoveAt(_Results.Count - 1);
+            _results.Insert(0, b);
+            while (_results.Count > c_maxResults)
+            {
+                _results.RemoveAt(_results.Count - 1);
+            }
         }
         private void MakeSureThreadHasRecentlyCheckedIn()
         {
@@ -195,29 +212,19 @@ namespace FlexWiki.Web.Newsletters
         }
         private void ReallyDoWork()
         {
-            DaemonBasedDeliveryBoy boy;
-            boy = new DaemonBasedDeliveryBoy(SmtpServer, SmtpUser, SmtpPassword, _sendAsAttachments);
+            DaemonBasedDeliveryBoy boy = new DaemonBasedDeliveryBoy(SmtpServer, SmtpUser, SmtpPassword, _sendAsAttachments, 
+                Federation.Application);
             LinkMaker lm = new LinkMaker(_rootUrl);
             NewsletterManager manager = new NewsletterManager(Federation, lm, boy, _newslettersFrom, _headInsert);
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            boy.Log = sw;
             LogEvent ev = Federation.LogEventFactory.CreateAndStartEvent(null, null, null, LogEventType.NewsletterGeneration);
-            LogResult(sb);
-            sw.WriteLine("Begin: " + DateTime.Now.ToString());
-            sw.WriteLine("Thread: " + Thread.CurrentThread.Name);
             try
             {
-                manager.Notify(sw);
+                manager.Notify();
             }
             finally
             {
                 ev.Record();
-                sw.WriteLine("End: " + DateTime.Now.ToString());
             }
-            // Append to the newsletters details file:
-
-            Federation.Application.AppendToLog("Newsletter.details", sb.ToString());
         }
         private void Start()
         {
@@ -229,14 +236,26 @@ namespace FlexWiki.Web.Newsletters
         }
         private void ThreadProc()
         {
-            while (true)
+            try
             {
-                lock (this)
+                // We need the thread to run as *someone* so that it can have access 
+                // to the topics. 
+                Thread.CurrentPrincipal = _principal;
+                while (true)
                 {
-                    Checkin();
-                    DoWorkIfItIsTime();
+                    lock (this)
+                    {
+                        Checkin();
+                        DoWorkIfItIsTime();
+                    }
+                    Thread.Sleep(c_checkinInterval);
                 }
-                Thread.Sleep(c_checkinInterval);
+            }
+            catch (Exception e)
+            {
+                Federation.Application.LogError(this.GetType().ToString(), 
+                    "Newsletter thread encountered an error and is shutting down." + e.ToString());
+                throw; 
             }
         }
 

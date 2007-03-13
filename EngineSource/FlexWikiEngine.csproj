@@ -106,6 +106,7 @@
     <Compile Include="IContentProvider.cs" />
     <Compile Include="IFileInformation.cs" />
     <Compile Include="IFileSystem.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="QualifiedTopicName.cs" />
     <Compile Include="QualifiedTopicRevision.cs">
       <SubType>Code</SubType>

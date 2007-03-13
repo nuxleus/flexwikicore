@@ -11,15 +11,18 @@
 #endregion
 
 using System;
-using System.Text.RegularExpressions;
-using System.Web.UI;
-using System.IO;
+using System.Collections;
 using System.Configuration;
+using System.IO;
+using System.Net; 
+using System.Net.Mail; 
+using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI;
+
 using FlexWiki;
 using FlexWiki.Web.Newsletters;
 using FlexWiki.Formatting;
-using System.Collections;
 
 namespace FlexWiki.Web
 {
@@ -450,13 +453,7 @@ namespace FlexWiki.Web
                 throw new Exception("Default namespace (" + ns + ") doesn't exist.");
             }
 
-            FlexWikiWebApplicationConfiguration configuration = FlexWikiWebApplication.ApplicationConfiguration;
-
-            EstablishNewsletterDaemon(
-                configuration.SmtpServer,
-                configuration.SmtpUser,
-                configuration.SmtpPassword,
-                configuration.NewslettersFrom);
+            EstablishNewsletterDaemon();
 
             ProcessUnauthenticatedUserName();
         }
@@ -513,18 +510,27 @@ namespace FlexWiki.Web
                 return path + "/";
             }
         }
-        protected string SendMail(System.Net.Mail.MailMessage message)
+        protected string SendMail(MailMessage message)
         {
-            SmtpMail mailer = new SmtpMail();
             try
             {
                 FlexWikiWebApplicationConfiguration configuration = FlexWikiWebApplication.ApplicationConfiguration; 
-                return mailer.Send(message, configuration.SmtpServer, configuration.SmtpUser, configuration.SmtpPassword);
+                SmtpClient client = new SmtpClient(configuration.SmtpConfiguration.Server); 
+                if (!string.IsNullOrEmpty(configuration.SmtpConfiguration.Password))
+                {
+                    client.Credentials = new NetworkCredential(configuration.SmtpConfiguration.User, 
+                        configuration.SmtpConfiguration.Password);
+                }
+                client.Send(message); 
             }
             catch (Exception e)
             {
-                return "An exception occurred trying to send mail. " + e.ToString();
+                FlexWikiWebApplication.LogError(this.GetType().ToString(), "An error occurred trying to send mail: " +
+                    e.ToString());
+                return e.ToString(); 
             }
+            // Bizarre semantics, but null indicates success. 
+            return null; 
         }
         protected string SendRequestsTo
         {
@@ -567,9 +573,9 @@ namespace FlexWiki.Web
             // Setup event monitoring
             SetupUpdateMonitoring();
         }
-        private void EstablishNewsletterDaemon(string SMTPServer, string SMTPUser, string SMTPPassword, string newslettersFrom)
+        private void EstablishNewsletterDaemon()
         {
-            if (FlexWikiWebApplication.ApplicationConfiguration.DisableNewsletters)
+            if (!FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.Enabled)
             {
                 return; 
             }
@@ -610,11 +616,11 @@ namespace FlexWiki.Web
             styles = @"<style>" + styles + @"
 </style>";
 
-            bool sendAsAttachments = FlexWikiWebApplication.ApplicationConfiguration.SendNewslettersAsAttachments;
+            bool sendAsAttachments = FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.SendAsAttachments;
 
             // Use the NewsletterRootUrl config entry as the base URL for newsletters if present, otherwise
             // default to whatever URL was used for this request. 
-            string rootUrl = FlexWikiWebApplication.ApplicationConfiguration.NewsletterRootUrl;
+            string rootUrl = FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.RootUrl;
 
             if (rootUrl == null || rootUrl.Length == 0)
             {
@@ -627,12 +633,17 @@ namespace FlexWiki.Web
                 rootUrl += "/";
             }
 
-            NewsletterDaemon daemon = new NewsletterDaemon(Federation, rootUrl,
-        newslettersFrom, styles, sendAsAttachments);
+            NewsletterDaemon daemon = new NewsletterDaemon(
+                Federation, 
+                rootUrl,
+                FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.NewslettersFrom, 
+                styles, 
+                sendAsAttachments,
+                FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.AuthenticateAs);
             TheNewsletterDaemon = daemon;
-            daemon.SmtpServer = SMTPServer;
-            daemon.SmtpUser = SMTPUser;
-            daemon.SmtpPassword = SMTPPassword;
+            daemon.SmtpServer = FlexWikiWebApplication.ApplicationConfiguration.SmtpConfiguration.Server;
+            daemon.SmtpUser = FlexWikiWebApplication.ApplicationConfiguration.SmtpConfiguration.User;
+            daemon.SmtpPassword = FlexWikiWebApplication.ApplicationConfiguration.SmtpConfiguration.Password;
             daemon.EnsureRunning();
         }
         private void LoadPlugins()

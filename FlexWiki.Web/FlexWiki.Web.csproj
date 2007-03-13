@@ -74,6 +74,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -357,6 +361,7 @@
       <DependentUpon>LostAndFound.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="NewsletterConfiguration.cs" />
     <Compile Include="Newsletters\DaemonBasedDeliveryBoy.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -364,12 +369,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Newsletters\NewsletterManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Newsletters\SmtpMail.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Newsletters\SmtpResponse.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Preview.aspx.cs">
@@ -415,6 +414,7 @@
     <Compile Include="Analysis\TopicAnalysis.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SmtpConfiguration.cs" />
     <Compile Include="UIColumn.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -565,12 +565,16 @@
       <DependentUpon>WikiEdit.aspx.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="flexwiki.config.template" />
+    <None Include="log4net.config.template" />
     <None Include="flexwiki.config" />
+    <None Include="log4net.config" />
     <None Include="security.config" />
     <None Include="WikiBases\MyWiki\HomePage.wiki" />
     <None Include="WikiBases\MyWiki\_ContentBaseDefinition.wiki" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="logs\" />
     <Folder Include="Namespaces\SampleNamespaceOne\" />
     <Folder Include="Namespaces\SampleNamespaceTwo\" />
   </ItemGroup>

@@ -42,21 +42,34 @@ namespace FlexWiki.UnitTests
             get { return _timeProvider; }
         }
 
-        public void AppendToLog(string logfile, string message)
+        public void Log(string source, LogLevel level, string message)
         {
-            throw new NotImplementedException();
+            // no-op
         }
-
+        public void LogDebug(string source, string message)
+        {
+            // no-op
+        }
+        public void LogError(string source, string message)
+        {
+            // no-op
+        }
+        public void LogInfo(string source, string message)
+        {
+            // no-op
+        }
+        public void LogWarning(string source, string message)
+        {
+            // no-op
+        }
         public string ResolveRelativePath(string path)
         {
             return System.IO.Path.Combine("FW:\\", path); 
         }
-
         public void WriteFederationConfiguration()
         {
             throw new NotImplementedException(); 
         }
-
 
     }
 }

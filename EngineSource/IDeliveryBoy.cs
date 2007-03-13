@@ -20,6 +20,6 @@ namespace FlexWiki
 	/// </summary>
 	public interface IDeliveryBoy
 	{
-		void Deliver(string to, string from, string subject, string body);
+		bool Deliver(string to, string from, string subject, string body);
 	}
 }

@@ -11,7 +11,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -110,20 +110,24 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 			
 			NewsletterManager nm = new NewsletterManager(Federation, TheLinkMaker);
 
-			Hashtable hash = new Hashtable();
-			foreach (QualifiedTopicRevision newsletterName in nm.GetAllNewsletterNames(ns))
+            Dictionary<string, List<QualifiedTopicName>> newsletterNamespaceMap = new Dictionary<string, List<QualifiedTopicName>>();
+			foreach (QualifiedTopicName newsletterName in nm.GetAllNewsletterNames(ns))
 			{
-				ArrayList topicsInThisNamespace = (ArrayList)hash[newsletterName.Namespace];
-				if (topicsInThisNamespace == null)
+                List<QualifiedTopicName> topicsInThisNamespace = null;
+                if (newsletterNamespaceMap.ContainsKey(newsletterName.Namespace))
+                {
+                    topicsInThisNamespace = newsletterNamespaceMap[newsletterName.Namespace];
+                }
+				else
 				{
-					topicsInThisNamespace = new ArrayList();
-					hash[newsletterName.Namespace] = topicsInThisNamespace;
+					topicsInThisNamespace = new List<QualifiedTopicName>();
+					newsletterNamespaceMap[newsletterName.Namespace] = topicsInThisNamespace;
 				}
 				topicsInThisNamespace.Add(newsletterName);
 			}
 
-			ArrayList bases = new ArrayList();
-			bases.AddRange(hash.Keys);
+			List<string> bases = new List<string>();
+			bases.AddRange(newsletterNamespaceMap.Keys);
 			bases.Sort();
 			
 			OpenTable();
@@ -132,7 +136,7 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 				NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(each);
 				if (ns == null)
 					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(storeManager.FriendlyTitle)  + "</div></td></tr>");
-				foreach (QualifiedTopicRevision abs in (ArrayList)(hash[each]))
+				foreach (QualifiedTopicName abs in newsletterNamespaceMap[each])
 				{
 					TopicVersionInfo info = Federation.GetTopicInfo(abs.ToString());
 					string desc = info.GetProperty("Description");
@@ -154,11 +158,13 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 		void ShowNamespaceFeeds(string ns)
 		{
 			Response.Write(@"<h1>Namespace Feeds</h1>");
-			ArrayList bases = new ArrayList();
+			List<NamespaceManager> bases = new List<NamespaceManager>();
 			foreach (string each in Federation.Namespaces)
 			{
-				if (ns != null && ns != each)
-					continue;
+                if (ns != null && ns != each)
+                {
+                    continue;
+                }
 				NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(each);
 				bases.Add(storeManager);
 			}

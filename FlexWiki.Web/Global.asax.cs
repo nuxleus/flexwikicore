@@ -18,6 +18,8 @@ using System.Web;
 using System.Web.SessionState;
 using System.Web.Security;
 
+using log4net; 
+
 namespace FlexWiki.Web 
 {
 	/// <summary>
@@ -57,12 +59,15 @@ namespace FlexWiki.Web
 
 		protected void Application_AuthenticateRequest(Object sender, EventArgs e)
 		{
-
+            
 		}
 
 		protected void Application_Error(Object sender, EventArgs e)
 		{
+            Exception ex = Server.GetLastError(); 
+            LogManager.GetLogger("FlexWiki.Web").Error("Uncaught exception in the web application: " + ex.ToString()); 
 
+            // We don't call ClearError because we still want the error page to appear
 		}
 
 		protected void Session_End(Object sender, EventArgs e)

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <FederationConfiguration>
-    <About>About FlexWiki.</About>
+    <About>This is FlexWiki, an open source wiki engine.</About>
     <AuthorizationRules>
       <Rule Type="Allow" Action="ManageNamespace" Principal="all" />
     </AuthorizationRules>
@@ -28,11 +28,16 @@
   <NewsletterConfiguration>
     <AuthenticateAs>anonymous</AuthenticateAs>
     <Enabled>true</Enabled>
-    <NewslettersFrom>newsletters@wangdera.com</NewslettersFrom>
-    <RootUrl>http://localhost/flexwiki</RootUrl>
+    <!-- Change this. -->
+    <NewslettersFrom>newsletters@flexwiki.com</NewslettersFrom>
+    <!-- Change this. -->
+    <RootUrl>http://www.flexwiki.com/</RootUrl>
     <SendAsAttachments>false</SendAsAttachments>
   </NewsletterConfiguration>
+  <!-- Change this. -->
   <SmtpConfiguration>
-    <Server>valhalla</Server>
+    <Server>localhost</Server>
+    <User></User>
+    <Password></Password>
   </SmtpConfiguration>
 </configuration>
