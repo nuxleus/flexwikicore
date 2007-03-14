@@ -123,8 +123,8 @@
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the actual compilation stage of the build. -->
-  <property name="build.skip" value="false" 
-      unless="${property::exists('build.skip')}" />
+  <property name="compile.skip" value="false" 
+      unless="${property::exists('compile.skip')}" />
 
   <!-- Set this property to true here (or override elsewhere) to skip
        the test stage (nunit, fxcop) of the build. -->
@@ -208,86 +208,84 @@
     <property name="fxcop.skip" value="false" />
   </if>
 
-  <!-- NAnt build targets appear after this point. To build a
-       particular target, run "nant targetname" from the command line.
-       For example, to build the init target, run "nant init". -->
-  
-  <!-- The init target does initial setup of the project -->
-  <target name="init">
-
     <!-- Create the reports directory if it doesn't exist. -->
     <mkdir dir="${reportdir}" />
     
     <!-- Create the SQL Server data directory if it doens't exist -->
     <mkdir dir="${sqldir}" />
-
+    
     <!-- Set up the XML version number so external tools can use it to
-        	 know what version we built. -->
-
+             know what version we built. -->
+    
     <!-- Copy the version file to the reports directory -->
     <property name="versionreport" value="${reportdir}/version.xml" />
     <copy file="${versionfile}" tofile="${versionreport}" />
-
+    
     <!-- Now store the various build numbers in the xml file -->
     <xmlpoke file="${versionreport}" 
-	     value="${vermajor}"
-	     xpath="/version/major" />
+         value="${vermajor}"
+         xpath="/version/major" />
     <xmlpoke file="${versionreport}" 
-	     value="${verminor}"
-	     xpath="/version/minor" />
+         value="${verminor}"
+         xpath="/version/minor" />
     <xmlpoke file="${versionreport}" 
-	     value="${verbuild}"
-	     xpath="/version/build" />
+         value="${verbuild}"
+         xpath="/version/build" />
     <xmlpoke file="${versionreport}" 
-	     value="${verrevision}"
-	     xpath="/version/revision" />
+         value="${verrevision}"
+         xpath="/version/revision" />
     
-    <!-- Create a SharedAssemblyInfo.cs file with the version number that
-	        we calculated at the beginning of the build script -->
-    <asminfo output="${basedir}/SharedAssemblyInfo.cs"
-		      language="CSharp">
-	    <imports>
-	      <import namespace="System" />
-	      <import namespace="System.Reflection" />
-	    </imports>
-	    <attributes>
-	      <attribute type="AssemblyVersionAttribute"
-		        value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
-		    <attribute type="AssemblyCopyrightAttribute"
-		        value="Copyright (c) 2005 Microsoft Corporation" />
-	    </attributes>
-	  </asminfo>
-
+    
     <!-- Analyze the solution file to figure out what projects are there -->
     
     <!-- Start by deleting the file that lists all the projects -->
-    <property name="init.projectlistpath" value="${reportdir}/projectlist.txt" />
+    <property name="projectlistpath" value="${reportdir}/projectlist.txt" />
     
-    <delete file="${init.projectlistpath}" if="${file::exists(init.projectlistpath)}" />
+    <delete file="${projectlistpath}" if="${file::exists(projectlistpath)}" />
     
     <foreach item="Line" 
         in="${basedir}/${project::get-name()}.sln"
-        property="init.line" >
+        property="line" >
       <do>
-        <if test="${string::starts-with(init.line, 'Project(')}">
+        <if test="${string::starts-with(line, 'Project(')}">
           <regex pattern="(?:=\s)*&quot;(?'proj'.*?)&quot;,\s&quot;(?'path'.*?)&quot;,\s&quot;(?'guid'.*?)&quot;"
-            input="${init.line}" />
-          <echo file="${init.projectlistpath}" append="true" 
+            input="${line}" />
+          <echo file="${projectlistpath}" append="true" 
             message="${path}" />
         </if>
       </do>
     </foreach>
     
-  </target>
+
+  <!-- NAnt build targets appear after this point. To build a
+       particular target, run "nant targetname" from the command line.
+       For example, to build the compile target, run "nant compile". -->
 
   <!-- The build target simply compiles the projects listed in the
        .sln file into the target directory -->
-  <target name="build" depends="init" unless="${build.skip}">
-    <property name="build.framework.directory" 
+  <target name="compile" unless="${compile.skip}">
+
+    <!-- Create a SharedAssemblyInfo.cs file with the version number that
+            we calculated at the beginning of the build script -->
+    <asminfo output="${basedir}/SharedAssemblyInfo.cs"
+              language="CSharp">
+        <imports>
+          <import namespace="System" />
+          <import namespace="System.Reflection" />
+        </imports>
+        <attributes>
+          <attribute type="AssemblyVersionAttribute"
+                value="${vermajor}.${verminor}.${verbuild}.${verrevision}" />
+            <attribute type="AssemblyCopyrightAttribute"
+                value="Copyright (c) 2005 Microsoft Corporation" />
+        </attributes>
+    </asminfo>
+
+    <property name="compile.framework.directory" 
         value="${framework::get-framework-directory(framework::get-target-framework())}" />
 
     <exec program="msbuild.exe"
-        basedir="${build.framework.directory}"
+        basedir="${compile.framework.directory}"
         workingdir="${basedir}" >
         <arg value="/p:Configuration=${configuration}" />
         <arg value="${project::get-name()}.sln" />
@@ -298,7 +296,7 @@
   
   <!-- The test target runs nunit on any assemblies that have NUnit
        tests in them. --> 
-  <target name="test" depends="build" unless="${test.skip}">
+  <target name="test" depends="compile" unless="${test.skip}">
 
     <!-- Set nunit.skip to true to skip NUnit testing -->
     <if test="${not nunit.skip}">
@@ -375,8 +373,12 @@
   </target> 
 
   <!-- The dist target builds the distribution zipfiles from the files
-       in the target directory. -->
-  <target name="dist" depends="test" unless="${dist.skip}">
+       in the target directory. run-dist actually does the work: by 
+       having two targets, it allows us to skip all the dependencies
+       and only run the dist steps in isolation. -->
+  <target name="dist" depends="test run-dist" />
+  
+  <target name="run-dist" unless="${dist.skip}">
     <mkdir dir="${distdir}" />
 
 
@@ -461,6 +463,21 @@
     <copy todir="${dist.stagingdir}">
       <fileset refid="dist.root" />
     </copy>
+
+    <!-- Overwrite any .config files with their .config.template counterparts. This prevents
+         developer settings from winding up in the distribution. -->
+    <foreach item="File" property="dist.templateconfig">
+        <in>
+            <items basedir="${dist.webdir}">
+                <include name="*.config.template" />
+            </items>
+        </in>
+        <do>
+            <property name="dist.configfile" 
+                value="${path::combine(path::get-directory-name(dist.templateconfig), path::get-file-name-without-extension(dist.templateconfig))}" />
+            <copy file="${dist.templateconfig}" tofile="${dist.configfile}" />
+        </do>
+    </foreach>
 
     <!-- We build four zipfiles: 
           * a source zip containing the source files, 
