@@ -558,7 +558,7 @@ namespace FlexWiki
             string answer = null;
 
             // If the content is blacklisted and this is a historical version, answer dummy content
-            if (name.Version != null && IsBlacklisted(GetTopicUnformattedContent(name)))
+            if (name.Version != null && IsBlacklisted(Read(name)))
             {
                 answer = Formatter.FormattedString(name, @"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.",
                   Format, this.NamespaceManagerForTopic(name), LinkMaker);

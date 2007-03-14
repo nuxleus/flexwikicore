@@ -63,12 +63,19 @@ namespace FlexWiki
                 return _created;
             }
         }
-        [ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the full name of the topic whose change is described by this TopicChange")]
         public string DottedName
         {
             get
             {
                 return TopicRevision.DottedName;
+            }
+        }
+        [ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the full name of the topic whose change is described by this TopicChange")]
+        public string DottedNameWithVersion
+        {
+            get
+            {
+                return TopicRevision.DottedNameWithVersion;
             }
         }
         [ExposedMethod("Timestamp", ExposedMethodFlags.Default, "Answer a DateTime that indicates when this version was last modified.")]
