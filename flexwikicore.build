@@ -208,6 +208,12 @@
     <property name="fxcop.skip" value="false" />
   </if>
 
+
+  <!-- NAnt build targets appear after this point. To build a
+       particular target, run "nant targetname" from the command line.
+       For example, to build the compile target, run "nant compile". -->
+
+    <target name="init">
     <!-- Create the reports directory if it doesn't exist. -->
     <mkdir dir="${reportdir}" />
     
@@ -255,15 +261,12 @@
         </if>
       </do>
     </foreach>
-    
+    </target>
 
-  <!-- NAnt build targets appear after this point. To build a
-       particular target, run "nant targetname" from the command line.
-       For example, to build the compile target, run "nant compile". -->
 
   <!-- The build target simply compiles the projects listed in the
        .sln file into the target directory -->
-  <target name="compile" unless="${compile.skip}">
+  <target name="compile" depends="init" unless="${compile.skip}">
 
     <!-- Create a SharedAssemblyInfo.cs file with the version number that
             we calculated at the beginning of the build script -->
