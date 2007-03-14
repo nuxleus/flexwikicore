@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<log4net>
+  <appender name="FileAppender" type="log4net.Appender.FileAppender">
+    <file value="logs\flexwiki.log" />
+    <appendToFile value="true" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%-5level] %logger %ndc - %message%newline" />
+    </layout>
+  </appender>
+
+  <!-- Change the root level to DEBUG to get lots more information. At this setting only errors are logged. -->
+  <root>
+    <level value="ERROR" />
+    <appender-ref ref="FileAppender" />
+  </root>
+</log4net>
