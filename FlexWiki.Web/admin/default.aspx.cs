@@ -89,7 +89,7 @@ namespace FlexWiki.Web.Admin
 
 		private void ShowFederationInfo(Federation aFederation)
 		{
-			LinkMaker lm = new LinkMaker(RootUrl(Request));
+			LinkMaker lm = new LinkMaker(RootUrl);
 
 			UIResponse.WritePara(UIResponse.Bold("General Federation Information"));
 			UIResponse.WriteStartKVTable();

@@ -18,7 +18,9 @@ using System.Web;
 using System.Web.SessionState;
 using System.Web.Security;
 
-using log4net; 
+using log4net;
+
+using FlexWiki.Security; 
 
 namespace FlexWiki.Web 
 {
@@ -54,7 +56,6 @@ namespace FlexWiki.Web
 
 		protected void Application_EndRequest(Object sender, EventArgs e)
 		{
-
 		}
 
 		protected void Application_AuthenticateRequest(Object sender, EventArgs e)
@@ -64,10 +65,27 @@ namespace FlexWiki.Web
 
 		protected void Application_Error(Object sender, EventArgs e)
 		{
-            Exception ex = Server.GetLastError(); 
-            LogManager.GetLogger("FlexWiki.Web").Error("Uncaught exception in the web application: " + ex.ToString()); 
+            Exception ex = Server.GetLastError();
 
-            // We don't call ClearError because we still want the error page to appear
+            if ((ex is HttpUnhandledException) && (ex.InnerException is FlexWikiAuthorizationException))
+            {
+                try
+                {
+                    LogManager.GetLogger("FlexWiki.Web").Warn("Access was denied " + ex.ToString());
+                    Context.Items["LastError"] = ex.InnerException;
+                    Server.Transfer("AccessDenied.aspx");
+                }
+                finally
+                {
+                    Server.ClearError(); 
+                }
+            }
+            else
+            {
+                // We don't call ClearError because we still want the error page to appear
+                LogManager.GetLogger("FlexWiki.Web").Error("Uncaught exception in the web application: " + ex.ToString());
+            }
+
 		}
 
 		protected void Session_End(Object sender, EventArgs e)

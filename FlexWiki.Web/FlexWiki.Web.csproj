@@ -114,7 +114,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AccessDenied.aspx" />
+    <Content Include="AccessDenied.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="admin\Config.aspx">
       <SubType>Form</SubType>
     </Content>
@@ -127,15 +129,22 @@
     <Content Include="admin\Providers.aspx" />
     <Content Include="admin\ShowUpdates.aspx" />
     <Content Include="admin\UpgradeConfigFile.aspx" />
+    <Content Include="admin\Users.aspx" />
     <Content Include="Blade.aspx">
       <SubType>Form</SubType>
     </Content>
     <Content Include="Compare.aspx" />
+    <Content Include="RegisterUser.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="RecoverPassword.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="default.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="DoSearch.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="EditService.asmx" />
     <Content Include="emoticons\angel_smile.gif" />
@@ -181,8 +190,16 @@
     <Content Include="emoticons\whatchutalkingabout_smile.gif" />
     <Content Include="emoticons\wilted_rose.gif" />
     <Content Include="emoticons\wink_smile.gif" />
+    <Compile Include="admin\Users.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Analysis\Island.cs" />
     <Compile Include="Analysis\Ocean.cs" />
+    <Compile Include="PageUtilities.cs" />
+    <Compile Include="RegisterUser.aspx.cs">
+      <DependentUpon>RegisterUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="FlexWikiApplicationConfiguration.cs" />
     <Content Include="Global.asax">
     </Content>
@@ -200,8 +217,12 @@
     <Content Include="LastModified.aspx">
       <SubType>Form</SubType>
     </Content>
-    <Content Include="Login.aspx" />
-    <Content Include="Logoff.aspx" />
+    <Content Include="Login.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Logoff.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="LostAndFound.aspx">
       <SubType>Form</SubType>
     </Content>
@@ -230,6 +251,9 @@
     <Content Include="Search.aspx">
       <SubType>Form</SubType>
     </Content>
+    <Content Include="diagnostics\SecurityContext.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="ShowNewsletter.aspx">
       <SubType>Form</SubType>
     </Content>
@@ -239,7 +263,6 @@
     </Content>
     <Content Include="Web.config" />
     <Content Include="wiki.css" />
-    <Content Include="WikiBases\NamespaceMap.xml" />
     <Content Include="WikiEdit.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -383,6 +406,10 @@
       <DependentUpon>QuickLink.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="RecoverPassword.aspx.cs">
+      <DependentUpon>RecoverPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Rename.aspx.cs">
       <DependentUpon>Rename.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -414,7 +441,6 @@
     <Compile Include="Analysis\TopicAnalysis.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SmtpConfiguration.cs" />
     <Compile Include="UIColumn.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -481,6 +507,10 @@
       <DependentUpon>Compare.aspx.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="RegisterUser.aspx.resx">
+      <DependentUpon>RegisterUser.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="default.aspx.resx">
       <DependentUpon>default.aspx.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -523,6 +553,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="QuickLink.aspx.resx">
       <DependentUpon>QuickLink.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecoverPassword.aspx.resx">
+      <DependentUpon>RecoverPassword.aspx.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Rename.aspx.resx">
@@ -570,8 +604,6 @@
     <None Include="flexwiki.config" />
     <None Include="log4net.config" />
     <None Include="security.config" />
-    <None Include="WikiBases\MyWiki\HomePage.wiki" />
-    <None Include="WikiBases\MyWiki\_ContentBaseDefinition.wiki" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="logs\" />

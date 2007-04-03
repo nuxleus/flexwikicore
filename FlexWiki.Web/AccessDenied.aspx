@@ -1,22 +1,32 @@
-<%@ Page language="c#" Codebehind="AccessDenied.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.AccessDenied" %>
+<%@ Page Language="c#" Codebehind="AccessDenied.aspx.cs" AutoEventWireup="false"
+    Inherits="FlexWiki.Web.AccessDenied" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<HTML>
-	<HEAD>
-		<title>Wiki Logon</title>
-		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
-		<%= InsertStylesheetReferences() %>
-	</HEAD>
-	<body class='Dialog'>
-<fieldset>
-	<legend class='DialogTitle'>Security</legend>
-
-		<form id="LogonForm" runat="server" method="post">
-			<table>
-				<TBODY>
-					<tr>
-						<td><asp:Label id="Msg" ForeColor="red" Font-Name="Verdana" Font-Size="10" runat="server">Access Denied Message</asp:Label>
-		</form>
-		</TD></TR></TBODY></TABLE>
-</fieldset>
-	</body>
-</HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Access Denied</title>
+    <%= InsertStylesheetReferences() %>
+</head>
+<body>
+    <form id="Form1" runat="server" method="post" action="">
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <asp:Label ID="Msg" ForeColor="red" Font-Names="Verdana" Font-Size="10" runat="server">Access Denied Message</asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:HyperLink ID="LoginLink" runat="server">Try Logging In</asp:HyperLink>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:HyperLink ID="ReturnLink" runat="server">Return to FlexWiki</asp:HyperLink>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>

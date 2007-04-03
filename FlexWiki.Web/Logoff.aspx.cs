@@ -17,6 +17,7 @@ using System.Data;
 using System.Drawing;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Configuration; 
 using System.Web.SessionState;
 using System.Web.Security;
 using System.Web.UI;
@@ -25,17 +26,45 @@ using System.Web.UI.HtmlControls;
 
 namespace FlexWiki.Web
 {
-	/// <summary>
-	/// Summary description for WebForm1.
-	/// </summary>
-	public class Logoff : BasePage
+	public partial class Logoff : BasePage
 	{
-		protected System.Web.UI.WebControls.Label LogOffMessage;
-		protected System.Web.UI.HtmlControls.HtmlForm LogonForm;
+        protected Label LogOffMessage;
+        protected HyperLink ReturnLink; 
+
 		private void Page_Load(object sender, System.EventArgs e)
 		{
-			LogOffMessage.Text = Context.User.Identity.Name + " has logged off";
-			FormsAuthentication.SignOut();
+            AuthenticationSection section =
+                WebConfigurationManager.GetWebApplicationSection("system.web/authentication") as AuthenticationSection;
+
+            if (section != null)
+            {
+                // While we can log off just fine if we're using forms authentication, there's not 
+                // much we can do if we're using Windows authentication or something else. 
+                if (section.Mode == AuthenticationMode.Forms)
+                {
+                    FormsAuthentication.SignOut();
+                    LogOffMessage.Text = Context.User.Identity.Name + " has logged off";
+                }
+                else
+                {
+                    LogOffMessage.Text = "Unable to explicitly log off when authentication mode is " + section.Mode.ToString();
+                }
+            }
+            else
+            {
+                LogOffMessage.Text = "Unable to log off when no authentication mechanism is defined."; 
+            }
+
+            string returnUrl = Request.QueryString["ReturnURL"]; 
+
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                ReturnLink.Visible = false; 
+            }
+            else
+            {
+                ReturnLink.NavigateUrl = returnUrl; 
+            }
 		}
 
 		#region Web Form Designer generated code

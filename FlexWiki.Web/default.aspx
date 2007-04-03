@@ -1,4 +1,5 @@
-<%@ Page language="c#" Codebehind="default.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Default2" %>
+<%@ Page language="c#" Codebehind="default.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Default2"  %>
+<%@ OutputCache VaryByParam="None" Location="None" %>
 <%
 	StartPage();
 %>

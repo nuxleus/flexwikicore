@@ -43,9 +43,6 @@ namespace FlexWiki.Web.Newsletters
         private readonly ArrayList _results = new ArrayList();
         private string _rootUrl;
         private bool _sendAsAttachments;
-        private string _smtpPassword;
-        private string _smtpServer;
-        private string _smtpUser;
         private DateTime _started = DateTime.MinValue;
         private DateTime _workLastCompleted = DateTime.MinValue;
         private DateTime _workLastStarted = DateTime.MinValue;
@@ -106,21 +103,6 @@ namespace FlexWiki.Web.Newsletters
             {
                 return _results;
             }
-        }
-        public string SmtpPassword
-        {
-            get { return _smtpPassword; }
-            set { _smtpPassword = value; }
-        }
-        public string SmtpServer
-        {
-            get { return _smtpServer; }
-            set { _smtpServer = value; }
-        }
-        public string SmtpUser
-        {
-            get { return _smtpUser; }
-            set { _smtpUser = value; }
         }
         public DateTime Started
         {
@@ -212,8 +194,7 @@ namespace FlexWiki.Web.Newsletters
         }
         private void ReallyDoWork()
         {
-            DaemonBasedDeliveryBoy boy = new DaemonBasedDeliveryBoy(SmtpServer, SmtpUser, SmtpPassword, _sendAsAttachments, 
-                Federation.Application);
+            DaemonBasedDeliveryBoy boy = new DaemonBasedDeliveryBoy(_sendAsAttachments, Federation.Application);
             LinkMaker lm = new LinkMaker(_rootUrl);
             NewsletterManager manager = new NewsletterManager(Federation, lm, boy, _newslettersFrom, _headInsert);
             LogEvent ev = Federation.LogEventFactory.CreateAndStartEvent(null, null, null, LogEventType.NewsletterGeneration);

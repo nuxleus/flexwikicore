@@ -26,7 +26,6 @@ namespace FlexWiki.Web
         private string _sendNamespaceCreationRequestsTo;
         private string _sendNamespaceRequestMailFrom;
         private bool _signNamespaceCreationMail;
-        private SmtpConfiguration _smtpConfiguration; 
         
         // Properties
 
@@ -104,11 +103,6 @@ namespace FlexWiki.Web
         {
             get { return _signNamespaceCreationMail; }
             set { _signNamespaceCreationMail = value; }
-        }
-        public SmtpConfiguration SmtpConfiguration
-        {
-            get { return _smtpConfiguration; }
-            set { _smtpConfiguration = value; }
         }
 
     }

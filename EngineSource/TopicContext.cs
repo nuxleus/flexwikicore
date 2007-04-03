@@ -17,80 +17,80 @@ using System.Web.Caching;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	[ExposedClass("TopicContext", "Tracks the context in which WikiTalk execution is occurring")]
-	public class TopicContext : BELObject
-	{
-    private NamespaceManager _currentNamespaceManager;
-    private Federation _currentFederation;
-    private TopicVersionInfo _currentTopic;
-    private Hashtable _externalWikiMap;
-    
-    public TopicContext(Federation f, NamespaceManager namespaceManager, TopicVersionInfo topic)
-		{
-			CurrentFederation = f;
-			CurrentNamespaceManager = namespaceManager;
-			CurrentTopic = topic;
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    [ExposedClass("TopicContext", "Tracks the context in which WikiTalk execution is occurring")]
+    public class TopicContext : BELObject
+    {
+        private NamespaceManager _currentNamespaceManager;
+        private Federation _currentFederation;
+        private TopicVersionInfo _currentTopic;
+        private Hashtable _externalWikiMap;
 
-		
-    public override IOutputSequence ToOutputSequence()
-		{
-			return new WikiSequence(ToString());
-		}
+        public TopicContext(Federation f, NamespaceManager namespaceManager, TopicVersionInfo topic)
+        {
+            CurrentFederation = f;
+            CurrentNamespaceManager = namespaceManager;
+            CurrentTopic = topic;
+        }
 
 
-		[ExposedMethod(ExposedMethodFlags.Default, "Answer the federation")]
-		public Federation CurrentFederation
-		{
-			get
-			{
-				return _currentFederation;
-			}
-			set
-			{
-				_currentFederation = value;
-			}
-		}
+        public override IOutputSequence ToOutputSequence()
+        {
+            return new WikiSequence(ToString());
+        }
 
-		[ExposedMethod("CurrentTopic", ExposedMethodFlags.Default, "Answer a TopicInfo object describing the current topic")]
-		public TopicVersionInfo CurrentTopic
-		{
-			get
-			{
-				return _currentTopic;
-			}
-			set
-			{
-				_currentTopic = value;
-			}
-		}
 
-		[ExposedMethod("CurrentNamespace", ExposedMethodFlags.Default, "Answer the current namespace")]
-		public NamespaceManager CurrentNamespaceManager
-		{
-			get
-			{
-				return _currentNamespaceManager;
-			}
-			set
-			{
-				_currentNamespaceManager = value;
-			}
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the federation")]
+        public Federation CurrentFederation
+        {
+            get
+            {
+                return _currentFederation;
+            }
+            set
+            {
+                _currentFederation = value;
+            }
+        }
 
-		public Hashtable ExternalWikiMap
-		{
-			get
-			{
-				return _externalWikiMap;
-			}
-			set
-			{
-				_externalWikiMap = value;
-			}
-		}
-	}
+        [ExposedMethod("CurrentTopic", ExposedMethodFlags.Default, "Answer a TopicInfo object describing the current topic")]
+        public TopicVersionInfo CurrentTopic
+        {
+            get
+            {
+                return _currentTopic;
+            }
+            set
+            {
+                _currentTopic = value;
+            }
+        }
+
+        [ExposedMethod("CurrentNamespace", ExposedMethodFlags.Default, "Answer the current namespace")]
+        public NamespaceManager CurrentNamespaceManager
+        {
+            get
+            {
+                return _currentNamespaceManager;
+            }
+            set
+            {
+                _currentNamespaceManager = value;
+            }
+        }
+
+        public Hashtable ExternalWikiMap
+        {
+            get
+            {
+                return _externalWikiMap;
+            }
+            set
+            {
+                _externalWikiMap = value;
+            }
+        }
+    }
 }

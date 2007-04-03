@@ -189,9 +189,13 @@ namespace FlexWiki.Web
             }
 
             if (returnTo == null)
-                Response.Redirect(RootUrl(Request));
+            {
+                Response.Redirect(RootUrl);
+            }
             else
+            {
                 Response.Redirect(TheLinkMaker.LinkToTopic(returnTo));
+            }
 
         }
 

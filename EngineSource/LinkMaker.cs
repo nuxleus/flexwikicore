@@ -141,12 +141,12 @@ namespace FlexWiki
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(SiteURL);
-            builder.Append("logoff.aspx");
+            builder.Append("logoff.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
             return builder.ToString();
         }
         public string LinkToLogoff(TopicRevision topic)
         {
-            return LinkToLogoff(topic);
+            return LinkToLogoff(topic.DottedNameWithVersion);
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the lost and found for the given namespace")]
         public string LinkToLostAndFound(string ns)
@@ -287,27 +287,43 @@ namespace FlexWiki
             StringBuilder builder = new StringBuilder();
             TopicRevision topic = new TopicRevision(top);
             builder.Append(SiteURL);
-            builder.Append("default.aspx/");
-            if (topic.Namespace != null && topic.Namespace != "")
-                builder.Append(HttpUtility.UrlEncode(topic.Namespace) + "/");
-            builder.Append(topic.LocalName);
-            if (topic.Version != null)
-                builder.Append("(" + HttpUtility.UrlEncode(topic.Version) + ")");
-            builder.Append(".html");		// hard coded for now -- later we'll be cooler!
+            builder.Append("default.aspx");
+
+            // A null or empty topic links us to the wiki homepage
+            if (!string.IsNullOrEmpty(top))
+            {
+                builder.Append("/");
+                if (topic.Namespace != null && topic.Namespace != "")
+                {
+                    builder.Append(HttpUtility.UrlEncode(topic.Namespace) + "/");
+                }
+                builder.Append(topic.LocalName);
+                if (topic.Version != null)
+                {
+                    builder.Append("(" + HttpUtility.UrlEncode(topic.Version) + ")");
+                }
+                builder.Append(".html");		// hard coded for now -- later we'll be cooler! (maybe)
+            }
             StringBuilder query = new StringBuilder();
             if (showDiffs)
+            {
                 query.Append("diff=y");
+            }
             if (extraQueryParms != null)
             {
                 foreach (string each in extraQueryParms)
                 {
                     if (query.Length != 0)
+                    {
                         query.Append("&");
-                    query.Append(each + "=" + HttpUtility.UrlEncode((string) (extraQueryParms[each])));
+                    }
+                    query.Append(each + "=" + HttpUtility.UrlEncode((string)(extraQueryParms[each])));
                 }
             }
             if (query.Length != 0)
+            {
                 builder.Append("?" + query.ToString());
+            }
             return builder.ToString();
         }
     }

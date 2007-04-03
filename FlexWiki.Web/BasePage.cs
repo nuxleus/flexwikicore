@@ -47,6 +47,21 @@ namespace FlexWiki.Web
         }
 
         /// <summary>
+        /// Returns the URL suitable for composition with FlexWiki web pages to create
+        /// valid FlexWiki links. This method does *not* return the scheme, servername, 
+        /// or port. 
+        /// </summary>
+        /// <param name="req">An <see cref="HttpRequest"/> object to use to determine
+        /// the root URL.</param>
+        /// <returns>A string representing the root URL for the application.</returns>
+        protected string RootUrl
+        {
+            get
+            {
+                return PageUtilities.RootUrl;
+            }
+        }
+        /// <summary>
         /// Answer a string to identify the current visitor.  Is authentication is up and the user is authenticated, answer the
         /// authenticated user's name (e.g., a Windows accoutn name).  Otherwise answer the IP address of the visitor (possibly 
         /// with a user specified prefix).
@@ -89,6 +104,13 @@ namespace FlexWiki.Web
                 return (Federation) (Application[s_federationCacheKey]);
             }
         }
+        protected FlexWikiWebApplication FlexWikiWebApplication
+        {
+            get
+            {
+                return (FlexWikiWebApplication)Federation.Application;
+            }
+        }
         protected bool IsPost
         {
             get
@@ -129,13 +151,6 @@ namespace FlexWiki.Web
             get
             {
                 return _userPrefix;
-            }
-        }
-        protected FlexWikiWebApplication FlexWikiWebApplication
-        {
-            get
-            {
-                return (FlexWikiWebApplication) Federation.Application; 
             }
         }
 
@@ -208,7 +223,7 @@ namespace FlexWiki.Web
         protected virtual void DefaultPageLoad()
         {
             // Setup the federation -- either find the existing one or create a new one
-            _linkMaker = new LinkMaker(RootUrl(Request));
+            _linkMaker = new LinkMaker(RootUrl);
             EstablishFederation();
 
             MinimalPageLoad();
@@ -278,44 +293,7 @@ namespace FlexWiki.Web
         }
         protected QualifiedTopicRevision GetTopicVersionKey()
         {
-            string topic;
-
-            topic = Request.PathInfo;
-            if (topic.StartsWith("/"))
-                topic = topic.Substring(1);
-
-            // See if we're dealign with old style references or new ones
-            // OLD: My.Name.Space.Topic
-            // NEW: My.Name.Space/Topic.html
-            bool isNewStyle = topic.IndexOf("/") != -1;	// if we have a slash, it's new
-
-            // OK, we've got the namespace and the name now
-            QualifiedTopicRevision abs;
-            if (topic == null || topic.Length == 0)
-            {
-                abs = new QualifiedTopicRevision(DefaultNamespaceManager.HomePage, DefaultNamespaceManager.Namespace);
-            }
-            else
-            {
-                if (isNewStyle)
-                {
-                    string ns, top;
-                    int slash = topic.IndexOf("/");
-                    ns = topic.Substring(0, slash);
-                    top = topic.Substring(slash + 1);
-
-                    int tailDot = top.LastIndexOf(".");
-                    if (tailDot != -1)
-                        top = top.Substring(0, tailDot);	// trim of the extension (e.g., ".html")
-
-                    abs = new QualifiedTopicRevision(ns + "." + top);
-                }
-                else
-                {
-                    abs = new QualifiedTopicRevision(topic);
-                }
-            }
-            return abs;
+            return PageUtilities.GetTopicRevision(Federation); 
         }
         //		protected AbsoluteTopicName GetTopicName()
         //		{
@@ -365,30 +343,11 @@ namespace FlexWiki.Web
         }
         protected string InsertStylesheetReferences()
         {
-            string answer = MainStylesheetReference();
-            QualifiedTopicRevision abs = GetTopicVersionKey();
-            string styleSheet = null;
-            if (abs.Namespace != null)
-                styleSheet = Federation.GetTopicPropertyValue(abs, "Stylesheet");
-
-            if (styleSheet != null && styleSheet.Length > 0)
-            {
-                answer += "\n<LINK href='" + styleSheet + "' type='text/css' rel='stylesheet'>";
-            }
-            else
-            {
-                string styleOverride = FlexWikiWebApplication.ApplicationConfiguration.OverrideStylesheet;
-                if (styleOverride != null && styleOverride.Length > 0)
-                {
-                    answer += "\n<LINK href='" + styleOverride + "' type='text/css' rel='stylesheet'>";
-                }
-            }
-
-            return answer;
+            return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication); 
         }
         protected string MainStylesheetReference()
         {
-            return "<LINK href='" + RootUrl(Request) + "wiki.css' type='text/css' rel='stylesheet'>";
+            return PageUtilities.MainStylesheetReference(); 
         }
         protected void MinimalPageLoad()
         {
@@ -490,37 +449,11 @@ namespace FlexWiki.Web
             }
             return new QualifiedTopicRevision(topic.LocalName, topic.Namespace);
         }
-        /// <summary>
-        /// Returns the URL suitable for composition with FlexWiki web pages to create
-        /// valid FlexWiki links. This method does *not* return the scheme, servername, 
-        /// or port. 
-        /// </summary>
-        /// <param name="req">An <see cref="HttpRequest"/> object to use to determine
-        /// the root URL.</param>
-        /// <returns>A string representing the root URL for the application.</returns>
-        protected string RootUrl(HttpRequest req)
-        {
-            string path = req.ApplicationPath;
-            if (path.EndsWith("/"))
-            {
-                return path;
-            }
-            else
-            {
-                return path + "/";
-            }
-        }
         protected string SendMail(MailMessage message)
         {
             try
             {
-                FlexWikiWebApplicationConfiguration configuration = FlexWikiWebApplication.ApplicationConfiguration; 
-                SmtpClient client = new SmtpClient(configuration.SmtpConfiguration.Server); 
-                if (!string.IsNullOrEmpty(configuration.SmtpConfiguration.Password))
-                {
-                    client.Credentials = new NetworkCredential(configuration.SmtpConfiguration.User, 
-                        configuration.SmtpConfiguration.Password);
-                }
+                SmtpClient client = new SmtpClient(); 
                 client.Send(message); 
             }
             catch (Exception e)
@@ -641,9 +574,6 @@ namespace FlexWiki.Web
                 sendAsAttachments,
                 FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.AuthenticateAs);
             TheNewsletterDaemon = daemon;
-            daemon.SmtpServer = FlexWikiWebApplication.ApplicationConfiguration.SmtpConfiguration.Server;
-            daemon.SmtpUser = FlexWikiWebApplication.ApplicationConfiguration.SmtpConfiguration.User;
-            daemon.SmtpPassword = FlexWikiWebApplication.ApplicationConfiguration.SmtpConfiguration.Password;
             daemon.EnsureRunning();
         }
         private void LoadPlugins()

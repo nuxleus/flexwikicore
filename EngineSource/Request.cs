@@ -11,15 +11,16 @@
 #endregion
 
 using System;
-using System.Web;
 using System.Collections;
 using System.Security.Principal;
+using System.Threading; 
+using System.Web;
 
 namespace FlexWiki
 {
-	/// <summary>
-	/// Summary description for Request.
-	/// </summary>
+    // This class is pretty busted - it is linked tightly with the ASP.NET infrastructure, 
+    // when instead it should be getting that stuff from IFlexWikiApplication. But I'm not
+    // going to fix it right now. 
 	[ExposedClass("Request", "Provides information about the current user's request for this topic")]
 	public class Request : BELObject
 	{
@@ -43,9 +44,7 @@ namespace FlexWiki
 		{
 			get
 			{
-				if (System.Web.HttpContext.Current == null)
-					return null;
-				return System.Web.HttpContext.Current.User;
+                return Thread.CurrentPrincipal;
 			}
 		}
 

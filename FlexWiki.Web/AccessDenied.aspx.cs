@@ -23,7 +23,9 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
+
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 
 namespace FlexWiki.Web
 {
@@ -32,10 +34,41 @@ namespace FlexWiki.Web
 	/// </summary>
 	public class AccessDenied : BasePage
 	{
-		protected System.Web.UI.WebControls.Label Msg;
+        protected HyperLink LoginLink; 
+		protected Label Msg;
+        protected HyperLink ReturnLink; 
+
 		private void Page_Load(object sender, System.EventArgs e)
 		{
-			// Put user code to initialize the page here
+            FlexWikiAuthorizationException ex = Context.Items["LastError"] as FlexWikiAuthorizationException;
+
+            if (ex != null)
+            {
+                Msg.Text = "Access was denied. The error message was: " + ex.Message;
+            }
+            else
+            {
+                Msg.Text = "Access was denied. No further information is available."; 
+            }
+
+            LoginLink.NavigateUrl = TheLinkMaker.LinkToLogin("");
+            ReturnLink.NavigateUrl = TheLinkMaker.LinkToTopic("");
+            try
+            {
+                QualifiedTopicRevision revision = PageUtilities.GetTopicRevision(Federation);
+                if (revision != null)
+                {
+                    LoginLink.NavigateUrl = TheLinkMaker.LinkToLogin(revision.DottedNameWithVersion); 
+                }
+            }
+            catch (Exception x)
+            {
+                // Swallow any exceptions: this is error handling code so we're not 
+                // interested in blowing up while we try to publish a helpful page. 
+                FlexWikiWebApplication.LogError(typeof(AccessDenied).ToString(),
+                    "Error trying to figure out what page the user was on: " + x.ToString()); 
+            }
+
 		}
 
 		#region Web Form Designer generated code

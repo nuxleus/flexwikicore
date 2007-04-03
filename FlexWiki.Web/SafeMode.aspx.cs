@@ -328,7 +328,7 @@ function tbinput()
 
 			Command(lm, "Print", "Show a printable version of this topic", lm.LinkToPrintView(topic));
 			Command(lm, "Recent&nbsp;Changes", "Show recently changed topics", lm.LinkToRecentChanges(topic.Namespace));
-			Command(lm, "Subscriptions", "Get notified when topics on this site change", RootUrl(Request) + lm.LinkToSubscriptions(topic.Namespace));
+			Command(lm, "Subscriptions", "Get notified when topics on this site change", RootUrl + lm.LinkToSubscriptions(topic.Namespace));
 
 			Response.Write("</td>");
 			Response.Write("<td valign='top'>&nbsp;</td>");
@@ -336,8 +336,8 @@ function tbinput()
 			Response.Write("<td valign='top'>");
 
 			Command(lm, "Lost&nbsp;and&nbsp;Found", "Show unreferenced topics", lm.LinkToLostAndFound(topic.Namespace));
-			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl(Request) + "Search.aspx?search=" + topic.LocalName);
-			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl(Request) + "Rename.aspx?topic=" + topic.DottedName);
+			Command(lm, "Find&nbsp;References", "Find mentions of this topic in other topics", RootUrl + "Search.aspx?search=" + topic.LocalName);
+			Command(lm, "Rename", "Rename this topic (use with care)", RootUrl + "Rename.aspx?topic=" + topic.DottedName);
 			Response.Write("</td>");
 			Response.Write("</tr></table>");
 

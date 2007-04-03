@@ -23,22 +23,15 @@ namespace FlexWiki.Web.Newsletters
     {
         private IWikiApplication _application;
         //private StringWriter _log;
-        private string _smtpHost;
-        private string _smtpUser;
-        private string _smtpPassword;
         private bool _sendAsAttachments;
 
-        internal DaemonBasedDeliveryBoy(string smtpHost, string smtpUser, string smtpPassword, IWikiApplication application)
-            : this(smtpHost, smtpUser, smtpPassword, false, application)
+        internal DaemonBasedDeliveryBoy(IWikiApplication application)
+            : this(false, application)
         {
         }
 
-        internal DaemonBasedDeliveryBoy(string smtpHost, string smtpUser, string smtpPassword, bool sendAsAttachments, 
-            IWikiApplication application)
+        internal DaemonBasedDeliveryBoy(bool sendAsAttachments, IWikiApplication application)
         {
-            _smtpHost = smtpHost;
-            _smtpUser = smtpUser;
-            _smtpPassword = smtpPassword;
             _sendAsAttachments = sendAsAttachments;
             _application = application; 
         }
@@ -78,18 +71,14 @@ namespace FlexWiki.Web.Newsletters
 
             try
             {
-                SmtpClient client = new SmtpClient(_smtpHost);
-                if (_smtpPassword != null)
-                {
-                    client.Credentials = new NetworkCredential(_smtpUser, _smtpPassword); 
-                }
+                SmtpClient client = new SmtpClient();
                 client.Send(message);
                 return true; 
             }
             catch (Exception e)
             {
                 _application.LogError(this.GetType().ToString(), 
-                    "Exception while sending to host '" + _smtpHost + "': " + e.ToString());
+                    "Exception while sending mail : " + e.ToString());
                 return false; 
             }
         }

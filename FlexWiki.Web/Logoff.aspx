@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="Logoff.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Logoff" %>
+<%@ Page language="c#" CodeBehind="Logoff.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Logoff" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <HTML>
 	<HEAD>
@@ -14,7 +14,12 @@
 				<table width="100%">
 					<tr>
 						<td align="center">
-							<asp:Label id="LogOffMessage" runat="server">User has logged off</asp:Label>
+							<asp:Label id="LogOffMessage" runat="server" />
+						</td>
+					</tr>
+	                <tr>
+						<td align="center">
+							<asp:HyperLink id="ReturnLink" runat="server">Return to FlexWiki.</asp:HyperLink>
 						</td>
 					</tr>
 				</table>

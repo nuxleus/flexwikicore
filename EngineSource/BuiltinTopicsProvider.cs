@@ -53,7 +53,7 @@ aTopic|
       ""||"",
       with (Presentations)
       {
-        Link(federation.LinkMaker.LinkToLogoff(aTopic.Namespace.Name), ""Log off"", ""Log off."")
+        Link(federation.LinkMaker.LinkToLogoff(aTopic.Fullname), ""Log off"", ""Log off."")
       },
       ""||"",
       Newline
@@ -62,7 +62,11 @@ aTopic|
   ]}
   IfFalse
   {
-    """"
+    [
+      ""||{C2+}Not logged in.||"", 
+      Presentations.Link(federation.LinkMaker.LinkToLogin(aTopic.Fullname), ""Log in"", ""Log in.""),
+      ""||""
+    ]
   },
   namespace.Description,
   Newline, ""----"", Newline, 
