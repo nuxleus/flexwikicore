@@ -55,7 +55,7 @@ namespace FlexWiki.Web
                     
                     // Attempt to close at least one of the connections, as that should force logoff to occur on that
                     // connection. Other connections may remain logged in, however. 
-                    Response.Headers["Connection"] = "Close"; 
+                    Response.AppendHeader("Connection", "Close"); 
 
                     LogOffMessage.Text = @"It is not possible to completely log off when using Windows authentication, 
 which this site is currently configured to use. 
