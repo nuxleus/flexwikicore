@@ -11,6 +11,7 @@ namespace FlexWiki.Web
 {
     public class FlexWikiWebApplication : IWikiApplication
     {
+
         // Fields 
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
         private readonly string _configPath;
@@ -71,6 +72,10 @@ namespace FlexWiki.Web
 
                 return _applicationConfiguration.FederationConfiguration;
             }
+        }
+        public static string ForceWindowsAuthenticationCookieName
+        {
+            get { return "FlexWikiForceWindowsAuth"; }
         }
         public LinkMaker LinkMaker
         {

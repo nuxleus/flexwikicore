@@ -51,7 +51,21 @@ namespace FlexWiki.Web
 
 		protected void Application_BeginRequest(Object sender, EventArgs e)
 		{
-
+            // Because browsers don't automatically authenticate every request, we need
+            // to force Windows authentication if the login page has told us that the 
+            // user has logged in via Windows auth. 
+            HttpCookie cookie = Request.Cookies[FlexWikiWebApplication.ForceWindowsAuthenticationCookieName]; 
+            if (cookie != null && cookie.Value == "true")
+            {
+                if (string.IsNullOrEmpty(Request.ServerVariables["LOGON_USER"]))
+                {
+                    Response.Clear();
+                    Response.StatusCode = 401;
+                    Response.StatusDescription = "Unauthorized";
+                    Response.Flush();
+                    Response.End();
+                }
+            }
 		}
 
 		protected void Application_EndRequest(Object sender, EventArgs e)

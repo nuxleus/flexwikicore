@@ -45,7 +45,24 @@ namespace FlexWiki.Web
                     FormsAuthentication.SignOut();
                     LogOffMessage.Text = Context.User.Identity.Name + " has logged off";
                 }
-                else
+                else if (section.Mode == AuthenticationMode.Windows)
+                {
+                    HttpCookie cookie = Response.Cookies[FlexWikiWebApplication.ForceWindowsAuthenticationCookieName];
+                    if (cookie != null)
+                    {
+                        cookie.Value = ""; 
+                    }
+                    
+                    // Attempt to close at least one of the connections, as that should force logoff to occur on that
+                    // connection. Other connections may remain logged in, however. 
+                    Response.Headers["Connection"] = "Close"; 
+
+                    LogOffMessage.Text = @"It is not possible to completely log off when using Windows authentication, 
+which this site is currently configured to use. 
+When you return to FlexWiki, you might still show up as logged in, or you might intermittantly show up as logged in/out. 
+Closing your browser will complete the logoff process."; 
+                }
+                else 
                 {
                     LogOffMessage.Text = "Unable to explicitly log off when authentication mode is " + section.Mode.ToString();
                 }

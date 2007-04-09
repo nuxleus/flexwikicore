@@ -63,7 +63,13 @@ namespace FlexWiki.Web
                     string user = Request.ServerVariables["LOGON_USER"];
                     if (string.IsNullOrEmpty(user))
                     {
-                        Response.Clear(); 
+                        // The browser won't automatically resubmit the authentication on 
+                        // subsequent requests, so we need to force it by manually returning
+                        // a 401 on every request that isn't authenticated. We do so by 
+                        // setting this cookie, which is detected in Application_BeginRequest
+                        Response.Clear();
+                        Response.Cookies.Add(
+                            new HttpCookie(FlexWikiWebApplication.ForceWindowsAuthenticationCookieName, "true")); 
                         Response.StatusCode = 401;
                         Response.StatusDescription = "Unauthorized";
                         Response.End();
