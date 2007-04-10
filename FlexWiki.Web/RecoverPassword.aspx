@@ -15,7 +15,7 @@
             <SuccessTemplate>
                 Your password has been sent to you. <br />
                 <asp:HyperLink runat="server" ID="LoginLink">Return to login</asp:HyperLink><br />
-                <asp:HyperLink runat="server" ID="ReturnLink">Return to FlexWiki</asp:HyperLink>
+                <asp:HyperLink runat="server" ID="ReturnLink">Return to the wiki</asp:HyperLink>
             </SuccessTemplate>
             <InstructionTextStyle Font-Italic="True" ForeColor="Black" />
             <SuccessTextStyle Font-Bold="True" ForeColor="#1C5E55" />

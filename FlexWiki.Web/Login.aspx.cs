@@ -81,7 +81,7 @@ namespace FlexWiki.Web
                         Login1.Visible = false;
                         ReturnLink.Visible = true;
                         ReturnLink.NavigateUrl = Request.QueryString["ReturnURL"];
-                        ReturnLink.Text = string.Format("You have been logged in as {0}. Click here to return to FlexWiki.",
+                        ReturnLink.Text = string.Format("You have been logged in as {0}. Click here to return to the wiki.",
                             user); 
 
                         //Response.Redirect(Request.QueryString["ReturnURL"]); 

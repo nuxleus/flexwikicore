@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -99,7 +100,8 @@ namespace FlexWiki.Web
 
                 LinkMaker lm = TheLinkMaker;
 
-                Hashtable searchTopics = new Hashtable();
+                Dictionary<NamespaceManager, QualifiedTopicNameCollection> searchTopics = 
+                    new Dictionary<NamespaceManager,QualifiedTopicNameCollection>();
                 if (preferredNamespace == All)
                 {
                     foreach (string ns in uniqueNamespaces)
@@ -120,33 +122,38 @@ namespace FlexWiki.Web
                 {
                     string ns = storeManager.Namespace;
                     bool header = false;
-                    foreach (QualifiedTopicName topic in (QualifiedTopicNameCollection) (searchTopics[storeManager]))
+                    foreach (QualifiedTopicName topic in searchTopics[storeManager])
                     {
-                        string s = Federation.Read(topic);
-                        string bodyWithTitle = topic.ToString() + s;
-
-                        if (Regex.IsMatch(bodyWithTitle, search, RegexOptions.IgnoreCase))
+                        // Skip topics we don't have read permission for - they don't exist as far as search
+                        // is concerned.
+                        if (Federation.HasPermission(topic.AsQualifiedTopicRevision(), TopicPermission.Read))
                         {
-                            if (!header && searchTopics.Count > 1)
-                                Response.Write("<h1>" + ns + "</h1>");
-                            header = true;
+                            string s = Federation.Read(topic);
+                            string bodyWithTitle = topic.ToString() + s;
 
-                            Response.Write("<div class='searchHitHead'>");
-                            Response.Write(@"<a title=""" + topic.DottedName + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
-                            Response.Write(topic.LocalName);
-                            Response.Write("</a>");
-                            Response.Write("</div>");
-
-                            string[] lines = s.Split(new char[] { '\n' });
-                            Response.Write("<div class='searchHitBody'>");
-                            foreach (string each in lines)
+                            if (Regex.IsMatch(bodyWithTitle, search, RegexOptions.IgnoreCase))
                             {
-                                if (Regex.IsMatch(each, search, RegexOptions.IgnoreCase))
+                                if (!header && searchTopics.Count > 1)
+                                    Response.Write("<h1>" + ns + "</h1>");
+                                header = true;
+
+                                Response.Write("<div class='searchHitHead'>");
+                                Response.Write(@"<a title=""" + topic.DottedName + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
+                                Response.Write(topic.LocalName);
+                                Response.Write("</a>");
+                                Response.Write("</div>");
+
+                                string[] lines = s.Split(new char[] { '\n' });
+                                Response.Write("<div class='searchHitBody'>");
+                                foreach (string each in lines)
                                 {
-                                    Response.Write(Formatter.FormattedString(topic.AsQualifiedTopicRevision(), each, OutputFormat.HTML, storeManager, TheLinkMaker));
+                                    if (Regex.IsMatch(each, search, RegexOptions.IgnoreCase))
+                                    {
+                                        Response.Write(Formatter.FormattedString(topic.AsQualifiedTopicRevision(), each, OutputFormat.HTML, storeManager, TheLinkMaker));
+                                    }
                                 }
+                                Response.Write("</div>");
                             }
-                            Response.Write("</div>");
                         }
                     }
                 }

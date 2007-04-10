@@ -59,7 +59,7 @@ namespace FlexWiki.Web
 
                     LogOffMessage.Text = @"It is not possible to completely log off when using Windows authentication, 
 which this site is currently configured to use. 
-When you return to FlexWiki, you might still show up as logged in, or you might intermittantly show up as logged in/out. 
+When you return to the wiki, you might still show up as logged in, or you might intermittantly show up as logged in/out. 
 Closing your browser will complete the logoff process."; 
                 }
                 else 

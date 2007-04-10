@@ -22,7 +22,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <asp:HyperLink ID="ReturnLink" runat="server">Return to FlexWiki</asp:HyperLink>
+                        <asp:HyperLink ID="ReturnLink" runat="server">Return to the wiki.</asp:HyperLink>
                     </td>
                 </tr>
             </tbody>
