@@ -42,6 +42,8 @@ namespace FlexWiki.Web.Admin
    
 		private void ShowMain()
 		{
+            UIResponse.Write("Updates not currently implemented."); 
+
 			UIResponse.Write("<table cellpadding='2' cellspacing='0' border='0'>");
 			for (int index = this.UpdateMonitor.Updates.Count - 1; index >= 0; index--)
 			{

@@ -52,100 +52,101 @@ namespace FlexWiki.Web.Admin
    
 		protected void ShowMain()
 		{
-			string clear = Request.QueryString["clear"];
-			if (clear == "1")
-			{
-				CacheManager.Clear();
-				Response.Redirect("ShowCache.aspx");
-				return;
-			}
+            Response.Write("Caching is not currently implemented."); 
+            //string clear = Request.QueryString["clear"];
+            //if (clear == "1")
+            //{
+            //    CacheManager.Clear();
+            //    Response.Redirect("ShowCache.aspx");
+            //    return;
+            //}
 
-			string key = Request.QueryString["key"];
-			if (key == null)
-				ShowKeys();
-			else
-				ShowKey(key);
+            //string key = Request.QueryString["key"];
+            //if (key == null)
+            //    ShowKeys();
+            //else
+            //    ShowKey(key);
 		}
 
-		private void WriteFilterScript()
-		{
-			Response.Write("<script language='javascript'>");
-			Response.Write(@"
+//        private void WriteFilterScript()
+//        {
+//            Response.Write("<script language='javascript'>");
+//            Response.Write(@"
+//
+//function FilterChanged()
+//{
+//	var filterControl = document.getElementById('Filter');
+//	var filter = filterControl.value;
+//	var id = 0;
+//	while (true)
+//	{
+//		var headerPrefix = '" + headerPrefix + @"' + id;
+//		var valuePrefix = '" + valuePrefix + @"' + id;
+//
+//		var valueElement = document.getElementById(valuePrefix);
+//		if (valueElement == null)
+//			break;
+//		var show = true;
+//		var test = """" + valueElement.innerText.toUpperCase();
+//		if (filter != """" && test.indexOf(filter.toUpperCase()) < 0)
+//			show = false;
+//		var styleString = show ? 'block' : 'none';
+//
+//		var headerPrefixElement = document.getElementById(headerPrefix);
+//		headerPrefixElement.style.display = styleString;
+//		id++;
+//	}
+//}
+//
+//");
 
-function FilterChanged()
-{
-	var filterControl = document.getElementById('Filter');
-	var filter = filterControl.value;
-	var id = 0;
-	while (true)
-	{
-		var headerPrefix = '" + headerPrefix + @"' + id;
-		var valuePrefix = '" + valuePrefix + @"' + id;
+//            Response.Write("</script>");
+//        }
 
-		var valueElement = document.getElementById(valuePrefix);
-		if (valueElement == null)
-			break;
-		var show = true;
-		var test = """" + valueElement.innerText.toUpperCase();
-		if (filter != """" && test.indexOf(filter.toUpperCase()) < 0)
-			show = false;
-		var styleString = show ? 'block' : 'none';
+//        private const string headerPrefix = "Row";
+//        private const string valuePrefix = "RowData";
 
-		var headerPrefixElement = document.getElementById(headerPrefix);
-		headerPrefixElement.style.display = styleString;
-		id++;
-	}
-}
+//        private void ShowKeys()
+//        {
+//            WriteFilterScript();
+//            Response.Write("<p>Search for key: <input id='Filter' onkeyup='javascript:FilterChanged()' length=30/></p>");
+//            int id = 0;
+//            ArrayList keys = new ArrayList();
+//            keys.AddRange(CacheManager.Keys);
+//            keys.Sort();
+//            foreach (string key in keys)
+//            {
+//                Response.Write("<div  id='" + headerPrefix + id + "' class='CacheKey'><a href='ShowCache.aspx?key=" + key + "'><span id='" + valuePrefix + id + "'>" + key + "</span></a></div>");
+//                id++;
+//            }
+//        }
 
-");
-
-			Response.Write("</script>");
-		}
-
-		private const string headerPrefix = "Row";
-		private const string valuePrefix = "RowData";
-
-		private void ShowKeys()
-		{
-			WriteFilterScript();
-			Response.Write("<p>Search for key: <input id='Filter' onkeyup='javascript:FilterChanged()' length=30/></p>");
-			int id = 0;
-			ArrayList keys = new ArrayList();
-			keys.AddRange(CacheManager.Keys);
-			keys.Sort();
-			foreach (string key in keys)
-			{
-				Response.Write("<div  id='" + headerPrefix + id + "' class='CacheKey'><a href='ShowCache.aspx?key=" + key + "'><span id='" + valuePrefix + id + "'>" + key + "</span></a></div>");
-				id++;
-			}
-		}
-
-		private void ShowKey(string key)
-		{
-			Response.Write("<h2>" + EscapeHTML(key) + "</h2>");
-			Response.Write("<h3>Cache Rule:</h3>");
-			CacheRule rule = CacheManager.GetRuleForKey(key);
-			if (rule != null)
-				WriteLineNicely(Response.Output, rule);
-			Response.Write("<h3>Value</h3>");
-			object shortValue = CacheManager[key];
-			if (shortValue != null)
-			{
-				if (shortValue is IEnumerable && !(shortValue is string))
-				{
-					Response.Output.WriteLine("<table width='100%' border=1 cellpadding=3 cellspacing=0>");
-					foreach (object each in (IEnumerable)shortValue)
-					{
-						Response.Output.WriteLine("<tr><td valign='top'>");
-						WriteLineNicely(Response.Output, each);
-						Response.Output.WriteLine("</tr>");
-					}
-					Response.Output.WriteLine("</table>");
-				}
-				else
-					WriteLineNicely(Response.Output, shortValue);
-			}
-		}
+//        private void ShowKey(string key)
+//        {
+//            Response.Write("<h2>" + EscapeHTML(key) + "</h2>");
+//            Response.Write("<h3>Cache Rule:</h3>");
+//            CacheRule rule = CacheManager.GetRuleForKey(key);
+//            if (rule != null)
+//                WriteLineNicely(Response.Output, rule);
+//            Response.Write("<h3>Value</h3>");
+//            object shortValue = CacheManager[key];
+//            if (shortValue != null)
+//            {
+//                if (shortValue is IEnumerable && !(shortValue is string))
+//                {
+//                    Response.Output.WriteLine("<table width='100%' border=1 cellpadding=3 cellspacing=0>");
+//                    foreach (object each in (IEnumerable)shortValue)
+//                    {
+//                        Response.Output.WriteLine("<tr><td valign='top'>");
+//                        WriteLineNicely(Response.Output, each);
+//                        Response.Output.WriteLine("</tr>");
+//                    }
+//                    Response.Output.WriteLine("</table>");
+//                }
+//                else
+//                    WriteLineNicely(Response.Output, shortValue);
+//            }
+//        }
 
 
 		#region Web Form Designer generated code

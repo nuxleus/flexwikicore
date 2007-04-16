@@ -126,7 +126,12 @@
     <Content Include="admin\Newsletter.aspx">
       <SubType>Form</SubType>
     </Content>
-    <Content Include="admin\Providers.aspx" />
+    <Content Include="admin\Providers.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\ShowCache.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="admin\ShowUpdates.aspx" />
     <Content Include="admin\UpgradeConfigFile.aspx" />
     <Content Include="admin\Users.aspx" />
@@ -190,6 +195,9 @@
     <Content Include="emoticons\whatchutalkingabout_smile.gif" />
     <Content Include="emoticons\wilted_rose.gif" />
     <Content Include="emoticons\wink_smile.gif" />
+    <Compile Include="admin\ShowCache.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="admin\Users.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -492,6 +500,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="admin\Providers.aspx.resx">
       <DependentUpon>Providers.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\ShowCache.aspx.resx">
+      <DependentUpon>ShowCache.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="admin\ShowUpdates.aspx.resx">
       <DependentUpon>ShowUpdates.aspx.cs</DependentUpon>

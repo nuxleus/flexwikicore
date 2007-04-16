@@ -147,7 +147,7 @@ namespace FlexWiki
         {
             string author = "";
             FileSystemStore store = new FileSystemStore();
-            NamespaceManager manager = aFed.RegisterNamespace(store, Namespace);
+            NamespaceManager manager = aFed.RegisterNamespace(store, Namespace, _parameters);
             manager.WriteTopic(NamespaceManager.DefinitionTopicLocalName, "");
             manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Contact", Contact, false, author);
             manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Title", Title, false, author);

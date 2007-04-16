@@ -57,32 +57,28 @@ namespace FlexWiki.Web.Admin
 			if (CheckForConfigurationFormatUpgrade())
 				return;
 
-            //string config = ConfigurationManager.AppSettings["FederationNamespaceMapFile"];
-            //string mappedConfig = (config == null ? null : MapPath(config));
-            //ConfigurationChecker checker = new ConfigurationChecker(
-            //    config,
-            //    mappedConfig);
+            ConfigurationChecker checker = new ConfigurationChecker();
 
-            //checker.Check();
-            //checker.WriteStoplightTo(UIResponse);
+            checker.Check();
+            checker.WriteStoplightTo(UIResponse);
 
 
-            //UIResponse.WriteDivider();
+            UIResponse.WriteDivider();
 
-            //Federation aFederation = null;
-            //try
-            //{
-            //    FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker("")); 
-            //    aFederation = new Federation(application);
-            //}
-            //catch (Exception)
-            //{
-            //}
+            Federation aFederation = null;
+            try
+            {
+                FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker(""));
+                aFederation = new Federation(application);
+            }
+            catch (Exception)
+            {
+            }
 
-            //if (aFederation != null)
-            //    ShowFederationInfo(aFederation);
-
-            throw new NotImplementedException("Change later when implementing admin portion of website."); 
+            if (aFederation != null)
+            {
+                ShowFederationInfo(aFederation);
+            }
 
         }
 

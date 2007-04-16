@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml; 
 using System.Xml.Serialization;
 
 using log4net;
@@ -26,6 +27,8 @@ namespace FlexWiki.Web
         {
         }
 
+        // This one is only used by the BuildVerificationTests and should go away
+        // at some point. Don't use it. 
         public FlexWikiWebApplication(string configPath, LinkMaker linkMaker)
             :
             this(configPath, linkMaker, OutputFormat.HTML)
@@ -60,6 +63,10 @@ namespace FlexWiki.Web
             {
                 return _applicationConfiguration;
             }
+        }
+        public string ApplicationConfigurationPath
+        {
+            get { return GetFlexWikiConfigurationPath(); }
         }
         public FederationConfiguration FederationConfiguration
         {
@@ -152,7 +159,17 @@ namespace FlexWiki.Web
         }
         public void WriteFederationConfiguration()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            LogInfo(this.GetType().ToString(), "Writing updated wiki configuration to: " + _configPath);
+            XmlSerializer serializer = new XmlSerializer(typeof(FlexWikiWebApplicationConfiguration));
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.IndentChars = "  ";
+            settings.Indent = true;
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(_configPath, settings))
+            {
+                serializer.Serialize(xmlWriter, _applicationConfiguration); 
+                xmlWriter.Close(); 
+            }
         }
 
         private static string GetFlexWikiConfigurationPath()

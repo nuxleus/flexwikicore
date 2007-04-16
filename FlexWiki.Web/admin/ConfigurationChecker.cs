@@ -11,14 +11,18 @@
 #endregion
 
 using System;
-using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Configuration;
+using System.IO;
+using System.Reflection;
+using System.Xml;
+using System.Xml.Serialization; 
 
 using FlexWiki;
 using FlexWiki.Formatting;
+using FlexWiki.Security; 
 using FlexWiki.Web;
 
 
@@ -31,16 +35,12 @@ namespace FlexWiki.Web.Admin
     {
         // Fields
 
-        private string _federationNamespaceMapLogicalPath;
-        private string _federationNamespaceMap;
-        private readonly ArrayList _results = new ArrayList();
+        private readonly List<Result> _results = new List<Result>();
 
         // Constructors
 
-        public ConfigurationChecker(string logicalPath, string physicalPath)
+        public ConfigurationChecker()
         {
-            _federationNamespaceMapLogicalPath = logicalPath;
-            _federationNamespaceMap = physicalPath;
         }
 
         // Properties
@@ -53,14 +53,26 @@ namespace FlexWiki.Web.Admin
                 foreach (Result each in Results)
                 {
                     if ((answer == Level.OK || answer == Level.Warning) && each.ResultLevel == Level.Error)
+                    {
                         answer = each.ResultLevel;
+                    }
                     if ((answer == Level.OK) && each.ResultLevel == Level.Warning)
+                    {
                         answer = each.ResultLevel;
+                    }
                 }
                 return answer;
             }
         }
-        public IList Results
+        public string ApplicationConfigurationPath
+        {
+            get
+            {
+                FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker("dummy://here"));
+                return application.ApplicationConfigurationPath; 
+            }
+        }
+        public IList<Result> Results
         {
             get
             {
@@ -73,25 +85,33 @@ namespace FlexWiki.Web.Admin
         public void Check()
         {
             _results.Clear();
-            FederationConfiguration config = null;
+            FlexWikiWebApplication application = null;
+            try
+            {
+                application = new FlexWikiWebApplication(
+                    new LinkMaker("http://dummy"));
+            }
+            catch (Exception e)
+            {
+                Result r = new Result("Error initializing the application", Level.Error);
+                r.Writer.WritePara("The error was: " + HtmlWriter.Escape(e.Message));
+                AddResult(r); 
+            }
+
+            if (application == null)
+            {
+                return; 
+            }
+
+            FederationConfiguration config = application.FederationConfiguration;
 
             CheckPluginTypes();
-
-            if (CheckConfigurationFileSetting())
-            {
-                if (CheckConfigurationFileExists())
-                {
-                    config = CheckConfigurationFileCanBeRead();
-                }
-            }
 
             if (config != null)
             {
                 CheckProviders(config);
                 try
                 {
-                    FlexWikiWebApplication application = new FlexWikiWebApplication(_federationNamespaceMap, 
-                        new LinkMaker("http://dummy"), OutputFormat.Testing);
                     Federation aFed = new Federation(application);
                     ValidateDefaultNamespace(aFed);
                     ValidateWritableNamespaces(aFed);
@@ -191,76 +211,6 @@ namespace FlexWiki.Web.Admin
         //////////
         ///Make sure we can read the configuration file in
         ///
-        private FederationConfiguration CheckConfigurationFileCanBeRead()
-        {
-            FederationConfiguration config = null;
-            try
-            {
-                FlexWikiWebApplication application = new FlexWikiWebApplication(_federationNamespaceMap, null);
-                config = application.FederationConfiguration; 
-            }
-            catch (Exception ex)
-            {
-                Result r = new Result("Missing configuration file", Level.Error);
-                r.Writer.Write(@"<p>You specified a federation configuration file, but an error occurred while reading it.  The federation
-configuration file is stored here: <b>" + HtmlWriter.Escape(_federationNamespaceMap) + @"</b> and and the following error occurred while reading the file:");
-                r.Writer.Write("<p><blockquote>" + HtmlWriter.Escape(ex.ToString()) + "</blockquote>");
-                r.Writer.Write(@"<p>Here is an example of a valid federation configuration file:");
-                r.Writer.Write(ExampleConfig());
-                AddResult(r);
-                return null;
-            }
-            OK("Federation configuration file successfully read");
-            return config;
-        }
-        private bool CheckConfigurationFileExists()
-        {
-            if (!File.Exists(_federationNamespaceMap))
-            {
-                Result r = new Result("Missing configuration file", Level.Error);
-                r.Writer.Write(@"<p>You specified a federation configuration file, but it can't be found.  Given your current settings,
-this file must be present at <b>" + HtmlWriter.Escape(_federationNamespaceMap) + @"</b> and be a valid federation configuration file.
-<p>Here is an example of a valid federation configuration file:");
-                r.Writer.Write(ExampleConfig());
-                AddResult(r);
-                return false;
-            }
-            OK("Federation configuration file found at: " + HtmlWriter.Escape(_federationNamespaceMap));
-
-            Result r2 = new Result("Federation configuration", Level.Info);
-            r2.Writer.Write("<pre>");
-            using (TextReader sr = new StreamReader(_federationNamespaceMap))
-            {
-                string s = sr.ReadToEnd();
-                r2.Writer.Write(HtmlWriter.Escape(s));
-            }
-            r2.Writer.Write("</pre>");
-            AddResult(r2);
-            return true;
-        }
-        private bool CheckConfigurationFileSetting()
-        {
-            ///////////
-            ///Make sure there is a namespace file pointed to by the configuration settings
-            if (_federationNamespaceMapLogicalPath == null)
-            {
-                Result r = new Result("Missing configuration file setting", Level.Error);
-                r.Writer.Write(@"<p>You are missing the setting for <b>FederationNamespaceMapFile</b> in your <b>web.config</b> file.
-	<p>Here is an example of a valid web.config file:");
-                r.Writer.Write(WriteExampleWebConfig());
-                r.Writer.Write(@"<p>Note that some of the authentication settings may vary for your site.  This example is configured for Windows network authentication.  
-	<p></b>FederationNamespaceMapFile</b> must be set to the logical web path of a valid FlexWiki federation configuration file.  Here 
-	is an example of a valid federation configuration file:");
-                r.Writer.Write(ExampleConfig());
-                AddResult(r);
-                return false;
-            }
-            else
-            {
-                OK("Federation configuration file identified in web.config", UIResponse.Escape(_federationNamespaceMapLogicalPath));
-                return true;
-            }
-        }
         private void CheckPluginTypes()
         {
             FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker(""));
@@ -379,6 +329,61 @@ this file must be present at <b>" + HtmlWriter.Escape(_federationNamespaceMap) +
                 // TODO: Check for per-provider parms
             }
         }
+
+        private string ExampleConfig()
+        {
+            HtmlStringWriter w = new HtmlStringWriter();
+            w.Write("<blockquote><pre>");
+            FlexWikiWebApplicationConfiguration appConfig = new FlexWikiWebApplicationConfiguration();
+            appConfig.FederationConfiguration = new FederationConfiguration();
+            appConfig.FederationConfiguration.AboutWikiString = "Text about the wiki here";
+            appConfig.FederationConfiguration.AuthorizationRules.Add(
+                new WikiAuthorizationRule(
+                    new SecurityRule(
+                        new SecurityRuleWho(SecurityRuleWhoType.GenericAll),
+                        SecurityRulePolarity.Allow,
+                        SecurityRuleScope.Wiki,
+                        SecurableAction.Edit,
+                        0)
+                )
+            );
+            appConfig.FederationConfiguration.AuthorizationRules.Add(
+                new WikiAuthorizationRule(
+                    new SecurityRule(
+                        new SecurityRuleWho(SecurityRuleWhoType.GenericAuthenticated),
+                        SecurityRulePolarity.Allow,
+                        SecurityRuleScope.Wiki,
+                        SecurableAction.ManageNamespace,
+                        1)
+                )
+            );
+            appConfig.FederationConfiguration.DefaultNamespace = "SampleNamespaceOne"; 
+            
+            NamespaceProviderDefinition sampleNamespaceOne = new NamespaceProviderDefinition(
+                typeof(FileSystemNamespaceProvider).Assembly.FullName, 
+                typeof(FileSystemNamespaceProvider).FullName, 
+                string.Empty);
+            sampleNamespaceOne.Parameters.Add(new NamespaceProviderParameter("Root", @".\SampleNamespaceOne"));
+
+            appConfig.FederationConfiguration.NamespaceMappings.Add(sampleNamespaceOne);
+
+            appConfig.FederationConfiguration.WikiTalkVersion = 1;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(FlexWikiWebApplicationConfiguration));
+            XmlWriterSettings writerSettings = new XmlWriterSettings();
+            writerSettings.Indent = true;
+            writerSettings.IndentChars = "  ";
+            StringWriter stringWriter = new StringWriter();
+            XmlWriter xmlWriter = XmlWriter.Create(stringWriter, writerSettings);
+
+            serializer.Serialize(xmlWriter, appConfig);
+
+            xmlWriter.Close(); 
+                        
+            w.Write(HtmlStringWriter.Escape(stringWriter.ToString()));
+            w.Write("</pre></blockquote>");
+            return w.ToString();
+        }
         private void Error(string title)
         {
             Error(title, null);
@@ -389,22 +394,6 @@ this file must be present at <b>" + HtmlWriter.Escape(_federationNamespaceMap) +
             if (htmlBody != null)
                 r.Writer.Write(htmlBody);
             AddResult(r);
-        }
-        private static string ExampleConfig()
-        {
-            HtmlStringWriter w = new HtmlStringWriter();
-            w.Write("<blockquote><pre>");
-            w.Write(HtmlStringWriter.Escape(@"<?xml version=""1.0"" encoding=""utf-8""?>
-<FederationConfiguration>
-  <DefaultNamespace>FlexWiki</DefaultNamespace>
-  <Namespaces>
-		<Namespace Id=""238f8774-a470-4f2e-93a0-07252e99fcb9"" Type=""FlexWiki.FileSystemStore"" Connection="".\wikibases\FlexWiki"" Namespace=""FlexWiki"" />
-		<Namespace Id=""890e8874-a470-4f2e-93a0-07252e99ed19"" Type=""FlexWiki.FileSystemStore"" Connection="".\wikibases\Some.Other.Namespace"" Namespace=""Some.Other.Namespace"" />
-  </Namespaces>
-  <About>This site is the home of FlexWiki, an experimental collaboration tool.</About>
-</FederationConfiguration>"));
-            w.Write("</pre></blockquote>");
-            return w.ToString();
         }
         private void Info(string title)
         {
@@ -419,7 +408,15 @@ this file must be present at <b>" + HtmlWriter.Escape(_federationNamespaceMap) +
         }
         private static IContentProvider ContentStore(NamespaceManager storeManager)
         {
-            throw new NotImplementedException("Deprecated because the configuration checker winds up with too much internal knowledge of the content provider chain.");
+            BuiltinTopicsProvider builtInTopicsProvider = 
+                (BuiltinTopicsProvider) storeManager.GetProvider(typeof(BuiltinTopicsProvider));
+            IContentProvider provider = builtInTopicsProvider.Next;
+            while (provider.Next != null)
+            {
+                provider = provider.Next; 
+            }
+
+            return provider; 
         }
         private void OK(string title)
         {
@@ -478,7 +475,7 @@ this file must be present at <b>" + HtmlWriter.Escape(_federationNamespaceMap) +
             if (defaultNamespace == null)
             {
                 Result r = new Result("Default namespace not specified", Level.Error);
-                r.Writer.Write(@"<p>You have not specified the default namespace for your federation in the federation configuration file (<b>" + HtmlWriter.Escape(_federationNamespaceMap) + @"</b>).
+                r.Writer.Write(@"<p>You have not specified the default namespace for your federation in the federation configuration file (<b>" + HtmlWriter.Escape(ApplicationConfigurationPath) + @"</b>).
 This setting must be present and must name a namespace listed in your configuration file. <p>Here is an example of a valid federation configuration file:");
                 r.Writer.Write(ExampleConfig());
                 AddResult(r);
@@ -488,7 +485,7 @@ This setting must be present and must name a namespace listed in your configurat
             if (aFed.NamespaceManagerForNamespace(defaultNamespace) == null)
             {
                 Result r = new Result("Default namespace not found", Level.Error);
-                r.Writer.Write(@"<p>You have specified the default namespace for your federation in the federation configuration file (<b>" + HtmlWriter.Escape(_federationNamespaceMap) + @"</b>),
+                r.Writer.Write(@"<p>You have specified the default namespace for your federation in the federation configuration file (<b>" + HtmlWriter.Escape(ApplicationConfigurationPath) + @"</b>),
 but the namespace you specified can not be found (either because it's not listed in the configuration file or it's not valid).
 <p>Here is an example of a valid federation configuration file:");
                 r.Writer.Write(ExampleConfig());

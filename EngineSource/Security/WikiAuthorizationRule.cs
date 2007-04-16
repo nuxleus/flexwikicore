@@ -66,11 +66,11 @@ namespace FlexWiki.Security
 
             string type = reader.GetAttribute("Type"); 
 
-            if (type == "Allow")
+            if (type == StringLiterals.Allow)
             {
                 _polarity = SecurityRulePolarity.Allow; 
             }
-            else if (type == "Deny")
+            else if (type == StringLiterals.Deny)
             {
                 _polarity = SecurityRulePolarity.Deny;
             }
@@ -88,19 +88,19 @@ namespace FlexWiki.Security
         {
             if (_polarity == SecurityRulePolarity.Allow)
             {
-                writer.WriteAttributeString("type", "allow"); 
+                writer.WriteAttributeString("Type", StringLiterals.Allow); 
             }
             else if (_polarity == SecurityRulePolarity.Deny)
             {
-                writer.WriteAttributeString("type", "deny");
+                writer.WriteAttributeString("Type", StringLiterals.Deny);
             }
             else
             {
                 throw new NotImplementedException("Unsupported security rule polarity"); 
             }
 
-            writer.WriteAttributeString("action", _action.ToString());
-            writer.WriteAttributeString("principal", _who.ToString());
+            writer.WriteAttributeString("Action", _action.ToString());
+            writer.WriteAttributeString("Principal", _who.ToString());
         }
     }
 }

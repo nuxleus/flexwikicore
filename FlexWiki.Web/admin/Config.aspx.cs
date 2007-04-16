@@ -78,17 +78,11 @@ namespace FlexWiki.Web.Admin
 			if (CheckForConfigurationFormatUpgrade())
 				return;
 
-            //string config = ConfigurationManager.AppSettings["FederationNamespaceMapFile"];
-            //ConfigurationChecker checker = new ConfigurationChecker(
-            //    config,
-            //    (config == null ? null : MapPath(config)));
-            
+            ConfigurationChecker checker = new ConfigurationChecker();
 
-            //checker.Check();
-            //checker.WriteStoplightTo(UIResponse);
-            //checker.WriteTo(UIResponse);
-
-            throw new NotImplementedException("Implement later when working on the admin portion of the website."); 
+            checker.Check();
+            checker.WriteStoplightTo(UIResponse);
+            checker.WriteTo(UIResponse);
 		}
 
 	}

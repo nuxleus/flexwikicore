@@ -68,7 +68,14 @@ aTopic|
       ""||""
     ]
   },
-  namespace.Description,
+  namespace.Description.IfNull
+  { 
+    """"
+  } 
+  Else
+  {
+    [ Newline, namespace.Description ]
+  },
   Newline, ""----"", Newline, 
   federation.About,
   Newline, ""----"", Newline,
