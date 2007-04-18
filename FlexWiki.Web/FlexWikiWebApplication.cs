@@ -15,6 +15,7 @@ namespace FlexWiki.Web
 
         // Fields 
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
+        private readonly object _configFileLock = new object(); 
         private readonly string _configPath;
         private readonly LinkMaker _linkMaker;
         private readonly OutputFormat _outputFormat;
@@ -165,10 +166,15 @@ namespace FlexWiki.Web
             settings.IndentChars = "  ";
             settings.Indent = true;
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(_configPath, settings))
+            // In order to prevent the system from trying to read the file while 
+            // we're still writing it, we take a lock. 
+            lock (_configFileLock)
             {
-                serializer.Serialize(xmlWriter, _applicationConfiguration); 
-                xmlWriter.Close(); 
+                using (XmlWriter xmlWriter = XmlWriter.Create(_configPath, settings))
+                {
+                    serializer.Serialize(xmlWriter, _applicationConfiguration);
+                    xmlWriter.Close();
+                }
             }
         }
 
@@ -199,10 +205,17 @@ namespace FlexWiki.Web
         {
             LogInfo(this.GetType().ToString(), "Loading wiki configuration from: " + _configPath);
             XmlSerializer ser = new XmlSerializer(typeof(FlexWikiWebApplicationConfiguration));
-            using (FileStream fileStream = new FileStream(_configPath, FileMode.Open,
-                FileAccess.Read, FileShare.Read))
+
+            // In order to prevent the system from trying to write the file while 
+            // we're still reading it, we take a lock. 
+            lock (_configFileLock)
             {
-                _applicationConfiguration = (FlexWikiWebApplicationConfiguration)ser.Deserialize(fileStream);
+                using (FileStream fileStream = new FileStream(_configPath, FileMode.Open,
+                    FileAccess.Read, FileShare.Read))
+                {
+                    _applicationConfiguration = (FlexWikiWebApplicationConfiguration)ser.Deserialize(fileStream);
+                    fileStream.Close();
+                }
             }
             LogInfo(this.GetType().ToString(), "Successfully loaded wiki configuration from: " + _configPath);
         }
