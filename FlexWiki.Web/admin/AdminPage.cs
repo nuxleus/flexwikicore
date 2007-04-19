@@ -45,6 +45,7 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WriteMenuItem("Newsletter.aspx", "Newsletter Daemon", "Show information about the newsletter delivery daemon status");
 			UIResponse.WriteMenuItem("ShowCache.aspx", "Show Cache", "Show a list of everything in the cache (and, optionally, clear the cache)");
 			UIResponse.WriteMenuItem("ShowUpdates.aspx", "Show Updates", "Show recent changes to the federation");
+            UIResponse.WriteMenuItem("ReloadConfiguration.aspx", "Reread Configuration", "Reread the FlexWiki configuration file from disk."); 
 			UIResponse.WriteEndMenu();
 		}
 

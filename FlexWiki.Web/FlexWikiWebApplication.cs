@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml; 
+using System.Xml;
 using System.Xml.Serialization;
 
 using log4net;
@@ -15,7 +15,7 @@ namespace FlexWiki.Web
 
         // Fields 
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
-        private readonly object _configFileLock = new object(); 
+        private readonly object _configFileLock = new object();
         private readonly string _configPath;
         private readonly LinkMaker _linkMaker;
         private readonly OutputFormat _outputFormat;
@@ -44,7 +44,10 @@ namespace FlexWiki.Web
             _outputFormat = outputFormat;
 
             LoadConfiguration();
-            WatchConfiguration();
+            // We no longer watch the config file for changes because it was causing too 
+            // many problems. Now there's just a "reload configuration" button in 
+            // the admin app. 
+            //WatchConfiguration();
 
             _linkMaker.MakeAbsoluteUrls = _applicationConfiguration.MakeAbsoluteUrls;
 
@@ -98,6 +101,10 @@ namespace FlexWiki.Web
             get { return _timeProvider; }
         }
 
+        internal void ReloadConfiguration()
+        {
+            LoadConfiguration(); 
+        }
 
         // Methods
 
@@ -219,25 +226,29 @@ namespace FlexWiki.Web
             }
             LogInfo(this.GetType().ToString(), "Successfully loaded wiki configuration from: " + _configPath);
         }
-        private void WatchConfiguration()
-        {
-            FileSystemWatcher watcher = new FileSystemWatcher(Path.GetDirectoryName(_configPath));
-            watcher.Changed += new FileSystemEventHandler(WatcherChanged);
-            watcher.Created += new FileSystemEventHandler(WatcherChanged);
-            watcher.Deleted += new FileSystemEventHandler(WatcherChanged);
-            watcher.Renamed += new RenamedEventHandler(WatcherRenamed);
-            watcher.EnableRaisingEvents = true;
-        }
-        private void WatcherChanged(object sender, FileSystemEventArgs e)
-        {
-            LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
-            LoadConfiguration();
-        }
-        private void WatcherRenamed(object sender, RenamedEventArgs e)
-        {
-            LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
-            LoadConfiguration();
-        }
+        //private void WatchConfiguration()
+        //{
+        //    // FileSystemWatcher introduces so many problems I decided to punt it. Instead, there's a 
+        //    // "reload configuration" button in the admin app. 
+        //    FileSystemWatcher watcher = new FileSystemWatcher(Path.GetDirectoryName(_configPath),
+        //        Path.GetFileName(_configPath));
+        //    watcher.Changed += new FileSystemEventHandler(WatcherChanged);
+        //    watcher.Created += new FileSystemEventHandler(WatcherChanged);
+        //    watcher.Deleted += new FileSystemEventHandler(WatcherChanged);
+        //    watcher.Renamed += new RenamedEventHandler(WatcherRenamed);
+        //    watcher.EnableRaisingEvents = true;
+        //}
+        //private void WatcherChanged(object sender, FileSystemEventArgs e)
+        //{
+        //    LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
+        //    LoadConfiguration();
+        //}
+        //private void WatcherRenamed(object sender, RenamedEventArgs e)
+        //{
+        //    LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
+        //    LoadConfiguration();
+        //}
+
 
 
 
