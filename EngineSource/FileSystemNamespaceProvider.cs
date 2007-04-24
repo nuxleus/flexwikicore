@@ -147,6 +147,11 @@ namespace FlexWiki
         {
             string author = "";
             FileSystemStore store = new FileSystemStore();
+            // If no one has set the Root, we should set it to the default value. If we don't,
+            // then the default is the web application directory, which isn't right. 
+            // It won't hurt if someone has already set, since in that case DefaultedRoot is the 
+            // same as just Root. 
+            SetParameter(c_root, DefaultedRoot); 
             NamespaceManager manager = aFed.RegisterNamespace(store, Namespace, _parameters);
             manager.WriteTopic(NamespaceManager.DefinitionTopicLocalName, "");
             manager.SetTopicPropertyValue(NamespaceManager.DefinitionTopicLocalName, "Contact", Contact, false, author);
@@ -216,7 +221,7 @@ namespace FlexWiki
                 throw new Exception("Unknown parameter: " + parameter);
             }
 
-            _parameters.Add(new NamespaceProviderParameter(parameter, value));
+            _parameters.AddOrReplace(new NamespaceProviderParameter(parameter, value));
         }
         public IList ValidateAggregate(Federation aFed, bool isCreate)
         {

@@ -156,9 +156,9 @@ namespace FlexWiki.Web.Admin
 						foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
 						{
 							provider.SetParameter(each.ID, GetParm(each.ID));
-							provider.SavePersistentParametersToDefinition(def);
 						}
-						IList namespaces = null;
+                        provider.SavePersistentParametersToDefinition(def);
+                        IList namespaces = null;
 						if (isCreate)
 						{
 							Federation.Configuration.NamespaceMappings.Add(def);

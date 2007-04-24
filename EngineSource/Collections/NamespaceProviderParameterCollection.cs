@@ -29,6 +29,16 @@ namespace FlexWiki.Collections
             }
         }
 
+        public void AddOrReplace(NamespaceProviderParameter item)
+        {
+            if (this.Contains(item.Name))
+            {
+                this.Remove(this[item.Name]); 
+            }
+
+            this.Add(item); 
+        }
+
         protected override string GetKeyForItem(NamespaceProviderParameter item)
         {
             return item.Name; 
