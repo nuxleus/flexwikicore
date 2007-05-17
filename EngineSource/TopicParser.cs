@@ -219,10 +219,17 @@ namespace FlexWiki
                             rawValueBuilder.Append(endDelimiter); 
                         }
 
-                        TopicProperty property = new TopicProperty(currentProperty);
+                        TopicProperty property;
+                        if (properties.Contains(currentProperty))
+                        {
+                            property = properties[currentProperty];
+                        }
+                        else
+                        {
+                            property = new TopicProperty(currentProperty);
+                            properties.Add(property);
+                        }
                         property.Values.Add(new TopicPropertyValue(rawValueBuilder.ToString()));
-
-                        properties.Add(property);
                     }
                     else
                     {

@@ -143,6 +143,34 @@ second line
         }
 
         [Test]
+        public void ParseMultilinePropertyMultipleValues()
+        {
+            string input = @"Name:[value
+value
+]
+Name:[
+value
+value
+value
+]
+Name:[
+value
+value
+value
+]"; 
+            ParsedTopic parsedTopic = TopicParser.Parse(input);
+
+            Assert.AreEqual(1, parsedTopic.Properties.Count, "Checking that there's only one property.");
+            Assert.AreEqual("Name", parsedTopic.Properties[0].Name, "Checking that the property name is correct.");
+            Assert.AreEqual(3, parsedTopic.Properties[0].Values.Count, "Checking that the property has three values.");
+            Assert.AreEqual(@"value
+value
+value
+", parsedTopic.Properties[0].Values[1].RawValue,
+                "Checking that the second property value is correct."); 
+        }
+
+        [Test]
         public void ParseMultilinePropertyWithBraces()
         {
             ParsedTopic parsedTopic = TopicParser.Parse(@"Multiline:{
