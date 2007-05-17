@@ -71,6 +71,63 @@ namespace FlexWiki
                 return s_multilinePropertyRegex;
             }
         }
+        public static Regex PropertyRegex
+        {
+            get
+            {
+                return s_propertyRegex;
+            }
+        }
+
+        public static int CountExternalLinks(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return 0; 
+            }
+
+            int index = 0;
+            int countHttp = 0; 
+            int countHttps = 0; 
+
+            while (true)
+            {
+                int nextHttp = text.IndexOf("http://", index, StringComparison.InvariantCultureIgnoreCase);
+                int nextHttps = text.IndexOf("https://", index, StringComparison.InvariantCultureIgnoreCase); 
+ 
+                if ((nextHttp == -1) && (nextHttps == -1))
+                {
+                    break; 
+                }
+                
+                if (nextHttp == -1)
+                {
+                    nextHttp = text.Length; 
+                }
+
+                if (nextHttps == -1)
+                {
+                    nextHttps = text.Length; 
+                }
+                
+                if (nextHttp < nextHttps)
+                {
+                    ++countHttp; 
+                    index = nextHttp + "http://".Length; 
+                }
+                else if (nextHttps < nextHttp)
+                {
+                    ++countHttps; 
+                    index = nextHttps + "https://".Length; 
+                }
+                else
+                {
+                    throw new Exception("The values for nextHttps and nextHttp should never be equal. Unexpected situation."); 
+                }
+            }
+
+            return countHttp + countHttps; 
+        }
         public static ParsedTopic Parse(string text)
         {
             TopicPropertyCollection properties = ParseProperties(text);
@@ -84,13 +141,6 @@ namespace FlexWiki
         public static ParsedTopic Parse(TextReader textReader)
         {
             return Parse(textReader.ReadToEnd());
-        }
-        public static Regex PropertyRegex
-        {
-            get
-            {
-                return s_propertyRegex;
-            }
         }
         public static IList<string> SplitTopicPropertyValue(string value)
         {
@@ -281,8 +331,6 @@ namespace FlexWiki
 
             return referencedTopics;
         }
-
-
 
     }
 }

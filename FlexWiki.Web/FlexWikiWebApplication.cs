@@ -63,10 +63,7 @@ namespace FlexWiki.Web
 
         public FlexWikiWebApplicationConfiguration ApplicationConfiguration
         {
-            get
-            {
-                return _applicationConfiguration;
-            }
+            get { return _applicationConfiguration; }
         }
         public string ApplicationConfigurationPath
         {

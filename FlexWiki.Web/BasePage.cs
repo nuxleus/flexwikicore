@@ -31,7 +31,6 @@ namespace FlexWiki.Web
     /// </summary>   
     public class BasePage : System.Web.UI.Page
     {
-        private static string s_federationCacheKey = "---FEDERATION---";
         private static string s_newsletterDaemonCacheKey = "---NEWSLETTERDAEMON---";
 
         private LinkMaker _linkMaker;
@@ -101,7 +100,7 @@ namespace FlexWiki.Web
         {
             get
             {
-                return (Federation) (Application[s_federationCacheKey]);
+                return (Federation) (Application[Constants.FederationCacheKey]);
             }
         }
         protected FlexWikiWebApplication FlexWikiWebApplication
@@ -632,7 +631,7 @@ namespace FlexWiki.Web
         }
         private void SetFederation(Federation fed)
         {
-            Application[s_federationCacheKey] = fed;
+            Application[Constants.FederationCacheKey] = fed;
         }
         private void SetupUpdateMonitoring()
         {

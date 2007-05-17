@@ -11,6 +11,8 @@ namespace FlexWiki.Web
     {
         // Fields
 
+        private string _captchaKey;
+        private int _captchaLinkThreshold; 
         private string _defaultNamespaceProviderForNamespaceCreation;
         private bool _disableRenameFixup; 
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
@@ -20,6 +22,7 @@ namespace FlexWiki.Web
         private bool _makeAbsoluteUrls;
         private NewsletterConfiguration _newsletterConfiguration; 
         private string _overrideStylesheet;
+        private CaptchaRequired _requireCaptchaOnEdit; 
         private string _sendBanNotificationsToMailAddress;
         private string _sendNamespaceCreationMailFrom;
         private string _sendNamespaceCreationMailToCC;
@@ -29,6 +32,16 @@ namespace FlexWiki.Web
         
         // Properties
 
+        public string CaptchaKey
+        {
+            get { return _captchaKey; }
+            set { _captchaKey = value; }
+        }
+        public int CaptchaLinkThreshold
+        {
+            get { return _captchaLinkThreshold; }
+            set { _captchaLinkThreshold = value; }
+        }
         public string DefaultNamespaceProviderForNamespaceCreation
         {
             get { return _defaultNamespaceProviderForNamespaceCreation; }
@@ -73,6 +86,11 @@ namespace FlexWiki.Web
         {
             get { return _overrideStylesheet; }
             set { _overrideStylesheet = value; }
+        }
+        public CaptchaRequired RequireCaptchaOnEdit
+        {
+            get { return _requireCaptchaOnEdit; }
+            set { _requireCaptchaOnEdit = value; }
         }
         public string SendBanNotificationsToMailAddress
         {

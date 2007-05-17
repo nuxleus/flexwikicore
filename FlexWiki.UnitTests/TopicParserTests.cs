@@ -42,6 +42,36 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
+        public void CountExternalLinks()
+        {
+            Assert.AreEqual(0, TopicParser.CountExternalLinks(null),
+                "Checking that zero comes back when null is input.");
+            Assert.AreEqual(0, TopicParser.CountExternalLinks(string.Empty),
+                "Checking that zero comes back when an empty string is input.");
+
+            Assert.AreEqual(0, TopicParser.CountExternalLinks("something"),
+                "Checking that zero comes back when no links are present.");
+
+            Assert.AreEqual(1, TopicParser.CountExternalLinks("http://foo.bar/whatever"),
+                "Checking that one comes back when input consists of a single http link.");
+            Assert.AreEqual(1, TopicParser.CountExternalLinks("https://foo.bar/whatever"),
+                "Checking that one comes back when input consists of a single https link.");
+
+            Assert.AreEqual(1, TopicParser.CountExternalLinks("This is a link: http://whatever.com/bar. And some followup."), 
+                "Checking that one comes back with an embedded http link."); 
+            Assert.AreEqual(1, TopicParser.CountExternalLinks("This is a link: https://whatever.com/bar. And some followup."), 
+                "Checking that one comes back with an embedded https link.");
+
+            Assert.AreEqual(5, TopicParser.CountExternalLinks(@"Some text
+And then a link http://pluralsight.com/craig and some more text and another link https://www.microsoft.com
+And a bit more text and another link https://www.flexwiki.com and another link http://sourceforge.net and 
+maybe another link to end it http://www.microsoft.com."),
+               "Checking that the right number of links are identified for long input."); 
+                                                      ; 
+            
+        }
+
+        [Test]
         public void IsBehaviorPropertyDelimiter()
         {
             Assert.IsTrue(TopicParser.IsBehaviorPropertyDelimiter("{"),

@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AboutCaptcha.html" />
     <Content Include="AccessDenied.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -211,6 +212,10 @@
     </Compile>
     <Compile Include="Analysis\Island.cs" />
     <Compile Include="Analysis\Ocean.cs" />
+    <Compile Include="CaptchaImage.cs" />
+    <Compile Include="CaptchaImageHandler.cs" />
+    <Compile Include="CaptchaRequired.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="PageUtilities.cs" />
     <Compile Include="RegisterUser.aspx.cs">
       <DependentUpon>RegisterUser.aspx</DependentUpon>
@@ -282,6 +287,7 @@
     <Content Include="WikiEdit.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="WikiEdit.js" />
     <Content Include="xslt\rssToWikiList.xslt" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
@@ -450,6 +456,7 @@
       <DependentUpon>Search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Security.cs" />
     <Compile Include="ShowNewsletter.aspx.cs">
       <DependentUpon>ShowNewsletter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -623,6 +630,7 @@
       <DependentUpon>WikiEdit.aspx.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="CaptchaImage.ashx" />
     <None Include="flexwiki.config.template" />
     <None Include="log4net.config.template" />
     <None Include="flexwiki.config" />

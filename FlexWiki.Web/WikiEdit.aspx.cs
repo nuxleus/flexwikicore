@@ -35,37 +35,11 @@ namespace FlexWiki.Web
     /// </summary>
     public class WikiEdit : BasePage
     {
+        private QualifiedTopicRevision _TheTopic;
+
         private void Page_Load(object sender, System.EventArgs e)
         {
             // Put user code to initialize the page here
-        }
-
-        #region Web Form Designer generated code
-        override protected void OnInit(EventArgs e)
-        {
-            //
-            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
-            //
-            InitializeComponent();
-            base.OnInit(e);
-        }
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            this.Load += new System.EventHandler(this.Page_Load);
-        }
-        #endregion
-
-        private string PostedTopicText
-        {
-            get
-            {
-                return Request.Form["Text1"];
-            }
         }
 
         protected string ReturnTopic
@@ -82,55 +56,20 @@ namespace FlexWiki.Web
                 return answer;
             }
         }
-
-        private void ProcessPost()
-        {
-            ProcessSave(true);
-        }
-
-        private bool IsConflictingChange
+        protected QualifiedTopicRevision TheTopic
         {
             get
             {
-                if (!IsPost)
-                    return false;
-                string lastEdit = Request.Form["TopicLastWrite"];
-                if (lastEdit == "" || lastEdit == null)
-                    return false;	// it's probably new
-                DateTime currentStamp;
-
-                return Federation.TopicExists(TheTopic) &&
-                    !(currentStamp = Federation.GetTopicModificationTime(TheTopic)).ToString("s").Equals(lastEdit);
+                if (_TheTopic != null)
+                    return _TheTopic;
+                string topic;
+                if (IsPost)
+                    topic = Request.Form["Topic"];
+                else
+                    topic = Request.QueryString["topic"];
+                _TheTopic = new QualifiedTopicRevision(topic);
+                return _TheTopic;
             }
-        }
-
-        private void LogBannedAttempt()
-        {
-            string to = FlexWikiWebApplication.ApplicationConfiguration.SendBanNotificationsToMailAddress;
-            if (to == null || to == "")
-            {
-                return;
-            }
-
-            HtmlStringWriter w = new HtmlStringWriter();
-            w.WritePara(String.Format("{0} attempted to post a change with banned content to the topic {1} on the FlexWiki site at {2}.",
-                HtmlStringWriter.Escape(VisitorIdentityString), HtmlStringWriter.Escape(TheTopic.DottedName), HtmlStringWriter.Escape((Request.Url.Host))));
-            w.WritePara("Banned content includes:");
-            w.WriteStartUnorderedList();
-            string proposed = PostedTopicText;
-            foreach (string each in Federation.BlacklistedExternalLinkPrefixes)
-            {
-                if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
-                    w.WriteListItem(HtmlStringWriter.Escape(each));
-            }
-            w.WriteEndUnorderedList();
-
-            string from = "noreply_spam_report@" + Request.Url.Host;
-            MailMessage msg = new MailMessage(from, to);
-            msg.Subject = "Banned content post attempt from " + VisitorIdentityString;
-            msg.IsBodyHtml = true;
-            msg.Body = w.ToString();
-            SendMail(msg);
         }
 
         private bool IsBanned
@@ -146,15 +85,106 @@ namespace FlexWiki.Web
                 return false;
             }
         }
+        private bool IsCaptchaVerified
+        {
+            get
+            {
+                if (!IsCaptchaRequired())
+                {
+                    return true; 
+                }
+
+                string captchaContext = Request.Form["CaptchaContextSubmitted"];
+                string captchaEntered = Request.Form["CaptchaEnteredSubmitted"];
+
+                if (string.IsNullOrEmpty(captchaContext))
+                {
+                    FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                        "CAPTCHA context was empty or missing."); 
+                    return false; 
+                }
+
+                if (string.IsNullOrEmpty(captchaEntered))
+                {
+                    FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                        "CAPTCHA entered by user was empty or missing.");
+                    return false; 
+                }
+
+                string expectedValue = Security.Decrypt(captchaContext,
+                    FlexWikiWebApplication.ApplicationConfiguration.CaptchaKey);
+
+                if (captchaEntered.Equals(expectedValue, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                        "CAPTCHA value entered by user was verified.");
+                    return true;
+                }
+                else
+                {
+                    FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                        "User entered incorrect CAPTCHA value. Expected value was " + expectedValue + 
+                        " but user entered " + captchaEntered);
+                    return false;
+                }
+            }
+        }
+        private bool IsConflictingChange
+        {
+            get
+            {
+                if (!IsPost)
+                {
+                    return false;
+                }
+                string lastEdit = Request.Form["TopicLastWrite"];
+                if (lastEdit == "" || lastEdit == null)
+                {
+                    return false;	// it's probably new
+                }
+                DateTime currentStamp;
+
+                return Federation.TopicExists(TheTopic) &&
+                    !(currentStamp = Federation.GetTopicModificationTime(TheTopic)).ToString("s").Equals(lastEdit);
+            }
+        }
+        private bool IsWritable
+        {
+            get
+            {
+                if (!Federation.TopicExists(TheTopic))
+                    return true;	// assume we can create
+                return Federation.IsExistingTopicWritable(TheTopic);
+            }
+        }
+        private string OriginalTopicText
+        {
+            get
+            {
+                string text = string.Empty;
+                if (Federation.TopicExists(TheTopic))
+                {
+                    text = Federation.Read(TheTopic);
+                }
+
+                return text; 
+            }
+        }
+        private string PostedTopicText
+        {
+            get
+            {
+                return Request.Form["Text1"];
+            }
+        }
+
 
         protected void ProcessSave(bool back)
         {
             QualifiedTopicRevision returnTo = null;
 
             //Check Null edits
-            string oldContent = string.Empty;
-            if (Federation.TopicExists(TheTopic))
-                oldContent = Federation.Read(TheTopic);
+            string oldContent = OriginalTopicText;
 
             if (string.Compare(oldContent, PostedTopicText) != 0)
             {
@@ -178,63 +208,150 @@ namespace FlexWiki.Web
                     }
 
                     if (back && ReturnTopic != null)
+                    {
                         returnTo = new QualifiedTopicRevision(ReturnTopic);
+                    }
                 }
                 finally
                 {
                     if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicWrite) != null)
+                    {
                         Federation.GetPerformanceCounter(PerformanceCounterNames.TopicWrite).Increment();
+                    }
                     ev.Record();
                 }
+            }
+            else
+            {
+                string topic = "<<null>>";
+                if (TheTopic != null && TheTopic.DottedName != null)
+                {
+                    topic = TheTopic.DottedName; 
+                }
+                FlexWikiWebApplication.LogDebug(this.GetType().ToString(), "A null edit was submitted for topic " + topic); 
             }
 
             if (returnTo == null)
             {
+                FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                    "Redirecting to wiki root."); 
                 Response.Redirect(RootUrl);
             }
             else
             {
+                FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                    "Redirecting to: " + returnTo.DottedNameWithVersion);
                 Response.Redirect(TheLinkMaker.LinkToTopic(returnTo));
             }
 
         }
 
-        private QualifiedTopicRevision _TheTopic;
-        protected QualifiedTopicRevision TheTopic
-        {
-            get
-            {
-                if (_TheTopic != null)
-                    return _TheTopic;
-                string topic;
-                if (IsPost)
-                    topic = Request.Form["Topic"];
-                else
-                    topic = Request.QueryString["topic"];
-                _TheTopic = new QualifiedTopicRevision(topic);
-                return _TheTopic;
-            }
-        }
-
-        private bool IsWritable
-        {
-            get
-            {
-                if (!Federation.TopicExists(TheTopic))
-                    return true;	// assume we can create
-                return Federation.IsExistingTopicWritable(TheTopic);
-            }
-        }
-
         protected void DoPage()
         {
             if (IsPost && !IsConflictingChange && !IsBanned)
-                ProcessPost();
+            {
+                if (IsCaptchaVerified)
+                {
+                    ProcessPost();
+                }
+                else
+                {
+                    ShowEditPage(true); 
+                }
+            }
             else
+            {
                 ShowEditPage();
+            }
         }
 
+        private int CountLinks(string text)
+        {
+            return TopicParser.CountExternalLinks(text); 
+        }
+        private string GenerateNewCaptchaCode()
+        {
+            string code = CaptchaImage.GenerateRandomCode();
+            string encryptedCode = Security.Encrypt(code, FlexWikiWebApplication.ApplicationConfiguration.CaptchaKey);
+            return encryptedCode;
+        }
+        private bool IsCaptchaRequired()
+        {
+            CaptchaRequired requirement = FlexWikiWebApplication.ApplicationConfiguration.RequireCaptchaOnEdit;
+
+            if (requirement == CaptchaRequired.Always)
+            {
+                return true;
+            }
+
+            if (requirement == CaptchaRequired.IfAnonymous)
+            {
+                return !(User.Identity.IsAuthenticated);
+            }
+
+            if (requirement == CaptchaRequired.WhenOverLinkThreshold)
+            {
+                if (!IsPost)
+                {
+                    return false; 
+                }
+
+                string submitted = PostedTopicText;
+                string original = OriginalTopicText;
+
+                int submittedLinkCount = CountLinks(submitted);
+                int originalLinkCount = CountLinks(original);
+
+                int delta = submittedLinkCount - originalLinkCount;
+
+                if (delta >= FlexWikiWebApplication.ApplicationConfiguration.CaptchaLinkThreshold)
+                {
+                    return true; 
+                }
+            }
+
+
+            return false;
+        }
+        private void LogBannedAttempt()
+        {
+            string to = FlexWikiWebApplication.ApplicationConfiguration.SendBanNotificationsToMailAddress;
+            if (to == null || to == "")
+            {
+                return;
+            }
+
+            HtmlStringWriter w = new HtmlStringWriter();
+            w.WritePara(String.Format("{0} attempted to post a change with banned content to the topic {1} on the FlexWiki site at {2}.",
+                HtmlStringWriter.Escape(VisitorIdentityString), HtmlStringWriter.Escape(TheTopic.DottedName), HtmlStringWriter.Escape((Request.Url.Host))));
+            w.WritePara("Banned content includes:");
+            w.WriteStartUnorderedList();
+            string proposed = PostedTopicText;
+            foreach (string each in Federation.BlacklistedExternalLinkPrefixes)
+            {
+                if (proposed.ToUpper().IndexOf(each.ToUpper()) >= 0)
+                {
+                    w.WriteListItem(HtmlStringWriter.Escape(each));
+                }
+            }
+            w.WriteEndUnorderedList();
+
+            string from = "noreply_spam_report@" + Request.Url.Host;
+            MailMessage msg = new MailMessage(from, to);
+            msg.Subject = "Banned content post attempt from " + VisitorIdentityString;
+            msg.IsBodyHtml = true;
+            msg.Body = w.ToString();
+            SendMail(msg);
+        }
+        private void ProcessPost()
+        {
+            ProcessSave(true);
+        }
         private void ShowEditPage()
+        {
+            ShowEditPage(false); 
+        }
+        private void ShowEditPage(bool preserveContent)
         {
             Response.Write("<body class='EditBody' width='100%' height='100%' scroll='no'>");
 
@@ -268,9 +385,18 @@ Add your wiki text here.
 ";
             string content = null;
             if (Federation.TopicExists(TheTopic))
+            {
                 content = Federation.Read(TheTopic);
+            }
             if (IsPost && IsBanned)
+            {
                 content = PostedTopicText;		// preserve what they asked for, even though we won't let them save
+            }
+
+            if (preserveContent)
+            {
+                content = PostedTopicText;
+            }
 
             #region Build up the list of templates and set the content accordingly
             string templateSelect = string.Empty;
@@ -332,6 +458,8 @@ Add your wiki text here.
             Response.Write(@"</textarea>");
             if (IsWritable)
             {
+                Response.Write("<input type='text' style='display:none' name='CaptchaEnteredSubmitted' value =''>"); 
+                Response.Write("<input type='text' style='display:none' name='CaptchaContextSubmitted' value =''>"); 
                 Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
                 if (Federation.TopicExists(TheTopic))
                     Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(Federation.GetTopicModificationTime(TheTopic).ToString("s")) + "'>");
@@ -550,6 +678,42 @@ Add your wiki text here.
 
             if (IsWritable)
             {
+                if (IsCaptchaRequired())
+                {
+                    Response.Write("<table class='SidebarTile' cellspacing='0' cellpadding='2' border='0'>");
+                    Response.Write("<tbody>");
+                    Response.Write("<tr>");
+                    Response.Write("<td class='SidebarTileTitle' valign='middle'>Spam Prevention</td>"); 
+                    Response.Write("</tr>");
+                    Response.Write("<tr class='SidebarTileBody' valign='middle'>");
+                    Response.Write("<td>");
+                    Response.Write("<div>"); 
+                    string captchaCode = GenerateNewCaptchaCode();
+                    string aboutHref = TheLinkMaker.SimpleLinkTo("AboutCaptcha.html");
+                    if (IsPost && !IsCaptchaVerified)
+                    {
+                        Response.Write("<span class='ErrorMessageBody'>To prevent automated spam attacks, you must properly enter the code shown below. Please enter the number you see in the box and then click Save. </span>"); 
+                    }
+                    else
+                    {
+                        Response.Write("<span>Before saving, please enter the code you see below. </span>"); 
+                    }
+                    Response.Write("<br />"); 
+                    Response.Write("<a href='" + aboutHref + "' target='_blank'>What's this?</a>");
+                    Response.Write("<br />");
+                    string captchaHref = TheLinkMaker.SimpleLinkTo("CaptchaImage.ashx/" + captchaCode);
+                    Response.Write("<img src='" + captchaHref +
+                        "' alt='Enter this code in the box to the right.' />");
+                    Response.Write("<br />");
+                    Response.Write(string.Format("<input type='hidden' name='CaptchaContext' id='CaptchaContext' value='{0}' />", captchaCode));
+                    Response.Write("<input type='text' name='CaptchaEntered' id='CaptchaEntered' value='' />");
+                    Response.Write("</div>"); 
+                    Response.Write("</td>"); 
+                    Response.Write("</tr>"); 
+                    Response.Write("</tbody>");
+                    Response.Write("</table>");
+                }
+
                 // generate cancel, save, search, preview, and Save&Return buttons
                 Response.Write(@"
 <div style='margin-top: 12px; text-align: center'><table>
@@ -563,6 +727,7 @@ Add your wiki text here.
                     Response.Write("<tr><td colspan='2'><button onclick='javascript:SaveAndReturn()'  name='SaveButton'>Save and Back</button></td></tr>");
                 }
 
+
                 Response.Write("</table></div>");
             }
 
@@ -573,10 +738,29 @@ Add your wiki text here.
             Response.Write("</body>");
 
         }
-
         private void WriteTip(string id, string text)
         {
             Response.Write(@"<span onclick='javascript:ShowTip(""" + id + @""")'><b>" + text + "</b></span> ");
         }
+
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
     }
 }
