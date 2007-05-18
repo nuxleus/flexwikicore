@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <FederationConfiguration>
+    <About>This is FlexWiki, an open source wiki engine.</About>
+    <AuthorizationRules>
+      <Rule Type="Allow" Action="ManageNamespace" Principal="all" />
+    </AuthorizationRules>
+    <DefaultNamespace>SampleNamespaceOne</DefaultNamespace>
+    <WikiTalkVersion>0</WikiTalkVersion>
+    <NoFollowExternalHyperlinks>0</NoFollowExternalHyperlinks>
+    <NamespaceProviders>
+      <Provider Id="5a2caaff-c139-40ad-85df-cdf136c95458" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=1.8.0.0, Culture=neutral, PublicKeyToken=null">
+        <Parameters>
+          <Parameter Name="Namespace" Value="SampleNamespaceOne" />
+          <Parameter Name="Root" Value="Namespaces\SampleNamespaceOne" />
+        </Parameters>
+      </Provider>
+      <Provider Id="efa37414-d13e-487a-bf13-ab506f05bd08" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=1.8.0.0, Culture=neutral, PublicKeyToken=null">
+        <Parameters>
+          <Parameter Name="Namespace" Value="SampleNamespaceTwo" />
+          <Parameter Name="Root" Value="Namespaces\SampleNamespaceTwo" />
+        </Parameters>
+      </Provider>
+    </NamespaceProviders>
+    <BlacklistedExternalLinks />
+    <Namespaces />
+  </FederationConfiguration>
+  <NewsletterConfiguration>
+    <AuthenticateAs>anonymous</AuthenticateAs>
+    <Enabled>true</Enabled>
+    <!-- Change this. -->
+    <NewslettersFrom>newsletters@flexwiki.com</NewslettersFrom>
+    <!-- Change this. -->
+    <RootUrl>http://www.flexwiki.com/</RootUrl>
+    <SendAsAttachments>false</SendAsAttachments>
+  </NewsletterConfiguration>
+  <!-- Change this. -->
+  <SmtpConfiguration>
+    <Server>localhost</Server>
+    <User></User>
+    <Password></Password>
+  </SmtpConfiguration>
+</configuration>
