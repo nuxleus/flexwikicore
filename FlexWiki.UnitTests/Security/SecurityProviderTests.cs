@@ -249,7 +249,7 @@ namespace FlexWiki.UnitTests.Security
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
-                Assert.IsFalse(provider.Exists, 
+                Assert.IsFalse(provider.Exists,
                     "Checking that the security provider returns false when read permission is granted on the namespace and store does not exist.");
             }
         }
@@ -267,7 +267,7 @@ namespace FlexWiki.UnitTests.Security
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 bool exists = provider.Exists;
-                Assert.IsFalse(exists, 
+                Assert.IsFalse(exists,
                     "Checking that security provider returns false when read permission is not granted on the namespace and store does not exist.");
             }
         }
@@ -389,6 +389,42 @@ namespace FlexWiki.UnitTests.Security
             }
         }
 
+        [Test]
+        public void HasPermissionDefinitionTopic()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://SecurityProviderTests",
+              TestContentSets.SingleEmptyNamespace, configuration);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            SecurityProvider provider = GetSecurityProvider(manager);
+
+            // Set it up so we have Edit but not ManageNamespace
+            SecurityRule deny = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.Edit, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, deny.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsFalse(provider.HasPermission(new UnqualifiedTopicName(manager.DefinitionTopicName.LocalName),
+                    TopicPermission.Edit),
+                    "Checking that allowing edit is not enough to grant editpermisison on the definition topic.");
+            }
+
+            // Now try it where we're granted ManageNamespace
+            SecurityRule allow = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "someuser"),
+                SecurityRulePolarity.Allow, SecurityRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName(manager.DefinitionTopicName.LocalName),
+                    TopicPermission.Edit),
+                    "Checking that granting ManageNamespace implies ability to edit definition topic.");
+            }
+
+        }
 
         [Test]
         public void IsReadOnlyContentStoreReadOnlySecurityReadWrite()

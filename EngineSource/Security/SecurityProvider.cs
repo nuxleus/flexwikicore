@@ -133,13 +133,28 @@ namespace FlexWiki.Security
                 return false;
             }
 
+            bool isDefinitionTopic = false;
+            using (CreateRecursionContext())
+            {
+                if (topic.Equals(new UnqualifiedTopicName(NamespaceManager.DefinitionTopicLocalName)))
+                {
+                    isDefinitionTopic = true;
+                }
+            }
+
             // Assemble the rules. First wiki, then namespace, then topic
             SecurityRuleCollection rules = new SecurityRuleCollection();
             rules.AddRange(GetWikiScopeRules());
             rules.AddRange(GetNamespaceScopeRules());
-            rules.AddRange(GetTopicScopeRules(topic));
 
-            return IsAllowed(permission, rules);
+            // The namespace rules are redundant if this is the definition topic, as that's where they're stored. 
+            if (!isDefinitionTopic)
+            {
+                rules.AddRange(GetTopicScopeRules(topic));
+            }
+
+            SecurableAction action = GetActionFromPermission(permission, isDefinitionTopic);
+            return IsAllowed(action, rules);
         }
         public void Initialize(NamespaceManager namespaceManager)
         {
@@ -239,9 +254,21 @@ namespace FlexWiki.Security
         }
         private SecurableAction GetActionFromPermission(TopicPermission permission)
         {
+            return GetActionFromPermission(permission, false);
+        }
+        private SecurableAction GetActionFromPermission(TopicPermission permission, bool isDefinitionTopic)
+        {
             if (permission == TopicPermission.Edit)
             {
-                return SecurableAction.Edit;
+                // Editing the definition topic requires ManageNamespace, not Edit. 
+                if (isDefinitionTopic)
+                {
+                    return SecurableAction.ManageNamespace; 
+                }
+                else
+                {
+                    return SecurableAction.Edit;
+                }
             }
             else if (permission == TopicPermission.Read)
             {
@@ -307,19 +334,7 @@ namespace FlexWiki.Security
         }
         private bool IsAllowed(TopicPermission permission, SecurityRuleCollection rules)
         {
-            SecurableAction action;
-            if (permission == TopicPermission.Read)
-            {
-                action = SecurableAction.Read;
-            }
-            else if (permission == TopicPermission.Edit)
-            {
-                action = SecurableAction.Edit;
-            }
-            else
-            {
-                throw new ArgumentException("Unexpected TopicPermission " + permission.ToString());
-            }
+            SecurableAction action = GetActionFromPermission(permission);
 
             return IsAllowed(action, rules);
         }
