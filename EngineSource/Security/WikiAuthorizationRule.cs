@@ -13,16 +13,16 @@ namespace FlexWiki.Security
     public class WikiAuthorizationRule : IXmlSerializable
     {
         private SecurableAction _action;
-        private SecurityRulePolarity _polarity;
-        private SecurityRuleWho _who; 
+        private AuthorizationRulePolarity _polarity;
+        private AuthorizationRuleWho _who; 
 
         public WikiAuthorizationRule()
         {
         }
 
-        public WikiAuthorizationRule(SecurityRule rule)
+        public WikiAuthorizationRule(AuthorizationRule rule)
         {
-            if (rule.Scope != SecurityRuleScope.Wiki)
+            if (rule.Scope != AuthorizationRuleScope.Wiki)
             {
                 throw new ArgumentException("Rule must be a wiki-level rule."); 
             }
@@ -37,7 +37,7 @@ namespace FlexWiki.Security
             get { return _action; }
         }
 
-        public SecurityRulePolarity Polarity
+        public AuthorizationRulePolarity Polarity
         {
             get { return _polarity; }
         }
@@ -47,7 +47,7 @@ namespace FlexWiki.Security
             get { return _who.Who; }
         }
 
-        public SecurityRuleWhoType WhoType
+        public AuthorizationRuleWhoType WhoType
         {
             get { return _who.WhoType; }
         }
@@ -68,11 +68,11 @@ namespace FlexWiki.Security
 
             if (type == StringLiterals.Allow)
             {
-                _polarity = SecurityRulePolarity.Allow; 
+                _polarity = AuthorizationRulePolarity.Allow; 
             }
             else if (type == StringLiterals.Deny)
             {
-                _polarity = SecurityRulePolarity.Deny;
+                _polarity = AuthorizationRulePolarity.Deny;
             }
             else
             {
@@ -80,17 +80,17 @@ namespace FlexWiki.Security
             }
 
             _action = (SecurableAction) Enum.Parse(typeof(SecurableAction), reader.GetAttribute("Action"));
-            _who = SecurityRuleWho.Parse(reader.GetAttribute("Principal"));
+            _who = AuthorizationRuleWho.Parse(reader.GetAttribute("Principal"));
             reader.Read(); 
         }
 
         void IXmlSerializable.WriteXml(System.Xml.XmlWriter writer)
         {
-            if (_polarity == SecurityRulePolarity.Allow)
+            if (_polarity == AuthorizationRulePolarity.Allow)
             {
                 writer.WriteAttributeString("Type", StringLiterals.Allow); 
             }
-            else if (_polarity == SecurityRulePolarity.Deny)
+            else if (_polarity == AuthorizationRulePolarity.Deny)
             {
                 writer.WriteAttributeString("Type", StringLiterals.Deny);
             }

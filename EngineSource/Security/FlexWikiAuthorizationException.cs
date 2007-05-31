@@ -8,9 +8,9 @@ namespace FlexWiki.Security
     {
         private SecurableAction _action;
         private string _name; 
-        private SecurityRuleScope _scope; 
+        private AuthorizationRuleScope _scope; 
 
-        public FlexWikiAuthorizationException(SecurableAction action, SecurityRuleScope scope, string name)
+        public FlexWikiAuthorizationException(SecurableAction action, AuthorizationRuleScope scope, string name)
         {
             _action = action;
             _scope = scope;
@@ -36,7 +36,7 @@ namespace FlexWiki.Security
             get { return _name; }
         }
 
-        public SecurityRuleScope Scope
+        public AuthorizationRuleScope Scope
         {
             get { return _scope; }
         }

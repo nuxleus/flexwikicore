@@ -39,6 +39,11 @@ namespace FlexWiki.BeL.Debugger
             }
         }
 
+        public bool IsTransportSecure
+        {
+            get { return true; }
+        }
+
         public LinkMaker LinkMaker
         {
             get { return null;  }

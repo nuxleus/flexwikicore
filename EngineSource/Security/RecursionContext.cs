@@ -1,12 +1,13 @@
 using System;
-using System.Threading; 
+using System.Collections.Generic;
+using System.Threading;
 
 namespace FlexWiki.Security
 {
     internal class RecursionContext
     {
         private int _count;
-        private static LocalDataStoreSlot s_slot = Thread.AllocateDataSlot();
+        private static object _lock = new object();
 
         private RecursionContext()
         {
@@ -17,21 +18,6 @@ namespace FlexWiki.Security
             get { return _count; }
         }
 
-        public static RecursionContext Current
-        {
-            get
-            {
-                RecursionContext context = Thread.GetData(s_slot) as RecursionContext;
-                if (context == null)
-                {
-                    context = new RecursionContext();
-                    Thread.SetData(s_slot, context);
-                }
-
-                return context;
-            }
-        }
-
         public void Decrement()
         {
             if (_count <= 0)
@@ -40,7 +26,20 @@ namespace FlexWiki.Security
             }
             --_count;
         }
+        public static RecursionContext GetRecursionContext(string name)
+        {
+            lock (_lock)
+            {
+                RecursionContext context = Thread.GetData(Thread.GetNamedDataSlot(name)) as RecursionContext;
+                if (context == null)
+                {
+                    context = new RecursionContext();
+                    Thread.SetData(Thread.GetNamedDataSlot(name), context);
+                }
 
+                return context;
+            }
+        }
         public void Increment()
         {
             ++_count;

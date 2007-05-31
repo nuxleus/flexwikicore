@@ -39,6 +39,10 @@ namespace PrintTopic
                 return _federationConfiguration; 
             }
         }
+        public bool IsTransportSecure
+        {
+            get { return true; }
+        }
         public LinkMaker LinkMaker
         {
             get { return _linkMaker; }

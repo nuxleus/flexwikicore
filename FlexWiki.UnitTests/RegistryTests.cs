@@ -53,8 +53,8 @@ namespace FlexWiki.UnitTests
             // Allow everyone all permissions
             FederationConfiguration configuration = new FederationConfiguration();
             configuration.AuthorizationRules.Add(new WikiAuthorizationRule(
-                new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null), SecurityRulePolarity.Allow,
-                SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
+                new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll, null), AuthorizationRulePolarity.Allow,
+                AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
             MockWikiApplication application = new MockWikiApplication(
                 configuration,
                 _lm,

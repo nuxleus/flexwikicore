@@ -31,8 +31,8 @@ namespace FlexWiki.UnitTests.Formatting
         {
             _lm = new LinkMaker(c_siteUrl);
             FederationConfiguration configuration = new FederationConfiguration();
-            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
-                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
+            AuthorizationRule rule = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll, null),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
             configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule));
             MockWikiApplication application = new MockWikiApplication(
                 configuration,

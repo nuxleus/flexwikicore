@@ -7,6 +7,7 @@ namespace FlexWiki
     public interface IWikiApplication
     {
         FederationConfiguration FederationConfiguration { get; }
+        bool IsTransportSecure { get; }
         LinkMaker LinkMaker { get; }
         OutputFormat OutputFormat { get; }
         ITimeProvider TimeProvider { get; }

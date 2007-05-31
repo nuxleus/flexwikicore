@@ -7,12 +7,14 @@ using FlexWiki.Collections;
 
 namespace FlexWiki.Security
 {
-    public class SecurityProvider : IContentProvider
+    public class AuthorizationProvider : IContentProvider
     {
+        private const string c_recursionContextKey = "AuthorizationProviderRecursionContextKey"; 
+
         private NamespaceManager _namespaceManager;
         private IContentProvider _next;
 
-        public SecurityProvider(IContentProvider next)
+        public AuthorizationProvider(IContentProvider next)
         {
             _next = next;
         }
@@ -21,7 +23,7 @@ namespace FlexWiki.Security
         {
             get
             {
-                SecurityRuleCollection rules = new SecurityRuleCollection();
+                AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
                 rules.AddRange(GetWikiScopeRules());
                 rules.AddRange(GetNamespaceScopeRules());
 
@@ -69,7 +71,7 @@ namespace FlexWiki.Security
         }
         private bool IsRecursing
         {
-            get { return RecursionContext.Current.Count > 0; }
+            get { return RecursionContextHelper.IsRecursing(c_recursionContextKey); }
         }
         private string Namespace
         {
@@ -143,7 +145,7 @@ namespace FlexWiki.Security
             }
 
             // Assemble the rules. First wiki, then namespace, then topic
-            SecurityRuleCollection rules = new SecurityRuleCollection();
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             rules.AddRange(GetWikiScopeRules());
             rules.AddRange(GetNamespaceScopeRules());
 
@@ -220,13 +222,13 @@ namespace FlexWiki.Security
 
         private void AssertNamespacePermission(SecurableAction action)
         {
-            SecurityRuleCollection rules = new SecurityRuleCollection();
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             rules.AddRange(GetWikiScopeRules());
             rules.AddRange(GetNamespaceScopeRules());
 
             if (!IsAllowed(action, rules))
             {
-                throw new FlexWikiAuthorizationException(action, SecurityRuleScope.Namespace, Namespace);
+                throw new FlexWikiAuthorizationException(action, AuthorizationRuleScope.Namespace, Namespace);
             }
         }
         private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission permission)
@@ -240,17 +242,13 @@ namespace FlexWiki.Security
             if (!HasPermission(topic, permission))
             {
                 SecurableAction action = GetActionFromPermission(permission);
-                throw new FlexWikiAuthorizationException(action, SecurityRuleScope.Topic,
+                throw new FlexWikiAuthorizationException(action, AuthorizationRuleScope.Topic,
                     new QualifiedTopicName(topic.LocalName, Namespace).DottedName);
             }
         }
-        private bool CaseInsenstiveEquivalent(string s1, string s2)
-        {
-            return string.Compare(s1, s2, true) == 0;
-        }
         private IDisposable CreateRecursionContext()
         {
-            return new RecursionContextHelper(); 
+            return new RecursionContextHelper(c_recursionContextKey); 
         }
         private SecurableAction GetActionFromPermission(TopicPermission permission)
         {
@@ -279,33 +277,33 @@ namespace FlexWiki.Security
                 throw new ArgumentException("Unexpected permission " + permission.ToString());
             }
         }
-        private SecurityRuleCollection GetNamespaceScopeRules()
+        private AuthorizationRuleCollection GetNamespaceScopeRules()
         {
-            SecurityRuleCollection rules = new SecurityRuleCollection();
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             ParsedTopic parsedDefinitionTopic = Next.GetParsedTopic(
                 new UnqualifiedTopicRevision(_namespaceManager.DefinitionTopicName.LocalName));
             if (parsedDefinitionTopic != null)
             {
-                rules.AddRange(GetSecurityRules(parsedDefinitionTopic, SecurityRuleScope.Namespace));
+                rules.AddRange(GetSecurityRules(parsedDefinitionTopic, AuthorizationRuleScope.Namespace));
             }
             return rules;
         }
-        private SecurityRuleCollection GetSecurityRules(ParsedTopic parsedTopic, SecurityRuleScope scope)
+        private AuthorizationRuleCollection GetSecurityRules(ParsedTopic parsedTopic, AuthorizationRuleScope scope)
         {
             int lexicalOrder = 0;
-            SecurityRuleCollection rules = new SecurityRuleCollection();
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             foreach (TopicProperty property in parsedTopic.Properties)
             {
                 SecurableAction action;
-                SecurityRulePolarity polarity;
-                if (SecurityRule.TryParseRuleType(property, scope, out action, out polarity))
+                AuthorizationRulePolarity polarity;
+                if (AuthorizationRule.TryParseRuleType(property, scope, out action, out polarity))
                 {
                     foreach (string propertyValue in property.AsList())
                     {
-                        SecurityRuleWho who;
-                        if (SecurityRuleWho.TryParse(propertyValue, out who))
+                        AuthorizationRuleWho who;
+                        if (AuthorizationRuleWho.TryParse(propertyValue, out who))
                         {
-                            rules.Add(new SecurityRule(who, polarity, scope, action, lexicalOrder++));
+                            rules.Add(new AuthorizationRule(who, polarity, scope, action, lexicalOrder++));
                         }
                     }
                 }
@@ -313,32 +311,26 @@ namespace FlexWiki.Security
 
             return rules;
         }
-        private SecurityRuleCollection GetTopicScopeRules(UnqualifiedTopicName topic)
+        private AuthorizationRuleCollection GetTopicScopeRules(UnqualifiedTopicName topic)
         {
-            SecurityRuleCollection rules = new SecurityRuleCollection();
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             ParsedTopic parsedTopic = Next.GetParsedTopic(new UnqualifiedTopicRevision(topic));
-            rules.AddRange(GetSecurityRules(parsedTopic, SecurityRuleScope.Topic));
+            rules.AddRange(GetSecurityRules(parsedTopic, AuthorizationRuleScope.Topic));
             return rules;
         }
-        private SecurityRuleCollection GetWikiScopeRules()
+        private AuthorizationRuleCollection GetWikiScopeRules()
         {
-            SecurityRuleCollection rules = new SecurityRuleCollection();
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             int lexicalOrder = 0;
             foreach (WikiAuthorizationRule wikiRule in this.Federation.Configuration.AuthorizationRules)
             {
-                SecurityRule rule = new SecurityRule(new SecurityRuleWho(wikiRule.WhoType, wikiRule.Who),
-                    wikiRule.Polarity, SecurityRuleScope.Wiki, wikiRule.Action, lexicalOrder++);
+                AuthorizationRule rule = new AuthorizationRule(new AuthorizationRuleWho(wikiRule.WhoType, wikiRule.Who),
+                    wikiRule.Polarity, AuthorizationRuleScope.Wiki, wikiRule.Action, lexicalOrder++);
                 rules.Add(rule);
             }
             return rules;
         }
-        private bool IsAllowed(TopicPermission permission, SecurityRuleCollection rules)
-        {
-            SecurableAction action = GetActionFromPermission(permission);
-
-            return IsAllowed(action, rules);
-        }
-        private bool IsAllowed(SecurableAction action, SecurityRuleCollection rules)
+        private bool IsAllowed(SecurableAction action, AuthorizationRuleCollection rules)
         {
             // If this is a recursive call, then we need to allow the action - otherwise we might
             // deny permission to do things like read the definition topic, which we need in order
@@ -359,18 +351,18 @@ namespace FlexWiki.Security
 
             bool allowed = false;
 
-            foreach (SecurityRule rule in rules)
+            foreach (AuthorizationRule rule in rules)
             {
                 if (rule.Who.IsMatch(Thread.CurrentPrincipal))
                 {
-                    if (rule.Polarity == SecurityRulePolarity.Allow)
+                    if (rule.Polarity == AuthorizationRulePolarity.Allow)
                     {
                         if ((int)action >= (int)rule.Action)
                         {
                             allowed = true;
                         }
                     }
-                    else if (rule.Polarity == SecurityRulePolarity.Deny)
+                    else if (rule.Polarity == AuthorizationRulePolarity.Deny)
                     {
                         if ((int)action <= (int)rule.Action)
                         {
@@ -386,52 +378,5 @@ namespace FlexWiki.Security
 
             return allowed;
         }
-        private bool IsPrincipalListedUnderProperty(ParsedTopic parsedTopic, IPrincipal principal, string propertyName)
-        {
-            TopicProperty property = null;
-            if (parsedTopic.Properties.Contains(propertyName))
-            {
-                property = parsedTopic.Properties[propertyName];
-            }
-
-            if (property == null)
-            {
-                return false;
-            }
-
-            foreach (string value in property.AsList())
-            {
-                if (value.ToLower().StartsWith(StringLiterals.UserPrefix))
-                {
-                    if (CaseInsenstiveEquivalent(value, StringLiterals.UserPrefix + principal.Identity.Name))
-                    {
-                        return true;
-                    }
-                }
-                else if (value.ToLower().StartsWith(StringLiterals.RolePrefix))
-                {
-                    if (principal.IsInRole(value.Substring(StringLiterals.RolePrefix.Length)))
-                    {
-                        return true;
-                    }
-                }
-                else if (CaseInsenstiveEquivalent(value, StringLiterals.All))
-                {
-                    return true;
-                }
-                else if (CaseInsenstiveEquivalent(value, StringLiterals.Anonymous))
-                {
-                    return principal.Identity.IsAuthenticated == false;
-                }
-                else if (CaseInsenstiveEquivalent(value, StringLiterals.Authenticated))
-                {
-                    return principal.Identity.IsAuthenticated == true;
-                }
-            }
-
-            return false;
-
-        }
-
     }
 }

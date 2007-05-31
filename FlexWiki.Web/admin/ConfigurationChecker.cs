@@ -339,20 +339,20 @@ namespace FlexWiki.Web.Admin
             appConfig.FederationConfiguration.AboutWikiString = "Text about the wiki here";
             appConfig.FederationConfiguration.AuthorizationRules.Add(
                 new WikiAuthorizationRule(
-                    new SecurityRule(
-                        new SecurityRuleWho(SecurityRuleWhoType.GenericAll),
-                        SecurityRulePolarity.Allow,
-                        SecurityRuleScope.Wiki,
+                    new AuthorizationRule(
+                        new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll),
+                        AuthorizationRulePolarity.Allow,
+                        AuthorizationRuleScope.Wiki,
                         SecurableAction.Edit,
                         0)
                 )
             );
             appConfig.FederationConfiguration.AuthorizationRules.Add(
                 new WikiAuthorizationRule(
-                    new SecurityRule(
-                        new SecurityRuleWho(SecurityRuleWhoType.GenericAuthenticated),
-                        SecurityRulePolarity.Allow,
-                        SecurityRuleScope.Wiki,
+                    new AuthorizationRule(
+                        new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAuthenticated),
+                        AuthorizationRulePolarity.Allow,
+                        AuthorizationRuleScope.Wiki,
                         SecurableAction.ManageNamespace,
                         1)
                 )

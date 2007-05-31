@@ -63,13 +63,13 @@ namespace FlexWiki.Web.Newsletters
             _headInsert = headInsert;
             _sendAsAttachments = sendAsAttachments;
 
-            SecurityRuleWho who = SecurityRuleWho.Parse(authenticateAs);
+            AuthorizationRuleWho who = AuthorizationRuleWho.Parse(authenticateAs);
 
-            if (who.WhoType == SecurityRuleWhoType.GenericAnonymous)
+            if (who.WhoType == AuthorizationRuleWhoType.GenericAnonymous)
             {
                 _principal = new GenericPrincipal(new GenericIdentity(""), null);
             }
-            else if (who.WhoType == SecurityRuleWhoType.User)
+            else if (who.WhoType == AuthorizationRuleWhoType.User)
             {
                 _principal = new GenericPrincipal(new GenericIdentity(who.Who), null);
             }

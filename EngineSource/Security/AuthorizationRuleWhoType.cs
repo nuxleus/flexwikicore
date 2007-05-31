@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FlexWiki.Security
 {
-    public enum SecurityRuleWhoType
+    public enum AuthorizationRuleWhoType
     {
         GenericAll,
         GenericAnonymous,

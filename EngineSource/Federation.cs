@@ -921,7 +921,8 @@ namespace FlexWiki
             // want to make these configurable
             IContentProvider providerChain = new BuiltinTopicsProvider(contentStore); 
             providerChain = new ParsingProvider(providerChain);
-            providerChain = new SecurityProvider(providerChain); 
+            providerChain = new AuthorizationProvider(providerChain);
+            providerChain = new TransportSecurityRequirementProvider(providerChain); 
             
             NamespaceManager namespaceManager = new NamespaceManager(this, providerChain, ns, parameters);
 

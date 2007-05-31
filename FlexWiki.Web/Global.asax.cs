@@ -94,6 +94,18 @@ namespace FlexWiki.Web
                     Server.ClearError(); 
                 }
             }
+            else if ((ex is HttpUnhandledException) && (ex.InnerException is TransportSecurityRequirementException))
+            {
+                try
+                {
+                    Context.Items["LastError"] = ex.InnerException;
+                    Server.Transfer("HttpsRequired.aspx");
+                }
+                finally
+                {
+                    Server.ClearError(); 
+                }
+            }
             else
             {
                 // We don't call ClearError because we still want the error page to appear

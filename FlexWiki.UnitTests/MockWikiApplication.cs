@@ -7,6 +7,7 @@ namespace FlexWiki.UnitTests
     internal class MockWikiApplication : IWikiApplication
     {
         private FederationConfiguration _configuration;
+        private bool _isTransportSecure; 
         private LinkMaker _linkMaker;
         private OutputFormat _ouputFormat;
         private ITimeProvider _timeProvider; 
@@ -25,6 +26,12 @@ namespace FlexWiki.UnitTests
         public FederationConfiguration FederationConfiguration
         {
             get { return _configuration; }
+        }
+
+        public bool IsTransportSecure
+        {
+            get { return _isTransportSecure; }
+            set { _isTransportSecure = value; }
         }
 
         public LinkMaker LinkMaker

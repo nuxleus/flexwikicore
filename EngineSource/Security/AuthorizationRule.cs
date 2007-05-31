@@ -4,20 +4,20 @@ using System.Text;
 
 namespace FlexWiki.Security
 {
-    public class SecurityRule : IComparable<SecurityRule>
+    public class AuthorizationRule : IComparable<AuthorizationRule>
     {
         private SecurableAction _action;
         private int _lexicalOrder;
-        private SecurityRulePolarity _polarity;
-        private SecurityRuleScope _scope;
-        private SecurityRuleWho _who;
+        private AuthorizationRulePolarity _polarity;
+        private AuthorizationRuleScope _scope;
+        private AuthorizationRuleWho _who;
 
-        public SecurityRule(SecurityRuleWho who, SecurityRulePolarity what, SecurityRuleScope scope,
+        public AuthorizationRule(AuthorizationRuleWho who, AuthorizationRulePolarity what, AuthorizationRuleScope scope,
             SecurableAction permission, int lexicalOrder)
         {
             if (permission == SecurableAction.ManageNamespace)
             {
-                if (scope == SecurityRuleScope.Topic)
+                if (scope == AuthorizationRuleScope.Topic)
                 {
                     throw new ArgumentException("ManageNamespace cannot be stated at topic scope.");
                 }
@@ -38,15 +38,15 @@ namespace FlexWiki.Security
         {
             get { return _action; }
         }
-        public SecurityRulePolarity Polarity
+        public AuthorizationRulePolarity Polarity
         {
             get { return _polarity; }
         }
-        public SecurityRuleScope Scope
+        public AuthorizationRuleScope Scope
         {
             get { return _scope; }
         }
-        public SecurityRuleWho Who
+        public AuthorizationRuleWho Who
         {
             get { return _who; }
         }
@@ -73,11 +73,11 @@ namespace FlexWiki.Security
 
             string statement = "";
 
-            if (_polarity == SecurityRulePolarity.Allow)
+            if (_polarity == AuthorizationRulePolarity.Allow)
             {
                 statement += StringLiterals.Allow;
             }
-            else if (_polarity == SecurityRulePolarity.Deny)
+            else if (_polarity == AuthorizationRulePolarity.Deny)
             {
                 statement += StringLiterals.Deny;
             }
@@ -110,7 +110,7 @@ namespace FlexWiki.Security
             return statement;
         }
 
-        int IComparable<SecurityRule>.CompareTo(SecurityRule other)
+        int IComparable<AuthorizationRule>.CompareTo(AuthorizationRule other)
         {
             if (this.Score == other.Score)
             {
@@ -120,20 +120,20 @@ namespace FlexWiki.Security
             return this.Score.CompareTo(other.Score); 
         }
 
-        public static bool TryParseRuleType(TopicProperty property, SecurityRuleScope scope, 
-            out SecurableAction action, out SecurityRulePolarity polarity)
+        public static bool TryParseRuleType(TopicProperty property, AuthorizationRuleScope scope, 
+            out SecurableAction action, out AuthorizationRulePolarity polarity)
         {
             action = SecurableAction.Read;
-            polarity = SecurityRulePolarity.Deny;
+            polarity = AuthorizationRulePolarity.Deny;
             string remainder; 
             if (property.Name.StartsWith(StringLiterals.Allow))
             {
-                polarity = SecurityRulePolarity.Allow;
+                polarity = AuthorizationRulePolarity.Allow;
                 remainder = property.Name.Substring(StringLiterals.Allow.Length);
             }
             else if (property.Name.StartsWith(StringLiterals.Deny))
             {
-                polarity = SecurityRulePolarity.Deny;
+                polarity = AuthorizationRulePolarity.Deny;
                 remainder = property.Name.Substring(StringLiterals.Deny.Length);
             }
             else
@@ -151,7 +151,7 @@ namespace FlexWiki.Security
             }
             else if (remainder.Equals(StringLiterals.ManageNamespace))
             {
-                if (scope == SecurityRuleScope.Topic)
+                if (scope == AuthorizationRuleScope.Topic)
                 {
                     return false;
                 }

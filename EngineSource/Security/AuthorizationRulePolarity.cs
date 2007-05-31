@@ -4,10 +4,9 @@ using System.Text;
 
 namespace FlexWiki.Security
 {
-    public enum SecurityRuleScope
+    public enum AuthorizationRulePolarity
     {
-        Wiki = 0,
-        Namespace = 1,
-        Topic = 2,
+        Allow,
+        Deny,
     }
 }

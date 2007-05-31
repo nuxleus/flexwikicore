@@ -42,7 +42,8 @@ namespace FlexWiki
         private string _interWikisTopic; 
         private readonly ArrayList _namespaceMappings = new ArrayList();
         private bool _noFollowExternalHyperlinks;
-        private readonly Collection<string> _plugins = new Collection<string>(); 
+        private readonly Collection<string> _plugins = new Collection<string>();
+        private TransportSecurityRequiredFor _requireTransportSecurityFor; 
         private int _wikiTalkVersion;
 
         public FederationConfiguration()
@@ -131,6 +132,11 @@ namespace FlexWiki
         public Collection<string> Plugins
         {
             get { return _plugins; }
+        }
+        public TransportSecurityRequiredFor RequireTransportSecurityFor
+        {
+            get { return _requireTransportSecurityFor; }
+            set { _requireTransportSecurityFor = value; }
         }
         [XmlElement(ElementName = "WikiTalkVersion")]
         public int WikiTalkVersion

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace FlexWiki.Security
 {
-    public enum SecurityRulePolarity
+    internal enum TransportSecurityContext
     {
-        Allow,
-        Deny,
+        Content,
+        // There may be others later
     }
 }

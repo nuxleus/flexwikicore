@@ -177,8 +177,8 @@ namespace FlexWiki.UnitTests
         {
             // We need to turn off security by default so there are no surprises during the tests. 
             FederationConfiguration configuration = new FederationConfiguration();
-            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll, null),
-                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
+            AuthorizationRule rule = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll, null),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
             WikiAuthorizationRule allowAll = new WikiAuthorizationRule(rule);
             configuration.AuthorizationRules.Add(allowAll);
             

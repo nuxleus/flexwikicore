@@ -4,16 +4,16 @@ using System.Security.Principal;
 
 namespace FlexWiki.Security
 {
-    public class SecurityRuleWho
+    public class AuthorizationRuleWho
     {
         private string _name;
-        private SecurityRuleWhoType _whoType;
+        private AuthorizationRuleWhoType _whoType;
 
-        public SecurityRuleWho(SecurityRuleWhoType whoType) : this(whoType, null)
+        public AuthorizationRuleWho(AuthorizationRuleWhoType whoType) : this(whoType, null)
         {
         }
 
-        public SecurityRuleWho(SecurityRuleWhoType whoType, string who)
+        public AuthorizationRuleWho(AuthorizationRuleWhoType whoType, string who)
         {
             _name = who;
             _whoType = whoType;
@@ -39,30 +39,30 @@ namespace FlexWiki.Security
             get { return _name; }
         }
 
-        public SecurityRuleWhoType WhoType
+        public AuthorizationRuleWhoType WhoType
         {
             get { return _whoType; }
         }
 
         public override string ToString()
         {
-            if (WhoType == SecurityRuleWhoType.User)
+            if (WhoType == AuthorizationRuleWhoType.User)
             {
                 return StringLiterals.UserPrefix + Who;
             }
-            else if (WhoType == SecurityRuleWhoType.Role)
+            else if (WhoType == AuthorizationRuleWhoType.Role)
             {
                 return  StringLiterals.RolePrefix + Who;
             }
-            else if (WhoType == SecurityRuleWhoType.GenericAuthenticated)
+            else if (WhoType == AuthorizationRuleWhoType.GenericAuthenticated)
             {
                 return StringLiterals.Authenticated;
             }
-            else if (WhoType == SecurityRuleWhoType.GenericAnonymous)
+            else if (WhoType == AuthorizationRuleWhoType.GenericAnonymous)
             {
                 return StringLiterals.Anonymous;
             }
-            else if (WhoType == SecurityRuleWhoType.GenericAll)
+            else if (WhoType == AuthorizationRuleWhoType.GenericAll)
             {
                 return StringLiterals.All;
             }
@@ -72,9 +72,9 @@ namespace FlexWiki.Security
             }
         }
 
-        public static SecurityRuleWho Parse(string input)
+        public static AuthorizationRuleWho Parse(string input)
         {
-            SecurityRuleWho who;
+            AuthorizationRuleWho who;
             if (!TryParse(input, out who))
             {
                 throw new FormatException("Unrecognized input string " + input);
@@ -84,61 +84,61 @@ namespace FlexWiki.Security
         }
 
 
-        public static bool TryParse(string input, out SecurityRuleWho who)
+        public static bool TryParse(string input, out AuthorizationRuleWho who)
         {
             who = null; 
-            SecurityRuleWhoType whoType;
+            AuthorizationRuleWhoType whoType;
             string principal = null;
             if (input.StartsWith(StringLiterals.UserPrefix, StringComparison.InvariantCultureIgnoreCase))
             {
-                whoType = SecurityRuleWhoType.User;
+                whoType = AuthorizationRuleWhoType.User;
                 principal = input.Substring(StringLiterals.UserPrefix.Length);
             }
             else if (input.StartsWith(StringLiterals.RolePrefix, StringComparison.InvariantCultureIgnoreCase))
             {
-                whoType = SecurityRuleWhoType.Role;
+                whoType = AuthorizationRuleWhoType.Role;
                 principal = input.Substring(StringLiterals.RolePrefix.Length);
             }
             else if (input.Equals(StringLiterals.Authenticated, StringComparison.InvariantCultureIgnoreCase))
             {
-                whoType = SecurityRuleWhoType.GenericAuthenticated;
+                whoType = AuthorizationRuleWhoType.GenericAuthenticated;
             }
             else if (input.Equals(StringLiterals.Anonymous, StringComparison.InvariantCultureIgnoreCase))
             {
-                whoType = SecurityRuleWhoType.GenericAnonymous;
+                whoType = AuthorizationRuleWhoType.GenericAnonymous;
             }
             else if (input.Equals(StringLiterals.All, StringComparison.InvariantCultureIgnoreCase))
             {
-                whoType = SecurityRuleWhoType.GenericAll;
+                whoType = AuthorizationRuleWhoType.GenericAll;
             }
             else
             {
                 return false; 
             }
 
-            who = new SecurityRuleWho(whoType, principal);
+            who = new AuthorizationRuleWho(whoType, principal);
             return true;             
         }
 
         public bool IsMatch(IPrincipal principal)
         {
-            if (_whoType == SecurityRuleWhoType.GenericAll)
+            if (_whoType == AuthorizationRuleWhoType.GenericAll)
             {
                 return true; 
             }
-            else if (_whoType == SecurityRuleWhoType.GenericAnonymous)
+            else if (_whoType == AuthorizationRuleWhoType.GenericAnonymous)
             {
                 return !principal.Identity.IsAuthenticated; 
             }
-            else if (_whoType == SecurityRuleWhoType.GenericAuthenticated)
+            else if (_whoType == AuthorizationRuleWhoType.GenericAuthenticated)
             {
                 return principal.Identity.IsAuthenticated; 
             }
-            else if (_whoType == SecurityRuleWhoType.Role)
+            else if (_whoType == AuthorizationRuleWhoType.Role)
             {
                 return principal.IsInRole(_name); 
             }
-            else if (_whoType == SecurityRuleWhoType.User)
+            else if (_whoType == AuthorizationRuleWhoType.User)
             {
                 return _name.Equals(principal.Identity.Name, StringComparison.CurrentCultureIgnoreCase);
             }
@@ -148,16 +148,16 @@ namespace FlexWiki.Security
             }
         }
 
-        private static bool IsGeneric(SecurityRuleWhoType whoType)
+        private static bool IsGeneric(AuthorizationRuleWhoType whoType)
         {
-            if (whoType == SecurityRuleWhoType.GenericAll ||
-                whoType == SecurityRuleWhoType.GenericAnonymous ||
-                whoType == SecurityRuleWhoType.GenericAuthenticated)
+            if (whoType == AuthorizationRuleWhoType.GenericAll ||
+                whoType == AuthorizationRuleWhoType.GenericAnonymous ||
+                whoType == AuthorizationRuleWhoType.GenericAuthenticated)
             {
                 return true; 
             }
-            else if (whoType == SecurityRuleWhoType.Role ||
-                whoType == SecurityRuleWhoType.User)
+            else if (whoType == AuthorizationRuleWhoType.Role ||
+                whoType == AuthorizationRuleWhoType.User)
             {
                 return false;
             }

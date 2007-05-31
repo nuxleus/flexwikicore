@@ -4,7 +4,10 @@ using System.Text;
 
 namespace FlexWiki.UnitTests.Security
 {
-    internal static class SecurityTestContentSets
+    internal enum TransportSecurityRequirement
     {
+        Unspecified,
+        RequiredOnContent,
+        RequiredOnNone,
     }
 }

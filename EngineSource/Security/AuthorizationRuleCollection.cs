@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 
 namespace FlexWiki.Security
 {
-    public class SecurityRuleCollection : Collection<SecurityRule>
+    public class AuthorizationRuleCollection : Collection<AuthorizationRule>
     {
-        public void AddRange(IEnumerable<SecurityRule> items)
+        public void AddRange(IEnumerable<AuthorizationRule> items)
         {
-            foreach (SecurityRule item in items)
+            foreach (AuthorizationRule item in items)
             {
                 this.Add(item); 
             }

@@ -46,8 +46,8 @@ namespace FlexWiki.UnitTests
             FederationConfiguration configuration = new FederationConfiguration();
             // Grant everyone full control so we don't have security issues for the test. 
             configuration.AuthorizationRules.Add(new WikiAuthorizationRule(
-                new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll), SecurityRulePolarity.Allow,
-                    SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
+                new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll), AuthorizationRulePolarity.Allow,
+                    AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
             MockWikiApplication application = new MockWikiApplication(
                 configuration,
                 new LinkMaker("http://boobar"), OutputFormat.HTML,

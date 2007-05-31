@@ -39,11 +39,11 @@ namespace FlexWiki.UnitTests
             FederationConfiguration configuration = (FederationConfiguration)serializer.Deserialize(reader);
 
             Assert.AreEqual(2, configuration.AuthorizationRules.Count, "Checking that the right number of rules were read.");
-            AssertRuleCorrect(new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAll), SecurityRulePolarity.Allow, 
-                SecurityRuleScope.Wiki, SecurableAction.ManageNamespace, 0), configuration.AuthorizationRules[0], 
+            AssertRuleCorrect(new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll), AuthorizationRulePolarity.Allow, 
+                AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0), configuration.AuthorizationRules[0], 
                 "first rule");
-            AssertRuleCorrect(new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.User, "candera"), SecurityRulePolarity.Deny,
-                SecurityRuleScope.Wiki, SecurableAction.Edit, 0), configuration.AuthorizationRules[1],
+            AssertRuleCorrect(new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "candera"), AuthorizationRulePolarity.Deny,
+                AuthorizationRuleScope.Wiki, SecurableAction.Edit, 0), configuration.AuthorizationRules[1],
                 "second rule");
 
         }
@@ -53,8 +53,8 @@ namespace FlexWiki.UnitTests
         public void SerializeAuthorization()
         {
             FederationConfiguration configuration = new FederationConfiguration();
-            SecurityRule rule = new SecurityRule(new SecurityRuleWho(SecurityRuleWhoType.GenericAnonymous),
-                SecurityRulePolarity.Allow, SecurityRuleScope.Wiki, SecurableAction.Edit, 0);
+            AuthorizationRule rule = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAnonymous),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Wiki, SecurableAction.Edit, 0);
             configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule));
 
             XmlSerializer serializer = new XmlSerializer(typeof(FederationConfiguration));
@@ -63,7 +63,7 @@ namespace FlexWiki.UnitTests
             Assert.Fail("Need to add real verification to this."); 
         }
 
-        private void AssertRuleCorrect(SecurityRule expected, WikiAuthorizationRule actual, string message)
+        private void AssertRuleCorrect(AuthorizationRule expected, WikiAuthorizationRule actual, string message)
         {
             Assert.AreEqual(expected.Action, actual.Action, "Checking that action was correct for " + message);
             Assert.AreEqual(expected.Polarity, actual.Polarity, "Checking that polarity was correct for " + message);

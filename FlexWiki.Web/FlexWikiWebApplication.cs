@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Web; 
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -84,6 +85,26 @@ namespace FlexWiki.Web
         public static string ForceWindowsAuthenticationCookieName
         {
             get { return "FlexWikiForceWindowsAuth"; }
+        }
+        public bool IsTransportSecure
+        {
+            get
+            {
+                HttpContext context = HttpContext.Current;
+
+                // If there's been a thread switch or for whatever reason we can't 
+                // find the current context, we have to assume the communications are
+                // local and therefore secure. This is specifically the case with the
+                // newsletter manager, which runs on a background thread, and should
+                // have access to the content without having to require a secure
+                // connection. 
+                if (context == null)
+                {
+                    return true; 
+                }
+
+                return context.Request.IsSecureConnection; 
+            }
         }
         public LinkMaker LinkMaker
         {
