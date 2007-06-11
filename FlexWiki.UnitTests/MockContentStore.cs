@@ -140,7 +140,7 @@ namespace FlexWiki.UnitTests
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             if (mockTopic == null)
             {
-                return false;
+                return true;
             }
 
             if (permission == TopicPermission.Edit)

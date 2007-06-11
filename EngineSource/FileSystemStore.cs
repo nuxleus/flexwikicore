@@ -195,16 +195,18 @@ namespace FlexWiki
             _fileSystem.CreateDirectory(_root); 
         }
         /// <summary>
-        /// Answer whether a topic exists and is writable
+        /// Answer whether a topic is readable or writable
         /// </summary>
         /// <param name="topic">The topic (must directly be in this content base)</param>
-        /// <returns>true if the topic exists AND is writable by the current user; else false</returns>
+        /// <returns>true is writable by the current user (or does not exist); else false</returns>
         public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             string path = TopicPath(topic, null);
             if (!FileSystem.FileExists(path))
             {
-                return false;
+                // It might seem a little weird to return true if the topic doesn't exist, but 
+                // basically what we're saying is that there's no reason to deny read/edit.
+                return true;
             }
 
             if (permission == TopicPermission.Edit)

@@ -1015,7 +1015,7 @@ namespace FlexWiki.UnitTests
             // Now ask for the time for the oldest version
             DateTime creationTime = manager.GetTopicCreationTime(topicName, changes.Oldest.Version);
 
-            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 02), creationTime,
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 01), creationTime,
                 "Checking that the creation time for the first version is correct.");
         }
         [Test]
@@ -1028,7 +1028,7 @@ namespace FlexWiki.UnitTests
             string topicName = "TopicOne";
             DateTime creationTime = manager.GetTopicCreationTime(topicName, null);
 
-            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 09), creationTime,
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 06), creationTime,
                 "Checking that the creation time for the latest version is correct.");
         }
         [Test]
@@ -1047,7 +1047,7 @@ namespace FlexWiki.UnitTests
 
             DateTime creationTime = manager.GetTopicCreationTime(revision);
 
-            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 02), creationTime,
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 01), creationTime,
                 "Checking that the creation time for the first version doesn't change even when modified.");
         }
         [Test]
@@ -1142,7 +1142,7 @@ namespace FlexWiki.UnitTests
 
             DateTime modificationTime = manager.GetTopicLastModificationTime("TopicOne");
 
-            DateTime expectedModificationTime = new DateTime(2004, 10, 28, 14, 11, 02);
+            DateTime expectedModificationTime = new DateTime(2004, 10, 28, 14, 11, 01);
             Assert.AreEqual(expectedModificationTime, modificationTime, "Checking that modification time was correct.");
         }
         [Test]
@@ -1252,8 +1252,8 @@ PropertyOne: List, of, values")
 
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            UnqualifiedTopicRevision oldRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-02.0000-author");
-            UnqualifiedTopicRevision newRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-06.0000-author");
+            UnqualifiedTopicRevision oldRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-01.0000-author");
+            UnqualifiedTopicRevision newRevision = new UnqualifiedTopicRevision("TopicOne", "2004-10-28-14-11-04.0000-author");
 
             TopicProperty property = manager.GetTopicProperty(oldRevision, "PropertyOne");
             Assert.AreEqual(property.LastValue, "ValueOne", "Checking that old revision has old value.");
@@ -1512,7 +1512,7 @@ PropertyOne: List, of, values")
 
             DateTime lastModified = manager.LastModified(ImportPolicy.DoNotIncludeImports);
 
-            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 10), lastModified,
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 07), lastModified,
                 "Checking that last modification time is correct.");
         }
         [Test]
@@ -1536,7 +1536,7 @@ PropertyOne: List, of, values")
 
             DateTime lastModified = manager.LastModified(ImportPolicy.IncludeImports);
 
-            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 23), lastModified,
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 17), lastModified,
                 "Checking that last modification time is correct.");
         }
         [Test]
@@ -1548,7 +1548,7 @@ PropertyOne: List, of, values")
 
             string version = manager.LatestVersionForTopic("TopicOne");
 
-            Assert.AreEqual("2004-10-28-14-11-09.0000-author3", version, "Checking that version was reported correctly.");
+            Assert.AreEqual("2004-10-28-14-11-06.0000-author3", version, "Checking that version was reported correctly.");
         }
         [Test]
         public void LastestVersionForTopicNonExistentTopic()

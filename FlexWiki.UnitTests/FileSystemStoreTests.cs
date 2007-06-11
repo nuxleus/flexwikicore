@@ -313,10 +313,12 @@ namespace FlexWiki.UnitTests
         [Test]
         public void IsExistingTopicWritableNonexistentTopic()
         {
-            Assert.IsFalse(_provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"), TopicPermission.Edit),
-                "Checking that a nonexistent topic is reported as not writable.");
-            Assert.IsFalse(_provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"), TopicPermission.Read),
-                "Checking that a nonexistent topic is reported as not readable.");
+            // It might seem a little weird to return true if the topic doesn't exist, but 
+            // basically what we're saying is that there's no reason to deny read/edit
+            Assert.IsTrue(_provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"), TopicPermission.Edit),
+                "Checking that a nonexistent topic is reported as writable.");
+            Assert.IsTrue(_provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"), TopicPermission.Read),
+                "Checking that a nonexistent topic is reported as readable.");
 
         }
 

@@ -91,12 +91,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void DeleteAllTopicsAndHistoryAllowed()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the ManageNamespace permission, which should be what is needed.
             AuthorizationRule allowManageNamespace = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -119,12 +120,13 @@ namespace FlexWiki.UnitTests.Security
         [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void DeleteAllTopicsAndHistoryDenied()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Edit permission, which shouldn't be enough: ManageNamespace is required.
             AuthorizationRule allowEdit = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -143,12 +145,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void DeleteTopicAllowed()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Edit permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -195,12 +198,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void ExistsAllowedStoreExists()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Read permission at namespace, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -217,12 +221,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void ExistsDeniedStoreExists()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
@@ -234,12 +239,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void ExistsAllowedStoreNonexistent()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, MockSetupOptions.StoreDoesNotExist, configuration);
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.StoreDoesNotExist);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Read permission at namespace, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -257,13 +263,14 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void ExistsDeniedStoreNonexistent()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, MockSetupOptions.StoreDoesNotExist, configuration);
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.StoreDoesNotExist);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
 
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+            
             using (new TestSecurityContext("someuser", "somerole"))
             {
                 bool exists = provider.Exists;
@@ -275,12 +282,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void GetParsedTopicAllowed()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Read permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -300,12 +308,13 @@ namespace FlexWiki.UnitTests.Security
         [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
         public void GetParsedTopicDenied()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
@@ -399,10 +408,10 @@ namespace FlexWiki.UnitTests.Security
             AuthorizationProvider provider = GetSecurityProvider(manager);
 
             // Set it up so we have Edit but not ManageNamespace
-            AuthorizationRule deny = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
+            AuthorizationRule allowEdit = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Edit, 0);
             WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
-                manager.DefinitionTopicName.LocalName, deny.ToString("T"), "test");
+                manager.DefinitionTopicName.LocalName, allowEdit.ToString("T"), "test");
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
@@ -427,13 +436,66 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
-        public void IsReadOnlyContentStoreReadOnlySecurityReadWrite()
+        public void HasPermissionNonexistentTopicAllowed()
         {
             FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, MockSetupOptions.ReadOnlyStore, configuration);
+              TestContentSets.SingleEmptyNamespace, configuration);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Set it up so we have Edit 
+            AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Edit, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"),
+                    TopicPermission.Edit),
+                    "Checking that allowing edit at the namespace level grants edit on nonexistent topics.");
+            }
+
+        }
+
+        [Test]
+        public void HasPermissionNonexistentTopicDenied()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleEmptyNamespace, configuration);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Set it up so we only have Read 
+            AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Read, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"),
+                    TopicPermission.Read),
+                    "Checking that allowing read at the namespace level grants read on nonexistent topics.");
+                Assert.IsFalse(provider.HasPermission(new UnqualifiedTopicName("NoSuchTopic"),
+                    TopicPermission.Edit),
+                    "Checking that allowing read at the namespace level denies edit on nonexistent topics.");
+            }
+
+        }
+
+        [Test]
+        public void IsReadOnlyContentStoreReadOnlySecurityReadWrite()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.ReadOnlyStore);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Read permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -451,12 +513,14 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void IsReadOnlyContentStoreReadOnlySecurityReadOnly()
         {
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, MockSetupOptions.ReadOnlyStore, configuration);
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.ReadOnlyStore);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
 
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+            
             // Grant the Read permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Read, 0);
@@ -472,12 +536,14 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void IsReadOnlyContentStoreReadWriteSecurityReadWrite()
         {
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
 
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+            
             // Grant the Read permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Edit, 0);
@@ -495,12 +561,14 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void IsReadOnlyContentStoreReadWriteSecurityReadOnly()
         {
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
 
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+            
             // Grant the Read permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Read, 0);
@@ -517,12 +585,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void LockTopicAllowed()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the ManageNamespace permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -549,12 +618,13 @@ namespace FlexWiki.UnitTests.Security
         [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void LockTopicDenied()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Edit permission, which should not be enough.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -577,12 +647,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void TextReaderForTopicAllowed()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Read permission, which should be enough.
             AuthorizationRule deny = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -602,12 +673,13 @@ namespace FlexWiki.UnitTests.Security
         [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Read Topic NamespaceOne.TopicOne is denied.")]
         public void TextReaderForTopicDenied()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             using (new TestSecurityContext("someuser", "somerole"))
             {
@@ -620,12 +692,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void TopicExists()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Deny the Read permission. Topic existence shouldn't be affected by security policy. 
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -642,12 +715,13 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void TopicExistsNonexistentTopic()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Deny the Read permission. Topic existence shouldn't be affected by security policy. 
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -664,13 +738,14 @@ namespace FlexWiki.UnitTests.Security
         [Test]
         public void UnlockTopicAllowed()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
 
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+            
             // Grant the ManageNamespace permission, which should be what is needed.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
@@ -697,12 +772,13 @@ namespace FlexWiki.UnitTests.Security
         [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to ManageNamespace Namespace NamespaceOne is denied.")]
         public void UnlockTopicDenied()
         {
-            // Use the default configuration, where everything is denied
-            FederationConfiguration configuration = new FederationConfiguration();
             Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
-              TestContentSets.SingleTopicNoImports, configuration);
+              TestContentSets.SingleTopicNoImports);
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
             AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear(); 
 
             // Grant the Edit permission, which should not be enough.
             AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
@@ -715,6 +791,56 @@ namespace FlexWiki.UnitTests.Security
                 provider.UnlockTopic(topic);
 
                 Assert.Fail("A security exception should have been thrown.");
+            }
+        }
+
+        [Test]
+        public void WriteNewTopicAllowed()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleEmptyNamespace, configuration);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Set it up so we have Edit 
+            AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Edit, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision("NewTopic");
+            string content = "New content to be written"; 
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                provider.WriteTopic(revision, content);
+                Assert.AreEqual(content, provider.TextReaderForTopic(revision).ReadToEnd(),
+                    "Checking that content was written okay.");
+            }
+
+        }
+
+        [Test]
+        [ExpectedException(typeof(FlexWikiAuthorizationException), "Permission to Edit Topic NamespaceOne.NewTopic is denied.")]
+        public void WriteNewTopicDenied()
+        {
+            FederationConfiguration configuration = new FederationConfiguration();
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleEmptyNamespace, configuration);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Set it up so we have Read
+            AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.Read, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision("NewTopic");
+            string content = "New content to be written";
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                provider.WriteTopic(revision, content);
             }
         }
 

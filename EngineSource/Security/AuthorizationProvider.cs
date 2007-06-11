@@ -233,11 +233,11 @@ namespace FlexWiki.Security
         }
         private void AssertTopicPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
-            // We don't throw if the topic doesn't exist.
-            if (!_next.TopicExists(topic))
-            {
-                return;
-            }
+            //// We don't throw if the topic doesn't exist.
+            //if (!_next.TopicExists(topic))
+            //{
+            //    return;
+            //}
 
             if (!HasPermission(topic, permission))
             {
@@ -292,6 +292,12 @@ namespace FlexWiki.Security
         {
             int lexicalOrder = 0;
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
+
+            if (parsedTopic == null)
+            {
+                return rules; 
+            }
+
             foreach (TopicProperty property in parsedTopic.Properties)
             {
                 SecurableAction action;

@@ -202,7 +202,7 @@ namespace FlexWiki.UnitTests
 
                 foreach (TestTopic topic in ns.Topics)
                 {
-                    WriteTestTopicAndNewVersion(storeManager, topic.Name, topic.Content, topic.Author);
+                    WriteTopicAndNewVersionBypassingSecurity(storeManager, topic.Name, topic.Content, topic.Author);
                 }
             }
 

@@ -148,7 +148,7 @@ namespace FlexWiki.UnitTests
             Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",
                 TestContentSets.SingleTopicNoImports);
 
-            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 02),
+            Assert.AreEqual(new DateTime(2004, 10, 28, 14, 11, 01),
                 federation.GetTopicCreationTime(new QualifiedTopicName("NamespaceOne.TopicOne")),
                 "Checking that creation time is correct."); 
         }
@@ -170,7 +170,7 @@ namespace FlexWiki.UnitTests
             DateTime modificationTime = federation.GetTopicLastModificationTime(
                 new TopicName("TopicOne", "NamespaceOne"));
 
-            DateTime expectedModificationTime = new DateTime(2004, 10, 28, 14, 11, 09);
+            DateTime expectedModificationTime = new DateTime(2004, 10, 28, 14, 11, 06);
             Assert.AreEqual(expectedModificationTime, modificationTime, "Checking that modification time was correct.");
         }
         [Test]
