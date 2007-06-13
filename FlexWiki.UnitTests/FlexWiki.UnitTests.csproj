@@ -93,11 +93,6 @@
       <Project>{7362F597-DAB3-437E-8A07-37D8D2FE6E56}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\SqlProvider\SqlProvider.csproj">
-      <Name>SqlProvider</Name>
-      <Project>{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -134,9 +129,13 @@
     <Compile Include="Security\TestAnonymousIdentity.cs" />
     <Compile Include="Security\TestIdentity.cs" />
     <Compile Include="Security\TestSecurityContext.cs" />
+    <Compile Include="SqlProvider\MockDatabase.cs" />
+    <Compile Include="SqlProvider\MockDataReader.cs" />
+    <Compile Include="SqlProvider\SqlStoreTests.cs" />
     <Compile Include="Security\TransportSecurityRequirement.cs" />
     <Compile Include="Security\TransportSecurityRequirementProviderTests.cs" />
     <Compile Include="Security\TransportSecurityRequirementTestConfiguration.cs" />
+    <Compile Include="SqlProvider\TestDataSets.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicRevision.cs" />

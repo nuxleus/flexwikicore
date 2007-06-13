@@ -12,7 +12,7 @@ You must not remove this notice, or any other, from this software.
 
 IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'${database}')  DROP DATABASE [${database}] 
 GO 
-CREATE DATABASE [${database}]  ON (NAME = N'${database}_Data', FILENAME = N'${datadir}\${database}.mdf' , SIZE = 1, FILEGROWTH = 10%) LOG ON (NAME = N'${database}_Log', FILENAME = N'${datadir}\${database}_log.ldf' , FILEGROWTH = 10%) 
+CREATE DATABASE [${database}]  ON (NAME = N'${database}_Data', FILENAME = N'${datadir}\${database}.mdf' , FILEGROWTH = 10%) LOG ON (NAME = N'${database}_Log', FILENAME = N'${datadir}\${database}_log.ldf' , FILEGROWTH = 10%) 
 COLLATE SQL_Latin1_General_CP1_CI_AS 
 GO
 exec sp_dboption N'${database}', N'autoclose', N'false'

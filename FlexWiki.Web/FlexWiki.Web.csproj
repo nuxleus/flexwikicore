@@ -107,11 +107,6 @@
       <Project>{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\SqlProvider\SqlProvider.csproj">
-      <Name>SqlProvider</Name>
-      <Project>{216838B1-BDE9-45C6-B6BF-F9D7F10882DB}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="AboutCaptcha.html" />
@@ -127,7 +122,6 @@
     <Content Include="admin\default.aspx" />
     <Content Include="admin\EditLinksBlacklist.aspx" />
     <Content Include="admin\EditProvider.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\Newsletter.aspx">
       <SubType>Form</SubType>

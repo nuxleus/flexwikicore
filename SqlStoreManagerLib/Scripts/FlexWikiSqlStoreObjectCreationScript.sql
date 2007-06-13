@@ -733,9 +733,6 @@ AS
 		WHERE TopicId = @topicId
 	END
 
-
-
-
 GO
 
 SET QUOTED_IDENTIFIER OFF 

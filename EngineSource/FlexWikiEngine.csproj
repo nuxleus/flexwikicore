@@ -101,6 +101,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Collections\NamespaceManagerMap.cs" />
+    <Compile Include="SqlProvider\ConfigurationParameterNames.cs" />
     <Compile Include="FileInformation.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="IContentProvider.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="IFileSystem.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="QualifiedTopicName.cs" />
+    <Compile Include="ComparerAdaptor.cs" />
     <Compile Include="QualifiedTopicRevision.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -224,6 +226,14 @@
     <Compile Include="Security\TransportSecurityRequirementProvider.cs" />
     <Compile Include="Security\WikiAuthorizationRule.cs" />
     <Compile Include="Security\WikiAuthorizationRuleCollection.cs" />
+    <Compile Include="SqlProvider\DatabaseParameter.cs" />
+    <Compile Include="SqlProvider\IDatabase.cs" />
+    <Compile Include="SqlProvider\SqlDatabase.cs" />
+    <Compile Include="SqlProvider\SqlHelper.cs" />
+    <Compile Include="SqlProvider\SqlInfoForTopic.cs" />
+    <Compile Include="SqlProvider\SqlInfoTopicData.cs" />
+    <Compile Include="SqlProvider\SqlNamespaceProvider.cs" />
+    <Compile Include="SqlProvider\SqlStore.cs" />
     <Compile Include="TopicPermission.cs" />
     <Compile Include="UnqualifiedTopicName.cs" />
     <Compile Include="NamespaceManager.cs">

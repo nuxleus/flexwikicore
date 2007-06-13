@@ -110,21 +110,16 @@
     <Compile Include="SqlHelperParameterCache.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SqlInfoForTopic.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SqlInfoTopicData.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlNamespaceProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SqlStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SqlStoreState.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TimeSort.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
