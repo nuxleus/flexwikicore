@@ -376,8 +376,10 @@ namespace FlexWiki.Web.Admin
 								INamespaceProvider worker = (INamespaceProvider)(Activator.CreateInstance(each));
 								string displayString = each.FullName + " (" + worker.Description + ")";
 								string val = assembly.GetName() + "#" + each.FullName;
-								if (each.FullName == defaultProvider)
-									def = val;
+                                if (each.FullName == defaultProvider)
+                                {
+                                    def = val;
+                                }
 
 								choices.Add(displayString, val);
 								break;
@@ -387,13 +389,13 @@ namespace FlexWiki.Web.Admin
 				}
 			}
 
-
-
 			UIResponse.WriteCombobox(s_paramNameTypeName, "Type", "The type of provider to to use", choices, def);
 
 			// If there were any proposed values for the parms provided in the query string, pass them along
-			foreach (string pName in Request.QueryString)
-				UIResponse.WriteHiddenField(pName, Request.QueryString[pName]);
+            foreach (string pName in Request.QueryString)
+            {
+                UIResponse.WriteHiddenField(pName, Request.QueryString[pName]);
+            }
 			
 			UIResponse.WriteEndFields();
 

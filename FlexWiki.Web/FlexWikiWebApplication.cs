@@ -47,10 +47,8 @@ namespace FlexWiki.Web
             LoadConfiguration();
             // We no longer watch the config file for changes because it was causing too 
             // many problems. Now there's just a "reload configuration" button in 
-            // the admin app. 
+            // the admin app (not yet implemented). 
             //WatchConfiguration();
-
-            _linkMaker.MakeAbsoluteUrls = _applicationConfiguration.MakeAbsoluteUrls;
 
             string log4NetConfigPath = "log4net.config";
             if (_applicationConfiguration.Log4NetConfigPath != null)

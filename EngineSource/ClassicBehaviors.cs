@@ -321,7 +321,6 @@ namespace FlexWiki
 
             if (result == null)
             {
-                // TODO: Get configuration-reading code out of internals - move out to containing app. 
                 string interWikisTopic = fed.Configuration.InterWikisTopic; 
                 if (interWikisTopic == null)
                 {

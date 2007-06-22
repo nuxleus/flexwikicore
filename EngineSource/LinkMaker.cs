@@ -28,7 +28,6 @@ namespace FlexWiki
     {
         // Fields
 
-        private bool _makeAbsoluteURLs;
         private QualifiedTopicRevision _returnToTopicForEditLinks;
         private string _siteURL;
 
@@ -41,17 +40,6 @@ namespace FlexWiki
 
         // Properties
 
-        public bool MakeAbsoluteUrls
-        {
-            get
-            {
-                return _makeAbsoluteURLs;
-            }
-            set
-            {
-                _makeAbsoluteURLs = value;
-            }
-        }
         public string SiteURL
         {
             get

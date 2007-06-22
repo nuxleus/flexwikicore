@@ -527,7 +527,6 @@ Add your wiki text here.
                 OpenPane(Response.Output, "External Hyperlinks");
                 Response.Write("<img src='" + TheLinkMaker.LinkToImage("images/NoFollowNoSpam.gif") + "' align='right'>External hyperlinks will not be indexed by search engines.");
                 ClosePane(Response.Output);
-                LogBannedAttempt();
             }
 
 

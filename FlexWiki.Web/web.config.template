@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
 
-  <connectionStrings>
-    <!--<add name="LocalSqlServer"
-         connectionString="data source=.\SQLEXPRESS;Integrated Security=SSPI;AttachDBFilename=|DataDirectory|aspnetdb.mdf;User Instance=true"
-         providerName="System.Data.SqlClient" />-->
-  </connectionStrings>
-
   <system.net>
     <!-- Change this to match your mail configuration if you want to use any of the 
           email-related features of FlexWiki (e.g. newsletters). Only host is required - 
@@ -54,16 +48,18 @@
     </membership>
 
     <!--  DYNAMIC DEBUG COMPILATION
-   Set compilation debug="true" to enable ASPX debugging.  Otherwise, setting this value to
-   false will improve runtime performance of this application. 
-   Set compilation debug="true" to insert debugging symbols (.pdb information)
-   into the compiled page. Because this creates a larger file that executes
-   more slowly, you should set this value to true only when debugging and to
-   false at all other times. For more information, refer to the documentation about
-   debugging ASP.NET files. -->
-    <compilation defaultLanguage="c#" debug="true" />
+       Set compilation debug="true" to enable ASPX debugging.  Otherwise, setting this value to
+       false will improve runtime performance of this application. 
+       Set compilation debug="true" to insert debugging symbols (.pdb information)
+       into the compiled page. Because this creates a larger file that executes
+       more slowly, you should set this value to true only when debugging and to
+       false at all other times. For more information, refer to the documentation about
+       debugging ASP.NET files. -->
+    <compilation defaultLanguage="c#" debug="false" />
 
-    <!-- SECURITY SETTINGS
+    <!-- 
+    
+    SECURITY SETTINGS
   
     Some sample authentication setups are included below. Copy the XML that applies 
     to your situation, and paste it in below. Custom setups are also possible. 
@@ -71,7 +67,7 @@
     ===============
     
     ALLOW EVERYONE : This setup makes the wiki available to everyone without making
-      anyone authenticate.
+      anyone log in. This is the default. 
     
     <authentication mode="None" />
     <authorization>
@@ -80,32 +76,51 @@
     
     ===============
     
-    ALLOW AUTHENTICATED USERS ONLY : This setup makes the wiki only available to 
-      people who have a valid NT login. 
+    FORCE ALL USERS TO AUTHENTICATE WITH THEIR WINDOWS CREDENTIALS : 
+      This setup makes the wiki only available to people who have a valid NT login. 
     
     <authentication mode="Windows" />
     <authorization>
       <deny users="?" />
     </authorization>
+
+    Note that you must check the "Integrated" checkbox
+    in the IIS management tool under "Directory Security" for this to work. 
+
+    ===============
+
+    FORCE ALL USERS TO AUTHENTICATE VIA ASP.NET FORMS : 
+      This setup makes the wiki only available to people who have a valid NT login. 
     
+    <authentication mode="Forms" />
+    <authorization>
+      <deny users="?" />
+    </authorization>
+
+    Note that you must check the "Anonymous" checkbox
+    in the IIS management tool under "Directory Security" for this to work. 
+
     ===============
     
-    ALLOW ACCESS TO CERTAIN PAGES : This setup depends on the file permissions for
-      the individual .wiki files and directories - if the access is allowed for 
-      the NETWORK SERVICE user (IUSR_machinename under Windows XP/2000), then the 
-      user will be allowed to access the page. Otherwise, only users with permission
-      to access the .wiki file/directory will be allowed to access that topic. 
+    ALLOW ANONYMOUS USERS TO ACCESS THE PARTS OF THE WIKI THEY CAN, BUT MAKE
+    AUTHENTICATED USERS LOG ON VIA WINDOWS: 
     
     <authentication mode="Windows" />
-    <authorization>
-      <allow users="*" />
-    </authorization>
-    <identity impersonate="true" />
+    
+    Note that you must check both the "Anonymous" and "Integrated" checkboxes
+    in the IIS management tool under "Directory Security" for this to work. 
     
     ===============
-  
-  -->
+    
+    ALLOW ANONYMOUS USERS TO ACCESS THE PARTS OF THE WIKI THEY CAN, BUT MAKE
+    AUTHENTICATED USERS LOG ON VIA ASP.NET FORMS: 
+    
+    <authentication mode="Forms" />
 
+    Note that you must check the "Anonymous" checkbox
+    in the IIS management tool under "Directory Security" for this to work. 
+
+    -->
 
     <!-- Paste security-related XML here. We default to allowing everyone in. 
       See comments above. -->
@@ -116,8 +131,6 @@
     </authorization>
 
     <!-- End security-related XML. -->
-
-
 
     <!-- We rely on session state, so we need to make sure it's turned on -->
     <sessionState mode="InProc" />

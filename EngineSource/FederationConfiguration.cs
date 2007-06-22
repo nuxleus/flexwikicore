@@ -97,15 +97,15 @@ namespace FlexWiki
                 return _deprecatedDefinitions;
             }
         }
-        public bool EnablePerformanceCounters
-        {
-            get { return _enablePerformanceCounters; }
-            set { _enablePerformanceCounters = value; }
-        }
         public bool DisplaySpacesInWikiLinks
         {
             get { return _displaySpacesInWikiLinks; }
             set { _displaySpacesInWikiLinks = value; }
+        }
+        public bool EnablePerformanceCounters
+        {
+            get { return _enablePerformanceCounters; }
+            set { _enablePerformanceCounters = value; }
         }
         public string InterWikisTopic
         {

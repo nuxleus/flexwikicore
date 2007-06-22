@@ -13,13 +13,12 @@ namespace FlexWiki.Web
 
         private string _captchaKey;
         private int _captchaLinkThreshold; 
-        private string _defaultNamespaceProviderForNamespaceCreation;
+        private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
         private bool _disableRenameFixup; 
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
         private string _log4NetConfigPath; 
-        private bool _makeAbsoluteUrls;
         private NewsletterConfiguration _newsletterConfiguration; 
         private string _overrideStylesheet;
         private CaptchaRequired _requireCaptchaOnEdit; 
@@ -71,11 +70,6 @@ namespace FlexWiki.Web
         {
             get { return _log4NetConfigPath; }
             set { _log4NetConfigPath = value; }
-        }
-        public bool MakeAbsoluteUrls
-        {
-            get { return _makeAbsoluteUrls; }
-            set { _makeAbsoluteUrls = value; }
         }
         public NewsletterConfiguration NewsletterConfiguration
         {
