@@ -15,7 +15,7 @@
 <%
 	if (Request.HttpMethod == "POST")
 	{
-		Response.Write("<legend class='DialogTitle'>Rename <b>" + FlexWiki.Web.HTMLWriter.Escape(OldName)  + "</b></legend>");
+		Response.Write("<legend class='DialogTitle'>Rename <b>" + FlexWiki.Web.HtmlWriter.Escape(OldName)  + "</b></legend>");
 		PerformRename();
 	}
 	else
@@ -30,7 +30,7 @@
 %>
 				<legend class='DialogTitle'>
 				Rename <b>
-					<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>
+					<%= FlexWiki.Web.HtmlWriter.Escape(AbsTopicName.DottedName)  %>
 				</b>
 				</legend>
 			<p><b>&nbsp;Important guidelines</b> (rename is not always straightforward!):
@@ -56,11 +56,11 @@
 				</ul>
 				<hr noshade size='1'>
 				<form id="RenameForm" method="post" ACTION="Rename.aspx">
-					<input style='DISPLAY: none' type="text"  name="oldName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
+					<input style='DISPLAY: none' type="text"  name="oldName" value ="<%= FlexWiki.Web.HtmlWriter.Escape(AbsTopicName.LocalName)  %>">
 					<b>&nbsp;Old</b> name:
-					<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>
+					<%= FlexWiki.Web.HtmlWriter.Escape(AbsTopicName.LocalName)  %>
 					<br>
-					<b>&nbsp;New</b> name: <input style='FONT-SIZE: x-small' type="text"  name="newName" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Name)  %>">
+					<b>&nbsp;New</b> name: <input style='FONT-SIZE: x-small' type="text"  name="newName" value ="<%= FlexWiki.Web.HtmlWriter.Escape(AbsTopicName.LocalName)  %>">
 					<p>
 					<%
 					{
@@ -93,7 +93,7 @@
 						</div>
 					<P></P>
 					<p>
-						<input style='DISPLAY: none' type="text"  name="namespace" value ="<%= FlexWiki.Web.HTMLWriter.Escape(AbsTopicName.Namespace)  %>">
+						<input style='DISPLAY: none' type="text"  name="namespace" value ="<%= FlexWiki.Web.HtmlWriter.Escape(AbsTopicName.Namespace)  %>">
 						<input type='submit' ID="SaveButton" Value="Rename">
 					</p>
 				</form>

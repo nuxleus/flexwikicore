@@ -262,7 +262,7 @@
       <SubType>Form</SubType>
     </Content>
     <Content Include="Rename.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RequestNamespace.aspx" />
     <Content Include="Rss.aspx">
