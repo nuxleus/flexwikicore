@@ -893,7 +893,7 @@ namespace FlexWiki
             {
                 return null;
             }
-            return namespaceManager.Read(topic.LocalName);
+            return namespaceManager.Read(topic.AsUnqualifiedTopicRevision());
         }
         public string Read(TopicName topic)
         {

@@ -15,155 +15,155 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 using FlexWiki;
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
 {
-	/// <summary>
-	/// Summary description for WebForm1.
-	/// </summary>
-	public class Default2 : BasePage
-	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
+    /// <summary>
+    /// Summary description for WebForm1.
+    /// </summary>
+    public class Default2 : BasePage
+    {
+        private void Page_Load(object sender, System.EventArgs e)
+        {
+            // Put user code to initialize the page here
+        }
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
 
-		protected string urlForDiffs;
-		protected string urlForNoDiffs;
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
 
-		private static bool IsAbsoluteURL(string pattern)
-		{
-			if (pattern.StartsWith(System.Uri.UriSchemeHttp + System.Uri.SchemeDelimiter))
-				return true;
-			if (pattern.StartsWith(System.Uri.UriSchemeHttps + System.Uri.SchemeDelimiter))
-				return true;
-			if (pattern.StartsWith(System.Uri.UriSchemeFile + System.Uri.UriSchemeFile))
-				return true;
-			return false;
-		}
+        protected string urlForDiffs;
+        protected string urlForNoDiffs;
 
-		private LogEvent MainEvent;
-		protected void StartPage()
-		{
-			if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads) != null)
-				Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads).Increment();
+        private static bool IsAbsoluteURL(string pattern)
+        {
+            if (pattern.StartsWith(System.Uri.UriSchemeHttp + System.Uri.SchemeDelimiter))
+                return true;
+            if (pattern.StartsWith(System.Uri.UriSchemeHttps + System.Uri.SchemeDelimiter))
+                return true;
+            if (pattern.StartsWith(System.Uri.UriSchemeFile + System.Uri.UriSchemeFile))
+                return true;
+            return false;
+        }
 
-			MainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicVersionKey().ToString(), LogEventType.ReadTopic);
-			VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
-			LogVisitorEvent(e);
-		}
+        private LogEvent MainEvent;
+        protected void StartPage()
+        {
+            if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads) != null)
+                Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads).Increment();
 
-		protected void EndPage()
-		{
-			MainEvent.Record();
-		}
+            MainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicVersionKey().ToString(), LogEventType.ReadTopic);
+            VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
+            LogVisitorEvent(e);
+        }
 
-		protected string GetTitle()
-		{
-			string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
-			if (title == null || title == "")
-				title = GetTopicVersionKey().FormattedName;
-			return HtmlStringWriter.Escape(title);
-		}
+        protected void EndPage()
+        {
+            MainEvent.Record();
+        }
 
-		protected void DoHead()
-		{
+        protected string GetTitle()
+        {
+            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
+            if (title == null || title == "")
+                title = GetTopicVersionKey().FormattedName;
+            return HtmlStringWriter.Escape(title);
+        }
+
+        protected void DoHead()
+        {
 
 
-			QualifiedTopicRevision topic = GetTopicVersionKey();	 
-			LinkMaker lm = TheLinkMaker;
+            QualifiedTopicRevision topic = GetTopicVersionKey();
+            LinkMaker lm = TheLinkMaker;
 
-			// Consider establishing a redirect if there's a redirect to a topic or an URL
-			string redir = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Redirect");
-			if (redir != "")
-			{
-				UriBuilder uri = null;
-				if (IsAbsoluteURL(redir)) 
-				{
-					uri = new UriBuilder(redir);
-				}
-				else
-				{
-					// Must be a topic name
-					string trimmed = redir.Trim();
+            // Consider establishing a redirect if there's a redirect to a topic or an URL
+            string redir = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Redirect");
+            if (redir != "")
+            {
+                UriBuilder uri = null;
+                if (IsAbsoluteURL(redir))
+                {
+                    uri = new UriBuilder(redir);
+                }
+                else
+                {
+                    // Must be a topic name
+                    string trimmed = redir.Trim();
                     QualifiedTopicNameCollection all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
 
-					if (all.Count == 1) 
-					{
-						uri = new UriBuilder(
+                    if (all.Count == 1)
+                    {
+                        uri = new UriBuilder(
                             new Uri(
-                                new Uri(FullRootUrl(Request)), 
+                                new Uri(FullRootUrl(Request)),
                                 lm.LinkToTopic(
-                                    new QualifiedTopicRevision(all[0]), 
-                                    false, 
+                                    new QualifiedTopicRevision(all[0]),
+                                    false,
                                     Request.QueryString)));
-					}
-					else
-					{
-						if (all.Count == 0)
-							Response.Write("<!-- Redirect topic does not exist -->\n");
-						else
-							Response.Write("<!-- Redirect topic is ambiguous -->\n");
-					}
-				}
-				if (uri != null)
-				{
-					if (Request.QueryString["DelayRedirect"] == "1")
-						Response.Write(@"<meta http-equiv='refresh' content='10;URL=" + uri + "'>\n");
-					else
-					{
-						Response.Redirect(uri.Uri.ToString());
-						return;
-					}
-				}
-			}
+                    }
+                    else
+                    {
+                        if (all.Count == 0)
+                            Response.Write("<!-- Redirect topic does not exist -->\n");
+                        else
+                            Response.Write("<!-- Redirect topic is ambiguous -->\n");
+                    }
+                }
+                if (uri != null)
+                {
+                    if (Request.QueryString["DelayRedirect"] == "1")
+                        Response.Write(@"<meta http-equiv='refresh' content='10;URL=" + uri + "'>\n");
+                    else
+                    {
+                        Response.Redirect(uri.Uri.ToString());
+                        return;
+                    }
+                }
+            }
 
-			string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
-			if (keywords != "")
-				Response.Write("<META name=\"keywords\" content=\"" + keywords + "\">\n");
-			string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
-			if (description != "")
-				Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
-			Response.Write("<META name=\"author\" content=\"" + 
-                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) + 
+            string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
+            if (keywords != "")
+                Response.Write("<META name=\"keywords\" content=\"" + keywords + "\">\n");
+            string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
+            if (description != "")
+                Response.Write("<META name=\"description\" content=\"" + description + "\">\n");
+            Response.Write("<META name=\"author\" content=\"" +
+                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) +
                 "\">\n");
 
-			if (GetTopicVersionKey().Version != null)
-			{
-				// Don't index the versions
-				Response.Write("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\">");
-			}
-        
-			urlForDiffs = lm.LinkToTopic(topic, true);
-			urlForNoDiffs = lm.LinkToTopic(topic, false);
-		}
+            if (GetTopicVersionKey().Version != null)
+            {
+                // Don't index the versions
+                Response.Write("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\">");
+            }
 
-		protected void DoPage()
-		{
+            urlForDiffs = lm.LinkToTopic(topic, true);
+            urlForNoDiffs = lm.LinkToTopic(topic, false);
+        }
 
-			string script = @"
+        protected void DoPage()
+        {
+
+            string script = @"
 <script  type=""text/javascript"" language='javascript'>
 
 function TopicBarMouseOver()
@@ -241,38 +241,38 @@ function tbinput()
 
             QualifiedTopicRevision topic = GetTopicVersionKey();
             NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
-			LinkMaker lm = TheLinkMaker;
-			bool diffs = Request.QueryString["diff"] == "y";
-			QualifiedTopicRevision diffVersion = null;
-			bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
-			bool isBlacklistedRestore = false;
-			bool editOnDoubleClick = true;
-			if (restore==true)
-			{
-				// Prevent restoring a topic with blacklisted content
-				if (Federation.IsBlacklisted(Federation.Read(topic)))
-				{
-					isBlacklistedRestore = true;
-				}
-				else
-				{
-					Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
-				}
-			}
+            LinkMaker lm = TheLinkMaker;
+            bool diffs = Request.QueryString["diff"] == "y";
+            QualifiedTopicRevision diffVersion = null;
+            bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
+            bool isBlacklistedRestore = false;
+            bool editOnDoubleClick = true;
+            if (restore == true)
+            {
+                // Prevent restoring a topic with blacklisted content
+                if (Federation.IsBlacklisted(Federation.Read(topic)))
+                {
+                    isBlacklistedRestore = true;
+                }
+                else
+                {
+                    Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
+                }
+            }
 
-			// Go edit if we try to view it and it doesn't exist
-			if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
-			{ 
-				Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
-				return;
-			}
+            // Go edit if we try to view it and it doesn't exist
+            if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
+            {
+                Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
+                return;
+            }
 
-			if (diffs)
-			{
-				diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
-			}
+            if (diffs)
+            {
+                diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
+            }
 
-            editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick; 
+            editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
 
             if (editOnDoubleClick)
             {
@@ -283,44 +283,44 @@ function tbinput()
                 Response.Write("<body onclick='javascript: BodyClick()'>");
             }
 
-			Response.Write(script);
-			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
+            Response.Write(script);
+            Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
 
-			//////////////////////////
-			///
+            //////////////////////////
+            ///
 
-			// Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-			string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
+            // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
+            string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
 
-			// Now calculate the borders
-			int span = 1;
-			string leftBorder = Federation.GetTopicFormattedBorder(topic, Border.Left);
-			if (leftBorder != null)
-			{
-				span++;
-				leftBorder = "<td valign='top' class='BorderLeft'>" + leftBorder + "</td>";
-			}
-			string rightBorder =Federation.GetTopicFormattedBorder(topic, Border.Right);
-			if (rightBorder != null)
-			{
-				span++;
-				rightBorder = "<td valign='top' class='BorderRight'>" + rightBorder + "</td>";
-			}
-			string topBorder = Federation.GetTopicFormattedBorder(topic, Border.Top);
-			if (topBorder != null)
-				topBorder = "<tr><td valign='top'  class='BorderTop' colspan='" + span + "'>" + topBorder + "</td></tr>";
-			string bottomBorder = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
-			if (bottomBorder != null)
-				bottomBorder = "<tr><td valign='top'  class='BorderBottom' colspan='" + span + "'>" + bottomBorder + "</td></tr>";
+            // Now calculate the borders
+            int span = 1;
+            string leftBorder = Federation.GetTopicFormattedBorder(topic, Border.Left);
+            if (leftBorder != null)
+            {
+                span++;
+                leftBorder = "<td valign='top' class='BorderLeft'>" + leftBorder + "</td>";
+            }
+            string rightBorder = Federation.GetTopicFormattedBorder(topic, Border.Right);
+            if (rightBorder != null)
+            {
+                span++;
+                rightBorder = "<td valign='top' class='BorderRight'>" + rightBorder + "</td>";
+            }
+            string topBorder = Federation.GetTopicFormattedBorder(topic, Border.Top);
+            if (topBorder != null)
+                topBorder = "<tr><td valign='top'  class='BorderTop' colspan='" + span + "'>" + topBorder + "</td></tr>";
+            string bottomBorder = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
+            if (bottomBorder != null)
+                bottomBorder = "<tr><td valign='top'  class='BorderBottom' colspan='" + span + "'>" + bottomBorder + "</td></tr>";
 
-			Response.Write("<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0'>");
-			if (topBorder != null)
-				Response.Write(topBorder);
-			Response.Write("<tr>");
-			if (leftBorder != null)
-				Response.Write(leftBorder);
-			Response.Write("<td valign='top' width='100%'>");
-			Response.Write(@"<div id='MainRegion' class='TopicBody'>
+            Response.Write("<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0'>");
+            if (topBorder != null)
+                Response.Write(topBorder);
+            Response.Write("<tr>");
+            if (leftBorder != null)
+                Response.Write(leftBorder);
+            Response.Write("<td valign='top' width='100%'>");
+            Response.Write(@"<div id='MainRegion' class='TopicBody'>
 <form method='post' action='" + lm.LinkToQuicklink() + @"?QuickLinkNamespace=" + topic.Namespace + @"' name='QuickLinkForm'>
 <div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='javascript:TopicBarMouseOver()'  onclick='javascript:TopicBarClick(event)'  onmouseout='javascript:TopicBarMouseOut()'>
 <div  id='StaticTopicBar'  class='StaticTopicBar' style='display: block'>" + GetTitle() + @"</div>
@@ -333,44 +333,44 @@ function tbinput()
 </form>
 ");
 
-			if (isBlacklistedRestore)
-			{
-				Response.Write("<div class='BlacklistedRestore'><font color='red'><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
-			}
-			
-			Response.Write(formattedBody);
+            if (isBlacklistedRestore)
+            {
+                Response.Write("<div class='BlacklistedRestore'><font color='red'><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
+            }
 
-			Response.Write("</div>");
-			Response.Write("</td>");
-			if (rightBorder != null)
-				Response.Write(rightBorder);
-			Response.Write("</tr>");
-			if (bottomBorder != null)
-				Response.Write(bottomBorder);
-			Response.Write("</table>");
+            Response.Write(formattedBody);
 
-			Response.Write("</body>");
+            Response.Write("</div>");
+            Response.Write("</td>");
+            if (rightBorder != null)
+                Response.Write(rightBorder);
+            Response.Write("</tr>");
+            if (bottomBorder != null)
+                Response.Write(bottomBorder);
+            Response.Write("</table>");
 
-		}
+            Response.Write("</body>");
 
-		private void Command(LinkMaker lm, string command, string helptext, string url)
-		{
-			Response.Write("<table cellspacing='0' cellpadding='1' class='CommandTable' border='0'><tr><td valign='middle'>");
-			Response.Write("<img src='" + lm.LinkToImage("images/go-dark.gif") + "'>");
-			Response.Write("</td>");
-			
-			Response.Write("<td valign='middle'>");
-			Response.Write("<a title='" + helptext + "' href=\"" + url + "\">" + command + "</a>");
-			Response.Write("</td>");
-			Response.Write("</tr></table>");
+        }
 
-		}
+        private void Command(LinkMaker lm, string command, string helptext, string url)
+        {
+            Response.Write("<table cellspacing='0' cellpadding='1' class='CommandTable' border='0'><tr><td valign='middle'>");
+            Response.Write("<img src='" + lm.LinkToImage("images/go-dark.gif") + "'>");
+            Response.Write("</td>");
 
-		private void WriteRecentPane()
-		{
-			OpenPane(Response.Output, "Recent Topics");
-			Response.Write("    ");
-			ClosePane(Response.Output);
-		}
-	}
+            Response.Write("<td valign='middle'>");
+            Response.Write("<a title='" + helptext + "' href=\"" + url + "\">" + command + "</a>");
+            Response.Write("</td>");
+            Response.Write("</tr></table>");
+
+        }
+
+        private void WriteRecentPane()
+        {
+            OpenPane(Response.Output, "Recent Topics");
+            Response.Write("    ");
+            ClosePane(Response.Output);
+        }
+    }
 }
