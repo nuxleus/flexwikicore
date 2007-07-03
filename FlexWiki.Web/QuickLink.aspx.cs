@@ -59,18 +59,19 @@ namespace FlexWiki.Web
 		protected void DoSearch()
 		{
 			string defaultNamespace = Request.QueryString["QuickLinkNamespace"];
-			NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(defaultNamespace);
 
 			LinkMaker lm = TheLinkMaker;
 
             string topic = Request.Form["QuickLink"];
-            QualifiedTopicNameCollection hits = storeManager.AllQualifiedTopicNamesThatExist(topic);
+            QualifiedTopicNameCollection hits = Federation.AllQualifiedTopicNamesThatExist(new TopicName(topic), defaultNamespace);
 
 			string target = null;
 			if (hits.Count == 0)
 			{
-				// No hits, create it in the default namespace
-				target = lm.LinkToEditTopic(new TopicName(topic, defaultNamespace));
+				// No hits, create it in the default namespace, or the namespace that was specified
+                TopicName topicName = new TopicName(topic);
+                topicName.ResolveRelativeTo(defaultNamespace); 
+				target = lm.LinkToEditTopic(topicName);
 			} 
 			else if (hits.Count == 1)
 			{
