@@ -35,7 +35,7 @@ namespace FlexWiki.Web
     /// </summary>
     public class WikiEdit : BasePage
     {
-        private QualifiedTopicRevision _TheTopic;
+        private QualifiedTopicRevision _theTopic;
 
         private void Page_Load(object sender, System.EventArgs e)
         {
@@ -48,11 +48,17 @@ namespace FlexWiki.Web
             {
                 string answer = null;
                 if (IsPost)
+                {
                     answer = Request.Form["ReturnTopic"];
+                }
                 else
+                {
                     answer = Request.QueryString["return"];
+                }
                 if (answer == "")
+                {
                     answer = null;
+                }
                 return answer;
             }
         }
@@ -60,15 +66,15 @@ namespace FlexWiki.Web
         {
             get
             {
-                if (_TheTopic != null)
-                    return _TheTopic;
+                if (_theTopic != null)
+                    return _theTopic;
                 string topic;
                 if (IsPost)
                     topic = Request.Form["Topic"];
                 else
                     topic = Request.QueryString["topic"];
-                _TheTopic = new QualifiedTopicRevision(topic);
-                return _TheTopic;
+                _theTopic = new QualifiedTopicRevision(topic);
+                return _theTopic;
             }
         }
 
@@ -226,7 +232,10 @@ namespace FlexWiki.Web
                 string topic = "<<null>>";
                 if (TheTopic != null && TheTopic.DottedName != null)
                 {
-                    topic = TheTopic.DottedName; 
+                    topic = TheTopic.DottedName;
+                    // On a null edit we want to make sure we go back to the right place. Without setting
+                    // returnTo, we'll wind up at the wiki default page. 
+                    returnTo = TheTopic; 
                 }
                 FlexWikiWebApplication.LogDebug(this.GetType().ToString(), "A null edit was submitted for topic " + topic); 
             }
