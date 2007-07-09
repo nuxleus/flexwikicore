@@ -70,8 +70,8 @@ namespace FlexWiki.Web
 			{
 				// No hits, create it in the default namespace, or the namespace that was specified
                 TopicName topicName = new TopicName(topic);
-                topicName.ResolveRelativeTo(defaultNamespace); 
-				target = lm.LinkToEditTopic(topicName);
+                QualifiedTopicName qualifiedTopicName = topicName.ResolveRelativeTo(defaultNamespace); 
+				target = lm.LinkToEditTopic(qualifiedTopicName);
 			} 
 			else if (hits.Count == 1)
 			{
