@@ -37,11 +37,27 @@ namespace FlexWiki.Web
     {
         private QualifiedTopicRevision _theTopic;
 
-        private void Page_Load(object sender, System.EventArgs e)
+        protected QualifiedTopicRevision TheTopic
         {
-            // Put user code to initialize the page here
+            get
+            {
+                if (_theTopic != null)
+                {
+                    return _theTopic;
+                }
+                string topic;
+                if (IsPost)
+                {
+                    topic = Request.Form["Topic"];
+                }
+                else
+                {
+                    topic = Request.QueryString["topic"];
+                }
+                _theTopic = new QualifiedTopicRevision(topic);
+                return _theTopic;
+            }
         }
-
         protected string ReturnTopic
         {
             get
@@ -62,22 +78,27 @@ namespace FlexWiki.Web
                 return answer;
             }
         }
-        protected QualifiedTopicRevision TheTopic
+
+        private bool IsBack
         {
             get
             {
-                if (_theTopic != null)
-                    return _theTopic;
-                string topic;
-                if (IsPost)
-                    topic = Request.Form["Topic"];
+                string saveButton = Request.Form["SaveButtonPressed"];
+
+                if (string.IsNullOrEmpty(saveButton))
+                {
+                    return false;
+                }
+                else if (saveButton == "Back")
+                {
+                    return true;
+                }
                 else
-                    topic = Request.QueryString["topic"];
-                _theTopic = new QualifiedTopicRevision(topic);
-                return _theTopic;
+                {
+                    return false;
+                }
             }
         }
-
         private bool IsBanned
         {
             get
@@ -185,6 +206,24 @@ namespace FlexWiki.Web
         }
 
 
+        protected void DoPage()
+        {
+            if (IsPost && !IsConflictingChange && !IsBanned)
+            {
+                if (IsCaptchaVerified)
+                {
+                    ProcessPost();
+                }
+                else
+                {
+                    ShowEditPage(true);
+                }
+            }
+            else
+            {
+                ShowEditPage();
+            }
+        }
         protected void ProcessSave(bool back)
         {
             QualifiedTopicRevision returnTo = null;
@@ -232,19 +271,25 @@ namespace FlexWiki.Web
                 string topic = "<<null>>";
                 if (TheTopic != null && TheTopic.DottedName != null)
                 {
-                    topic = TheTopic.DottedName;
-                    // On a null edit we want to make sure we go back to the right place. Without setting
-                    // returnTo, we'll wind up at the wiki default page. 
-                    returnTo = TheTopic; 
+                    topic = TheTopic.DottedName; 
                 }
                 FlexWikiWebApplication.LogDebug(this.GetType().ToString(), "A null edit was submitted for topic " + topic); 
             }
 
             if (returnTo == null)
             {
-                FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
-                    "Redirecting to wiki root."); 
-                Response.Redirect(RootUrl);
+               
+                if (TheTopic != null && TheTopic.DottedName != null)
+                {
+                    Response.Redirect(TheLinkMaker.LinkToTopic(TheTopic.ToString()));
+                }
+                else
+                {
+                    FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
+                        "Redirecting to wiki root.");
+                    Response.Redirect(RootUrl);
+                }
+                
             }
             else
             {
@@ -255,24 +300,6 @@ namespace FlexWiki.Web
 
         }
 
-        protected void DoPage()
-        {
-            if (IsPost && !IsConflictingChange && !IsBanned)
-            {
-                if (IsCaptchaVerified)
-                {
-                    ProcessPost();
-                }
-                else
-                {
-                    ShowEditPage(true); 
-                }
-            }
-            else
-            {
-                ShowEditPage();
-            }
-        }
 
         private int CountLinks(string text)
         {
@@ -352,9 +379,14 @@ namespace FlexWiki.Web
             msg.Body = w.ToString();
             SendMail(msg);
         }
+        private void Page_Load(object sender, System.EventArgs e)
+        {
+            // Put user code to initialize the page here
+        }
+
         private void ProcessPost()
         {
-            ProcessSave(true);
+            ProcessSave(IsBack);
         }
         private void ShowEditPage()
         {
@@ -467,8 +499,9 @@ Add your wiki text here.
             Response.Write(@"</textarea>");
             if (IsWritable)
             {
-                Response.Write("<input type='text' style='display:none' name='CaptchaEnteredSubmitted' value =''>"); 
-                Response.Write("<input type='text' style='display:none' name='CaptchaContextSubmitted' value =''>"); 
+                Response.Write("<input type='text' style='display:none' name='CaptchaEnteredSubmitted' value =''>");
+                Response.Write("<input type='text' style='display:none' name='CaptchaContextSubmitted' value =''>");
+                Response.Write("<input type='text' style='display:none' id='SaveButtonPressed' name='SaveButtonPressed' value=''>");
                 Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
                 if (Federation.TopicExists(TheTopic))
                     Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(Federation.GetTopicModificationTime(TheTopic).ToString("s")) + "'>");
