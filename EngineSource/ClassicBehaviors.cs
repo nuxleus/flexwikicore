@@ -36,24 +36,6 @@ namespace FlexWiki
         {
         }
 
-        public override IOutputSequence ToOutputSequence()
-        {
-            return new WikiSequence(ToString());
-        }
-
-        public override string ToString()
-        {
-            return "classic behaviors object";
-        }
-
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer the name of this product (FlexWiki)")]
-        public string ProductName
-        {
-            get
-            {
-                return "FlexWiki";
-            }
-        }
 
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a formatted error message")]
         public IBELObject ErrorMessage(string title, string body)
@@ -70,16 +52,23 @@ namespace FlexWiki
             }
         }
 
-
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer a tab character")]
-        public string Tab
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the current date and time")]
+        public DateTime Now
         {
             get
             {
-                return "\t";
+                return DateTime.Now;
             }
         }
 
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the name of this product (FlexWiki)")]
+        public string ProductName
+        {
+            get
+            {
+                return "FlexWiki";
+            }
+        }
 
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the exact version number of this software")]
         public string ProductVersion
@@ -90,14 +79,15 @@ namespace FlexWiki
             }
         }
 
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer the current date and time")]
-        public DateTime Now
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a tab character")]
+        public string Tab
         {
             get
             {
-                return DateTime.Now;
+                return "\t";
             }
         }
+
 
         [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer a list of all namespaces in the federation (with details)")]
         public string AllNamespacesWithDetails(ExecutionContext ctx)
@@ -125,6 +115,114 @@ namespace FlexWiki
             return b.ToString();
         }
 
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Present the given image with the supplied additiona information")]
+        public IBELObject Image(ExecutionContext ctx, string URL, string altText, [ExposedParameter(true)] string width, [ExposedParameter(true)]string height)
+        {
+            return new ImagePresentation(altText, URL, null, height, width);
+        }
+
+        // TODO - This method violates the rules: no behavior should ever directly output presentation strings.  To fix this,
+        // we need a BELHyperlinkPresentation object that this behavior can produce and that can do IOutputSequence...
+        [ExposedMethod(ExposedMethodFlags.AllowsVariableArguments, "Link to the given interWiki")]
+        public IBELObject InterWiki(ExecutionContext ctx, string interWikiName, string linkText)
+        {
+            ExternalReferencesMap map = ctx.ExternalWikiMap;
+            Federation fed = ctx.CurrentFederation;
+
+            string result = null;
+            string safeName = Formatter.EscapeHTML(interWikiName);
+            string safeLinkText = Formatter.EscapeHTML(linkText);
+            if (map != null)
+            {
+                foreach (KeyValuePair<string, string> extWiki in map)
+                {
+                    if (extWiki.Key.ToString().ToUpper() == interWikiName.ToUpper())
+                    {
+                        result = "<a class=ExternalLink title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + extWiki.Value.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
+                        break;
+                    }
+                }
+            }
+
+            if (result == null)
+            {
+                string interWikisTopic = fed.Configuration.InterWikisTopic;
+                if (interWikisTopic == null)
+                {
+                    interWikisTopic = "_InterWikis";
+                }
+
+                QualifiedTopicRevision topic = new QualifiedTopicRevision(interWikisTopic, fed.DefaultNamespace);
+                if (!fed.TopicExists(topic))
+                {
+                    throw new ArgumentException("Failed to find InterWikisTopic [" + interWikisTopic + "].");
+                }
+
+                TopicPropertyCollection props = fed.GetTopicProperties(topic);
+                if (props != null)
+                {
+                    foreach (TopicProperty entry in props)
+                    {
+                        if (entry.Name.ToUpper() == interWikiName.ToUpper())
+                        {
+                            result = "<a class=ExternalLink title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + entry.LastValue.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
+                        }
+                    }
+                }
+
+                if (result == null)
+                {
+                    throw new ArgumentException("Failed to find InterWiki '" + safeName + "'.");
+                }
+            }
+
+            for (int p = 0; p < ctx.TopFrame.ExtraArguments.Count; p++)
+            {
+                string replacementArg = Formatter.EscapeHTML(ctx.TopFrame.ExtraArguments[p] == null ? "null" : ctx.TopFrame.ExtraArguments[p].ToString());
+                result = result.Replace("$" + (p + 1).ToString(), replacementArg);
+            }
+
+            return new StringPresentation(result);
+        }
+
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer the value of the given property")]
+        public string Property(ExecutionContext ctx, string topic, string property)
+        {
+            TopicName abs = null;
+            bool ambig = false;
+            string answer = null;
+            try
+            {
+                NamespaceManager namespaceManager = ctx.CurrentNamespaceManager;
+                if (namespaceManager == null)
+                {
+                    namespaceManager = ctx.CurrentFederation.DefaultNamespaceManager;
+                }
+                TopicRevision rel = new TopicRevision(topic);
+                abs = namespaceManager.UnambiguousTopicNameFor(rel.LocalName);
+            }
+            catch (TopicIsAmbiguousException)
+            {
+                ambig = true;
+            }
+            if (abs != null)
+            {
+                // Got a unique one!
+                answer = ctx.CurrentFederation.GetTopicPropertyValue(abs, property);
+            }
+            else
+            {
+                if (ambig)
+                {
+                    throw new ArgumentException("Ambiguous topic name: " + topic);
+                }
+                else
+                {
+                    throw new ArgumentException("Unknown topic name: " + topic);
+                }
+            }
+            return answer;
+        }
 
         [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer a list of topics that match the given criteria.")]
         public string TopicIndex(ExecutionContext ctx, string type, [ExposedParameter(true)] string arg2, [ExposedParameter(true)] string topicNamespace)
@@ -156,7 +254,7 @@ namespace FlexWiki
             {
                 foreach (string ns in ctx.CurrentFederation.Namespaces)
                 {
-                    uniqueNamespaces.Add(ns); 
+                    uniqueNamespaces.Add(ns);
                 }
                 uniqueNamespaces.Sort();
             }
@@ -192,7 +290,7 @@ namespace FlexWiki
                             result += "\t* \"" + topic.DottedName + "\":" + topic.Namespace + ".[" + topic.LocalName + "]" + Environment.NewLine;
                         }
                         string topicSummary = ctx.CurrentFederation.GetTopicPropertyValue(topic, "Summary");
-                        if (topicSummary.Length > 0)
+                        if (!string.IsNullOrEmpty(topicSummary))
                         {
                             result += "\t\t*" + topicSummary + Environment.NewLine;
                         }
@@ -200,7 +298,7 @@ namespace FlexWiki
                     else
                     {
                         string topicProperty = ctx.CurrentFederation.GetTopicPropertyValue(topic, arg2);
-                        if (topicProperty.Length > 0)
+                        if (!string.IsNullOrEmpty(topicProperty))
                         {
                             result += "\t* \"" + topic.DottedName + "\":" + topic.Namespace + ".[" + topic.LocalName + "]" + Environment.NewLine + "\t\t* " + topicProperty + Environment.NewLine;
                         }
@@ -208,6 +306,15 @@ namespace FlexWiki
                 }
             }
             return result;
+        }
+
+        public override IOutputSequence ToOutputSequence()
+        {
+            return new WikiSequence(ToString());
+        }
+        public override string ToString()
+        {
+            return "classic behaviors object";
         }
 
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the result of transforming the given XML using the given transform")]
@@ -256,114 +363,8 @@ namespace FlexWiki
             return result;
         }
 
-
-        [ExposedMethod(ExposedMethodFlags.NeedContext, "Present the given image with the supplied additiona information")]
-        public IBELObject Image(ExecutionContext ctx, string URL, string altText, [ExposedParameter(true)] string width, [ExposedParameter(true)]string height)
-        {
-            return new ImagePresentation(altText, URL, null, height, width);
-        }
-
-        [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer the value of the given property")]
-        public string Property(ExecutionContext ctx, string topic, string property)
-        {
-            TopicName abs = null;
-            bool ambig = false;
-            string answer = null;
-            try
-            {
-                NamespaceManager namespaceManager = ctx.CurrentNamespaceManager;
-                if (namespaceManager == null)
-                    namespaceManager = ctx.CurrentFederation.DefaultNamespaceManager;
-                TopicRevision rel = new TopicRevision(topic);
-                abs = namespaceManager.UnambiguousTopicNameFor(rel.LocalName);
-            }
-            catch (TopicIsAmbiguousException)
-            {
-                ambig = true;
-            }
-            if (abs != null)
-            {
-                // Got a unique one!
-                answer = ctx.CurrentFederation.GetTopicPropertyValue(abs, property);
-            }
-            else
-            {
-                if (ambig)
-                    throw new ArgumentException("Ambiguous topic name: " + topic);
-                else
-                    throw new ArgumentException("Unknown topic name: " + topic);
-            }
-            return answer;
-        }
-
-        // TODO - This method violates the rules: no behavior should ever directly output presentation strings.  To fix this,
-        // we need a BELHyperlinkPresentation object that this behavior can produce and that can do IOutputSequence...
-        [ExposedMethod(ExposedMethodFlags.AllowsVariableArguments, "Link to the given interWiki")]
-        public IBELObject InterWiki(ExecutionContext ctx, string interWikiName, string linkText)
-        {
-            ExternalReferencesMap map = ctx.ExternalWikiMap;
-            Federation fed = ctx.CurrentFederation;
-
-            string result = null;
-            string safeName = Formatter.EscapeHTML(interWikiName);
-            string safeLinkText = Formatter.EscapeHTML(linkText);
-            if (map != null)
-            {
-                foreach (KeyValuePair<string, string> extWiki in map)
-                {
-                    if (extWiki.Key.ToString().ToUpper() == interWikiName.ToUpper())
-                    {
-                        result = "<a class=ExternalLink title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + extWiki.Value.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
-                        break;
-                    }
-                }
-            }
-
-            if (result == null)
-            {
-                string interWikisTopic = fed.Configuration.InterWikisTopic; 
-                if (interWikisTopic == null)
-                {
-                    interWikisTopic = "_InterWikis";
-                }
-
-                QualifiedTopicRevision topic = new QualifiedTopicRevision(interWikisTopic, fed.DefaultNamespace);
-                if (!fed.TopicExists(topic))
-                {
-                    throw new ArgumentException("Failed to find InterWikisTopic [" + interWikisTopic + "].");
-                }
-
-                TopicPropertyCollection props = fed.GetTopicProperties(topic);
-                if (props != null)
-                {
-                    foreach (TopicProperty entry in props)
-                    {
-                        if (entry.Name.ToUpper() == interWikiName.ToUpper())
-                        {
-                            result = "<a class=ExternalLink title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + entry.LastValue.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
-                        }
-                    }
-                }
-
-                if (result == null)
-                {
-                    throw new ArgumentException("Failed to find InterWiki '" + safeName + "'.");
-                }
-            }
-
-            for (int p = 0; p < ctx.TopFrame.ExtraArguments.Count; p++)
-            {
-                string replacementArg = Formatter.EscapeHTML(ctx.TopFrame.ExtraArguments[p] == null ? "null" : ctx.TopFrame.ExtraArguments[p].ToString());
-                result = result.Replace("$" + (p + 1).ToString(), replacementArg);
-            }
-
-            return new StringPresentation(result);
-        }
-
-
-
-
     }
 }
+
 
 
