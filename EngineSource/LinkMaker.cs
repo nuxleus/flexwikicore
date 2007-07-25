@@ -176,7 +176,14 @@ namespace FlexWiki
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to search for the given string in the given namespace")]
         public string LinkToSearchFor(string Namespace, string searchExpression)
         {
-            return SimpleLinkTo("search.aspx" + (Namespace != null ? "?namespace=" + Namespace : "") + (searchExpression != null ? "?search=" + HttpUtility.UrlEncode(searchExpression) : ""));
+            if (Namespace != null)
+            {
+                return SimpleLinkTo("search.aspx" + "?namespace=" + HttpUtility.UrlEncode(Namespace) + (searchExpression != null ? "&amp;search=" + HttpUtility.UrlEncode(searchExpression) : ""));
+            }
+            else
+            {
+                return SimpleLinkTo("search.aspx" + (searchExpression != null ? "?search=" + HttpUtility.UrlEncode(searchExpression) : ""));
+            }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the search page for the given namespace")]
         public string LinkToSearchNamespace(string ns)
