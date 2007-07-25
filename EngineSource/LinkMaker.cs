@@ -20,7 +20,7 @@ using System.Web;
 
 namespace FlexWiki
 {
-    /// <summary>
+    /// <summary> 
     /// LinkMaker understand how to make links to the various pages that make the wiki work
     /// </summary>
     [ExposedClass("LinkMaker", "Builds hyperlinks to various important pages")]
