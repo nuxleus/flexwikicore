@@ -604,6 +604,36 @@ Write(@"
 			return " " + attr;
 		}
 
+        public override void ContainerStart(string ID, string style)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            
+            // Start the <div> element.
+            stringBuilder.Append("<div");
+            
+            if (false == string.IsNullOrEmpty(ID))
+            {
+                // Add the id attribute.
+                stringBuilder.Append(string.Format(" id=\"{0}\"", ID));
+            }
 
+            if (false == string.IsNullOrEmpty(style))
+            {
+                // Add the class attribute.
+                stringBuilder.Append(string.Format(" class=\"{0}\"", style));
+            }
+            
+            // Close the <div> element.
+            stringBuilder.Append(">");
+
+            // Write the complete <div> element.
+            string containerStart = stringBuilder.ToString();
+            Write(containerStart);
+        }
+
+        public override void ContainerEnd()
+        {
+            Write("</div>");
+        }
 	}
 }

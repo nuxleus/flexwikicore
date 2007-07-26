@@ -32,29 +32,29 @@ namespace FlexWiki.UnitTests.Formatting
         public void ImageBehaviorTwoParamTest()
         {
             FormatTest("@@Image(\"http://server/image.jpg\", \"Alternative text\")@@",
-              "<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\"/></p>\n");
+              "<img src=\"http://server/image.jpg\" alt=\"Alternative text\"/>\n");
         }
 
         [Test]
         public void ImageBehaviorFourParamTest()
         {
             FormatTest("@@Image(\"http://server/image.jpg\", \"Alternative text\", \"500\", \"400\")@@",
-              "<p><img src=\"http://server/image.jpg\" alt=\"Alternative text\" " +
-              "width=\"500\" height=\"400\"/></p>\n");
+              "<img src=\"http://server/image.jpg\" alt=\"Alternative text\" " +
+              "width=\"500\" height=\"400\"/>\n");
         }
 
         [Test]
         public void ImageBehaviorEmbeddedQuotationMarks()
         {
             FormatTest(@"@@Image(""http://server/image.jpg"", ""Alt \""text\"""")@@",
-              "<p><img src=\"http://server/image.jpg\" alt=\"Alt &quot;text&quot;\"/></p>\n");
+              "<img src=\"http://server/image.jpg\" alt=\"Alt &quot;text&quot;\"/>\n");
         }
 
         [Test]
         public void ImageBehaviorTwoPerLineTest()
         {
             FormatTest("@@Image(\"http://server/image.jpg\", \"alt\")@@ and @@Image(\"http://server/image2.jpg\", \"alt2\")@@",
-              "<p><img src=\"http://server/image.jpg\" alt=\"alt\"/> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"/></p>\n");
+              "<img src=\"http://server/image.jpg\" alt=\"alt\"/> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"/>\n");
         }
 
         [Ignore("This test needs to be rewritten once the NamespaceManager rearchitecture firms up")]

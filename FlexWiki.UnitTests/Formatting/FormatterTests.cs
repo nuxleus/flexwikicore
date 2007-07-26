@@ -83,6 +83,20 @@ namespace FlexWiki.UnitTests.Formatting
                 _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("aZero123")) + @""">aZero123</a>");
         }
         [Test]
+        public void ContainerTests()
+        {
+            // Ugh! The line formatting in the Formatter sucks. This is the best we can manage without
+            // doing some serious work in the formatter.
+            FormatTest("@@Presentations.ContainerStart@@", @"<div>
+");
+            FormatTest("@@Presentations.ContainerStart(\"test\")@@", @"<div id=""test"">
+");
+            FormatTest("@@Presentations.ContainerStart(\"test\", \"style\")@@", @"<div id=""test"" class=""style"">
+");
+            FormatTest("@@Presentations.ContainerEnd@@", @"</div>
+");
+        }
+        [Test]
         public void CodeFormatting()
         {
             FormatTest("@Namespace.Class@", @"<p><code>Namespace.Class</code></p>
@@ -837,7 +851,7 @@ Baz
         [Test]
         public void PropertyBehavior()
         {
-            FormatTest(@"@@Property(""TopicWithColor"", ""Color"")@@", @"<p>Yellow</p>
+            FormatTest(@"@@Property(""TopicWithColor"", ""Color"")@@", @"Yellow
 ");
         }
         [Test]

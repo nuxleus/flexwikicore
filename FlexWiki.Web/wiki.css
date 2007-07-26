@@ -948,12 +948,12 @@ td {
    color:black;
 }
 
-p
-{
+p, form {
 	font-size: 0.76em;
 	line-height: 1.35em;
 	font-family: Arial, Sans-Serif;
 }
+
 a {
    color: royalblue;
    text-decoration:none;

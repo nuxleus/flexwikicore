@@ -1110,6 +1110,13 @@ namespace FlexWiki.Formatting
                                     _output.WriteCloseProperty();
                                 }
                             }
+                            else if (true == each.StartsWith(BehaviorDelimiter))
+                            {
+                                // Don't wrap behaviors in <p> and </p>.
+                                paraOpen = false;
+                                each = ProcessLineElements(each);
+                                _output.Write(each);
+                            }
                             else
                             {
                                 // As vanilla as can be -- just send it along
