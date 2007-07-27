@@ -604,26 +604,26 @@ Write(@"
 			return " " + attr;
 		}
 
-        public override void ContainerStart(string ID, string style)
+        public override void ContainerStart(string type, string id, string style)
         {
             StringBuilder stringBuilder = new StringBuilder();
             
-            // Start the <div> element.
-            stringBuilder.Append("<div");
+            // Start the element.
+            stringBuilder.AppendFormat("<{0}", type.ToLower());
             
-            if (false == string.IsNullOrEmpty(ID))
+            if (false == string.IsNullOrEmpty(id))
             {
                 // Add the id attribute.
-                stringBuilder.Append(string.Format(" id=\"{0}\"", ID));
+                stringBuilder.AppendFormat(" id=\"{0}\"", id);
             }
 
             if (false == string.IsNullOrEmpty(style))
             {
                 // Add the class attribute.
-                stringBuilder.Append(string.Format(" class=\"{0}\"", style));
+                stringBuilder.AppendFormat(" class=\"{0}\"", style);
             }
             
-            // Close the <div> element.
+            // Close the element.
             stringBuilder.Append(">");
 
             // Write the complete <div> element.
@@ -631,9 +631,10 @@ Write(@"
             Write(containerStart);
         }
 
-        public override void ContainerEnd()
+        public override void ContainerEnd(string type)
         {
-            Write("</div>");
+            string containerEnd = string.Format("</{0}>", type.ToLower());
+            Write(containerEnd);
         }
 	}
 }

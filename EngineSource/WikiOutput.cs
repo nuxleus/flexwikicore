@@ -132,7 +132,7 @@ namespace FlexWiki.Formatting
 		abstract public void FormTextarea(string FieldName, string fieldValue, int rows, int cols, string attributes);
 		abstract public void FormHiddenField(string FieldName, string fieldValue, string attributes);
 		abstract public void FormSelectField(string fieldName, int size, bool multiple, ArrayList options, string selectedOption, ArrayList values, object selectedValue, string attributes);
-        abstract public void ContainerStart(string ID, string style);
-        abstract public void ContainerEnd();
+        abstract public void ContainerStart(string type, string id, string style);
+        abstract public void ContainerEnd(string type);
 	}
 }

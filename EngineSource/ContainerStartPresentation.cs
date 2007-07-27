@@ -18,48 +18,82 @@ namespace FlexWiki
     /// <summary>
     /// 
     /// </summary>
-    [ExposedClass("ContainerStartPresentation", "Presents the start of a <div> container")]
+    [ExposedClass("ContainerStartPresentation", "Presents the start of a <div> or <span> container")]
     public class ContainerStartPresentation : FlexWiki.PresentationPrimitive
     {
-        public ContainerStartPresentation(string id, string style)
-        {
-            Init(id, style);
-        }
-        public ContainerStartPresentation(string id)
-        {
-            Init(id, string.Empty);
-        }
-        public ContainerStartPresentation()
-        {
-            Init(string.Empty, string.Empty);
-        }
-        private void Init(string id, string style)
-        {
-            _id = id;
-            _style = style;
-        }
+		
+		private string _id;
+		private string _style;
+		private string _type;
+		public const string Div = "div";
+		public const string Span = "span";
 
-        private string _id;
-        public string Id
+
+
+		public ContainerStartPresentation(string type, string id, string style)
+        {
+            Init(type, id, style);
+        }
+		
+		public ContainerStartPresentation(string type, string id)
+        {
+            Init(type, id, string.Empty);
+        }
+		
+		public ContainerStartPresentation(string type)
+        {
+            Init(type, string.Empty, string.Empty);
+        }
+		
+
+
+		public string ContainerElement
+        {
+            get
+            {
+                return _type;
+            }
+        }
+		
+		public string Id
         {
             get
             {
                 return _id;
             }
         }
-
-        private string _style;
-        public string Style
+		
+		public string Style
         {
             get
             {
                 return _style;
             }
         }
+		
 
-        public override void OutputTo(WikiOutput output)
+
+		public override void OutputTo(WikiOutput output)
         {
-            output.ContainerStart(Id, Style);
+            output.ContainerStart(ContainerElement, Id, Style);
         }
+		
+		private void Init(string type, string id, string style)
+        {
+            // Check for allowed container elements.
+            if ((false == string.Equals(
+                Div, type, StringComparison.CurrentCultureIgnoreCase)) &&
+                (false == string.Equals(
+                Span, type, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                throw new FlexWikiException("Invalid 'type' parameter. Must be 'span' or 'div'.");
+            }
+            _type = type;
+            _id = id;
+            _style = style;
+        }
+		
+
+
     }
 }

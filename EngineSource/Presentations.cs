@@ -140,16 +140,16 @@ namespace FlexWiki
 			return new FormSelectFieldPresentation(fieldName, size, multiple, options, selectedOption, values, selectedValue, attributes);
 		}
 
-        [ExposedMethod(ExposedMethodFlags.NeedContext, "Start a <div> container")]
-        public static ContainerStartPresentation ContainerStart(ExecutionContext context, [ExposedParameter(true)] string ID, [ExposedParameter(true)] string style)
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Start a <div> or <span> container")]
+        public static ContainerStartPresentation ContainerStart(ExecutionContext context, [ExposedParameter(true)] string type, [ExposedParameter(true)] string id, [ExposedParameter(true)] string style)
         {
-            return new ContainerStartPresentation(ID, style);
+            return new ContainerStartPresentation(type, id, style);
         }
 
-        [ExposedMethod(ExposedMethodFlags.NeedContext, "End a <div> container")]
-        public static ContainerEndPresentation ContainerEnd(ExecutionContext context)
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "End a <div> or <span> container")]
+        public static ContainerEndPresentation ContainerEnd(ExecutionContext context, [ExposedParameter(true)] string type)
         {
-            return new ContainerEndPresentation();
+            return new ContainerEndPresentation(type);
         }
     }
 }

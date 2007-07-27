@@ -85,15 +85,26 @@ namespace FlexWiki.UnitTests.Formatting
         [Test]
         public void ContainerTests()
         {
-            // Ugh! The line formatting in the Formatter sucks. This is the best we can manage without
-            // doing some serious work in the formatter.
-            FormatTest("@@Presentations.ContainerStart@@", @"<div>
+            // Div tests.
+            FormatTest("@@Presentations.ContainerStart(\"div\")@@", @"<div>
 ");
-            FormatTest("@@Presentations.ContainerStart(\"test\")@@", @"<div id=""test"">
+            FormatTest("@@Presentations.ContainerStart(\"div\", \"test\")@@", @"<div id=""test"">
 ");
-            FormatTest("@@Presentations.ContainerStart(\"test\", \"style\")@@", @"<div id=""test"" class=""style"">
+            FormatTest("@@Presentations.ContainerStart(\"div\", \"test\", \"style\")@@", @"<div id=""test"" class=""style"">
 ");
-            FormatTest("@@Presentations.ContainerEnd@@", @"</div>
+            FormatTest("@@Presentations.ContainerEnd(\"div\")@@", @"</div>
+");
+            // Span tests.
+            FormatTest("@@Presentations.ContainerStart(\"span\")@@", @"<span>
+");
+            FormatTest("@@Presentations.ContainerStart(\"span\", \"test\")@@", @"<span id=""test"">
+");
+            FormatTest("@@Presentations.ContainerStart(\"span\", \"test\", \"style\")@@", @"<span id=""test"" class=""style"">
+");
+            FormatTest("@@Presentations.ContainerEnd(\"span\")@@", @"</span>
+");
+            // Invalid type test.
+            FormatTest("@@Presentations.ContainerStart(\"script\")@@", @"<span class=""ErrorMessage""><span class=""ErrorMessageBody"">Invalid 'type' parameter. Must be 'span' or 'div'.</span></span>
 ");
         }
         [Test]

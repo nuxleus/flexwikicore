@@ -21,13 +21,42 @@ namespace FlexWiki
     [ExposedClass("ContainerEndPresentation", "Presents the end of a <div> container")]
     public class ContainerEndPresentation : FlexWiki.PresentationPrimitive
     {
-        public ContainerEndPresentation()
-        {
-        }
+		
+		private string _type;
 
-        public override void OutputTo(WikiOutput output)
+
+
+		public ContainerEndPresentation(string type)
         {
-            output.ContainerEnd();
+            // Check for allowed container elements.
+            if ((false == string.Equals(ContainerStartPresentation.Div, 
+                type, StringComparison.CurrentCultureIgnoreCase)) &&
+                (false == string.Equals(ContainerStartPresentation.Span, 
+                type, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                throw new FlexWikiException("Invalid 'type' parameter. Must be 'span' or 'div'.");
+            }
+            _type = type;
         }
+		
+
+
+		public string ContainterElement
+        {
+            get
+            {
+                return _type;
+            }
+        }
+		
+
+
+		public override void OutputTo(WikiOutput output)
+        {
+            output.ContainerEnd(_type);
+        }
+		
+
+
     }
 }
