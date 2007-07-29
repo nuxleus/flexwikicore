@@ -179,20 +179,6 @@ namespace FlexWiki.Web
         {
             get
             {
-                if (!Federation.TopicExists(TheTopic))
-                {
-                    //return true;	// assume we can create
-                    string definitionTopic = Federation.NamespaceManagerForNamespace(TheTopic.Namespace).DefinitionTopicName.LocalName; 
-                    QualifiedTopicRevision baseDefinition = new QualifiedTopicRevision(definitionTopic, TheTopic.Namespace); 
-                    if (!Federation.TopicExists(baseDefinition))
-                    {
-                        return true; //we really can create as there are no rules
-                    }
-                    else
-                    {
-                        return Federation.IsExistingTopicWritable(baseDefinition);
-                    }
-                }
                 return Federation.IsExistingTopicWritable(TheTopic);
             }
         }
