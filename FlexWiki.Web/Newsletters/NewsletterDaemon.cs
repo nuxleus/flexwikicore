@@ -236,7 +236,8 @@ namespace FlexWiki.Web.Newsletters
             {
                 Federation.Application.LogError(this.GetType().ToString(), 
                     "Newsletter thread encountered an error and is shutting down." + e.ToString());
-                throw; 
+                // Not a good idea to throw uncaught exceptions out of threads we start ourselves. 
+                // throw; 
             }
         }
 
