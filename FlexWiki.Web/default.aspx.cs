@@ -26,7 +26,7 @@ namespace FlexWiki.Web
     /// <summary>
     /// Summary description for WebForm1.
     /// </summary>
-    public partial class Default2 : BasePage
+    public class Default2 : BasePage
     {
         private void Page_Load(object sender, System.EventArgs e)
         {
@@ -113,16 +113,11 @@ namespace FlexWiki.Web
             StringBuilder headbldr = new StringBuilder();
 
             headbldr.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-            //headbldr.AppendLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" >");
-            //headbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/html\" >");
             headbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" >");
-            //headbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" >");
-            //headbldr.AppendLine("<html>");
             headbldr.AppendLine("<head>");
-            headbldr.AppendLine("<script type=\"text/javascript\" src=\"../../WikiDefault.js\"></script>");
-            //headbldr.AppendLine("<script type=\"text/javascript\" src=\"/FlexWiki/WikiMenu.js\"></script>");
+            headbldr.AppendLine("<script type=\"text/javascript\" src=\"WikiDefault.js\"></script>");
 
-            return (headbldr.AppendLine("<script type=\"text/javascript\" src=\"../../WikiTopicBar.js\"></script>")).ToString();
+            return (headbldr.AppendLine("<script type=\"text/javascript\" src=\"WikiTopicBar.js\"></script>")).ToString();
 
         }
 
