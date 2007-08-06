@@ -31,3 +31,5 @@ Another change after moving the source to subversion.
 And again. 
 
 One more time. 
+
+Upgrading to CC.NET v1.3
