@@ -504,7 +504,7 @@ file://servername/umuff&#126;/folder%20name/file.txt",
             FormatTest(
               @"@baf=http://www.baf.com/$$$
 Again, TestIt@baf should be an external link along with TestItAgain@baf, however @this should be code formatted@.",
-              @"<p>Again, <a class=""ExternalLink"" title=""External link to baf"" target=""ExternalLinks"" href=""http://www.baf.com/TestIt"">TestIt</a> should be an external link along with <a class=ExternalLink title=""External link to baf"" target=""ExternalLinks"" href=""http://www.baf.com/TestItAgain"">TestItAgain</a>, however <code>this should be code formatted</code>.</p>
+              @"<p>Again, <a class=""ExternalLink"" title=""External link to baf"" target=""ExternalLinks"" href=""http://www.baf.com/TestIt"">TestIt</a> should be an external link along with <a class=""ExternalLink"" title=""External link to baf"" target=""ExternalLinks"" href=""http://www.baf.com/TestItAgain"">TestItAgain</a>, however <code>this should be code formatted</code>.</p>
 ");
             FormatTest(
               @"@google=http://www.google.com/search?hl=en&ie=UTF-8&oe=UTF-8&q=$$$
