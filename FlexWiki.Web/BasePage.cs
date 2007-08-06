@@ -19,6 +19,7 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 
 using FlexWiki;
 using FlexWiki.Web.Newsletters;
@@ -342,12 +343,20 @@ namespace FlexWiki.Web
         }
         protected string InsertStylesheetReferences()
         {
-            return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication); 
+            return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication);
         }
         protected string MainStylesheetReference()
         {
-            return PageUtilities.MainStylesheetReference(); 
+            return PageUtilities.MainStylesheetReference();
         }
+        //protected void InsertStylesheetReferences(HtmlHead head)
+        //{
+        //    PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication, head);
+        //}
+        //protected void MainStylesheetReference(HtmlHead head)
+        //{
+        //    PageUtilities.MainStylesheetReference(head);
+        //}
         protected void MinimalPageLoad()
         {
             _response = Response;
@@ -637,6 +646,41 @@ namespace FlexWiki.Web
         {
             UpdateMonitor.Start();
         }
+
+        public T FindControl<T>(string id) where T : Control
+        {
+            return FindControl<T>(Page, id);
+        }
+           
+        public static T FindControl<T>(Control startingControl, string id) where T : Control
+        {
+               //Published Friday, April 13, 2007 3:05 PM by Palermo4 
+               // this is null by default
+               T found = default(T);
+          
+              int controlCount = startingControl.Controls.Count;
+          
+              if (controlCount > 0)
+              {
+                  for (int i = 0; i < controlCount; i++)
+                  {
+                      Control activeControl = startingControl.Controls[i];
+                      if (activeControl is T)
+                      {
+                          found = startingControl.Controls[i] as T;
+                          if (string.Compare(id, found.ID, true) == 0) break;
+                          else found = null;
+                      }
+                      else
+                      {
+                          found = FindControl<T>(activeControl, id);
+                          if (found != null) break;
+                      }
+                  }
+              }
+              return found;
+       }       
+
 
     }
 }

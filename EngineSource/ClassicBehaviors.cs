@@ -138,7 +138,7 @@ namespace FlexWiki
                 {
                     if (extWiki.Key.ToString().ToUpper() == interWikiName.ToUpper())
                     {
-                        result = "<a class=ExternalLink title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + extWiki.Value.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
+                        result = "<a class=\"ExternalLink\" title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + extWiki.Value.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
                         break;
                     }
                 }
@@ -165,7 +165,7 @@ namespace FlexWiki
                     {
                         if (entry.Name.ToUpper() == interWikiName.ToUpper())
                         {
-                            result = "<a class=ExternalLink title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + entry.LastValue.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
+                            result = "<a class=\"ExternalLink\" title=\"External link to " + safeName + "\" target=\"ExternalLinks\" href=\"" + entry.LastValue.ToString().Replace("$$$", safeLinkText) + "\">" + safeLinkText + "</a>";
                         }
                     }
                 }

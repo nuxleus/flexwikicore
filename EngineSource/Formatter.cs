@@ -2079,6 +2079,7 @@ namespace FlexWiki.Formatting
                         {
                             // It doesn't exist, so give the option to create it
                             TopicName abs = relName.ResolveRelativeTo(NamespaceManager.Namespace);
+                            //XHTML bug when str is enclosed in an wrapping anchor - property with undefined WikiTopic
                             str = ReplaceMatch(answer, str, m, before + "<a title=\"Click here to create this topic\" class=\"create\" href=\"" + LinkMaker().LinkToEditTopic(abs) + "\">" + displayname + "</a>" + after);
                         }
                         else
@@ -2121,7 +2122,7 @@ namespace FlexWiki.Formatting
                                 }
                                 tipHTML += " - " + lastAuthor + "</div>";
                             }
-                            tipHTML = "<div id=" + tipid + " style=\"display: none\">" + tipHTML + "</div>";
+                            tipHTML = "<div id=\"" + tipid + "\" style=\"display: none\">" + tipHTML + "</div>";
                             Output.AddToFooter(tipHTML);
                             string replacement = "<a ";
                             if (tip != null)

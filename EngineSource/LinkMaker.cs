@@ -253,7 +253,7 @@ namespace FlexWiki
             builder.Append(HttpUtility.UrlEncode(top));
             if (ReturnToTopicForEditLinks != null)
             {
-                builder.Append("&return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.DottedName));
+                builder.Append("&amp;return=" + HttpUtility.UrlEncode(ReturnToTopicForEditLinks.DottedName));
             }
 
             return builder.ToString();

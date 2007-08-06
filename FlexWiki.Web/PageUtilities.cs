@@ -1,5 +1,6 @@
 using System;
 using System.Web;
+using System.Web.UI.HtmlControls;
 
 using FlexWiki.Security; 
 
@@ -92,14 +93,14 @@ namespace FlexWiki.Web
 
             if (!string.IsNullOrEmpty(styleSheet))
             {
-                answer += "\n<LINK href='" + styleSheet + "' type='text/css' rel='stylesheet'>";
+                answer += "\n<link href=\"" + styleSheet + "\" type=\"text/css\" rel=\"stylesheet\" />";
             }
             else
             {
                 string styleOverride = wikiApplication.ApplicationConfiguration.OverrideStylesheet;
                 if (styleOverride != null && styleOverride.Length > 0)
                 {
-                    answer += "\n<LINK href='" + styleOverride + "' type='text/css' rel='stylesheet'>";
+                    answer += "\n<link href=\"" + styleOverride + "\" type=\"text/css\" rel=\"stylesheet\" />";
                 }
             }
 
@@ -107,7 +108,7 @@ namespace FlexWiki.Web
         }
         public static string MainStylesheetReference()
         {
-            return "<LINK href='" + RootUrl + "wiki.css' type='text/css' rel='stylesheet'>";
+            return "<link href=\"" + RootUrl + "wiki.css\" type=\"text/css\" rel=\"stylesheet\" />";
         }
     }
 }

@@ -12,7 +12,8 @@ namespace FlexWiki.Web
         // Fields
 
         private string _captchaKey;
-        private int _captchaLinkThreshold; 
+        private int _captchaLinkThreshold;
+        private string _contentUploadPath;
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
         private bool _disableRenameFixup; 
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
@@ -40,6 +41,11 @@ namespace FlexWiki.Web
         {
             get { return _captchaLinkThreshold; }
             set { _captchaLinkThreshold = value; }
+        }
+        public string ContentUploadPath
+        {
+            get { return _contentUploadPath; }
+            set { _contentUploadPath = value; }
         }
         public string DefaultNamespaceProviderForNamespaceCreation
         {
