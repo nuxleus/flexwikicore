@@ -213,6 +213,7 @@
     </Compile>
     <Compile Include="Analysis\Island.cs" />
     <Compile Include="Analysis\Ocean.cs" />
+    <Compile Include="AspNetWikiCache.cs" />
     <Compile Include="CaptchaImage.cs" />
     <Compile Include="CaptchaImageHandler.cs" />
     <Compile Include="CaptchaRequired.cs" />

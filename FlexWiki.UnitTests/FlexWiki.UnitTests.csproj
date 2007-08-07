@@ -108,6 +108,8 @@
     <Compile Include="CachingTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Caching\MockCache.cs" />
+    <Compile Include="Caching\TopicCacheProviderTests.cs" />
     <Compile Include="FederationConfigurationSerializationTests.cs" />
     <Compile Include="Formatting\BehaviorTests.cs" />
     <Compile Include="Formatting\FormattingTestsBase.cs" />

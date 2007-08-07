@@ -1,11 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+
+using FlexWiki.Caching; 
 
 namespace FlexWiki
 {
     public interface IWikiApplication
     {
+        IWikiCache Cache { get; }
         FederationConfiguration FederationConfiguration { get; }
         bool IsTransportSecure { get; }
         LinkMaker LinkMaker { get; }

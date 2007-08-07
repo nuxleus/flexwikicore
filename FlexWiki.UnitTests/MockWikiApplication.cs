@@ -1,11 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+
+using FlexWiki.Caching; 
+using FlexWiki.UnitTests.Caching; 
 
 namespace FlexWiki.UnitTests
 {
     internal class MockWikiApplication : IWikiApplication
     {
+        private MockCache _cache = new MockCache(); 
         private FederationConfiguration _configuration;
         private bool _isTransportSecure; 
         private LinkMaker _linkMaker;
@@ -21,6 +23,11 @@ namespace FlexWiki.UnitTests
             _ouputFormat = outputFormat;
             _timeProvider = timeProvider; 
 
+        }
+
+        public IWikiCache Cache
+        {
+            get { return _cache; }
         }
 
         public FederationConfiguration FederationConfiguration

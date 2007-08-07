@@ -4,11 +4,13 @@ using System.IO;
 using System.Xml.Serialization;
 
 using FlexWiki;
+using FlexWiki.Caching; 
 
 namespace FlexWiki.BeL.Debugger
 {
     class BehaviorDebuggerApplication : IWikiApplication
     {
+        private readonly NullCache _cache = new NullCache(); 
         private readonly string _configPath;
         private FederationConfiguration _federationConfiguration;
         private readonly ITimeProvider _timeProvider = new DefaultTimeProvider();
@@ -19,6 +21,10 @@ namespace FlexWiki.BeL.Debugger
             _configPath = configPath;
         }
 
+        public IWikiCache Cache
+        {
+            get { return _cache; }
+        }
 
         public FederationConfiguration FederationConfiguration
         {

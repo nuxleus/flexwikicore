@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-using FlexWiki; 
+using FlexWiki;
+using FlexWiki.Caching; 
 
 namespace PrintTopic
 {
     class PrintTopicApplication : IWikiApplication
     {
+        private readonly NullCache _cache = new NullCache(); 
         private readonly string _configPath;
         private FederationConfiguration _federationConfiguration; 
         private readonly LinkMaker _linkMaker; 
@@ -21,6 +23,10 @@ namespace PrintTopic
             _linkMaker = linkMaker; 
         }
 
+        public IWikiCache Cache
+        {
+            get { return _cache; }
+        }
         public FederationConfiguration FederationConfiguration
         {
             get 

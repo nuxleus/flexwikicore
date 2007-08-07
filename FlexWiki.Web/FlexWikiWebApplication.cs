@@ -9,6 +9,8 @@ using log4net;
 using log4net.Config;
 using log4net.Core;
 
+using FlexWiki.Caching; 
+
 namespace FlexWiki.Web
 {
     public class FlexWikiWebApplication : IWikiApplication
@@ -16,6 +18,7 @@ namespace FlexWiki.Web
 
         // Fields 
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
+        private AspNetWikiCache _cache = new AspNetWikiCache(); 
         private readonly object _configFileLock = new object();
         private readonly string _configPath;
         private readonly LinkMaker _linkMaker;
@@ -67,6 +70,10 @@ namespace FlexWiki.Web
         public string ApplicationConfigurationPath
         {
             get { return GetFlexWikiConfigurationPath(); }
+        }
+        public IWikiCache Cache
+        {
+            get { return _cache; }
         }
         public FederationConfiguration FederationConfiguration
         {

@@ -23,6 +23,7 @@ using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
 
+using FlexWiki.Caching; 
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
 using FlexWiki.Security; 
@@ -921,6 +922,7 @@ namespace FlexWiki
             // want to make these configurable
             IContentProvider providerChain = new BuiltinTopicsProvider(contentStore); 
             providerChain = new ParsingProvider(providerChain);
+            providerChain = new TopicCacheProvider(providerChain); 
             providerChain = new AuthorizationProvider(providerChain);
             providerChain = new TransportSecurityRequirementProvider(providerChain); 
             
