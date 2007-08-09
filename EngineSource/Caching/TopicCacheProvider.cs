@@ -20,7 +20,6 @@ namespace FlexWiki.Caching
                 return Federation.Application.Cache; 
             }
         }
-
         private bool CacheEnabled
         {
             get
@@ -42,6 +41,36 @@ namespace FlexWiki.Caching
             }
         }
 
+        public override void DeleteAllTopicsAndHistory()
+        {
+            Next.DeleteAllTopicsAndHistory();
+
+            if (CacheEnabled)
+            {
+                foreach (string key in Cache.Keys)
+                {
+                    if (IsKeyForNamespace(key))
+                    {
+                        Cache[key] = null;
+                    }
+                }
+            }
+        }
+        public override void DeleteTopic(UnqualifiedTopicName topic)
+        {
+            Next.DeleteTopic(topic);
+
+            if (CacheEnabled)
+            {
+                foreach (string key in Cache.Keys)
+                {
+                    if (IsKeyForRevisionOfTopic(key, topic))
+                    {
+                        Cache[key] = null;
+                    }
+                }
+            }
+        }
         public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
         {
             if (CacheEnabled)
@@ -65,18 +94,48 @@ namespace FlexWiki.Caching
         }
         public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
+            Next.WriteTopic(topicRevision, content);
+            
             if (CacheEnabled)
             {
                 string key = GetKeyForParsedTopic(topicRevision);
                 Cache[key] = null; 
             }
 
-            Next.WriteTopic(topicRevision, content); 
         }
 
         private string GetKeyForParsedTopic(UnqualifiedTopicRevision topicRevision)
         {
-            return string.Format("cache://{0}/{1}/ParsedTopic", Namespace, topicRevision.DottedNameWithVersion); 
+            return new TopicCacheKey(topicRevision.ResolveRelativeTo(Namespace), "ParsedTopic").ToString(); 
         }
+        private bool IsKeyForNamespace(string key)
+        {
+            TopicCacheKey parsedKey;
+            if (TopicCacheKey.TryParse(key, out parsedKey))
+            {
+                if (parsedKey.Revision.Namespace.Equals(Namespace))
+                {
+                    return true; 
+                }
+            }
+
+            return false;
+        }
+        private bool IsKeyForRevisionOfTopic(string key, UnqualifiedTopicName topic)
+        {
+            TopicCacheKey parsedKey;
+            if (TopicCacheKey.TryParse(key, out parsedKey))
+            {
+                QualifiedTopicName qualifiedName = topic.ResolveRelativeTo(Namespace); 
+                
+                if (qualifiedName.Equals(parsedKey.Revision.AsQualifiedTopicName()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 }

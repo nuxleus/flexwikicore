@@ -205,6 +205,22 @@ namespace FlexWiki.UnitTests
 
         }
         [Test]
+        public void GetTopicLastModifiedBy()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",
+                TestContentSets.MultipleVersions);
+
+            Assert.AreEqual("author3", federation.GetTopicLastModifiedBy(new TopicName("NamespaceOne.TopicOne"))); 
+        }
+        [Test]
+        public void GetTopicLastModifiedByNonExistentTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",
+                TestContentSets.MultipleVersions);
+
+            Assert.IsNull(federation.GetTopicLastModifiedBy(new TopicName("NamespaceOne.NoSuchTopic"))); 
+        }
+        [Test]
         public void GetTopicModificationTime()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://FederationTests",

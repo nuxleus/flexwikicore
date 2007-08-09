@@ -188,9 +188,14 @@ namespace FlexWiki.Web
             {
                 headbldr.AppendLine("<meta name=\"description\" content=\"" + description + "\" />");
             }
-            headbldr.AppendLine("<meta name=\"author\" content=\"" +
-                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) +
-                "\" />");
+            string lastModifiedBy = Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName());
+
+            if (!string.IsNullOrEmpty(lastModifiedBy))
+            {
+                headbldr.AppendLine("<meta name=\"author\" content=\"" +
+                    lastModifiedBy +
+                    "\" />");
+            }
 
             if (GetTopicVersionKey().Version != null)
             {

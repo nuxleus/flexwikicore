@@ -21,5 +21,11 @@ namespace FlexWiki.Caching
                 // asks for it. 
             }
         }
+
+        public string[] Keys
+        {
+            // Return an empty list - we don't hold anything.
+            get { return new string[0]; }
+        }
     }
 }

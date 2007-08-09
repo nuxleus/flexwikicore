@@ -1,4 +1,6 @@
 using System;
+using System.Collections; 
+using System.Collections.Generic; 
 using System.Web; 
 using System.Web.Caching;
 
@@ -24,6 +26,20 @@ namespace FlexWiki.Web
                 {
                     HttpContext.Current.Cache[key] = value;
                 }
+            }
+        }
+
+        public string[] Keys
+        {
+            get
+            {
+                List<string> keys = new List<string>(); 
+                foreach (DictionaryEntry entry in HttpContext.Current.Cache)
+                {
+                    keys.Add(entry.Key as string); 
+                }
+
+                return keys.ToArray(); 
             }
         }
     }

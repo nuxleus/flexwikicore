@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
-using FlexWiki.Caching; 
+using FlexWiki.Caching;
 
 namespace FlexWiki.UnitTests.Caching
 {
     internal class MockCache : IWikiCache
     {
-        private readonly Dictionary<string, object> _cache = new Dictionary<string, object>(); 
+        private readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
 
         public object this[string key]
         {
@@ -24,13 +24,28 @@ namespace FlexWiki.UnitTests.Caching
             }
             set
             {
-                _cache[key] = value; 
+                _cache[key] = value;
+            }
+        }
+
+        public string[] Keys
+        {
+            get
+            {
+                List<string> keys = new List<string>();
+
+                foreach (string key in _cache.Keys)
+                {
+                    keys.Add(key); 
+                }
+
+                return keys.ToArray(); 
             }
         }
 
         internal Dictionary<string, object> GetCacheContents()
         {
-            return _cache; 
+            return _cache;
         }
     }
 }

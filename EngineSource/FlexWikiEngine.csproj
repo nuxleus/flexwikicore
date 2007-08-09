@@ -637,6 +637,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\TopicCacheKey.cs" />
     <Compile Include="Caching\IWikiCache.cs" />
     <Compile Include="Caching\NullCache.cs" />
     <Compile Include="Caching\TopicCacheProvider.cs" />
