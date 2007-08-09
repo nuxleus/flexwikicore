@@ -25,7 +25,6 @@ namespace FlexWiki
 		private string _type;
 
 
-
 		public ContainerEndPresentation(string type)
         {
             // Check for allowed container elements.
@@ -40,7 +39,6 @@ namespace FlexWiki
         }
 		
 
-
 		public string ContainterElement
         {
             get
@@ -50,13 +48,11 @@ namespace FlexWiki
         }
 		
 
-
 		public override void OutputTo(WikiOutput output)
         {
             output.ContainerEnd(_type);
         }
 		
-
 
     }
 }

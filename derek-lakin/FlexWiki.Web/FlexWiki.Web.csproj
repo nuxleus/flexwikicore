@@ -119,7 +119,9 @@
     <Content Include="admin\ReloadConfiguration.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="admin\default.aspx" />
+    <Content Include="admin\default.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="admin\EditLinksBlacklist.aspx" />
     <Content Include="admin\EditProvider.aspx">
     </Content>
@@ -136,9 +138,11 @@
     <Content Include="admin\UpgradeConfigFile.aspx" />
     <Content Include="admin\Users.aspx" />
     <Content Include="Blade.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="Compare.aspx" />
+    <Content Include="Compare.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="HttpsRequired.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -254,7 +258,6 @@
       <SubType>Form</SubType>
     </Content>
     <Content Include="Preview.aspx">
-      <SubType>Form</SubType>
     </Content>
     <Content Include="Print.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -263,7 +266,6 @@
       <SubType>Form</SubType>
     </Content>
     <Content Include="Rename.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RequestNamespace.aspx" />
     <Content Include="Rss.aspx">
@@ -276,7 +278,6 @@
       <SubType>Form</SubType>
     </Content>
     <Content Include="Search.aspx">
-      <SubType>Form</SubType>
     </Content>
     <Content Include="diagnostics\SecurityContext.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -290,10 +291,13 @@
     </Content>
     <Content Include="Web.config" />
     <Content Include="wiki.css" />
+    <Content Include="WikiDefault.js" />
     <Content Include="WikiEdit.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="WikiEdit.js" />
+    <Content Include="WikiMenu.js" />
+    <Content Include="WikiTopicBar.js" />
     <Content Include="xslt\rssToWikiList.xslt" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>

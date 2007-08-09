@@ -63,7 +63,7 @@ namespace FlexWiki.Web
         }
         /// <summary>
         /// Answer a string to identify the current visitor.  Is authentication is up and the user is authenticated, answer the
-        /// authenticated user's name (e.g., a Windows accoutn name).  Otherwise answer the IP address of the visitor (possibly 
+        /// authenticated user's name (e.g., a Windows account name).  Otherwise answer the IP address of the visitor (possibly 
         /// with a user specified prefix).
         /// </summary>
         public string VisitorIdentityString

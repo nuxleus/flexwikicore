@@ -22,7 +22,7 @@ function ChangeTemplate(selectId)
 	{
 		var strInsertText = templateCombo.options[templateCombo.selectedIndex].value;
 		
-		var objTextArea = document.forms['Form1'].Text1;
+		var objTextArea = document.forms['Form1'].EditBox;
 		if (document.selection && document.selection.createRange)
 		{
 			objTextArea.focus();
@@ -44,7 +44,7 @@ function Document_OnKeyPress(event)
 	{
 		if (event.keyCode == 9)
 		{
-			textArea = document.forms["Form1"].Text1;
+			textArea = document.forms["Form1"].EditBox;
 			selStart = textArea.selectionStart;
 			selEnd = textArea.selectionEnd;
 			selTop = textArea.scrollTop;
@@ -80,10 +80,20 @@ function MainWidth()
 
 function preview()
 {
-	var s = document.forms["Form1"].Text1.value;
+	var s = document.forms["Form1"].EditBox.value;
 	document.forms["Form2"].body.value = s;
 	window.open('about:blank', 'previewWindow');
 	document.forms["Form2"].submit();
+}
+
+function ResizeEditBox()
+{
+    var height = CalcEditBoxHeight();
+    var editBox = document.getElementById("EditBox");
+    if (null != editBox)
+    {
+        editBox.style.height = Math.max(100, height) + "px";
+    }
 }
 
 function Save()
@@ -139,8 +149,12 @@ function SetUserName()
 function ShowTip(tipid)
 {
 	var s = document.getElementById(tipid);
-	TipArea.innerHTML = s.innerHTML;
-	TipArea.style.display = 'block';
+	var tipArea = document.getElementById("TipArea");
+	if (null != tipArea)
+	{
+	    tipArea.innerHTML = s.innerHTML;
+    	tipArea.style.display = 'block';
+	}
 }
 
 function Swap(alpha, beta)

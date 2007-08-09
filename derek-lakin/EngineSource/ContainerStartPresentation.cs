@@ -22,12 +22,11 @@ namespace FlexWiki
     public class ContainerStartPresentation : FlexWiki.PresentationPrimitive
     {
 		
+		public const string Div = "div";
+		public const string Span = "span";
 		private string _id;
 		private string _style;
 		private string _type;
-		public const string Div = "div";
-		public const string Span = "span";
-
 
 
 		public ContainerStartPresentation(string type, string id, string style)
@@ -45,7 +44,6 @@ namespace FlexWiki
             Init(type, string.Empty, string.Empty);
         }
 		
-
 
 		public string ContainerElement
         {
@@ -72,7 +70,6 @@ namespace FlexWiki
         }
 		
 
-
 		public override void OutputTo(WikiOutput output)
         {
             output.ContainerStart(ContainerElement, Id, Style);
@@ -92,7 +89,6 @@ namespace FlexWiki
             _id = id;
             _style = style;
         }
-		
 
 
     }

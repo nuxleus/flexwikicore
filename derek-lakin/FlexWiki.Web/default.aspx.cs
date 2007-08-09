@@ -30,19 +30,6 @@ namespace FlexWiki.Web
     {
         private void Page_Load(object sender, System.EventArgs e)
         {
-            // Put user code to initialize the page here
-            StartPage();
-
-            StringBuilder strbldr = new StringBuilder();
-
-            strbldr.Append(InitHead());
-            strbldr.AppendLine("<title>" + GetTitle() + "</title>");
-            strbldr.Append(InsertStylesheetReferences());
-            strbldr.Append(DoHead());
-            strbldr.Append(DoPage());
-            Response.Write(strbldr.ToString());
-            EndPage();
-
         }
 
         #region Web Form Designer generated code
@@ -110,21 +97,19 @@ namespace FlexWiki.Web
 
         protected string InitHead()
         {
-            StringBuilder headbldr = new StringBuilder();
+            StringBuilder initbldr = new StringBuilder();
 
-            headbldr.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-            headbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" >");
-            headbldr.AppendLine("<head>");
-            headbldr.AppendLine("<script type=\"text/javascript\" src=\"WikiDefault.js\"></script>");
+            initbldr.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+            initbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
+            initbldr.AppendLine("<head>");
+            string initHead = initbldr.ToString();
 
-            return (headbldr.AppendLine("<script type=\"text/javascript\" src=\"WikiTopicBar.js\"></script>")).ToString();
+            return initHead;
 
         }
 
         protected string DoHead()
         {
-
-
             StringBuilder headbldr = new StringBuilder();
             QualifiedTopicRevision topic = GetTopicVersionKey();
             LinkMaker lm = TheLinkMaker;
@@ -198,14 +183,40 @@ namespace FlexWiki.Web
                 headbldr.AppendLine("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\" />");
             }
 
-            return (headbldr.AppendLine("</head>")).ToString();
+            headbldr.AppendLine("<script type=\"text/javascript\">");
+            headbldr.AppendLine("function showChanges()");
+            headbldr.AppendLine("{");
+            headbldr.AppendLine("    nav(\"" + urlForDiffs + "\");");
+            headbldr.AppendLine("}");
+            headbldr.AppendLine();
+            headbldr.AppendLine("function hideChanges()");
+            headbldr.AppendLine("{");
+            headbldr.AppendLine("	nav(\"" + urlForNoDiffs + "\");");
+            headbldr.AppendLine("}");
+            headbldr.AppendLine("function BodyClick()");
+            headbldr.AppendLine("{");
+            headbldr.AppendLine("   SetEditing(false);");
+            headbldr.AppendLine("}");
+            headbldr.AppendLine("function BodyDblClick()");
+            headbldr.AppendLine("{");
+
+            bool editOnDoubleClick = true;
+            editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
+
+            if (editOnDoubleClick)
+            {
+                headbldr.AppendLine("location.href=\"" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "\";");
+            }
+            headbldr.AppendLine("}");
+            headbldr.AppendLine("</script>");
+            string head = headbldr.ToString();
+
+            return head;
         }
 
 
         protected string DoPage()
         {
-
-
             QualifiedTopicRevision topic = GetTopicVersionKey();
             NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
             LinkMaker lm = TheLinkMaker;
@@ -241,39 +252,13 @@ namespace FlexWiki.Web
             urlForDiffs = lm.LinkToTopic(topic, true);
             urlForNoDiffs = lm.LinkToTopic(topic, false);
 
-            strbldr.AppendLine("<body onclick=\"javascript:BodyClick()\" ondblclick=\"javascript:BodyDblClick()\" >");
-
-            strbldr.AppendLine("<script type=\"text/javascript\">");
-            strbldr.AppendLine("function showChanges()");
-            strbldr.AppendLine("{");
-            strbldr.AppendLine("    nav(\"" + urlForDiffs + "\");");
-            strbldr.AppendLine("}");
-            strbldr.AppendLine();
-            strbldr.AppendLine("function hideChanges()");
-            strbldr.AppendLine("{");
-            strbldr.AppendLine("	nav(\"" + urlForNoDiffs + "\");");
-            strbldr.AppendLine("}");
-            strbldr.AppendLine("function BodyDblClick()");
-            strbldr.AppendLine("{");
-
-            bool editOnDoubleClick = true;
-            editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
-
-            if (editOnDoubleClick)
-            {
-                strbldr.AppendLine("location.href=\"" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "\";");
-            }
-            strbldr.AppendLine("}");
-            strbldr.AppendLine("</script>");
-
-
             if (diffs)
             {
                 diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
             }
 
 
-            strbldr.AppendLine(@"<span id='TopicTip' class='TopicTip' ></span>");
+            strbldr.AppendLine("<span id=\"TopicTip\" class=\"TopicTip\" ></span>");
 
             //////////////////////////
             ///
@@ -295,89 +280,81 @@ namespace FlexWiki.Web
             templeft = Federation.GetTopicFormattedBorder(topic, Border.Left);
             if (!String.IsNullOrEmpty(templeft))
             {
-                leftBorder.AppendLine("<div id='BorderLeft'>");
+                leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
                 leftBorder.AppendLine(templeft);
                 leftBorder.AppendLine("</div>");
             }
             tempright = Federation.GetTopicFormattedBorder(topic, Border.Right);
             if (!String.IsNullOrEmpty(tempright))
             {
-                rightBorder.AppendLine("<div id='BorderRight'>");
+                rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
                 rightBorder.AppendLine(tempright);
                 rightBorder.AppendLine("</div>");
             }
             temptop = Federation.GetTopicFormattedBorder(topic, Border.Top);
             if (!String.IsNullOrEmpty(temptop))
             {
-                topBorder.AppendLine("<div id='BorderTop'>");
+                topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
                 topBorder.AppendLine(temptop);
                 topBorder.AppendLine("</div>");
             }
             tempbottom = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
             if (!String.IsNullOrEmpty(tempbottom))
             {
-                bottomBorder.AppendLine("<div id='BorderBottom'>");
+                bottomBorder.AppendLine("<div class=\"Border\" id=\"BorderBottom\">");
                 bottomBorder.AppendLine(tempbottom);
                 bottomBorder.AppendLine("</div>");
             }
 
-            // using a 7 box model with body as the 1st containing box
-            strbldr.AppendLine("<div>");
-            // insert box 2 if it is required
+            // Using a simple 5 box model for Top/Left/Right/BottomBorder and TopicBody.
+            // Insert the TopBorder if it is required.
             if (!String.IsNullOrEmpty(temptop))
             {
                 strbldr.AppendLine(topBorder.ToString());
             }
 
-            // always create box 3 as it holds the left & right borders and the topic content
-            strbldr.AppendLine("<div id=\"MainContent\">");
-
-            // insert box 4 if it is required
+            // Insert the LeftBorder if it is required.
             if (!String.IsNullOrEmpty(templeft))
             {
                 strbldr.AppendLine(leftBorder.ToString());
             }
 
-            // insert box 5 to hold the topic content
-            strbldr.AppendLine("<div id='TopicBody'>");
-            strbldr.AppendLine("<form method='post' action='" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "' name='QuickLinkForm'>");
-            strbldr.AppendLine("<div id='TopicBar' title='Click here to quickly jump to or create a topic' class='TopicBar' onmouseover='javascript:TopicBarMouseOver()'  onclick='javascript:TopicBarClick(event)'  onmouseout='javascript:TopicBarMouseOut()'>");
-            strbldr.AppendLine("<div  id='StaticTopicBar'  class='StaticTopicBar' style='display: block'>" + GetTitle() + "</div>");
-            strbldr.AppendLine("<div id='DynamicTopicBar' class='DynamicTopicBar' style='display: none'>");
-            //strbldr.AppendLine("<!-- <input id='TopicBarNamespace' style='display: none' type='text'  name='QuickLinkNamespace' /> -->");
-            strbldr.AppendLine("<input id='TopicBarInputBox' title='Enter a topic here to go to or create' class='QuickLinkInput' type=\"text\"  name=\"QuickLink\" />");
-            strbldr.AppendLine("<div class='DynamicTopicBarHelp'>Enter a topic name to show or a new topic name to create; then press Enter</div>");
+            // Insert the TopicBody to hold the topic content
+            strbldr.AppendLine("<div id=\"TopicBody\">");
+            strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
+            strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
+            strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
+            strbldr.AppendLine("<div id=\"DynamicTopicBar\" class=\"DynamicTopicBar\" style=\"display: none\">");
+            //strbldr.AppendLine("<!-- <input id=\"TopicBarNamespace\" style=\"display: none\" type=\"text\"  name=\"QuickLinkNamespace\" /> -->");
+            strbldr.AppendLine("<input id=\"TopicBarInputBox\" title=\"Enter a topic here to go to or create\" class=\"QuickLinkInput\" type=\"text\"  name=\"QuickLink\" />");
+            strbldr.AppendLine("<div class=\"DynamicTopicBarHelp\">Enter a topic name to show or a new topic name to create; then press Enter</div>");
             strbldr.AppendLine("</div></div></form>");
 
             if (isBlacklistedRestore)
             {
-                strbldr.AppendLine("<div class='BlacklistedRestore'><font color='red'><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
+                strbldr.AppendLine("<div class=\"BlacklistedRestore\"><font color=\"red\"><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
             }
 
             strbldr.AppendLine(formattedBody);
 
-            // close box 5
+            // Close the TopicBody.
             strbldr.AppendLine("</div>");
 
-            // insert box 6 if it is required
+            // Insert the RightBorder if it is required.
             if (!String.IsNullOrEmpty(tempright))
             {
                 strbldr.AppendLine(rightBorder.ToString());
             }
 
-            // close box 3
-            strbldr.AppendLine("</div>");
-
-            // insert box 4 if it is required
+            // Insert the BottomBorder if it is required.
             if (!String.IsNullOrEmpty(tempbottom))
             {
                 strbldr.AppendLine(bottomBorder.ToString());
             }
 
-            // the closing tag for body closes box 1
-            strbldr.AppendLine("</div></body></html>");
+            string page = strbldr.ToString();
 
-            return strbldr.ToString();
+            return page;
         }
 
         private void WriteRecentPane()
