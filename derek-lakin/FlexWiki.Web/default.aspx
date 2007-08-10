@@ -8,9 +8,9 @@
         <%= GetTitle() %>
     </title>
     <%= InsertStylesheetReferences() %>
-    <script language="javascript" src="WikiDefault.js" type="text/javascript"></script>
-    <script language="javascript" src="WikiTopicBar.js" type="text/javascript"></script>
-    <script language="javascript" src="WikiMenu.js" type="text/javascript"></script>
+    <script language="javascript" src="/FlexWiki688dl/WikiDefault.js" type="text/javascript"></script>
+    <script language="javascript" src="/FlexWiki688dl/WikiTopicBar.js" type="text/javascript"></script>
+    <script language="javascript" src="/FlexWiki688dl/WikiMenu.js" type="text/javascript"></script>
     <%= DoHead() %>
 </head>
 <body onclick="javascript:BodyClick()" ondblclick="javascript:BodyDblClick()">

@@ -211,6 +211,9 @@ namespace FlexWiki.Web
             headbldr.AppendLine("</script>");
             string head = headbldr.ToString();
 
+            headbldr.AppendLine("<script language=\"javascript\" src=\"" + RootUrl + "/WikiDefault.js\" type=\"text/javascript\"></script>");
+            headbldr.AppendLine("<script language=\"javascript\" src=\"" + RootUrl + "/WikiTopicBar.js\" type=\"text/javascript\"></script>");
+            headbldr.AppendLine("<script language=\"javascript\" src=\"" + RootUrl + "/WikiMenu.js\" type=\"text/javascript\"></script>");
             return head;
         }
 
