@@ -1,0 +1,736 @@
+/* General */
+html, body {
+height:100%;
+}
+body {
+background:url(images/gradient.gif) repeat-x fixed center top;
+color:#000;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:x-small;
+margin:0;
+min-width:640px;
+padding:0;
+}
+code, pre {
+font:bold small Consolas,Courier New,Courier,monospace;
+}
+img {
+border:0;
+}
+ol, ul {
+margin-left:14px;
+padding-left:14px;
+}
+ul li {
+list-style-image:url(images/bullet.gif);
+}
+/* End of General */
+/* Borders */
+.Border {
+color:#fff;
+display:inline-block;
+overflow:hidden;
+}
+.Border a {
+color:#B3E0FF;
+}
+.Border a.create {
+color:#fff;
+border-bottom:dashed 1px #B3E0FF;
+text-decoration:none;
+}
+.Border a.create:hover {
+color:#B3E0FF;
+border-bottom:solid 1px #B3E0FF;
+text-decoration:none;
+}
+.Border#TopBorder {
+width:100%;
+}
+.Border#BottomBorder {
+clear:left;
+width:100%;
+}
+.Border#LeftBorder {
+float:left;
+padding:4px;
+width:18.9%;
+}
+.Border#RightBorder {
+float:left;
+margin-right:-1.1%;
+padding:4px;
+width:18.9%;
+}
+.Border#RightBorder .TableCell {
+color:#000;
+}
+/* Search */
+input#search {
+background:#FFF3E1;
+border:1px solid #4E3818;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+/* End of Search */
+/* End of Borders */
+/* Topic Body */
+#TopicBody {
+background:#FFF3E1;
+border:1px solid #000;
+display:inline-block;
+float:left;
+min-height:99.5%;
+padding:4px;
+overflow:hidden;
+width:59.9%;
+}
+/* Topic Bar */
+.TopicBar, .TopicBarHover {
+border:1px solid #FFF3E1;
+color:#4E3818;
+font-size:1.5em;
+font-weight:bold;
+padding:2px 0 2px 0;
+}
+.TopicBarHover {
+border:1px solid #6A4E22;
+}
+.StaticTopicBar {
+border:1px solid #FFF3E1;
+color:#4E3818;
+font-size:1.5em;
+font-weight:bold;
+padding:2px 0 2px 0;
+}
+.DynamicTopicBar {
+}
+.DynamicTopicBarHelp {
+color:#6A4E22;
+font-size:xx-small;
+}
+.QuickLinkInput {
+background:#C1AF92;
+border:0;
+color:#4E3818;
+font-size:1.5em;
+font-weight:bold;
+width:100%;
+}
+/* End of Topic Bar */
+.Rule{
+border-top:1px solid #4E3818;
+}
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+color:#6A4E22;
+font-weight:bold;
+}
+h1 {
+border-bottom:2px solid #6A4E22;
+font-size:2em;
+}
+h1 a {
+}
+h1 a:hover {
+}
+h2 {
+border-bottom:1px solid #6A4E22;
+font-size:1.75em;
+}
+h2 a {
+}
+h2 a:hover {
+}
+h3 {
+font-size:1.5em;
+}
+h3 a {
+}
+h3 a:hover {
+}
+h4 {
+font-size:1.25em;
+}
+h5 {
+font-size:1.1em;
+}
+h6 {
+font-size:1em;
+}
+/* End of Headings */
+/* Links */
+a {
+color:#6A4E22;
+text-decoration:none;
+}
+a:hover {
+text-decoration:underline;
+}
+a.create {
+color:#000;
+border-bottom:dashed 1px #6A4E22;
+text-decoration:none;
+}
+a.create:hover {
+color:#6A4E22;
+border-bottom:solid 1px #6A4E22;
+}
+a.Anchor, a.Anchor:hover, a.Anchor:active {
+text-decoration:none;
+}
+a.standardsButton {
+}
+a.standardsButton:hover {
+}
+a.standardsButton:visited {
+}
+.externalLink, .ExternalLink {
+background:url(images/external.png) right center no-repeat;
+padding-right:12px;
+}
+/* End of Links */
+/* Properties */
+.Property {
+}
+.PropertyName {
+font-weight:bold;
+padding-bottom:2px;
+}
+.PropertyName a.create {
+border-bottom:dashed 1px #6A4E22;
+color:#000;
+text-decoration:none;
+}
+.PropertyName a.create:hover {
+border-bottom:solid 1px #6A4E22;
+color:#6A4E22;
+text-decoration:none;
+}
+.PropertyValue {
+color:#CC6600;
+}
+.PropertyValue a.create {
+border-bottom:dashed 1px #6A4E22;
+color:#CC6600;
+text-decoration:none;
+}
+.PropertyValue a.create:hover {
+border-bottom:solid 1px #6A4E22;
+color:#6A4E22;
+text-decoration:none;
+}
+.Anchor {
+color:#CC6600;
+}
+.Anchor:hover {
+}
+.Anchor a {
+}
+.Anchor a:hover {
+}
+/* End of Properties */
+/* Errors */
+.ErrorMessage {
+margin:1px;
+border:#303030 1px solid;
+}
+.ErrorMessageTitle {
+font-weight:bold;
+background-color:#CC0000;
+color:#FFF;
+}
+.ErrorMessageBody {
+color:#FFF;
+background-color:#990033;
+}
+/* End of Errors */
+/* Tables */
+.TableClass {
+background-color:#DEF;
+border:solid 1px #6A4E22;
+border-collapse:collapse;
+font-size:x-small;
+}
+TableWithoutBorderClass {
+border-collapse:collapse;
+}
+.TableCellHighlighted {
+background-color:#FFF;
+border-collapse:collapse;
+border:solid 1px #6A4E22;
+}
+.TableCell {
+border-collapse:collapse;
+border:solid 1px #6A4E22;
+font-size:x-small;
+}
+.TableCell p, .TableCell ul {
+font-size:smaller;
+}
+.TableCellHighlightedNoBorder {
+background-color:#FFF;
+}
+.TableCellNoBorder {
+}
+td {
+}
+/* End of Tables */
+/* Topic Tips */
+.DefaultTopicTipText {
+color:#000;
+}
+.TopicTipStats {
+border-top:1px solid #6A4E22;
+font-size:xx-small;
+color:#000;
+}
+.TopicTip {
+display:none; 
+position:absolute; 
+border:1px solid #6A4e22;
+background:#DEF;
+color:#000;
+padding:1px;
+font-size:x-small;
+}
+/* End of Topic Tips */
+/* End of Topic Body */
+/* Non-topic Styles */
+/* Sidebars */
+.Sidebar {
+padding:4px;
+width:200px;
+}
+.SidebarTile {
+background:#FFF3E1;
+border:solid 1px #4E3818;
+font-size:x-small;
+margin-bottom:4px;
+width:100%;
+}
+.SidebarTileTitle {
+background:url(images/tile-title.gif) repeat-x top left;
+color:#FFF;
+font-weight:bold;
+height:24px;
+}
+.SidebarTileTitle a {
+}
+.SidebarTileTitle a:hover {
+}
+.SidebarTileBody {
+}
+.SidebarTileBody a {
+}
+.SidebarTileBody a:hover {
+}
+.SidebarTileBody td p {
+}
+.ReadOnlyStripe{
+color:#C00;
+font-weight:bold;
+}
+/* End of Sidebars */
+.Dialog {
+background:#FFF3E1;
+padding:4px;
+}
+.DialogTitle {
+font-size:medium;
+font-weight:bold;
+}
+/* Edit */
+.EditMain {
+overflow:auto;
+width:100%;
+}
+.EditZone {
+width:99.7%;
+}
+textarea.EditBox {
+font:normal small Consolas,Courier New,Courier,monospace;
+width:100%;
+}
+.tip {
+font-weight:bold; 
+}
+.tipBody {
+font-size:xx-small; 
+}
+.TipArea {
+border:1px solid #6A4E22; 
+display:none; 
+font:8pt Verdana; 
+margin-top:3px; 
+padding:4px; 
+}
+/* End of Edit */
+/* Search/Changes */
+.SearchColumnHeading {
+background:url(images/tile-title.gif) repeat-x top left;
+color:#FFF;
+font-size:0.75em;
+font-weight:bold;
+height:24px;
+width:auto;
+}
+.SearchColumnFilter {
+}
+.SearchColumnFilterBox {
+}
+.SearchEvenRow {
+font-size:0.75em;
+}
+.SearchOddRow {
+background:#FFF;
+font-size:0.75em;
+}
+.SearchMain {
+background:#FFF;
+border:solid 10px #6A4E22;
+padding:4px;
+}
+.searchHitHead {
+background:#D1AA70;
+font-size:small;
+font-weight:bold;
+}
+.searchHitBody {
+background:#FFF;
+}
+.searchHitBody p {
+}
+.searchHitBody td {
+}
+.searchHitBody li {
+}
+.searchHitBody ul {
+}
+.searchHitBody ol {
+}
+/* End of Search/Changes */
+/* Versions */
+#topicversions li {
+margin-bottom:2px;
+}
+#topicversions li.selected {
+background:#D1AA70;
+border:dashed 1px #6A4E22;
+}
+#topicversions span.user {
+}
+/* End of Versions */
+#RenameContent {
+background:#FFF3E1;
+border:1px solid #000;
+padding:4px;
+}
+#RenameRight .TableCell {
+color:#000;
+}
+/* End of Non-topic Styles */
+/* Newsletters */
+.NewsletterBody {
+}
+.NewsletterInterior {
+margin:12px;
+}
+.NewsletterName {
+background:#0099CC;
+color:#FFF;
+font-size:2em;
+margin-bottom:6px;
+padding:4px;
+}
+.NewsletterTOCHeader {
+font-weight:bold;
+margin-bottom:6px;
+padding-top:14px;
+text-decoration:underline;
+}
+.NewsletterTOCFinsher {
+background:#0066CC;
+font-size:4pt;
+}
+.NewsletterTOCTable {
+border:1px solid #C0C0C0;
+}
+.NewsletterTOCHeaderCell {
+ background:#E0E0E0;
+border:1px solid #C0C0C0;
+font-size:10pt;
+}
+.NewsletterTOCBodyCell {
+background:#F8F8F8;
+border:1px solid #C0C0C0;
+color:#808080;
+font-size:10pt;
+}
+.NewsletterTopicChangers {
+}
+.NewsletterName a {
+color:#FFF;
+}
+.NewsletterName a:hover {
+color:#FFF;
+text-decoration:underline;
+}
+.NewsletterTopicBodyOLD {
+background:#F8F8F8;
+border:1px solid #C0C0C0; 
+height:200px;
+margin:0.1in; 
+overflow:scroll;
+padding:0.05in; 
+}
+.NewsletterTopicBody {
+border:3px solid #0099cc; 
+background:#F8F8F8;
+height:200px;
+overflow:scroll;
+padding:6px;
+}
+.NewsletterTopicName {
+background:#0099cc;
+color:#000080;
+border:solid 1px #000080;
+font-size:1.4em;
+margin-top:16px;
+padding:1px;
+}
+.NewsletterTopicName a {
+color:#FFF;
+}
+.NewsletterTopicName a:hover {
+color:#FFF;
+text-decoration:underline;
+}
+.NewsletterDescription {
+font-size:1em;
+margin-bottom:6px;
+}
+.NewsletterInformationHeader {
+margin-top:12px;
+border-top:1px solid #C0C0C0;
+}
+.NewsletterInfoNewsletterName {
+}
+.NewsletterInfoTopics {
+}
+.NewsletterDelive#FF0000By {
+font-style:italic;
+}
+/* End of Newsletters */
+/* Legacy */
+.CreateTopicWarning {
+background-color:#CC3333;
+padding:1px;
+color:#FFF;
+}
+.UpdateDivider {
+background-color:#C0C0C0;
+color:#000;
+font-size:.8em;
+font-weight:bold;
+}
+.UpdateKey {
+background-color:#E0E0E0;
+color:#000;
+font-size:.8em;
+}
+.UpdateValue {
+color:#000;
+font-size:.8em;
+}
+.CompositeCacheRuleChild {
+color:#000;
+font-size:.8em;
+}
+.SubscriptionNamespace {
+font-weight:bold;
+text-decoration:underline;
+}
+.#000listedWarning {
+background-color:#E0E0E0;
+border:#303030 1px solid;
+color:white;
+margin:1px;
+}
+.CacheKey {
+color:#000;
+font-size:.8em;
+}
+.CacheRules {
+background-color:#E0E0E0;
+color:#000;
+font-size:.8em;
+}
+.CacheValue {
+font-size:.8em;
+}
+.NamespaceTable {
+}
+.FieldTable {
+}
+.FieldName {
+font-weight:bold;
+}
+.FieldValue {
+}
+.FieldError {
+color:#FF0000;
+font-weight:bold;
+}
+.FieldHelp {
+font-size:.74em;
+color:#808080;
+padding-bottom:3px;
+}
+.NamespaceTitleLine {
+color:white;
+background-color:#6495ED;
+font-weight:bold;
+}
+.NamespaceTitleLine a {
+color:white;
+text-decoration:underline;
+background-color:#6495ED;
+font-weight:bold;
+}
+.NamespaceTitleLine a:hover {
+background-color:white;
+text-decoration:underline;
+color:#6495ED;
+font-weight:bold;
+}
+.AdvancedSearchLink {
+}
+.SearchBox {
+}
+.CommandTable {
+margin:8px;
+}
+.CommandTable a {
+color:#ffcc99;
+text-decoration:none;
+}
+.CommandTable a:hover {
+color:#FBE52F;
+text-decoration:underline;
+}
+.CommandTable td {
+color:#FFF;
+}
+.Main {
+}
+.PreviewMain {
+}
+.Menu {
+display:none;
+background:#F8F8F8;
+cursor:hand;
+padding:2px;
+color:blue;
+border:#2FA7FB 1px solid;
+position:absolute;
+}
+.MenuItemNormal {
+font-size:.8em;
+color:#000;
+text-decoration:none;
+}
+.MenuItemHover {
+color:#4169E1;
+font-size:.8em;
+text-decoration:underline;
+}
+.ShowDiffCheckbox {
+}
+.VersionList {
+background:##F2F2F2;
+color:#000;
+}
+.VersionBar {
+padding:2px;
+background:##F2F2F2;
+border-bottom:solid 1px #808080;
+text-align:right;
+}
+.VersionButton {
+}
+.FooterTable {
+background:#2FA7FB;
+padding:4px;
+border-top:solid 1px #404040;
+height:20px;
+}
+.FooterCell {
+color:white;
+}
+.FooterCell a {
+color:#FBE52F;
+text-decoration:none;
+}
+.FooterCell a:hover {
+color:#FBE52F;
+text-decoration:underline;
+}
+.HistorySpacer {
+height:5px;
+}
+.Header {
+padding:5px;
+background:#2FA7FB;
+border-bottom:solid 1px #404040;
+border-right:solid 1px #404040;
+color:#F0F8FF;
+height:20px;
+}
+.Header a {
+color:#FBE52F;
+font-weight:bold;
+   text-decoration:none;
+}
+.Header a:hover {
+font-weight:bold;
+color:#FBE52F;
+text-decoration:underline;
+}
+.PrintMain {
+padding:.2in;
+}
+.SimpleBody {
+}
+.BannedChange {
+background:#FF0000;
+color:#FFFF00;
+font-weight:bold;
+}
+.ConflictingChange {
+background:#FF0000;
+color:#FFFF00;
+font-weight:bold;
+}
+.SaveChanges {
+text-align:right;
+vertical-align:middle;
+background:#FFFACD;
+font-size:1.5em;
+height:22px;
+padding:2px;
+}
+.SaveChanges a {
+color:#FFFF00;
+text-decoration:underline;
+}
+.SimpleTopic {
+color:#000;
+font-size:16pt;
+}
+.TopicInfo {
+color:#000;
+text-align:center;
+}
+.Deemphasis {
+color:#A0A0A0;
+}
