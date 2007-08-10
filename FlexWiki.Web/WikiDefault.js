@@ -1,4 +1,3 @@
-
 function MainHeight()
 {
 	var answer = document.body.clientHeight;

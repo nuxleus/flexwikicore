@@ -606,7 +606,7 @@ namespace FlexWiki
 
             TopicChangeCollection changes = manager.AllChangesForTopic(topic.LocalName);
 
-            if (changes == null)
+            if ((changes == null) || (changes.Count == 0))
             {
                 return null; 
             }

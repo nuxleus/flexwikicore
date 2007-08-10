@@ -35,11 +35,6 @@ function SetEditing(flag)
 	}
 }
 
-function BodyClick()
-{
-	SetEditing(false);
-}
-
 function TopicBarClick(event)
 {
 	event.cancelBubble = true;

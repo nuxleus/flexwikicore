@@ -183,12 +183,12 @@ This page was automatically generated when this topic (" + oldName.LocalName + "
 
         protected void DoLeftBorder()
         {
-            Response.Write("<td width='140' valign='top' class='BorderLeft'></td>");
+            Response.Write("<td width=\"140\" valign=\"top\" class=\"Border\" id=\"RenameLeft\"></td>");
         }
         protected void DoRightBorder()
         {
             string rightBorder = Federation.GetTopicFormattedBorder(GetTopicVersionKey(), Border.Right); // topic, Border.Right);
-            rightBorder = "<td width='140' valign='top' class='BorderRight'>" + rightBorder + "</td>";
+            rightBorder = "<td width=\"140\" valign=\"top\" class=\"Border\" id=\"RenameRight\">" + rightBorder + "</td>";
             Response.Write(rightBorder);
         }
     }

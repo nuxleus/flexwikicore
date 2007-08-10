@@ -64,11 +64,11 @@ namespace FlexWiki.Web
         {
             string search = Request.QueryString["search"];
             Response.Write(@"
-<div id='TopicTip' class='TopicTip' ></div>
-<fieldset><legend class='DialogTitle'>Search</legend>
-<form id='SearchForm'>
-<p>Search:<br /><input type='text'  name='search' value='" + (search == null ? "[enter regular expression]" : FlexWiki.Web.HtmlWriter.Escape(search)) + @"'>
-<input type='submit' ID=Search Value='Go' />
+<div id=""TopicTip"" class=""TopicTip"" ></div>
+<fieldset><legend class=""DialogTitle"">Search</legend>
+<form id=""SearchForm"">
+<p>Search:<br /><input type=""text""  name=""search"" value=""" + (search == null ? "[enter regular expression]" : FlexWiki.Web.HtmlWriter.Escape(search)) + @"""/>
+<input type=""submit"" id=""SearchButton"" Value=""Go"" />
 </p>");
 
             ArrayList uniqueNamespaces = new ArrayList();
@@ -84,19 +84,19 @@ namespace FlexWiki.Web
                 preferredNamespace = DefaultNamespace;
             }
 
-            Response.Write("<p>Namespace:<br /><select name='namespace' class='SearchColumnFilterBox' id='NamespaceFilter'>");
-            Response.Write("<option value='" + All + "'>" + All + "</option>");
+            Response.Write("<p>Namespace:<br /><select name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
+            Response.Write("<option value=\"" + All + "\">" + All + "</option>");
             foreach (string ns in uniqueNamespaces)
             {
                 string sel = (ns == preferredNamespace) ? " selected " : "";
-                Response.Write("<option " + sel + " value='" + ns + "'>" + ns + "</option>");
+                Response.Write("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
             }
-            Response.Write(@"</select></p></form>");
+            Response.Write("</select></p></form>");
 
             if (search != null)
             {
-                Response.Write(@"<fieldset><legend>Search Result</legend>");
-                Response.Write(@"<div class='SearchMain'>");
+                Response.Write("<fieldset><legend>Search Result</legend>");
+                Response.Write("<div class=\"SearchMain\">");
 
                 LinkMaker lm = TheLinkMaker;
 
@@ -137,14 +137,14 @@ namespace FlexWiki.Web
                                     Response.Write("<h1>" + ns + "</h1>");
                                 header = true;
 
-                                Response.Write("<div class='searchHitHead'>");
-                                Response.Write(@"<a title=""" + topic.DottedName + @"""  href=""" + lm.LinkToTopic(topic) + @""">");
+                                Response.Write("<div class=\"searchHitHead\">");
+                                Response.Write("<a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
                                 Response.Write(topic.LocalName);
                                 Response.Write("</a>");
                                 Response.Write("</div>");
 
                                 string[] lines = s.Split(new char[] { '\n' });
-                                Response.Write("<div class='searchHitBody'>");
+                                Response.Write("<div class=\"searchHitBody\">");
                                 foreach (string each in lines)
                                 {
                                     if (Regex.IsMatch(each, search, RegexOptions.IgnoreCase))
@@ -157,7 +157,7 @@ namespace FlexWiki.Web
                         }
                     }
                 }
-                Response.Write(@"</div>");
+                Response.Write("</div>");
             }
         }
     }

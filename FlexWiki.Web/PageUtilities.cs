@@ -100,7 +100,16 @@ namespace FlexWiki.Web
                 string styleOverride = wikiApplication.ApplicationConfiguration.OverrideStylesheet;
                 if (styleOverride != null && styleOverride.Length > 0)
                 {
-                    answer += "\n<link href=\"" + styleOverride + "\" type=\"text/css\" rel=\"stylesheet\" />";
+                    if (true == styleOverride.StartsWith("http", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        answer += string.Format("\n<link href=\"{0}\" type=\"text/css\" rel=\"stylesheet\" />",
+                            styleOverride);
+                    }
+                    else
+                    {
+                        answer += string.Format("\n<link href=\"{0}{1}\" type=\"text/css\" rel=\"stylesheet\" />",
+                            RootUrl, styleOverride);
+                    }
                 }
             }
 

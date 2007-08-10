@@ -199,7 +199,7 @@ namespace FlexWiki.Web
         {
             get
             {
-                return Request.Form["Text1"];
+                return Request.Form["EditBox"];
             }
         }
 
@@ -392,23 +392,23 @@ namespace FlexWiki.Web
         }
         private void ShowEditPage(bool preserveContent)
         {
-            Response.Write("<body class='EditBody' width='100%' height='100%' scroll='no'>");
+            Response.Write("<body onload=\"javascript:ResizeEditBox()\" onresize=\"javascript:ResizeEditBox()\" class=\"EditBody\" width=\"100%\" height=\"100%\" scroll=\"no\">");
 
-            Response.Write("<table width='100%' id='MasterTable' height='100%' border='0' cellpadding='0' cellspacing='0'><tr><td valign='top'>");
-            Response.Write("<div id='MainRegion' class='EditMain'>");
+            Response.Write("<table width=\"100%\" id=\"MasterTable\" height=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td valign=\"top\">");
+            Response.Write("<div id=\"MainRegion\" class=\"EditMain\">");
 
             Response.Write(@"
-		<div style='display: none'>
-			<form id='Form2' method='post' target='previewWindow' ACTION='Preview.aspx'>
-				<textarea id='body' name='body'></textarea>
-				<input  type='text' id='Text1' name='defaultNamespace' value ='" + TheTopic.Namespace + @"'>
-				<input  type='text' id='Text2' name='topic' value ='" + TheTopic.LocalName + @"'>
+		<div style=""display: none"">
+			<form id=""Form2"" method=""post"" target=""previewWindow"" ACTION=""Preview.aspx"">
+				<textarea id=""body"" name=""body""></textarea>
+				<input  type=""text"" id=""Text1"" name=""defaultNamespace"" value =""" + TheTopic.Namespace + @""">
+				<input  type=""text"" id=""Text2"" name=""topic"" value =""" + TheTopic.LocalName + @""">
 
 			</form>
 		</div>
-		<div class='EditZone' id='EditZone' >
-			<form id='Form1' method='post'>
-			<textarea class='EditBox' onkeydown='if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} ' rows='20' cols='50' name='Text1' onfocus='textArea_OnFocus(event)' onblur='textArea_OnBlur(event)'>");
+		<div class=""EditZone"" id=""EditZone"" >
+			<form id=""Form1"" method=""post"">
+			<textarea class=""EditBox"" onkeydown=""if (document.all && event.keyCode == 9) {  event.returnValue= false; document.selection.createRange().text = String.fromCharCode(9)} "" rows=""20"" cols=""50"" id=""EditBox"" name=""EditBox"" onfocus=""textArea_OnFocus(event)"" onblur=""textArea_OnBlur(event)"">");
 
             string defaultContent = @"
 Check out the formatting tips on the right for help formatting and making links.
@@ -497,25 +497,25 @@ Add your wiki text here.
             Response.Write(@"</textarea>");
             if (IsWritable)
             {
-                Response.Write("<input type='text' style='display:none' name='CaptchaEnteredSubmitted' value =''>");
-                Response.Write("<input type='text' style='display:none' name='CaptchaContextSubmitted' value =''>");
-                Response.Write("<input type='text' style='display:none' id='SaveButtonPressed' name='SaveButtonPressed' value=''>");
-                Response.Write("<input type='text' style='display:none' name='UserSuppliedName' value ='" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "'>");
+                Response.Write("<input type=\"text\" style=\"display:none\" name=\"CaptchaEnteredSubmitted\" value =\"\">");
+                Response.Write("<input type=\"text\" style=\"display:none\" name=\"CaptchaContextSubmitted\" value =\"\">");
+                Response.Write("<input type=\"text\" style=\"display:none\" id=\"SaveButtonPressed\" name=\"SaveButtonPressed\" value=\"\">");
+                Response.Write("<input type=\"text\" style=\"display:none\" name=\"UserSuppliedName\" value =\"" + Formatter.EscapeHTML(UserPrefix == null ? "" : UserPrefix) + "\">");
                 if (Federation.TopicExists(TheTopic))
-                    Response.Write("<input type='text' style='display:none' name='TopicLastWrite' value ='" + Formatter.EscapeHTML(Federation.GetTopicModificationTime(TheTopic).ToString("s")) + "'>");
-                Response.Write("<input type='text' style='display:none' name='Topic' value ='" + Formatter.EscapeHTML(TheTopic.ToString()) + "'>");
+                    Response.Write("<input type=\"text\" style=\"display:none\" name=\"TopicLastWrite\" value =\"" + Formatter.EscapeHTML(Federation.GetTopicModificationTime(TheTopic).ToString("s")) + "\">");
+                Response.Write("<input type=\"text\" style=\"display:none\" name=\"Topic\" value =\"" + Formatter.EscapeHTML(TheTopic.ToString()) + "\">");
                 if (ReturnTopic != null)
                 {
-                    Response.Write("<input type='text' style='display:none' name='ReturnTopic' value ='" + Formatter.EscapeHTML(ReturnTopic) + "'>");
+                    Response.Write("<input type=\"text\" style=\"display:none\" name=\"ReturnTopic\" value =\"" + Formatter.EscapeHTML(ReturnTopic) + "\">");
                 }
             }
 
             Response.Write(@"</form></div>");
 
             Response.Write("</div></td>");
-            Response.Write("<td valign='top' id='Sidebar' class='Sidebar'>");
+            Response.Write("<td valign=\"top\" id=\"Sidebar\" class=\"Sidebar\">");
 
-            Response.Write("<table style='height: 100%'><tr><td height='100%' valign='top'>");
+            Response.Write("<table style=\"height: 100%\"><tr><td height=\"100%\" valign=\"top\">");
 
             /////////////////////////////
             OpenPane(Response.Output, "Edit&nbsp;" + BELString.MaxLengthString2(Formatter.EscapeHTML(TheTopic.ToString()), 20, "..."));
@@ -529,7 +529,7 @@ Add your wiki text here.
                 else
                 {
                     Response.Write(@"
-			<div class='CreateTopicWarning'>
+			<div class=""CreateTopicWarning"">
 				You are about to create a new topic called <b>" + TheTopic.LocalName + @"</b> in the <b>" +
                         storeManager.FriendlyTitle + @"</b> namespace.");
                     Response.Write("<P>Please be sure you are creating this topic in the desired namespace.</p>");
@@ -538,7 +538,7 @@ Add your wiki text here.
             }
             else
             {
-                Response.Write("<span class='ReadOnlyStripe'>You do not have permission to change this topic.</span>");
+                Response.Write("<span class=\"ReadOnlyStripe\">You do not have permission to change this topic.</span>");
             }
 
             ClosePane(Response.Output);
@@ -547,7 +547,7 @@ Add your wiki text here.
             if (IsConflictingChange)
             {
                 OpenPane(Response.Output, "Conflicting Change");
-                Response.Write("<div class='ConflictingChange'>Your change can not be saved.</div>");
+                Response.Write("<div class=\"ConflictingChange\">Your change can not be saved.</div>");
                 Response.Write("The topic has been changed since you started to edit it and if you saved your changes, the other changes would be lost.");
                 Response.Write(" Please save your changes somewhere and edit again (no merge functionality yet).  You are now being shown the new version on the left.  To recover your previous edits, use the Back button.");
                 ClosePane(Response.Output);
@@ -556,7 +556,7 @@ Add your wiki text here.
             if (IsPost && IsBanned)
             {
                 OpenPane(Response.Output, "Banned URLs");
-                Response.Write("<div class='BannedChange'>Your change can not be saved.</div>");
+                Response.Write("<div class=\"BannedChange\">Your change can not be saved.</div>");
                 Response.Write("The changes you are trying to save include banned URLs.");
                 ClosePane(Response.Output);
                 LogBannedAttempt();
@@ -565,7 +565,7 @@ Add your wiki text here.
             if (Federation.NoFollowExternalHyperlinks)
             {
                 OpenPane(Response.Output, "External Hyperlinks");
-                Response.Write("<img src='" + TheLinkMaker.LinkToImage("images/NoFollowNoSpam.gif") + "' align='right'>External hyperlinks will not be indexed by search engines.");
+                Response.Write("<img src=\"" + TheLinkMaker.LinkToImage("images/NoFollowNoSpam.gif") + "\" align=\"right\">External hyperlinks will not be indexed by search engines.");
                 ClosePane(Response.Output);
             }
 
@@ -582,13 +582,13 @@ Add your wiki text here.
                 {
                     Response.Write("Your edit will be attributed to: <b>" + Formatter.EscapeHTML(VisitorIdentityString) + "</b>.<br>");
 
-                    Response.Write("<div id='ShowAttribution' style='display: block'><a onclick=\"javascript:Swap('ShowAttribution', 'HideAttribution')\">Change this...</a></div>");
-                    Response.Write("<div id='HideAttribution' style='display: none'>");
+                    Response.Write("<div id=\"ShowAttribution\" style=\"display: block\"><a onclick=\"javascript:Swap('ShowAttribution', 'HideAttribution')\">Change this...</a></div>");
+                    Response.Write("<div id=\"HideAttribution\" style=\"display: none\">");
                     Response.Write("<a onclick=\"javascript:Swap('ShowAttribution', 'HideAttribution')\">Hide this...</a><br>");
 
                     Response.Write("You can change part of this by entering your preferred user identity here (e.g., an email address):<br>");
-                    Response.Write(@"<input style='font-size: x-small' type='text' id='UserNameEntryField' value ='" +
-                        (UserPrefix == null ? "" : Formatter.EscapeHTML(UserPrefix)) + "'>");
+                    Response.Write(@"<input style=""font-size: x-small"" type=""text"" id=""UserNameEntryField"" value =""" +
+                        (UserPrefix == null ? "" : Formatter.EscapeHTML(UserPrefix)) + "\">");
                     Response.Write("</div>");
 
                 }
@@ -600,8 +600,8 @@ Add your wiki text here.
             if (IsWritable)
             {
                 OpenPane(Response.Output, "Formatting Tips");
-                Response.Write("<div id='ShowTips' style='display: block'><a onclick=\"javascript:Swap('ShowTips', 'HideTips')\">Show tips...</a></div>");
-                Response.Write("<div id='HideTips' style='display: none'>");
+                Response.Write("<div id=\"ShowTips\" style=\"display: block\"><a onclick=\"javascript:Swap('ShowTips', 'HideTips')\">Show tips...</a></div>");
+                Response.Write("<div id=\"HideTips\" style=\"display: none\">");
                 Response.Write("<a onclick=\"javascript:Swap('ShowTips', 'HideTips')\">Hide tips...</a><br>");
 
                 Response.Write("Click on a subject for more information about formatting rules: ");
@@ -616,77 +616,77 @@ Add your wiki text here.
                 WriteTip("tip_pretip", "Preformatted");
                 WriteTip("tip_imagetip", "Images");
                 WriteTip("tip_proptip", "Properties");
-                Response.Write("<br><div class='TipArea' id='TipArea'></div>");
+                Response.Write("<br><div class=\"TipArea\" id=\"TipArea\"></div>");
 
                 Response.Write(@"
-<div style='display: none'>
-		<div id='tip_proptip'>
-			<div class='tipBody'>
+<div style=""display: none"">
+		<div id=""tip_proptip"">
+			<div class=""tipBody"">
 				A line that starts with a wiki word and a colon identifies a property.
 				The value of the property is everything on the line after the colon.
 				Multiline imports use PropertyName:[ and then multiple lines and then ] on a
 				blank line to mark the end.
 			</div>
 		</div>
-		<div id='tip_imagetip'>
-			<div class='tipBody'>
+		<div id=""tip_imagetip"">
+			<div class=""tipBody"">
 				Any URL that ends with .gif, .jpeg, .jpg or .png will be turned into an image
 				tag to display the actual image.
 			</div>
 		</div>
-		<div id='tip_pretip'>
-			<div class='tipBody'>
+		<div id=""tip_pretip"">
+			<div class=""tipBody"">
 				Any line that starts with at least one space will be fixed-width formatted.
 				Good for code and simple tables.
 			</div>
 		</div>
-		<div id='tip_liststip'>
-			<div class='tipBody'>
-				Start a line with a tab (or 8 spaces) followed by a star '*'.
+		<div id=""tip_liststip"">
+			<div class=""tipBody"">
+				Start a line with a tab (or 8 spaces) followed by a star ""*"".
 				Two tabs (or 16 spaces) indents to the next level, etc.
-				For ordered lists, use '1.' instead of '*'
+				For ordered lists, use ""1."" instead of ""*""
 			</div>
 		</div>
-		<div id='tip_linestip'>
-			<div class='tipBody'>
+		<div id=""tip_linestip"">
+			<div class=""tipBody"">
 				Four hyphens makes a horizontal rule.
 			</div>
 		</div>
-		<div id='tip_boldtip'>
-			<div class='tipBody'>
-				Surround the text with three ticks (''').
-				For example, '''<b>this text will be bold</b>'''
+		<div id=""tip_boldtip"">
+			<div class=""tipBody"">
+				Surround the text with three ticks ("""""").
+				For example, """"""<b>this text will be bold</b>""""""
 			</div>
 		</div>
-		<div id='tip_italicstip'>
-			<div class='tipBody'>
-				Surround the text with two ticks ('').
-				For example, ''<i>this text will be italic</i>''
+		<div id=""tip_italicstip"">
+			<div class=""tipBody"">
+				Surround the text with two ticks ("""").
+				For example, """"<i>this text will be italic</i>""""
 			</div>
 		</div>
-		<div id='tip_headingtip'>
-			<div class='tipBody'>
+		<div id=""tip_headingtip"">
+			<div class=""tipBody"">
 				Bang (!) at the start of a line for H1.
 				Bang Bang (!!) at the start of a line for H2.
 				And so on...
 			</div>
 		</div>
-		<div id='tip_hypertip'>
-			<div class='tipBody'>
+		<div id=""tip_hypertip"">
+			<div class=""tipBody"">
 				Any PascalCased word becomes a link.
 				Surrounding a word with square brackets [ word ] will make non-pascalcased
-				words into links; generally this is considered 'odd'.
+				words into links; generally this is considered ""odd"".
 				Any URL becomes a link (http://www.msn.com)
 			</div>
 		</div>
-		<div id='tip_emoticonstip'>
-			<div class='tipBody'>
+		<div id=""tip_emoticonstip"">
+			<div class=""tipBody"">
 				All the common emoticons like :-) and :-( are turned into the apprpriate
 				graphical images (like in messenger).
 			</div>
 		</div>
-		<div id='tip_tablestip'>
-			<div class='tipBody'>
+		<div id=""tip_tablestip"">
+			<div class=""tipBody"">
 				A line that starts and ends with || is a table row.  Cells are divided by ||.
 				For example: <br />
 				||Region || Sales||<br />
@@ -719,33 +719,33 @@ Add your wiki text here.
             {
                 if (IsCaptchaRequired())
                 {
-                    Response.Write("<table class='SidebarTile' cellspacing='0' cellpadding='2' border='0'>");
+                    Response.Write("<table class=\"SidebarTile\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\">");
                     Response.Write("<tbody>");
                     Response.Write("<tr>");
-                    Response.Write("<td class='SidebarTileTitle' valign='middle'>Spam Prevention</td>"); 
+                    Response.Write("<td class=\"SidebarTileTitle\" valign=\"middle\">Spam Prevention</td>"); 
                     Response.Write("</tr>");
-                    Response.Write("<tr class='SidebarTileBody' valign='middle'>");
+                    Response.Write("<tr class=\"SidebarTileBody\" valign=\"middle\">");
                     Response.Write("<td>");
                     Response.Write("<div>"); 
                     string captchaCode = GenerateNewCaptchaCode();
                     string aboutHref = TheLinkMaker.SimpleLinkTo("AboutCaptcha.html");
                     if (IsPost && !IsCaptchaVerified)
                     {
-                        Response.Write("<span class='ErrorMessageBody'>To prevent automated spam attacks, you must properly enter the code shown below. Please enter the number you see in the box and then click Save. </span>"); 
+                        Response.Write("<span class=\"ErrorMessageBody\">To prevent automated spam attacks, you must properly enter the code shown below. Please enter the number you see in the box and then click Save. </span>"); 
                     }
                     else
                     {
                         Response.Write("<span>Before saving, please enter the code you see below. </span>"); 
                     }
                     Response.Write("<br />"); 
-                    Response.Write("<a href='" + aboutHref + "' target='_blank'>What's this?</a>");
+                    Response.Write("<a href=\"" + aboutHref + "\" target=\"_blank\">What's this?</a>");
                     Response.Write("<br />");
                     string captchaHref = TheLinkMaker.SimpleLinkTo("CaptchaImage.ashx/" + captchaCode);
-                    Response.Write("<img src='" + captchaHref +
-                        "' alt='Enter this code in the box to the right.' />");
+                    Response.Write("<img src=\"" + captchaHref +
+                        "\" alt=\"Enter this code in the box to the right.\" />");
                     Response.Write("<br />");
-                    Response.Write(string.Format("<input type='hidden' name='CaptchaContext' id='CaptchaContext' value='{0}' />", captchaCode));
-                    Response.Write("<input type='text' name='CaptchaEntered' id='CaptchaEntered' value='' />");
+                    Response.Write(string.Format("<input type=\"hidden\" name=\"CaptchaContext\" id=\"CaptchaContext\" value=\"{0}\" />", captchaCode));
+                    Response.Write("<input type=\"text\" name=\"CaptchaEntered\" id=\"CaptchaEntered\" value=\"\" />");
                     Response.Write("</div>"); 
                     Response.Write("</td>"); 
                     Response.Write("</tr>"); 
@@ -755,15 +755,15 @@ Add your wiki text here.
 
                 // generate cancel, save, search, preview, and Save&Return buttons
                 Response.Write(@"
-<div style='margin-top: 12px; text-align: center'><table>
-<tr><td><button onclick='javascript:Cancel()' name='CancelButton'>Cancel</button></td>
-<td><button onclick='javascript:Save()' name='SaveButton'>Save</button></td></tr>
-<tr><td><Button OnClick='javascript:search()' ID='button3'>Search</Button></td>
-<td><Button OnClick='javascript:preview()' ID='button1'>Preview</Button></td></tr>");
+<div style=""margin-top: 12px; text-align: center""><table>
+<tr><td><button onclick=""javascript:Cancel()"" name=""CancelButton"">Cancel</button></td>
+<td><button onclick=""javascript:Save()"" name=""SaveButton"">Save</button></td></tr>
+<tr><td><Button OnClick=""javascript:search()"" ID=""button3"">Search</Button></td>
+<td><Button OnClick=""javascript:preview()"" ID=""button1"">Preview</Button></td></tr>");
 
                 if (ReturnTopic != null)
                 {
-                    Response.Write("<tr><td colspan='2'><button onclick='javascript:SaveAndReturn()'  name='SaveButton'>Save and Back</button></td></tr>");
+                    Response.Write("<tr><td colspan=\"2\"><button onclick=\"javascript:SaveAndReturn()\"  name=\"SaveButton\">Save and Back</button></td></tr>");
                 }
 
 
@@ -779,7 +779,7 @@ Add your wiki text here.
         }
         private void WriteTip(string id, string text)
         {
-            Response.Write(@"<span onclick='javascript:ShowTip(""" + id + @""")'><b>" + text + "</b></span> ");
+            Response.Write(@"<span onclick=""javascript:ShowTip('" + id + @"')""><b>" + text + "</b></span> ");
         }
 
         #region Web Form Designer generated code
