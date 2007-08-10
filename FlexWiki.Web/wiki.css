@@ -1,4 +1,4 @@
-/* General */
+﻿/* General */
 html, body {
 height:100%;
 }
@@ -81,7 +81,7 @@ display:inline-block;
 float:left;
 min-height:99.5%;
 padding:4px;
-overflow:hidden;
+overflow:auto;
 width:59.9%;
 }
 /* Topic Bar */
