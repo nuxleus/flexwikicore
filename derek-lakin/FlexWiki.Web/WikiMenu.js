@@ -47,11 +47,18 @@ function TopicTipOn(anchor, id, event)
 	var targetY = document.body.scrollTop + event.clientY + 18;
 	var targetX = document.body.scrollLeft + event.clientX + 12;
 	
-	document.getElementById("TopicTip").style.left = targetX;
-	document.getElementById("TopicTip").style.top = targetY;
-	var tip = 	document.getElementById(id);
-	document.getElementById("TopicTip").innerHTML = tip.innerHTML;
-	document.getElementById("TopicTip").style.display = 'block';
+	var topicTip = document.getElementById("TopicTip");
+	if (null != topicTip)
+	{
+	    topicTip.style.left = targetX + "px";
+	    topicTip.style.top = targetY + "px";
+	    var tip = document.getElementById(id);
+	    if (null != tip)
+	    {
+	        topicTip.innerHTML = tip.innerHTML;
+	        topicTip.style.display = "block";
+	    }
+	}
 	if (tipOffTimeout != null)
 		window.clearTimeout(tipOffTimeout);
 	tipOffTimeout = window.setTimeout("TopicTipOff()", 4000, "JavaScript");
@@ -62,7 +69,7 @@ function TopicTipOff()
 	if (tipOffTimeout != null)
 		window.clearTimeout(tipOffTimeout);
 	tipOffTimeout = null;				
-	document.getElementById("TopicTip").style.display = 'none';
+	document.getElementById("TopicTip").style.display = "none";
 }
 
 

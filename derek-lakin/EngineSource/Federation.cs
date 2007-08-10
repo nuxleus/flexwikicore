@@ -605,11 +605,13 @@ namespace FlexWiki
             }
 
             TopicChangeCollection changes = manager.AllChangesForTopic(topic.LocalName);
-            if (changes.Count > 0)
+            
+            if ((changes == null) || (changes.Count == 0))
             {
-                return changes.Latest.Author;
+                return null;
             }
-            return "FlexWiki";
+
+            return changes.Latest.Author;
         }
         public DateTime GetTopicLastModificationTime(TopicName topic)
         {

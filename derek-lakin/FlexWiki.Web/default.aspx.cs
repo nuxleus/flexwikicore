@@ -183,6 +183,9 @@ namespace FlexWiki.Web
                 headbldr.AppendLine("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\" />");
             }
 
+            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
             headbldr.AppendLine("<script type=\"text/javascript\">");
             headbldr.AppendLine("function showChanges()");
             headbldr.AppendLine("{");
@@ -211,9 +214,6 @@ namespace FlexWiki.Web
             headbldr.AppendLine("</script>");
             string head = headbldr.ToString();
 
-            headbldr.AppendLine("<script language=\"javascript\" src=\"" + RootUrl + "/WikiDefault.js\" type=\"text/javascript\"></script>");
-            headbldr.AppendLine("<script language=\"javascript\" src=\"" + RootUrl + "/WikiTopicBar.js\" type=\"text/javascript\"></script>");
-            headbldr.AppendLine("<script language=\"javascript\" src=\"" + RootUrl + "/WikiMenu.js\" type=\"text/javascript\"></script>");
             return head;
         }
 
