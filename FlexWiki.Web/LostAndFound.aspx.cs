@@ -15,6 +15,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -57,9 +58,10 @@ namespace FlexWiki.Web
 
         protected void ShowPage()
         {
-            Response.Write(@"
-<fieldset><legend class='DialogTitle'>Lost And Found</legend>
-<form id='Form'>");
+            StringBuilder strbldr = new StringBuilder();
+            
+            strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Lost And Found</legend>");
+            strbldr.AppendLine("<form id=\"Form\" action=\"\">");
 
             ArrayList uniqueNamespaces = new ArrayList();
             foreach (string ns in Federation.Namespaces)
@@ -72,13 +74,13 @@ namespace FlexWiki.Web
             if (preferredNamespace == null)
                 preferredNamespace = DefaultNamespace;
 
-            Response.Write("<p>Namespace:<br /><select title='to explore the list and found for another namespace, select it here' name='namespace' class='SearchColumnFilterBox' id='NamespaceFilter'>");
+            strbldr.AppendLine("<p>Namespace:<br /><select title=\"to explore the list and found for another namespace, select it here\" name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
             foreach (string ns in uniqueNamespaces)
             {
-                string sel = (ns == preferredNamespace) ? " selected " : "";
-                Response.Write("<option " + sel + " value='" + ns + "'>" + ns + "</option>");
+                string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
+                strbldr.AppendLine("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
             }
-            Response.Write(@"</select> <input title='click here to explore the lost and found for the selected namespace' type='submit' ID='Go' Value='Change namespace' /></p></form>");
+            strbldr.AppendLine("</select> <input title=\"click here to explore the lost and found for the selected namespace\" type=\"submit\" id=\"Go\" value=\"Change namespace\" /></p></form>");
 
 
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
@@ -86,21 +88,20 @@ namespace FlexWiki.Web
 
             if (storeManager == null)
             {
-                Response.Write(@"
-<h1>Inaccessible namespace</h1>
-<p>The namespace you have selected is not accessible.</p>");
+            
+                strbldr.AppendLine("<h1>Inaccessible namespace</h1>");
+                strbldr.AppendLine("<p>The namespace you have selected is not accessible.</p>");
             }
             else
             {
-                Response.Write(@"
-	<h1>Lost and Found</h1>
-	<p>Below are listed pages that are not reachable from the home page of this namespace.</p>
-	<p>Related pages (ones that link to each other) are listed together.  Bold topics are completely unreferenced.  Other topics are referenced, but only from within the related topic group.
-	");
+            	strbldr.AppendLine("<h1>Lost and Found</h1>");
+	            strbldr.AppendLine("<p>Below are listed pages that are not reachable from the home page of this namespace.</p>");
+	            strbldr.AppendLine("<p>Related pages (ones that link to each other) are listed together.  Bold topics are completely unreferenced.  Other topics are referenced, but only from within the related topic group.</p>");
+	
                 ContentStoreAnalysis analysis = new ContentStoreAnalysis(storeManager);
 
                 QualifiedTopicRevision home = new QualifiedTopicRevision(storeManager.HomePage, storeManager.Namespace);
-                Response.Write("<ul>");
+                strbldr.AppendLine("<ul>");
                 foreach (Island eachIsland in analysis.Islands)
                 {
                     if (eachIsland.Contains(home))
@@ -108,31 +109,32 @@ namespace FlexWiki.Web
                         continue;		// skip the mainland!
                     }
                     bool first = true;
-                    Response.Write("<li>");
+                    strbldr.AppendLine("<li>");
                     foreach (QualifiedTopicRevision eachTopic in eachIsland)
                     {
                         TopicAnalysis tan = analysis.AnalysisFor(eachTopic);
                         if (!first)
                         {
-                            Response.Write(", ");
+                            strbldr.AppendLine(", ");
                         }
                         first = false;
                         int refs = tan.RefCount;
                         if (refs == 0)
                         {
-                            Response.Write("<b>");
+                            strbldr.AppendLine("<b>");
                         }
-                        Response.Write("<a href='" + lm.LinkToTopic(eachTopic) + "'>" + eachTopic.LocalName + "</a>");
+                        strbldr.AppendLine("<a href=\"" + lm.LinkToTopic(eachTopic) + "\">" + eachTopic.LocalName + "</a>");
                         if (refs == 0)
                         {
-                            Response.Write("</b>");
+                            strbldr.AppendLine("</b>");
                         }
                     }
-                    Response.Write("</li>");
+                    strbldr.AppendLine("</li>");
                 }
-                Response.Write("</ul>");
+                strbldr.AppendLine("</ul>");
             }
-            Response.Write("</fieldset>");
+            strbldr.AppendLine("</fieldset>");
+            Response.Write(strbldr.ToString());
         }
     }
 
