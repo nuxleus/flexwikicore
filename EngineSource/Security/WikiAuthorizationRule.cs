@@ -54,7 +54,7 @@ namespace FlexWiki.Security
 
         System.Xml.Schema.XmlSchema IXmlSerializable.GetSchema()
         {
-            throw new Exception("The method or operation is not implemented.");
+			return null;
         }
 
         void IXmlSerializable.ReadXml(System.Xml.XmlReader reader)
