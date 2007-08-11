@@ -1,15 +1,12 @@
-<%@ Page Language="c#" Codebehind="Versions.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Versions" %>
-
+<%@ Page language="c#" CodeBehind="Versions.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Versions" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <title>
-        <%= GetTitle() %>
-    </title>
-    <meta name="Robots" content="NOINDEX, NOFOLLOW"/>
-    <%= InsertStylesheetReferences() %>
-
-    <script type="text/javascript" language="javascript">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+	<head>
+		<title><%= GetTitle() %></title>
+		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
+		<%= InsertStylesheetReferences() %>
+<script  type="text/javascript" language="javascript">
+/* <![CDATA[ */
 function PageInit() {
     hf = document.getElementById("topicversions");
     if(!hf) return;
@@ -57,10 +54,10 @@ function diffcheck() {
         }
     }
 }
+/* ]]> */
     </script>
-
-</head>
-<body class="Dialog" onload="PageInit();">
+	</head>
+	<body class='Dialog' onload="PageInit();">
     <div id="StaticTopicBar" class="StaticTopicBar" style="display: block">
         <%= TheTopic.ToString() %>
     </div>
@@ -71,7 +68,7 @@ function diffcheck() {
         press the button below or press key [alt-v] to compare these versions.<br />
         Legend: (Current) = shows difference with current version, (Previous) = shows difference
         with preceding version</p>
-    <form action="<%= LinkToCompare() %>" method="GET">
+    <form action="<%= LinkToCompare() %>" method="get">
         <input type="hidden" name="topic" value="<%=TheTopic.DottedName%>" />
         <input type="submit" accesskey="v" class="standardsButton" title="Show the differences between two selected versions of this topics. [alt-v]"
             value="Compare selected versions" />

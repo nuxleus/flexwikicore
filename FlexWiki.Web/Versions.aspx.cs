@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Web.UI;
+using System.Web.Util;
 using System.Text;
 
 using FlexWiki.Collections; 
@@ -124,13 +125,13 @@ namespace FlexWiki.Web
                 }
                 else
                 {
-                    output.AppendFormat(" (<a href='{0}' title='Show Difference with current version'>Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.DottedName, 0, row));
+                    output.AppendFormat(" (<a href=\"{0}\" title=\"Show Difference with current version\">Current</a>)", TheLinkMaker.LinkToCompare(TheTopic.DottedName, 0, row));
                 }
 
 
                 if (row < lastRow)
                 {
-                    output.AppendFormat(" (<a href='{0}' style='standardsButton' title='Show Difference with preceding version' tabindex={1}>Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.DottedName, row, row + 1), row + 1);
+                    output.AppendFormat(" (<a href=\"{0}\" style=\"standardsButton\" title=\"Show Difference with preceding version\" tabindex=\"{1}\">Previous</a>)", TheLinkMaker.LinkToCompare(TheTopic.DottedName, row, row + 1), row + 1);
                 }
                 else
                 {
@@ -138,8 +139,8 @@ namespace FlexWiki.Web
                 }
 
 
-                output.AppendFormat(" <input type='radio'{1}name='oldid' value='{0}' title='Select an older version to compare'{2} />&nbsp;", row, ((first) ? " style='visibility:hidden' " : ""), ((row == 1) ? "  checked='checked'" : ""));
-                output.AppendFormat(" <input type='radio' name='diff' value='{0}' title='Select a newer version to compare'{1} />", row, ((first) ? "  checked='checked'" : ""));
+                output.AppendFormat(" <input type=\"radio\" {1} name=\"oldid\" value=\"{0}\" title=\"Select an older version to compare\" {2} />&nbsp;", row, ((first) ? " style=\"visibility:hidden\" " : ""), ((row == 1) ? "  checked=\"checked\"" : ""));
+                output.AppendFormat(" <input type=\"radio\" name=\"diff\" value=\"{0}\" title=\"Select a newer version to compare\" {1} />", row, ((first) ? "  checked=\"checked\"" : ""));
 
                 if (change.Created == DateTime.MinValue)
                 {
@@ -147,7 +148,7 @@ namespace FlexWiki.Web
                 }
                 else
                 {
-                    output.Append("&nbsp;&nbsp;<span class='version'><a href='" + TheLinkMaker.LinkToTopic(change.TopicRevision) + "' title='Show this version' >");
+                    output.Append("&nbsp;&nbsp;<span class=\"version\"><a href=\"" + TheLinkMaker.LinkToTopic(change.TopicRevision) + "\" title=\"Show this version\" >");
                     if (change.Created.Date == DateTime.Now.Date)
                     {
                         output.Append(" Today, " + change.Created.ToString("HH:mm"));
@@ -167,7 +168,7 @@ namespace FlexWiki.Web
                 }
 
 
-                output.Append(" <span class='user'>" + change.Author + "</span>");
+                output.Append(" <span class=\"user\">" + change.Author + "</span>");
                 first = false;
                 output.Append("</li>");
                 row++;
