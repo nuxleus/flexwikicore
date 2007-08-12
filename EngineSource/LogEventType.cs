@@ -20,6 +20,7 @@ namespace FlexWiki
     WriteTopic, 
     DeleteTopic,
     CompareTopic,
-    NewsletterGeneration
+    NewsletterGeneration,
+    UploadFile
   };
 }

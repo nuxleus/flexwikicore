@@ -1,3 +1,50 @@
+function attachFile_OnClick()
+{
+    var insertText1 = "";
+    var insertText2 = "";
+    var insertText3 = "";
+    var insertText4 = "";
+    var textArea = document.forms["Form1"].EditBox;
+    var docTitle = document.getElementById("Form3DocTitle").value;
+    var urlString = document.getElementById("_fileUrl").value;
+    var sizeString = document.getElementById("_fileSize").value;
+    var filedDate = document.getElementById("Form3Filed").value;
+    var publishedDate = document.getElementById("Form3Published").value;
+    var authorName = document.getElementById("Form3Author").value;
+    var fileNo = document.getElementById("Form3FileNo").value;
+    var versionNo = document.getElementById("Form3Version").value;
+    var commentText = document.getElementById("Form3Comment").value;
+    var attachFormatString = getCheckedValue(document.forms["Form3"].attachFormat);
+    var statusDate = document.getElementById("Form3StatusDate").value;
+    var templateCombo = document.getElementById("Form3Status");
+	if ((templateCombo) && (templateCombo.selectedIndex > -1))
+	{
+        var statusString = templateCombo.options[templateCombo.selectedIndex].value;
+    }
+    if (attachFormatString == "Normal")
+    {
+        insertText1 = '@@Presentations.Image(federation.LinkMaker.LinkToImage("images/attach/file.gif"))@@ '; 
+        insertText2 = '@@Presentations.Link("' + urlString + '", "' + docTitle + '", "' + sizeString + '")@@';
+    }
+    if (attachFormatString == "Folder")
+    {
+        insertText1 = '|| ' + filedDate + ' || @@Presentations.Image(federation.LinkMaker.LinkToImage("images/attach/file.gif"))@@ ';
+        insertText2 = '@@Presentations.Link("' + urlString + '", "' + docTitle + '", "' + sizeString + '")@@ || ';
+        insertText3 = fileNo + ' || ' + authorName + ' || ' + publishedDate + ' || ' + commentText + ' ||';
+    }
+    if (attachFormatString == "DocMan")
+    {
+        insertText1 = '|| ' + filedDate + ' || @@Presentations.Image(federation.LinkMaker.LinkToImage("images/attach/file.gif"))@@ ';
+        insertText2 = '@@Presentations.Link("' + urlString + '", "' + docTitle + '", "' + sizeString + '")@@ || ';
+        insertText3 = fileNo + ' || ' + authorName + ' || ' + statusString + ' || ' + statusDate + ' || ';
+        insertText4 = versionNo +  ' || @@Presentations.Checkbox("checkOut_' + statusString + '_' + versionNo + '", "strUrl", false)@@ ||' + commentText + ' ||';
+    }
+    textArea.value += "\n\r" + insertText1 + insertText2 + insertText3 + insertText4;
+    textArea.focus();
+    document.forms["Form3"].PostBox.value = textArea.value;
+    document.getElementById("_processAttachment").value = "IsAttachment";
+}
+
 function CalcEditBoxHeight()
 {
 	var answer = CalcEditZoneHeight();
@@ -36,6 +83,8 @@ function ChangeTemplate(selectId)
 			objTextArea.focus();
 		}
 	}
+	var s = document.forms["Form1"].EditBox.value;
+	document.forms["Form3"].PostBox.value = s;
 }
 
 function Document_OnKeyPress(event)
@@ -56,6 +105,55 @@ function Document_OnKeyPress(event)
 		}
 	}
 	return true;
+}
+
+function FileUploadSend_OnClick()
+{
+	var s = document.forms["Form1"].EditBox.value;
+	document.forms["Form3"].PostBox.value = s;
+    document.getElementById("_processAttachment").value = "IsAttachment";
+	document.getElementById("Form3").submit();
+}
+
+// return the value of the radio button that is checked
+// return an empty string if none are checked, or
+// there are no radio buttons
+function getCheckedValue(radioObj) {
+	if(!radioObj)
+	{
+		return "";
+	}
+	var radioLength = radioObj.length;
+	if(radioLength == undefined)
+	{
+		if(radioObj.checked)
+		{
+			return radioObj.value;
+		}
+		else
+		{
+			return "";
+		}
+	}
+	for(var i = 0; i < radioLength; i++) {
+		if(radioObj[i].checked) {
+			return radioObj[i].value;
+		}
+	}
+	return "";
+}
+
+function ItemDisplay(itemId, display)
+{
+    var a = document.getElementById(itemId);
+    if (display)
+    {
+        a.style.display = 'block';
+    }
+    else
+    {
+        a.style.display = 'none';
+    }
 }
 
 function MainHeight()
@@ -100,8 +198,9 @@ function Save()
 {
 	SetUserName();
 	SetCaptcha();
+    document.getElementById("_processAttachment").value = "IsNotAttachment";
+    document.getElementById("SaveButtonPressed").value = "Save"; 
 	var r = document.getElementById("ReturnTopic");
-    	document.getElementById("SaveButtonPressed").value = "Save"; 
 	if (r != null)
 	{
 		r.value = ""; // prevent return action by emptying this out
@@ -112,7 +211,8 @@ function Save()
 function SaveAndReturn()
 {
 	SetUserName();
-    	document.getElementById("SaveButtonPressed").value = "Back"; 
+    document.getElementById("_processAttachment").value = "IsNotAttachment";
+    document.getElementById("SaveButtonPressed").value = "Back"; 
 	document.getElementById("Form1").submit();
 }
 
@@ -137,7 +237,27 @@ function SetCaptcha()
         document.forms["Form1"].CaptchaEnteredSubmitted.value = e.value; 
     }
 }
-
+function setCheckedValue(radioObj, newValue)
+{
+    if(!radioObj)
+    {
+        return;
+    }
+    var radioLength = radioObj.length;
+    if (radioLength == undefined)
+    {
+        radioObj.checked = (radioObj.value == newValue);
+        return;
+    }
+    for(var i = 0; i < radioLength; i++)
+    {
+        radioObj[i].checked = false;
+        if(radioObj[i].value == newValue)
+        {
+            radioObj[i].checked = true;
+        }
+    }
+}
 function SetUserName()
 {
 	var r = document.getElementById("UserNameEntryField");
@@ -146,6 +266,52 @@ function SetUserName()
 		document.forms["Form1"].UserSuppliedName.value = r.value;
 	}
 }
+
+function showDocMan_OnFocus()
+{
+    setCheckedValue(document.getElementById("Radio3"), "DocMan");
+    ItemDisplay("CommonFields", true)
+    ItemDisplay("FiledFields", true);
+    ItemDisplay("PublishedFields", false);
+    ItemDisplay("AuthorFields", true);
+    ItemDisplay("FileNoFields", true);
+    ItemDisplay("VersionFields", true);
+    ItemDisplay("CommentFields", true);
+    ItemDisplay("StatusDateFields", true);
+    ItemDisplay("StatusFields", true);
+    ItemDisplay("attachFileBtn", true);
+}
+
+function showFolder_OnFocus()
+{
+    setCheckedValue(document.getElementById("Radio2"),"Folder");
+    ItemDisplay("CommonFields", true)
+    ItemDisplay("FiledFields", true);
+    ItemDisplay("PublishedFields", true);
+    ItemDisplay("AuthorFields", true);
+    ItemDisplay("FileNoFields", true);
+    ItemDisplay("VersionFields", false);
+    ItemDisplay("CommentFields", true);
+    ItemDisplay("StatusDateFields", false);
+    ItemDisplay("StatusFields", false);
+    ItemDisplay("attachFileBtn",true);
+}
+
+function showNormal_OnFocus()
+{
+    setCheckedValue(document.getElementById("Radio1"),"Normal");
+    ItemDisplay("CommonFields", true)
+    ItemDisplay("FiledFields", false);
+    ItemDisplay("PublishedFields", false);
+    ItemDisplay("AuthorFields", false);
+    ItemDisplay("FileNoFields", false);
+    ItemDisplay("VersionFields", false);
+    ItemDisplay("CommentFields", false);
+    ItemDisplay("StatusDateFields", false);
+    ItemDisplay("StatusFields", false);
+    ItemDisplay("attachFileBtn",true);
+}
+
 function ShowTip(tipid)
 {
 	var s = document.getElementById(tipid);
@@ -173,14 +339,20 @@ function Swap(alpha, beta)
 	}	
 }
 
-function textArea_OnBlur(event)
-{
-	document.onkeypress = null;
-}
-
 function textArea_OnFocus(event)
 {
 	document.onkeypress = Document_OnKeyPress;
 }
 
-
+function textArea_OnBlur(event)
+{
+	document.onkeypress = null;
+}
+function textarea_OnKeyPress(event)
+{
+    if (document.all && event.keyCode == 9) 
+    {  
+        event.returnValue= false; 
+        document.selection.createRange().text = String.fromCharCode(9)
+    }
+}

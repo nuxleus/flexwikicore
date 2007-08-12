@@ -25,6 +25,20 @@
   <!-- Defines the number of links that must be added to a topic before CAPTCHA will be 
         required when <RequireCaptchaOnEdit> is set to CaptchaLinkThreshold. -->
   <CaptchaLinkThreshold>5</CaptchaLinkThreshold>
+  
+  <!-- Identifies the path to a directory tree where uploads to the wiki will be stored. If
+        this key does not exist, then the file upload and attachment controls will not be 
+        accessible in WikiEdit.aspx. The directory tree is placed in the virtual directory at
+        the root of the wiki and all directories must be precreated. In addition to the 
+        directories in the key, there are 3 other idrectories that must be created as subdirectories:
+        images, html or doc. Using the key below as a sample the directory tree would be:
+             RootUrl
+               content
+                    upload
+                        images
+                        html
+                        doc   -->
+  <ContentUploadPath>content\upload</ContentUploadPath>
 
   <!-- Identifies the default namespace provider in the "Add Namespace" section of the /admin
         pages. Set this to the full type name of a namespace provider to default to something 

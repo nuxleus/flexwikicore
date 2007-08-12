@@ -90,13 +90,13 @@ namespace FlexWiki
             StringBuilder builder = new StringBuilder();
             builder.Append(SiteURL);
             builder.Append("UserProfile.aspx?UserID=0");
-            builder.Append("&Mode=1");
+            builder.Append("&amp;Mode=1");
             return builder.ToString();
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to compare two versions for the given topic")]
         public string LinkToCompare(string fullTopicName, int diff, int oldid)
         {
-            return SimpleLinkTo("compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff >= 0) ? "&diff=" + diff.ToString() : string.Empty) + ((oldid >= 0) ? "&oldid=" + oldid.ToString() : string.Empty));
+            return SimpleLinkTo("compare.aspx" + (fullTopicName != null ? "?topic=" + HttpUtility.UrlEncode(fullTopicName) : "") + ((diff >= 0) ? "&amp;diff=" + diff.ToString() : string.Empty) + ((oldid >= 0) ? "&amp;oldid=" + oldid.ToString() : string.Empty));
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that lets the user edit the given topic")]
         public string LinkToEditTopic(string topic)
@@ -310,7 +310,7 @@ namespace FlexWiki
                 {
                     if (query.Length != 0)
                     {
-                        query.Append("&");
+                        query.Append("&amp;");
                     }
                     query.Append(each + "=" + HttpUtility.UrlEncode((string)(extraQueryParms[each])));
                 }
