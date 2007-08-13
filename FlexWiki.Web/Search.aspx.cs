@@ -66,9 +66,9 @@ namespace FlexWiki.Web
             Response.Write(@"
 <div id=""TopicTip"" class=""TopicTip"" ></div>
 <fieldset><legend class=""DialogTitle"">Search</legend>
-<form id=""SearchForm"">
+<form id=""SearchForm"" action="""">
 <p>Search:<br /><input type=""text""  name=""search"" value=""" + (search == null ? "[enter regular expression]" : FlexWiki.Web.HtmlWriter.Escape(search)) + @"""/>
-<input type=""submit"" id=""SearchButton"" Value=""Go"" />
+<input type=""submit"" id=""SearchButton"" value=""Go"" />
 </p>");
 
             ArrayList uniqueNamespaces = new ArrayList();
@@ -88,7 +88,7 @@ namespace FlexWiki.Web
             Response.Write("<option value=\"" + All + "\">" + All + "</option>");
             foreach (string ns in uniqueNamespaces)
             {
-                string sel = (ns == preferredNamespace) ? " selected " : "";
+                string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
                 Response.Write("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
             }
             Response.Write("</select></p></form>");
@@ -157,7 +157,7 @@ namespace FlexWiki.Web
                         }
                     }
                 }
-                Response.Write("</div>");
+                Response.Write("</div></fieldset></fieldset>");
             }
         }
     }
