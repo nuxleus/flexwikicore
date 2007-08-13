@@ -31,8 +31,8 @@ function LinkMenu(anArray, e)
 		h += item.offsetHeight;
 	}
 	menu.innerHTML = '<div class="MenuItems" onmouseover="MenuIn(this);" onmouseout="MenuOut(this);">' + menu.innerHTML + '<' + '/div>';
-	menu.style.left = document.body.scrollLeft + e.clientX;
-	menu.style.top = document.body.scrollTop + e.clientY;
+	menu.style.left = document.documentElement.scrollLeft + e.clientX;
+	menu.style.top = document.documentElement.scrollTop + e.clientY;
 	menu.style.height = h;
 	menu.style.width = w;
 	timeout = window.setTimeout("MenuTimeout()", 4000, "JavaScript");
@@ -44,8 +44,8 @@ var tipOffTimeout = null;
 
 function TopicTipOn(anchor, id, event)
 {
-	var targetY = document.body.scrollTop + event.clientY + 18;
-	var targetX = document.body.scrollLeft + event.clientX + 12;
+	var targetY = document.documentElement.scrollTop + event.clientY + 18;
+	var targetX = document.documentElement.scrollLeft + event.clientX + 12;
 	
 	var topicTip = document.getElementById("TopicTip");
 	if (null != topicTip)
