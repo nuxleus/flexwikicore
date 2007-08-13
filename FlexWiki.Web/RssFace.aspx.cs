@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -56,57 +57,44 @@ namespace FlexWiki.Web
 
 		protected void ShowPage()
 		{
+            StringBuilder strbldr = new StringBuilder();
 			string ns = Request.QueryString["namespace"];
-			Response.Write(@"
-<fieldset><legend class='DialogTitle'>Subscriptions</legend>
-");
-			Response.Write(@"<p>Listed below are the available <b>newsletters</b> and <b>RSS</b> subscriptions.");
+			strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Subscriptions</legend>");
+            strbldr.AppendLine("<p>Listed below are the available <b>newsletters</b> and <b>RSS</b> subscriptions.");
 			if (ns == null)
 			{
-				Response.Write(@" All subscriptions available in this Wiki federation are listed.");
+                strbldr.AppendLine(" All subscriptions available in this Wiki federation are listed.");
 			}
 			else
 			{
-				Response.Write(@" Only the subscriptions for <i>" + EscapeHTML(ns) + "</i> are listed.");
-				Response.Write(@"	You can also view <a href=" + Request.Path + @">all subscriptions on this site</a>.");
+                strbldr.AppendLine(" Only the subscriptions for <i>" + EscapeHTML(ns) + "</i> are listed.");
+                strbldr.AppendLine("	You can also view <a href=\"" + Request.Path + "\">all subscriptions on this site</a>.");
 			}
 
-			Response.Write(@"</p>");
+            strbldr.AppendLine("</p>");
 
-			Response.Write(@"<p>There are three ways to subscribe to change notifications for this site:
+			strbldr.AppendLine("<p>There are three ways to subscribe to change notifications for this site:</p>");
 
-<ul>
-<li><b>Newsletters (email and RSS).</b>  Newsletters provide notification of changes to a set of related topics.  
-To recieve newsletter updates by email, visit the newsletter topic and add your name to the Subscribers property.
-To subscribe the the RSS feed for the newsletter directly, use the listed link below.
-<li><b>Namespace feeds (RSS).</b>  You can subscribe to RSS feeds for all of the topics in this namespace.
-</ul>
-</p>");
+            strbldr.AppendLine("<ul>");
+            strbldr.AppendLine("<li><b>Newsletters (email and RSS).</b>  Newsletters provide notification of changes to a set of related topics.");
+            strbldr.AppendLine("To recieve newsletter updates by email, visit the newsletter topic and add your name to the Subscribers property.");
+            strbldr.AppendLine("To subscribe the the RSS feed for the newsletter directly, use the listed link below.</li>");
+            strbldr.AppendLine("<li><b>Namespace feeds (RSS).</b>  You can subscribe to RSS feeds for all of the topics in this namespace.</li>");
+            strbldr.AppendLine("</ul>");
 
-			ShowNewsletters(ns);
-			ShowNamespaceFeeds(ns);
+			strbldr.AppendLine(ShowNewsletters(ns));
+			strbldr.AppendLine(ShowNamespaceFeeds(ns));
 
-			Response.Write(@"
-</fieldset>");
+			strbldr.AppendLine("</fieldset>");
+            Response.Write(strbldr.ToString());
 
 		}
 
-		void OpenTable()
-		{
-			Response.Write(@"
-<table border='0'cellspacing='6' cellpadding='0'>
-");
-		}
 
-		void CloseTable()
+		string ShowNewsletters(string ns)
 		{
-			Response.Write(@"
-</table>");
-		}
-
-		void ShowNewsletters(string ns)
-		{
-			Response.Write(@"<h1>Newsletters</h1>");
+            StringBuilder strbldr = new StringBuilder();
+            strbldr.AppendLine("<h1>Newsletters</h1>");
 			
 			NewsletterManager nm = new NewsletterManager(Federation, TheLinkMaker);
 
@@ -129,35 +117,45 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 			List<string> bases = new List<string>();
 			bases.AddRange(newsletterNamespaceMap.Keys);
 			bases.Sort();
-			
-			OpenTable();
+
+            if (bases.Count > 0)
+            {
+                strbldr.AppendLine("<table border=\"0\" cellspacing=\"6\" cellpadding=\"0\">");
+            }
 			foreach (string each in bases)
 			{
 				NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(each);
-				if (ns == null)
-					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(storeManager.FriendlyTitle)  + "</div></td></tr>");
+                if (ns == null)
+                {
+                    strbldr.AppendLine("<tr><td colspan=\"2\"><div class=\"SubscriptionNamespace\">" + EscapeHTML(storeManager.FriendlyTitle) + "</div></td></tr>");
+                }
 				foreach (QualifiedTopicName abs in newsletterNamespaceMap[each])
 				{
 					TopicVersionInfo info = Federation.GetTopicInfo(abs.ToString());
 					string desc = info.GetProperty("Description");
-					Response.Write(@"
-<tr>
-<td><a class=""standardsButton"" href='" + RootUrl + @"Rss.aspx?newsletter=" + abs.ToString() + @"'>rss</a></td>
-<td><a href='" + TheLinkMaker.LinkToTopic(abs) + @"'>" + abs.LocalName + @"</a></td>
-</tr>
-<tr>
-<td></td>
-<td><span style='font-size: x-small; color: gray'>" + (desc == null ? "" : desc) + @"</span></td>
-</tr>
-<tr>");
+					strbldr.AppendLine("<tr>");
+                    strbldr.AppendLine("<td><a class=\"standardsButton\" href=\"" + RootUrl + "Rss.aspx?newsletter=" + abs.ToString() + "\">rss</a></td>");
+                    strbldr.AppendLine("<td><a href=\"" + TheLinkMaker.LinkToTopic(abs) + "\">" + abs.LocalName + "</a></td>");
+                    strbldr.AppendLine("</tr>");
+                    strbldr.AppendLine("<tr>");
+                    strbldr.AppendLine("<td></td>");
+                    strbldr.AppendLine("<td><span style=\"font-size: x-small; color: gray\">" + (desc == null ? "" : desc) + "</span></td>");
+                    strbldr.AppendLine("</tr>");
+                    strbldr.AppendLine("<tr>");
 				}
 			}
-			CloseTable();
+            if (bases.Count > 0)
+            {
+                strbldr.AppendLine("</table>");
+            }
+            return strbldr.ToString();
 		}
 
-		void ShowNamespaceFeeds(string ns)
+		string ShowNamespaceFeeds(string ns)
 		{
-			Response.Write(@"<h1>Namespace Feeds</h1>");
+            StringBuilder strbldr = new StringBuilder();
+
+            strbldr.AppendLine("<h1>Namespace Feeds</h1>");
 			List<NamespaceManager> bases = new List<NamespaceManager>();
 			foreach (string each in Federation.Namespaces)
 			{
@@ -170,26 +168,28 @@ To subscribe the the RSS feed for the newsletter directly, use the listed link b
 			}
 			bases.Sort();
 
-			OpenTable();
-			foreach (NamespaceManager storeManager in bases)
+            strbldr.AppendLine("<table border=\"0\" cellspacing=\"6\" cellpadding=\"0\">");
+            foreach (NamespaceManager storeManager in bases)
 			{
-				if (ns == null)
-					Response.Write(@"<tr><td colspan='2'><div class='SubscriptionNamespace'>" + EscapeHTML(storeManager.FriendlyTitle)  + "</div></td></tr>");
-				Response.Write(@"
-<tr>
-<td><a class=""standardsButton"" href='" + RootUrl + @"Rss.aspx?namespace=" + storeManager.Namespace + @"'>rss</a></td>
-<td>Only this namespace (<a href='" + TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(storeManager.Namespace + "." + storeManager.HomePage)) + @"'>" + storeManager.FriendlyTitle + @"</a>)</td>
-</tr>
-<tr>
-<td><a class=""standardsButton"" href='" + RootUrl + @"Rss.aspx?namespace=" + storeManager.Namespace + @"&inherited=y'>rss</a></td>
-<td>This namespace and related namespaces (<a href='" + TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(storeManager.Namespace + "." + storeManager.HomePage)) + @"'>" + storeManager.FriendlyTitle + @"</a>");
-				foreach (NamespaceManager import in storeManager.ImportedNamespaceManagers)
-					Response.Write(", <a href='" + TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(import.Namespace + "." + import.HomePage)) + @"'>" + import.FriendlyTitle + @"</a>");
-				Response.Write(@")</td>
-</tr>");
+                if (ns == null)
+                {
+                    strbldr.AppendLine("<tr><td colspan=\"2\"><div class=\"SubscriptionNamespace\">" + EscapeHTML(storeManager.FriendlyTitle) + "</div></td></tr>");
+                }
+				strbldr.AppendLine("<tr>");
+                strbldr.AppendLine("<td><a class=\"standardsButton\" href=\"" + RootUrl + "Rss.aspx?namespace=" + storeManager.Namespace + "\">rss</a></td>");
+                strbldr.AppendLine("<td>Only this namespace (<a href=\"" + TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(storeManager.Namespace + "." + storeManager.HomePage)) + "\">" + storeManager.FriendlyTitle + "</a>)</td>");
+                strbldr.AppendLine("</tr>");
+                strbldr.AppendLine("<tr>");
+                strbldr.AppendLine("<td><a class=\"standardsButton\" href=\"" + RootUrl + "Rss.aspx?namespace=" + storeManager.Namespace + "&amp;inherited=y\">rss</a></td>");
+                strbldr.AppendLine("<td>This namespace and related namespaces (<a href=\"" + TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(storeManager.Namespace + "." + storeManager.HomePage)) + "\">" + storeManager.FriendlyTitle + "</a>");
+                foreach (NamespaceManager import in storeManager.ImportedNamespaceManagers)
+                {
+                    strbldr.AppendLine(", <a href=\"" + TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(import.Namespace + "." + import.HomePage)) + "\">" + import.FriendlyTitle + "</a>");
+                }
+                strbldr.AppendLine(")</td></tr>");
 			}
-			CloseTable();
-
-		}
+            strbldr.AppendLine("</table>");
+            return strbldr.ToString();
+        }
 	}
 }
