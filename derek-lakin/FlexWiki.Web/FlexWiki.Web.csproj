@@ -94,6 +94,7 @@
     <Reference Include="System.Web.Services">
       <Name>System.Web.Services</Name>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -469,6 +470,8 @@
     </Compile>
     <Compile Include="Analysis\TopicAnalysis.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicControl.cs">
     </Compile>
     <Compile Include="UIColumn.cs">
       <SubType>Code</SubType>

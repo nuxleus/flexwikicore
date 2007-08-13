@@ -30,9 +30,11 @@ namespace FlexWiki.Web
         }
         public static QualifiedTopicRevision GetTopicRevision(Federation federation)
         {
-            string topic;
-
-            topic = HttpContext.Current.Request.PathInfo;
+            string topic = HttpContext.Current.Request.PathInfo;
+            return GetTopicRevision(federation, topic);
+        }
+        public static QualifiedTopicRevision GetTopicRevision(Federation federation, string topic)
+        {
             if (topic.StartsWith("/"))
             {
                 topic = topic.Substring(1);
