@@ -102,11 +102,6 @@
       <Project>{7362F597-DAB3-437E-8A07-37D8D2FE6E56}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\FlexWiki.Web.Service\FlexWiki.Web.Services.csproj">
-      <Name>FlexWiki.Web.Services</Name>
-      <Project>{374C1AEF-4BE6-41AA-9100-9BA48AEEBEF8}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="AboutCaptcha.html" />
@@ -463,6 +458,18 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Security.cs" />
+    <Compile Include="Services\EditServiceImplementation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\WireTypes\AbsoluteTopicName.cs" />
+    <Compile Include="Services\WireTypes\AbsoluteTopicNameCollection.cs" />
+    <Compile Include="Services\WireTypes\BELObject.cs" />
+    <Compile Include="Services\WireTypes\ContentBase.cs" />
+    <Compile Include="Services\WireTypes\ContentBaseCollection.cs" />
+    <Compile Include="Services\WireTypes\ReflectedValueSource.cs" />
+    <Compile Include="Services\WireTypes\TopicName.cs" />
+    <Compile Include="Services\WireTypes\TopicNameCollection.cs" />
+    <Compile Include="Services\WireTypes\WikiVersion.cs" />
     <Compile Include="ShowNewsletter.aspx.cs">
       <DependentUpon>ShowNewsletter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -622,6 +629,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Search.aspx.resx">
       <DependentUpon>Search.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Services\EditServiceImplementation.resx">
+      <DependentUpon>EditServiceImplementation.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ShowNewsletter.aspx.resx">
