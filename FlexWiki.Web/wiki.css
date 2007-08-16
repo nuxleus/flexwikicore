@@ -14,6 +14,12 @@ padding:0;
 code, pre {
 font:bold small Consolas,Courier New,Courier,monospace;
 }
+pre {
+background:#FFFAF2;
+border:solid 1px #6A4E22;
+overflow:auto;
+padding:4px 4px 4px 0;
+}
 img {
 border:0;
 }
@@ -379,11 +385,9 @@ width:auto;
 .SearchColumnFilterBox {
 }
 .SearchEvenRow {
-font-size:0.75em;
 }
 .SearchOddRow {
 background:#FFF;
-font-size:0.75em;
 }
 .SearchMain {
 background:#FFF;
