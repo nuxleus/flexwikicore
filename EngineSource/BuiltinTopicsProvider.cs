@@ -184,7 +184,7 @@ request.AreDifferencesShown.IfTrue
   Presentations.Image(
     federation.LinkMaker.LinkToImage(""images/flexwikirss.png""),
       [""RSS feed for the "", namespace.Name, "" namespace""].ToString,
-      federation.LinkMaker.SimpleLinkTo([""rss.aspx?namespace="", namespace.Name].ToString))
+      federation.LinkMaker.SimpleLinkTo([""Rss.aspx?namespace="", namespace.Name].ToString))
 ]
 }
 ";
