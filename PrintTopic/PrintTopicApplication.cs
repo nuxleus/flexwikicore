@@ -57,6 +57,12 @@ namespace PrintTopic
         {
             get { return OutputFormat.HTML; }
         }
+
+		public object this[string key]
+		{
+			get { return null; }
+		}
+
         public ITimeProvider TimeProvider
         {
             get { return _timeProvider; }

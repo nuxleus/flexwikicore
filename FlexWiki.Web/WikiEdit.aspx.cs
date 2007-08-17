@@ -258,7 +258,7 @@ namespace FlexWiki.Web
                 {
                     topicbody = Request.Form["PostBox"];
                 }
-                return topicbody;
+                return topicbody ?? "";
             }
         }
 
