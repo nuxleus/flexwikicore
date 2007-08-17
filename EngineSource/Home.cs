@@ -106,8 +106,8 @@ namespace FlexWiki
             return ctx.CurrentNamespaceManager;
         }
 
-        [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer the active Federation")]
-        public Federation federation(ExecutionContext ctx)
+        [ExposedMethod("federation",ExposedMethodFlags.NeedContext, "Answer the active Federation")]
+        public Federation Federation(ExecutionContext ctx)
         {
             return ctx.CurrentFederation;
         }
