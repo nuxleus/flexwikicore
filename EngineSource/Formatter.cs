@@ -413,10 +413,38 @@ namespace FlexWiki.Formatting
             //
             // Subtlties:
             //   - We upgrade any line styles, so that the new compound line gets the highest priority style found across all the lines
+			//   - We skip pre formatted lines these are the same rules as in the Format() method.
 
+			bool inPreBlock = false;
+			string preBlockKey = "";
             for (int lineNumber = 0; lineNumber < input.Count; lineNumber++)
             {
                 StyledLine eachLine = (StyledLine) (input[lineNumber]);
+				string each = eachLine.Text;
+				// single line pre-format
+				if (each.StartsWith(" "))
+				{
+					answer.Add(eachLine);
+					continue;
+				}
+				// multi line pre and extended pre formatting.
+				if (inPreBlock)
+				{
+					if ((each.StartsWith("}+") || each.StartsWith("}@")) && each.Substring(2).Trim() == preBlockKey)
+					{
+						inPreBlock = false;
+					}
+					answer.Add(eachLine);
+					continue;
+				}
+				else if (each.StartsWith("{+") || each.StartsWith("{@"))
+				{
+					inPreBlock = true;
+					preBlockKey = each.Substring(2).Trim();
+					answer.Add(eachLine);
+					continue;
+				}
+
                 int thisLineDelimiterCount = CountOccurrences(eachLine.Text, BehaviorDelimiter);
                 if ((thisLineDelimiterCount % 2) != 0)
                 {

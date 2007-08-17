@@ -792,6 +792,22 @@ No key case
         [Test]
         public void PreTest()
         {
+			FormatTest(@"{@
+this is @@ some pre stuff
+}@
+this is not",
+			@"<pre>
+this is @@ some pre stuff
+</pre>
+<p>this is not</p>
+");
+			FormatTest(@" this is @@ some pre stuff
+this is not",
+			@"<pre>
+ this is @@ some pre stuff
+</pre>
+<p>this is not</p>
+");
             FormatTest(
                 @" pre
  pre
