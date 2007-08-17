@@ -493,6 +493,11 @@ namespace FlexWiki
             }
             return exposedNamespaces;
         }
+		[ExposedMethod("Application", ExposedMethodFlags.Default, "Answer the application property")]
+		public object ExposedApplicationProperty(string key)
+		{
+			return _application[key];
+		}
         public static PerformanceCounter GetPerformanceCounter(string name)
         {
             if (!s_performanceCounterMap.ContainsKey(name))

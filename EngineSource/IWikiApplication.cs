@@ -21,5 +21,6 @@ namespace FlexWiki
         void LogWarning(string source, string message); 
         string ResolveRelativePath(string path); 
         void WriteFederationConfiguration();
+		object this[string key] { get; }
     }
 }

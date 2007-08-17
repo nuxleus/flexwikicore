@@ -35,8 +35,6 @@ Check out the FlexWikiFaq@flexWiki as a means  to collaborate on questions you m
     Newline
   ]}
 }
-
-
 RightBorder:{
 aTopic|
   [
@@ -78,6 +76,24 @@ aTopic|
   },
   Newline, ""----"", Newline, 
   federation.About,
+  Newline, ""----"", Newline,
+  federation.Application(""AlternateStyles"").IfNull
+  {
+    """"
+  }
+  Else
+  {
+    [ 
+      ""||{T-}'''Change Style'''||"",
+      Newline,
+      ""||"",
+      Presentations.FormStart("""", ""get"",""onsubmit='SetActiveStylesheet(this.styles.options[this.styles.selectedIndex].value);return false;'""),
+      Presentations.ComboSelectField(""styles"", [""Choose here.""].Append(federation.Application(""AlternateStyles"")),null,[""""].Append(federation.Application(""AlternateStyles""))),
+      Presentations.ImageButton(""goButton"", federation.LinkMaker.LinkToImage(""images/go-dark.gif""), ""Select alternate stylesheet""), 
+      Presentations.FormEnd(),
+     ""||""
+    ]
+  },
   Newline, ""----"", Newline,
   ""*Recent Topics*"",
   Newline,
@@ -371,7 +387,7 @@ request.AreDifferencesShown.IfTrue
             }
             else if (topicName.Equals(BordersTopicName))
             {
-                return DefaultNormalBordersContent;
+				return DefaultNormalBordersContent;
             }
             else
             {

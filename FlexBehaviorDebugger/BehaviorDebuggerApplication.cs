@@ -60,6 +60,11 @@ namespace FlexWiki.BeL.Debugger
             get { return OutputFormat.Testing; }
         }
 
+		public object this[string key]
+		{
+			get { return null; }
+		}
+
         public ITimeProvider TimeProvider
         {
             get { return _timeProvider; }

@@ -51,6 +51,11 @@ namespace FlexWiki.UnitTests
             get { return _ouputFormat; }
         }
 
+		public object this[string key]
+		{
+			get { return null; }
+		}
+
         public ITimeProvider TimeProvider
         {
             get { return _timeProvider; }
