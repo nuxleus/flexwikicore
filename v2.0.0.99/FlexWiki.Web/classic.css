@@ -1,0 +1,374 @@
+﻿/* General */
+body {
+background:lemonchiffon;
+color:#000;
+font-family:Arial,sans-serif;
+font-size:small;
+}
+code, pre {
+font:small Courier New,Courier,monospace;
+}
+ul li {
+list-style-image:none;
+}
+/* End of General */
+/* Borders */
+.Border {
+color:#000;
+}
+.Border a {
+color:royalblue;
+}
+.Border a.create {
+color:#000;
+border-bottom:dashed 1px royalblue;
+text-decoration:none;
+}
+.Border a.create:hover {
+color:royalblue;
+border-bottom:solid 1px royalblue;
+}
+/* Search */
+input#search {
+background:#FFF;
+border:1px solid silver;
+font-family:Arial, sans-serif;
+}
+/* End of Search */
+/* End of Borders */
+/* Topic Body */
+#TopicBody {
+background:#FFF;
+border:1px solid silver;
+color:#303030;
+padding-left:12px;
+}
+/* Topic Bar */
+.TopicBar, .TopicBarHover {
+border:none;
+color:#3399CC;
+}
+.TopicBarHover {
+border:1px solid #6A4E22;
+}
+.StaticTopicBar {
+border:none;
+color:#0066FF;
+font-size:2em;
+}
+.DynamicTopicBar {
+background:#E0E0E0 none repeat scroll 0%;
+}
+.DynamicTopicBarHelp {
+color:#6A4E22;
+font-size:xx-small;
+}
+.QuickLinkInput {
+background:#E0E0E0 none repeat scroll 0%;
+border:medium none;
+color:royalblue;
+font-size:1.4em;
+font-weight:bold;
+}
+/* End of Topic Bar */
+.Rule{
+border-top:1px solid gray;
+}
+/* Headings */
+h1, h2 {
+border:none;	
+}
+h1 {
+border-top:2px solid mediumblue;
+color:#0033CC;
+font-size:1.4em;
+margin-left:-5px;
+padding-left:4px;
+padding-top:2px;
+}
+h1 a {
+color:darkslateblue;
+text-decoration:none;
+}
+h1 a:hover {
+color:royalblue;
+text-decoration:underline;
+}
+h2 {
+color:darkslateblue;
+font-size:1.35em;
+margin-top:1.6em;
+}
+h2 a {
+color:royalblue;
+text-decoration:none;
+}
+h2 a:hover {
+color:royalblue;
+text-decoration:underline;
+}
+h3 {
+color:darkslateblue;
+font-size:1.1em;
+font-variant:small-caps;
+margin-top:1.6em;
+}
+h3 a {
+color:royalblue;
+text-decoration:none;
+}
+h3 a:hover {
+color:royalblue;
+text-decoration:underline;
+}
+h4 {
+color:darkslateblue;
+font-size:0.76em;
+margin-top:1.6em;
+}
+h5 {
+color:darkslateblue;
+font-size:0.76em;
+margin-top:1.6em;
+}
+h6 {
+color:darkslateblue;
+font-size:0.76em;
+margin-top:1.6em;
+}
+h7 {
+color:darkslateblue;
+font-size:0.76em;
+margin-top:1.6em;
+}
+/* End of Headings */
+/* Links */
+a {
+color:royalblue;
+text-decoration:none;
+}
+a.Anchor, a.Anchor:hover, a.Anchor:active {
+text-decoration:none;
+}
+a.Anchor, a.Anchor:hover, a.Anchor:active {
+text-decoration:none;
+}
+a.standardsButton {
+background-color:#FF6600;
+border-color:#FFC8A4 rgb(125, 51, 2) rgb(63, 26, 1) rgb(255, 154, 87);
+border-style:solid;
+border-width:1px;
+color:#FFFFFF;
+font-family:verdana,sans-serif;
+font-size:10px;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+line-height:normal;
+margin:0px;
+padding:0px 3px;
+text-decoration:none;
+}
+a.standardsButton:hover {
+background-color:#FF6600;
+border-color:#FFC8A4 rgb(125, 51, 2) rgb(63, 26, 1) rgb(255, 154, 87);
+border-style:solid;
+border-width:1px;
+color:#FFFFFF;
+font-family:verdana,sans-serif;
+font-size:10px;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+line-height:normal;
+margin:0px;
+padding:0px 3px;
+text-decoration:none;
+}
+a.standardsButton:visited {
+background-color:#FF6600;
+border-color:#FFC8A4 rgb(125, 51, 2) rgb(63, 26, 1) rgb(255, 154, 87);
+border-style:solid;
+border-width:1px;
+color:#FFFFFF;
+font-family:verdana,sans-serif;
+font-size:10px;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+line-height:normal;
+margin:0px;
+padding:0px 3px;
+text-decoration:none;
+}.externalLink, .ExternalLink {
+background:url(images/external.png) right center no-repeat;
+padding-right:12px;
+}
+/* End of Links */
+/* Properties */
+.Property {
+color:#0066FF;
+font-size:0.82em;
+margin-bottom:5px;
+margin-left:-5px;
+margin-top:5px;
+}
+.PropertyName {
+font-size:0.82em;
+font-weight:bold;
+line-height:1.2em;
+}
+.PropertyValue {
+background-color:white;
+color:#CC6600;
+font-size:0.82em;
+line-height:1.35em;
+}
+.PropertyValue p {
+background-color:white;
+color:#CC6600;
+font-size:1em;
+line-height:1.35em;
+margin-bottom:0pt;
+margin-top:0pt;
+}
+.Anchor {
+background-color:white;
+color:#CC6600;
+line-height:1.35em;
+}
+.Anchor:hover {
+background-color:white;
+color:#CC6600;
+line-height:1.35em;
+text-decoration:none;
+}
+.Anchor a {
+background-color:white;
+color:royalblue;
+line-height:1.35em;
+}
+.Anchor a:hover {
+color:royalblue;
+text-decoration:underline;
+}
+/* End of Properties */
+/* Tables */
+.TableClass {
+background-color:#F8F8F8;
+border:1px solid #505050;
+border-collapse:collapse;
+}
+.TableWithoutBorderClass {
+border-collapse:collapse;
+}
+.TableCellHighlighted {
+background-color:#E0E0E0;
+border:1px solid #909090;
+border-collapse:collapse;
+font-size:x-small;
+}
+.TableCell {
+border:1px solid #909090;
+border-collapse:collapse;
+}
+.TableCellHighlightedNoBorder {
+background-color:#E0E0E0;
+}
+.TableCellNoBorder {
+}
+td {
+color:#000;
+}
+/* End of Tables */
+/* Topic Tips */
+.TopicTipStats {
+border-top:1px solid gray;
+color:gray;
+}
+.TopicTip {
+background:#E0E0E0;
+border:1px solid silver;
+color:#000;
+padding:1px;
+}
+/* End of Topic Tips */
+/* End of Topic Body */
+/* Non-topic Styles */
+/* Sidebars */
+.Sidebar {
+background:lemonchiffon none repeat scroll 0%;
+}
+.SidebarTile {
+background:lemonchiffon;
+border:1px solid #404040;
+color:black;
+}
+.SidebarTileTitle {
+color:#E0E0E0;
+}
+.SidebarTileTitle a {
+color:#FFCC99;
+text-decoration:none;
+}
+.SidebarTileTitle a:hover {
+color:#FBE52F;
+text-decoration:underline;
+}
+.SidebarTileBody {
+color:#404040;
+}
+.SidebarTileBody a {
+color:mediumblue;
+text-decoration:none;
+}
+.SidebarTileBody a:hover {
+color:mediumblue;
+text-decoration:underline;
+}
+.SidebarTileBody td {
+color:#404040;
+}
+/* End of Sidebars */
+.Dialog {
+background:white none repeat scroll 0%;
+}
+.SearchColumnHeading {
+background:#003399 none repeat scroll 0%;
+border:1px solid black;
+font-weight:bold;
+}
+.SearchEvenRow {
+background:#FFF;
+border-bottom:1px solid silver;
+}
+.SearchOddRow {
+background:#F8F8F8;
+border-bottom:1px solid silver;
+}
+.SearchMain {
+border:12px solid #404040;
+color:#303030;
+padding:10px;
+}
+.searchHitHead {
+background:#E0E0E0;
+}
+.searchHitBody {
+overflow:hidden;
+}
+/* Versions */
+#topicversions li.selected {
+background:#F9F9F9;
+border:dashed 1px #808080;
+}
+/* End of Versions */
+#RenameContent {
+background:#FFF;
+}
