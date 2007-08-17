@@ -493,7 +493,7 @@ namespace FlexWiki
             }
             return exposedNamespaces;
         }
-		[ExposedMethod("Application", ExposedMethodFlags.Default, "Answer the application property")]
+		[ExposedMethod("Application", ExposedMethodFlags.Default, "Answer the value associated with the key from the IWikiApplication")]
 		public object ExposedApplicationProperty(string key)
 		{
 			return _application[key];

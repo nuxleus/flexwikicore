@@ -120,6 +120,11 @@ namespace FlexWiki.Web
         {
             get { return _outputFormat; }
         }
+		/// <summary>
+		/// Gets or sets the properties available outside of this IWikiApplication. <see cref="IWikiApplication.this[string]"/>
+		/// </summary>
+		/// <param name="key">key of the value to get</param>
+		/// <returns>the value associated with the key or null if the key is not found</returns>
 		public object this[string key]
 		{
 			get { return _properties.ContainsKey(key) ? _properties[key] : null; }

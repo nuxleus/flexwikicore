@@ -114,7 +114,8 @@ namespace FlexWiki
 			}
 			return answer;
 		}
-		[ExposedMethod(ExposedMethodFlags.Default, "Answer a this array after the supplied array has been appended on the end")]
+
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer this array after the supplied array has been appended on the end.")]
 		public BELArray Append(ArrayList array)
 		{
 			foreach (IBELObject each in array)
@@ -123,7 +124,6 @@ namespace FlexWiki
 			}
 			return this;
 		}
-
 
 		[ExposedMethod( ExposedMethodFlags.NeedContext, "Evaluate the block for each item in the array; answer a new Array that includes on those objects for which the block evaluated to true.")]
 		public BELArray Select(ExecutionContext ctx, Block block)

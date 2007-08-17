@@ -21,6 +21,16 @@ namespace FlexWiki
         void LogWarning(string source, string message); 
         string ResolveRelativePath(string path); 
         void WriteFederationConfiguration();
+		/// <summary>
+		/// Gets the value associated with the specified key. 
+		/// </summary>
+		/// <remarks>
+		/// This property bag is intended to provide a mechanism for the IWikiApplication to provide information and data to pieces
+		/// of the Engine, (e.g. WikiTalk.) It is up to the implementing class what it wants to expose to the Engine. These values
+		/// are exposed to WikiTalk via the <see cref="Foundation.Application(string key)"/> method.
+		/// </remarks>
+		/// <param name="key">The key of the value to get.</param>
+		/// <returns>The value associated with the specified <paramref name="key"/>. If the specified key is not found, null is returned.</returns>
 		object this[string key] { get; }
     }
 }
