@@ -289,7 +289,8 @@ namespace FlexWiki.Web
             //Check Null edits
             string oldContent = OriginalTopicText;
 
-            if (string.Compare(oldContent, PostedTopicText) != 0)
+			// if the posted text is different than the orig, or if there was no orig, proceed
+            if (string.Compare(oldContent, PostedTopicText) != 0 || !Federation.TopicExists(TheTopic))
             {
                 bool isDelete = Regex.IsMatch(PostedTopicText, "^delete$", RegexOptions.IgnoreCase);
                 LogEvent ev;
