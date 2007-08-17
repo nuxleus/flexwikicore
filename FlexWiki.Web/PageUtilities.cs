@@ -2,12 +2,14 @@ using System;
 using System.Web;
 using System.Web.UI.HtmlControls;
 
-using FlexWiki.Security; 
+using FlexWiki.Security;
+using System.Text; 
 
 namespace FlexWiki.Web
 {
     public static class PageUtilities
     {
+		public const string DefaultStylesheet = "Site Default";
         public static string RootUrl
         {
             get
@@ -93,31 +95,44 @@ namespace FlexWiki.Web
 
             if (!string.IsNullOrEmpty(styleSheet))
             {
-                answer += "\n<link href=\"" + styleSheet + "\" type=\"text/css\" rel=\"stylesheet\" />";
+				answer += GetStylesheetLink(styleSheet, DefaultStylesheet, false);
             }
             else
             {
                 string styleOverride = wikiApplication.ApplicationConfiguration.OverrideStylesheet;
                 if (styleOverride != null && styleOverride.Length > 0)
                 {
-                    if (true == styleOverride.StartsWith("http", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        answer += string.Format("\n<link href=\"{0}\" type=\"text/css\" rel=\"stylesheet\" />",
-                            styleOverride);
-                    }
-                    else
-                    {
-                        answer += string.Format("\n<link href=\"{0}{1}\" type=\"text/css\" rel=\"stylesheet\" />",
-                            RootUrl, styleOverride);
-                    }
+					answer += GetStylesheetLink(styleOverride, DefaultStylesheet, false);
                 }
             }
 
+			foreach(AlternateStylesheetConfiguration altStyle in wikiApplication.ApplicationConfiguration.AlternateStylesheets)
+			{
+				answer += GetStylesheetLink(altStyle.Href, altStyle.Title, true);
+			}
             return answer;
         }
+
+		public static string GetStylesheetLink(string styleOverride, string title, bool isAlternate)
+		{
+			string answer = "\n<link href=\"{0}{1}\" type=\"text/css\" rel=\"{2}\"{3}/>";
+			string rel = isAlternate ? "alternate stylesheet" : "stylesheet";
+			title = (title == null) ? "" : String.Format(" title=\"{0}\"", title);
+			if (true == styleOverride.StartsWith("http", StringComparison.CurrentCultureIgnoreCase))
+			{
+				answer = string.Format(answer, "", styleOverride, rel, title);
+			}
+			else
+			{
+				answer = string.Format(answer, RootUrl, styleOverride, rel, title);
+			}
+			return answer;
+		}
+
         public static string MainStylesheetReference()
         {
-            return "<link href=\"" + RootUrl + "wiki.css\" type=\"text/css\" rel=\"stylesheet\" />";
+			return GetStylesheetLink("wiki.css", null, false);
         }
-    }
+
+	}
 }

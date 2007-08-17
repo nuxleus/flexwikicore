@@ -148,7 +148,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="default.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="DoSearch.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -210,6 +209,7 @@
     <Compile Include="admin\Users.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="AlternateStylesheetConfiguration.cs" />
     <Compile Include="Analysis\Island.cs" />
     <Compile Include="Analysis\Ocean.cs" />
     <Compile Include="AspNetWikiCache.cs" />
@@ -288,7 +288,6 @@
     <Content Include="wiki.css" />
     <Content Include="WikiDefault.js" />
     <Content Include="WikiEdit.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="WikiEdit.js" />
     <Content Include="WikiMenu.js" />

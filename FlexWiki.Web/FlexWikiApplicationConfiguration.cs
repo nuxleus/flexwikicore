@@ -11,6 +11,7 @@ namespace FlexWiki.Web
     {
         // Fields
 
+		private AlternateStylesheetConfiguration[] _alternateStylesheets;
         private string _captchaKey;
         private int _captchaLinkThreshold;
         private string _contentUploadPath;
@@ -31,6 +32,18 @@ namespace FlexWiki.Web
         private bool _signNamespaceCreationMail;
         
         // Properties
+
+		[XmlArrayItem("AlternateStylesheet")]
+		public AlternateStylesheetConfiguration[] AlternateStylesheets
+		{
+			get 
+			{
+				if (_alternateStylesheets == null)
+					_alternateStylesheets = new AlternateStylesheetConfiguration[0];
+				return _alternateStylesheets; 
+			}
+			set { _alternateStylesheets = value; }
+		}
 
         public string CaptchaKey
         {

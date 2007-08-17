@@ -61,7 +61,6 @@
           in the border of every page on the wiki. It appears as the "About" property
           of the Federation class in WikiTalk. -->
     <About>This is FlexWiki, an open source wiki engine.</About>
-
     <!-- These are the default rules for who is allowed to do what at the wiki level. See 
       http://www.flexwiki.com/default.aspx/FlexWiki/FlexWikiAuthorization.html
       for more information. -->
@@ -216,11 +215,27 @@
     <SendAsAttachments>false</SendAsAttachments>
   </NewsletterConfiguration>
   
-  <!-- If set, will emit an additional <LINK rel='stylesheet' type='text/css' >
+  <!-- If there are AlternateStylesheet elements, then 
+        <LINK rel='alternate stylesheet' type='text/css' title='@Title' > 
+        tags will be emitted into the <head> of every page, allowing the admin 
+        to override CSS styles. The value in the @Href attribute becomes the 
+        href attribute of the <LINK>. To provide a method of allowing the 
+        OverrideStylesheet and the original stylesheet to coexist, you can add 
+        the original stylesheet as an alternate. See the 'Chocolate' example 
+        below. -->
+  <!--
+  <AlternateStylesheets>
+    <AlternateStylesheet Href='classic.css' Title='Lemon' />
+    <AlternateStylesheet Href='wiki.css' Title='Chocolate' />
+  </AlternateStylesheets>
+  -->
+
+  <!-- If set, will emit an additional 
+        <LINK rel='stylesheet' type='text/css' title='Basic' >
         tag into the <head> of every page, allowing the admin to override any
         CSS styles. The value below becomes the href attribute of the <LINK>. -->
   <!-- <OverrideStylesheet>http://yourserver/path/to/wiki/example-href.css</OverrideStylesheet> -->
-  
+
   <!-- If set, when a user tries to edit a page to include a URL from the URL blacklist 
         (see <BlackListedExternalLinks> above), an email about the event is sent to the 
         address listed here. -->

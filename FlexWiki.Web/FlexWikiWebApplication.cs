@@ -24,6 +24,7 @@ namespace FlexWiki.Web
         private readonly LinkMaker _linkMaker;
         private readonly OutputFormat _outputFormat;
         private readonly ITimeProvider _timeProvider = new DefaultTimeProvider();
+		private Dictionary<string, object> _properties = new Dictionary<string,object>();
 
         // Constructors
 
@@ -119,6 +120,11 @@ namespace FlexWiki.Web
         {
             get { return _outputFormat; }
         }
+		public object this[string key]
+		{
+			get { return _properties.ContainsKey(key) ? _properties[key] : null; }
+			internal set { _properties[key] = value; } 
+		}
         public ITimeProvider TimeProvider
         {
             get { return _timeProvider; }
@@ -247,6 +253,16 @@ namespace FlexWiki.Web
                     fileStream.Close();
                 }
             }
+			if (_applicationConfiguration.AlternateStylesheets.Length > 0)
+			{
+				string[] titles = new string[_applicationConfiguration.AlternateStylesheets.Length+1];
+				titles[0] = PageUtilities.DefaultStylesheet;
+				for (int i = 1; i < titles.Length; i++)
+				{
+					titles[i] = _applicationConfiguration.AlternateStylesheets[i-1].Title;
+				}
+				this["AlternateStyles"] = titles;
+			}
             LogInfo(this.GetType().ToString(), "Successfully loaded wiki configuration from: " + _configPath);
         }
         //private void WatchConfiguration()
