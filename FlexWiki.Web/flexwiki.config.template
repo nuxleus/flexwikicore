@@ -223,12 +223,10 @@
         OverrideStylesheet and the original stylesheet to coexist, you can add 
         the original stylesheet as an alternate. See the 'Chocolate' example 
         below. -->
-  <!--
   <AlternateStylesheets>
-    <AlternateStylesheet Href='classic.css' Title='Lemon' />
-    <AlternateStylesheet Href='wiki.css' Title='Chocolate' />
+    <AlternateStylesheet Href='classic.css' Title='Classic' />
+    <!-- <AlternateStylesheet Href='wiki.css' Title='Chocolate' /> -->
   </AlternateStylesheets>
-  -->
 
   <!-- If set, will emit an additional 
         <LINK rel='stylesheet' type='text/css' title='Basic' >
