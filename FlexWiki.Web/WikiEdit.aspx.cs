@@ -465,7 +465,7 @@ namespace FlexWiki.Web
                         {
                             if (fileNumber > 99)
                             {
-                                throw new System.IO.IOException("Too many copies of file exist on server.");
+                                throw new System.IO.IOException("Too many copies of file exist on server. Please rename it and upload again.");
                             }
                             fileNumber++;
                             fileNameAdder = ("-" + fileNumber.ToString("00") + ".");
@@ -514,9 +514,9 @@ namespace FlexWiki.Web
                 }
                 
             }
-            catch (System.IO.IOException)
+            catch (System.IO.IOException err)
             {
-                _errorMessage = "There are too many files on the server with that name. Please rename it and upload again.";
+                _errorMessage = err.Message;
             }
             //no changes ever made to the topic before the attachment was made
             if (Request.Form["PostBox"] == null)
