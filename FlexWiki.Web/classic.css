@@ -45,14 +45,14 @@ padding-left:12px;
 }
 /* Topic Bar */
 .TopicBar, .TopicBarHover {
-border:none;
+border:1px solid #FFF3E1;
 color:#3399CC;
 }
 .TopicBarHover {
 border:1px solid #6A4E22;
 }
 .StaticTopicBar {
-border:none;
+border:1px solid #FFF3E1;
 color:#0066FF;
 font-size:2em;
 }
