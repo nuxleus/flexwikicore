@@ -47,8 +47,85 @@ namespace FlexWiki.UnitTests.Caching
                 get { return _store; }
                 set { _store = value; }
             }
+        }
 
-	
+        [Test]
+        public void AllChangesForTopicSince()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                ClearCache(parameters.Cache);
+                UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
+                
+                parameters.Store.AllChangesForTopicSinceCalled = false; 
+
+                DateTime now = parameters.Federation.TimeProvider.Now; 
+                TopicChangeCollection firstRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    DateTime.MinValue);
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled, 
+                    "Checking that cache called store the first time."); 
+                
+                parameters.Store.AllChangesForTopicSinceCalled = false; 
+                TopicChangeCollection secondRetrieval =  parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    DateTime.MinValue);
+                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled, 
+                    "Checking that second retrieval came from cache."); 
+
+                parameters.Manager.WriteTopicAndNewVersion(topicName, "Changed content", "FlexWiki"); 
+
+                parameters.Store.AllChangesForTopicSinceCalled = false; 
+                TopicChangeCollection thirdRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    DateTime.MinValue);
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled, 
+                    "Checking that third retrieval (after topic is written to) did not come from cache."); 
+                
+                parameters.Store.AllChangesForTopicSinceCalled = false; 
+                TopicChangeCollection fourthRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    now);
+                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled, 
+                    "Checking that fourth retrieval did came from cache."); 
+                Assert.AreEqual(1, fourthRetrieval.Count, 
+                    "Checking that correct number of changes were returned.");
+
+                ClearCache(parameters.Cache);
+                parameters.Store.AllChangesForTopicSinceCalled = false;
+                TopicChangeCollection fifthRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    DateTime.MinValue);
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that the fifth retrieval (after a cache clear) did not come from cache.");
+
+                parameters.Store.AllChangesForTopicSinceCalled = false;
+                TopicChangeCollection sixthRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    now);
+                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that the sixth retrieval came from cache even though the timestamp was newer.");
+                Assert.AreEqual(1, sixthRetrieval.Count,
+                    "Checking that the correct number of changes were returned.");
+
+                ClearCache(parameters.Cache);
+                parameters.Store.AllChangesForTopicSinceCalled = false;
+                TopicChangeCollection seventhRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    now);
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that the seventh retrieval (after cache clear) did not come from cache.");
+
+                parameters.Store.AllChangesForTopicSinceCalled = false;
+                TopicChangeCollection eigthRetrieval = parameters.Provider.AllChangesForTopicSince(
+                    topicName,
+                    DateTime.MinValue);
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that the eigth retrieval did not come from cache, because new enough information was not present.");
+
+
+            }
+            );
         }
 
         [Test]
@@ -151,6 +228,10 @@ namespace FlexWiki.UnitTests.Caching
         {
             Assert.IsFalse(cache.GetCacheContents().ContainsValue(parsedTopic),
                 "Checking that cache does not contain parsed topic.");
+        }
+        private void AssertCacheDoesNotContainTopicChanges(MockCache mockCache, QualifiedTopicName qualifiedTopicName)
+        {
+            throw new Exception("The method or operation is not implemented.");
         }
         private void ClearCache(MockCache cache)
         {

@@ -641,6 +641,7 @@
     <Compile Include="Caching\IWikiCache.cs" />
     <Compile Include="Caching\NullCache.cs" />
     <Compile Include="Caching\TopicCacheProvider.cs" />
+    <Compile Include="Caching\TopicChangesCacheItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

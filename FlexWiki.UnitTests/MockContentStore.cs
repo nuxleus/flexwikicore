@@ -26,6 +26,7 @@ namespace FlexWiki.UnitTests
     /// </summary>
     internal class MockContentStore : ContentProviderBase
     {
+        private bool _allChangesForTopicSinceCalled; 
         private DateTime _created;
         private MockSetupOptions _options;
         private readonly MockTopicCollection _topics = new MockTopicCollection();
@@ -65,8 +66,16 @@ namespace FlexWiki.UnitTests
             }
         }
 
+        internal bool AllChangesForTopicSinceCalled
+        {
+            get { return _allChangesForTopicSinceCalled; }
+            set { _allChangesForTopicSinceCalled = value; }
+        }
+
         public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topicName, DateTime stamp)
         {
+            _allChangesForTopicSinceCalled = true; 
+
             MockTopic topic = GetTopic(topicName, ExistencePolicy.ExistingOnly);
 
             // If the topicName does not exist, return a null list
