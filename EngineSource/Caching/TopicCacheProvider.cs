@@ -88,6 +88,24 @@ namespace FlexWiki.Caching
                 return Next.AllChangesForTopicSince(topic, stamp); 
             }
         }
+        public override QualifiedTopicNameCollection AllTopics()
+        {
+            if (CacheEnabled)
+            {
+                string key = GetKeyForTopicList();
+                QualifiedTopicNameCollection topics = (QualifiedTopicNameCollection)Cache[key];
+
+                if (topics == null)
+                {
+                    topics = Next.AllTopics();
+                    Cache[key] = topics;
+                }
+
+                return topics; 
+            }
+
+            return Next.AllTopics(); 
+        }
         public override void DeleteAllTopicsAndHistory()
         {
             Next.DeleteAllTopicsAndHistory();
@@ -104,6 +122,7 @@ namespace FlexWiki.Caching
             if (CacheEnabled)
             {
                 InvalidateItemsForAnyRevisionOfTopic(topic);
+                InvalidateTopicListItem(); 
             }
         }
         public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
@@ -139,9 +158,11 @@ namespace FlexWiki.Caching
                 // that writes are rare and reads of non-tip revisions are common, we invalidate 
                 // all revisions. 
                 InvalidateItemsForAnyRevisionOfTopic(topicRevision.AsUnqualifiedTopicName());
+                InvalidateTopicListItem(); 
             }
 
         }
+
 
         private string GetKeyForParsedTopic(UnqualifiedTopicRevision topicRevision)
         {
@@ -151,6 +172,10 @@ namespace FlexWiki.Caching
         {
             return new TopicCacheKey(
                 topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), "TopicChanges").ToString(); 
+        }
+        private string GetKeyForTopicList()
+        {
+            return new TopicCacheKey(new QualifiedTopicRevision("AllTopics", Namespace), "TopicList").ToString(); 
         }
         private void InvalidateAllItemsForNamespace()
         {
@@ -181,6 +206,11 @@ namespace FlexWiki.Caching
                     Cache[key] = null; 
                 }
             }
+        }
+        private void InvalidateTopicListItem()
+        {
+            string key = GetKeyForTopicList();
+            Cache[key] = null;
         }
 
         private bool IsKeyForAnyRevisionOfTopic(string key, UnqualifiedTopicName topic)

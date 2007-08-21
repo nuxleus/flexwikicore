@@ -3,7 +3,7 @@ using System;
 using NUnit.Framework;
 
 using FlexWiki.Caching;
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 
 namespace FlexWiki.UnitTests.Caching
 {
@@ -56,39 +56,39 @@ namespace FlexWiki.UnitTests.Caching
             {
                 ClearCache(parameters.Cache);
                 UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
-                
-                parameters.Store.AllChangesForTopicSinceCalled = false; 
 
-                DateTime now = parameters.Federation.TimeProvider.Now; 
+                parameters.Store.AllChangesForTopicSinceCalled = false;
+
+                DateTime now = parameters.Federation.TimeProvider.Now;
                 TopicChangeCollection firstRetrieval = parameters.Provider.AllChangesForTopicSince(
                     topicName,
                     DateTime.MinValue);
-                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled, 
-                    "Checking that cache called store the first time."); 
-                
-                parameters.Store.AllChangesForTopicSinceCalled = false; 
-                TopicChangeCollection secondRetrieval =  parameters.Provider.AllChangesForTopicSince(
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that cache called store the first time.");
+
+                parameters.Store.AllChangesForTopicSinceCalled = false;
+                TopicChangeCollection secondRetrieval = parameters.Provider.AllChangesForTopicSince(
                     topicName,
                     DateTime.MinValue);
-                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled, 
-                    "Checking that second retrieval came from cache."); 
+                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that second retrieval came from cache.");
 
-                parameters.Manager.WriteTopicAndNewVersion(topicName, "Changed content", "FlexWiki"); 
+                parameters.Manager.WriteTopicAndNewVersion(topicName, "Changed content", "FlexWiki");
 
-                parameters.Store.AllChangesForTopicSinceCalled = false; 
+                parameters.Store.AllChangesForTopicSinceCalled = false;
                 TopicChangeCollection thirdRetrieval = parameters.Provider.AllChangesForTopicSince(
                     topicName,
                     DateTime.MinValue);
-                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled, 
-                    "Checking that third retrieval (after topic is written to) did not come from cache."); 
-                
-                parameters.Store.AllChangesForTopicSinceCalled = false; 
+                Assert.IsTrue(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that third retrieval (after topic is written to) did not come from cache.");
+
+                parameters.Store.AllChangesForTopicSinceCalled = false;
                 TopicChangeCollection fourthRetrieval = parameters.Provider.AllChangesForTopicSince(
                     topicName,
                     now);
-                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled, 
-                    "Checking that fourth retrieval did came from cache."); 
-                Assert.AreEqual(1, fourthRetrieval.Count, 
+                Assert.IsFalse(parameters.Store.AllChangesForTopicSinceCalled,
+                    "Checking that fourth retrieval did came from cache.");
+                Assert.AreEqual(1, fourthRetrieval.Count,
                     "Checking that correct number of changes were returned.");
 
                 ClearCache(parameters.Cache);
@@ -127,7 +127,46 @@ namespace FlexWiki.UnitTests.Caching
             }
             );
         }
+        [Test]
+        public void AllTopics()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                ClearCache(parameters.Cache);
+                parameters.Store.AllTopicsCalled = false;
+                QualifiedTopicNameCollection firstRetrieval = parameters.Provider.AllTopics();
+                Assert.IsTrue(parameters.Store.AllTopicsCalled,
+                    "Checking that first retrieval does not come from cache.");
 
+                parameters.Store.AllTopicsCalled = false;
+                QualifiedTopicNameCollection secondRetrieval = parameters.Provider.AllTopics();
+                Assert.IsFalse(parameters.Store.AllTopicsCalled,
+                    "Checking that second retrieval comes from cache.");
+
+                parameters.Manager.WriteTopicAndNewVersion("NewTopic", "New content", "test"); 
+
+                parameters.Store.AllTopicsCalled = false;
+                QualifiedTopicNameCollection thirdRetrieval = parameters.Provider.AllTopics();
+                Assert.IsTrue(parameters.Store.AllTopicsCalled,
+                    "Checking that a retrieval after a write of a new topic does not come from cache.");
+
+                parameters.Manager.DeleteTopic("NewTopic");
+
+                parameters.Store.AllTopicsCalled = false;
+                QualifiedTopicNameCollection fourthRetrieval = parameters.Provider.AllTopics();
+                Assert.IsTrue(parameters.Store.AllTopicsCalled,
+                    "Checking that a retrieval after a delete of a topic does not come from cache.");
+
+                parameters.Manager.DeleteAllTopicsAndHistory();
+
+                parameters.Store.AllTopicsCalled = false;
+                QualifiedTopicNameCollection fifthRetrieval = parameters.Provider.AllTopics();
+                Assert.IsTrue(parameters.Store.AllTopicsCalled,
+                    "Checking that a retrieval after a delete of all namespace content does not come from cache.");
+
+
+            }); 
+         }
         [Test]
         public void DeleteAllTopicsAndHistory()
         {
@@ -138,7 +177,7 @@ namespace FlexWiki.UnitTests.Caching
                 ParsedTopic firstRetrieval = parameters.Provider.GetParsedTopic(
                     topicRevision.AsUnqualifiedTopicRevision());
                 AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval);
-                parameters.Provider.DeleteAllTopicsAndHistory(); 
+                parameters.Provider.DeleteAllTopicsAndHistory();
                 AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval);
             }
             );
@@ -148,16 +187,16 @@ namespace FlexWiki.UnitTests.Caching
         {
             DoTest(delegate(TestParameters parameters)
             {
-                ClearCache(parameters.Cache); 
-                QualifiedTopicRevision topicRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne"); 
+                ClearCache(parameters.Cache);
+                QualifiedTopicRevision topicRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
                 ParsedTopic firstRetrieval = parameters.Provider.GetParsedTopic(
-                    topicRevision.AsUnqualifiedTopicRevision()); 
-                AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval); 
+                    topicRevision.AsUnqualifiedTopicRevision());
+                AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval);
                 parameters.Provider.DeleteTopic(
-                    topicRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName()); 
-                AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval); 
+                    topicRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName());
+                AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval);
             }
-            ); 
+            );
         }
         [Test]
         public void GetParsedTopic()
@@ -181,17 +220,17 @@ namespace FlexWiki.UnitTests.Caching
 
                 // There was a bug in early versions where the TopicCacheProvider would cache
                 // topics without a namespace, serving up the wrong topic at times. 
-                NamespaceManager otherManager = parameters.Federation.NamespaceManagerForNamespace("NamespaceTwo"); 
-                TopicCacheProvider otherProvider = otherManager.GetProvider(typeof(TopicCacheProvider)) as 
+                NamespaceManager otherManager = parameters.Federation.NamespaceManagerForNamespace("NamespaceTwo");
+                TopicCacheProvider otherProvider = otherManager.GetProvider(typeof(TopicCacheProvider)) as
                     TopicCacheProvider;
 
                 ParsedTopic otherParsedTopic = otherProvider.GetParsedTopic(
                     topicRevision.AsUnqualifiedTopicRevision());
 
                 Assert.IsFalse(object.ReferenceEquals(thirdRetrieval, otherParsedTopic),
-                    "Checking that the provider does not accidentially cache topics from two namespaces under the same key"); 
+                    "Checking that the provider does not accidentially cache topics from two namespaces under the same key");
             }
-            ); 
+            );
         }
         [Test]
         public void WriteTopic()
@@ -214,15 +253,15 @@ namespace FlexWiki.UnitTests.Caching
                 ParsedTopic thirdRetrieval = parameters.Provider.GetParsedTopic(
                     topicRevision.AsUnqualifiedTopicRevision());
                 Assert.AreSame(secondRetrieval, thirdRetrieval,
-                    "Checking that subsequent retrievals return from cache."); 
+                    "Checking that subsequent retrievals return from cache.");
             }
-            ); 
+            );
         }
 
         private void AssertCacheContainsParsedTopic(MockCache cache, ParsedTopic parsedTopic)
         {
             Assert.IsTrue(cache.GetCacheContents().ContainsValue(parsedTopic),
-                "Checking that cache contains parsed topic."); 
+                "Checking that cache contains parsed topic.");
         }
         private void AssertCacheDoesNotContainsParsedTopic(MockCache cache, ParsedTopic parsedTopic)
         {
@@ -235,11 +274,11 @@ namespace FlexWiki.UnitTests.Caching
         }
         private void ClearCache(MockCache cache)
         {
-            cache.GetCacheContents().Clear(); 
+            cache.GetCacheContents().Clear();
         }
         private void DoTest(Action<TestParameters> test)
         {
-            TestParameters parameters = new TestParameters(); 
+            TestParameters parameters = new TestParameters();
             parameters.Federation = WikiTestUtilities.SetupFederation("test://TopicCacheProviderTests",
                 TestContentSets.MultipleTopicsWithProperties);
             parameters.Manager = parameters.Federation.NamespaceManagerForNamespace("NamespaceOne");
@@ -247,11 +286,11 @@ namespace FlexWiki.UnitTests.Caching
             parameters.Store = (MockContentStore)parameters.Manager.GetProvider(typeof(MockContentStore));
             parameters.Cache = GetCache(parameters.Federation);
 
-            test(parameters); 
+            test(parameters);
         }
         private MockCache GetCache(Federation federation)
         {
-            return (MockCache)federation.Application.Cache; 
+            return (MockCache)federation.Application.Cache;
         }
     }
 }
