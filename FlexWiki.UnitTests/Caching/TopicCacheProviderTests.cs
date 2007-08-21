@@ -275,6 +275,53 @@ namespace FlexWiki.UnitTests.Caching
             });
         }
         [Test]
+        public void TopicExists()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                ClearCache(parameters.Cache);
+                UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
+
+                parameters.Store.TopicExistsCalled = false;
+
+                bool firstRetrieval = parameters.Provider.TopicExists(topicName);
+                Assert.IsTrue(parameters.Store.TopicExistsCalled,
+                    "Checking that cache called store the first time.");
+
+                parameters.Store.TopicExistsCalled = false;
+                bool secondRetrieval = parameters.Provider.TopicExists(topicName);
+                Assert.IsFalse(parameters.Store.TopicExistsCalled,
+                    "Checking that second retrieval came from cache.");
+
+                parameters.Manager.WriteTopicAndNewVersion(topicName, "Changed content", "FlexWiki");
+
+                parameters.Store.TopicExistsCalled = false;
+                bool thirdRetrieval = parameters.Provider.TopicExists(topicName);
+                Assert.IsTrue(parameters.Store.TopicExistsCalled,
+                    "Checking that third retrieval (after topic is written to) did not come from cache.");
+
+                parameters.Store.TopicExistsCalled = false;
+                bool fourthRetrieval = parameters.Provider.TopicExists(topicName);
+                Assert.IsFalse(parameters.Store.TopicExistsCalled,
+                    "Checking that fourth retrieval did came from cache.");
+
+                parameters.Manager.DeleteTopic(topicName);
+
+                parameters.Store.TopicExistsCalled = false;
+                bool fifthRetrieval = parameters.Provider.TopicExists(topicName);
+                Assert.IsTrue(parameters.Store.TopicExistsCalled,
+                    "Checking that fifth retrieval (after topic is deleted) did not come from cache.");
+
+                parameters.Manager.DeleteAllTopicsAndHistory();
+
+                parameters.Store.TopicExistsCalled = false;
+                bool sixthRetrieval = parameters.Provider.TopicExists(topicName);
+                Assert.IsTrue(parameters.Store.TopicExistsCalled,
+                    "Checking that sixth retrieval (after all namespace content created) did not come from cache.");
+            });
+
+        }
+        [Test]
         public void WriteTopic()
         {
             DoTest(delegate(TestParameters parameters)

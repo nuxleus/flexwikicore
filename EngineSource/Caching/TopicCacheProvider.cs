@@ -168,6 +168,31 @@ namespace FlexWiki.Caching
                 return Next.TextReaderForTopic(topicRevision);
             }
         }
+        public override bool TopicExists(UnqualifiedTopicName topic)
+        {
+            if (CacheEnabled)
+            {
+                string key = GetKeyForTopicExistence(topic);
+                object cachedValue = Cache[key];
+
+                if (cachedValue == null)
+                {
+                    bool existence = Next.TopicExists(topic);
+                    Cache[key] = existence;
+                    return existence;
+                }
+                else
+                {
+                    return (bool)cachedValue;
+                }
+                
+            }
+            else
+            {
+                return base.TopicExists(topic);
+            }
+        }
+
         public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
             Next.WriteTopic(topicRevision, content);
@@ -194,6 +219,11 @@ namespace FlexWiki.Caching
         {
             return new TopicCacheKey(
                 topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), "TopicChanges").ToString(); 
+        }
+        private string GetKeyForTopicExistence(UnqualifiedTopicName topic)
+        {
+            return new TopicCacheKey(
+                topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), "TopicExistence").ToString(); 
         }
         private string GetKeyForTopicList()
         {
