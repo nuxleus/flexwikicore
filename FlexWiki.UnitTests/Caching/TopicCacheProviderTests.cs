@@ -1,4 +1,5 @@
 using System;
+using System.IO; 
 
 using NUnit.Framework;
 
@@ -143,7 +144,7 @@ namespace FlexWiki.UnitTests.Caching
                 Assert.IsFalse(parameters.Store.AllTopicsCalled,
                     "Checking that second retrieval comes from cache.");
 
-                parameters.Manager.WriteTopicAndNewVersion("NewTopic", "New content", "test"); 
+                parameters.Manager.WriteTopicAndNewVersion("NewTopic", "New content", "test");
 
                 parameters.Store.AllTopicsCalled = false;
                 QualifiedTopicNameCollection thirdRetrieval = parameters.Provider.AllTopics();
@@ -165,8 +166,8 @@ namespace FlexWiki.UnitTests.Caching
                     "Checking that a retrieval after a delete of all namespace content does not come from cache.");
 
 
-            }); 
-         }
+            });
+        }
         [Test]
         public void DeleteAllTopicsAndHistory()
         {
@@ -231,6 +232,47 @@ namespace FlexWiki.UnitTests.Caching
                     "Checking that the provider does not accidentially cache topics from two namespaces under the same key");
             }
             );
+        }
+        [Test]
+        public void TextReaderForTopic()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision("TopicOne");
+
+                ClearCache(parameters.Cache);
+                parameters.Store.TextReaderForTopicCalled = false;
+                string firstRetrieval = parameters.Provider.TextReaderForTopic(revision).ToString();
+                Assert.IsTrue(parameters.Store.TextReaderForTopicCalled,
+                    "Checking that first retrieval does not come from cache.");
+
+                parameters.Store.TextReaderForTopicCalled = false;
+                string secondRetrieval = parameters.Provider.TextReaderForTopic(revision).ToString();
+                Assert.IsFalse(parameters.Store.TextReaderForTopicCalled,
+                    "Checking that second retrieval comes from cache.");
+
+                parameters.Manager.WriteTopicAndNewVersion(revision.AsUnqualifiedTopicName(), "New content", "test");
+
+                parameters.Store.TextReaderForTopicCalled = false;
+                string thirdRetrieval = parameters.Provider.TextReaderForTopic(revision).ToString();
+                Assert.IsTrue(parameters.Store.TextReaderForTopicCalled,
+                    "Checking that a retrieval after a write of a new topic does not come from cache.");
+
+                parameters.Manager.DeleteTopic(revision.AsUnqualifiedTopicName());
+
+                parameters.Store.TextReaderForTopicCalled = false;
+                TextReader fourthRetrieval = parameters.Provider.TextReaderForTopic(revision);
+                Assert.IsTrue(parameters.Store.TextReaderForTopicCalled,
+                    "Checking that a retrieval after a delete of a topic does not come from cache.");
+
+                parameters.Manager.DeleteAllTopicsAndHistory();
+
+                parameters.Store.TextReaderForTopicCalled = false;
+                TextReader fifthRetrieval = parameters.Provider.TextReaderForTopic(revision);
+                Assert.IsTrue(parameters.Store.TextReaderForTopicCalled,
+                    "Checking that a retrieval after a delete of all namespace content does not come from cache.");
+
+            });
         }
         [Test]
         public void WriteTopic()

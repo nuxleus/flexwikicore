@@ -1,4 +1,5 @@
 using System;
+using System.IO; 
 
 using FlexWiki.Collections;
 
@@ -144,6 +145,27 @@ namespace FlexWiki.Caching
             else
             {
                 return Next.GetParsedTopic(topicRevision); 
+            }
+        }
+        public override TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
+        {
+            if (CacheEnabled)
+            {
+                // Because the contents are already cached in the built-in property _Body, 
+                // it would be a waste to cache them again separately. So we just grab the 
+                // _Body property and wrap it with a TextReader. 
+                ParsedTopic parsedTopic = GetParsedTopic(topicRevision);
+
+                if (parsedTopic == null)
+                {
+                    return null; 
+                }
+
+                return new StringReader(parsedTopic.Properties["_Body"].LastValue); 
+            }
+            else
+            {
+                return Next.TextReaderForTopic(topicRevision);
             }
         }
         public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
