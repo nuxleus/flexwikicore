@@ -31,39 +31,27 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class Newsletter : AdminPage
 	{
-		private void Page_Load(object sender, System.EventArgs e)
+		
+		protected string FancyTime(DateTime when)
 		{
-			// Put user code to initialize the page here
-		}
+			string answer;
+			DateTime now = DateTime.Now;
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
+			if (when == DateTime.MinValue)
+				return "[never]";
+			TimeSpan diff = now.Subtract(when);
+			if (diff.Hours > 1)
+				return when.ToString();
+			answer = when.ToString();
+			string diffs = diff.ToString();
+			int idx = diffs.LastIndexOf(".");
+			if (idx != -1)
+				diffs = diffs.Substring(0, idx);
+			answer += " (" + diffs + ")";
+			return answer;
 		}
 		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
-
-
-		protected void ShowPage()
-		{
-			UIResponse.ShowPage("Newsletter Daemon Status", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
-		}
-   
-
-		protected void ShowMain()
+		protected override void ShowMain()
 		{
 
 			Response.Write("<p>Now: <b>" + DateTime.Now.ToString() + " </b></p>");
@@ -86,24 +74,29 @@ namespace FlexWiki.Web.Admin
 			}
 
 		}
-
-		protected string FancyTime(DateTime when)
+		private void Page_Load(object sender, System.EventArgs e)
 		{
-			string answer;
-			DateTime now = DateTime.Now;
-
-			if (when == DateTime.MinValue)
-				return "[never]";
-			TimeSpan diff = now.Subtract(when);
-			if (diff.Hours > 1)
-				return when.ToString();
-			answer = when.ToString();
-			string diffs = diff.ToString();
-			int idx = diffs.LastIndexOf(".");
-			if (idx != -1)
-				diffs = diffs.Substring(0, idx);
-			answer += " (" + diffs + ")";
-			return answer;
+			// Put user code to initialize the page here
 		}
+
+
+		#region Web Form Designer generated code
+		override protected void OnInit(EventArgs e)
+		{
+			//
+			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
+			//
+			InitializeComponent();
+			base.OnInit(e);
+		}
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{    
+			this.Load += new System.EventHandler(this.Page_Load);
+		}
+		#endregion
 	}
 }

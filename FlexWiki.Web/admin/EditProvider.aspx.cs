@@ -111,12 +111,7 @@ namespace FlexWiki.Web.Admin
             }
         }
 
-        protected void ShowPage()
-        {
-            UIResponse.ShowPage("Edit Provider", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(Body));
-        }
-
-        private void Body()
+        protected override void ShowMain()
         {
             string providerId = ProviderIdParam;
             if (ProviderIdParam == null)

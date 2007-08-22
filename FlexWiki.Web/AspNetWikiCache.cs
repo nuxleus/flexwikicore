@@ -10,7 +10,22 @@ namespace FlexWiki.Web
 {
     internal class AspNetWikiCache : IWikiCache
     {
-        public object this[string key]
+		
+		public string[] Keys
+        {
+            get
+            {
+                List<string> keys = new List<string>(); 
+                foreach (DictionaryEntry entry in HttpContext.Current.Cache)
+                {
+                    keys.Add(entry.Key as string); 
+                }
+
+                return keys.ToArray(); 
+            }
+        }
+		
+		public object this[string key]
         {
             get
             {
@@ -28,19 +43,17 @@ namespace FlexWiki.Web
                 }
             }
         }
+		
 
-        public string[] Keys
+		public void Clear()
         {
-            get
+            string[] keys = Keys;
+            foreach (string key in keys)
             {
-                List<string> keys = new List<string>(); 
-                foreach (DictionaryEntry entry in HttpContext.Current.Cache)
-                {
-                    keys.Add(entry.Key as string); 
-                }
-
-                return keys.ToArray(); 
+                HttpContext.Current.Cache.Remove(key);
             }
         }
+		
+
     }
 }

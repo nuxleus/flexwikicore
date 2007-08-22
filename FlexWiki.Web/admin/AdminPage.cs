@@ -22,9 +22,11 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class AdminPage : BasePage
 	{
+		
 		public AdminPage() : base()
 		{
 		}
+		
 
 		protected override string RelativeBase
 		{
@@ -33,7 +35,7 @@ namespace FlexWiki.Web.Admin
 				return "../";
 			}
 		}
-
+		
 
 		protected void ShowAdminMenu()
 		{
@@ -48,9 +50,27 @@ namespace FlexWiki.Web.Admin
             UIResponse.WriteMenuItem("ReloadConfiguration.aspx", "Reread Configuration", "Reread the FlexWiki configuration file from disk."); 
 			UIResponse.WriteEndMenu();
 		}
+		
+		protected virtual void ShowHead()
+        {
+            Response.Write(PageUtilities.InsertStylesheetReferences(
+                Federation, FlexWikiWebApplication));
+        }
+		
+		protected virtual void ShowMain()
+        {
+        }
+		
+		protected virtual void ShowMenu()
+        {
+            ShowAdminMenu();
+        }
+		
+		protected virtual void ShowTitle(string title)
+        {
+            Response.Write(string.Format("<h1 class=\"Admin\">{0}</h1>", title));
+        }
 
 
-
-
-	}
+    }
 }

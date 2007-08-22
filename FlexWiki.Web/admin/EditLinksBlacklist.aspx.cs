@@ -32,38 +32,8 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class EditLinksBlacklist : AdminPage
 	{
-	
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-		}
-
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
 		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-
-		}
-		#endregion
-
-		protected void ShowPage()
-		{
-			UIResponse.ShowPage("External Links Blacklist", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowList));
-		}
-
-		private void ShowList()
+		protected override void ShowMain()
 		{
 			if (IsPost)
 				ProcessPost();
@@ -83,7 +53,10 @@ namespace FlexWiki.Web.Admin
 				UIResponse.WriteLine(UIResponse.Escape(each));
 			}
 		}
-
+		private void Page_Load(object sender, System.EventArgs e)
+		{
+		}
+		
 		private void ProcessPost()
 		{
 			string [] adds = ((string)(Request.Form["Additions"])).Split (new char[] {'\n'});
@@ -135,5 +108,25 @@ namespace FlexWiki.Web.Admin
 			}			
 		}
 
+
+		#region Web Form Designer generated code
+		override protected void OnInit(EventArgs e)
+		{
+			//
+			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
+			//
+			InitializeComponent();
+			base.OnInit(e);
+		}
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{    
+			this.Load += new System.EventHandler(this.Page_Load);
+
+		}
+		#endregion
 	}
 }

@@ -31,24 +31,19 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class UpgradeConfigFile : AdminPage
 	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
-
+		
 		protected override void PageLoad()
 		{
 
 		}
-
-		protected void ShowUpdateInfo()
+		
+		protected override void ShowMain()
 		{
 			if (IsPost)
 				ProcessUpgradeRequest();
 			else
 				OfferUpgrade();
 		}
-
 		private void OfferUpgrade()
 		{
 			UIResponse.WritePara("Your configuration file uses old style namespace definitions (see below for more details).");
@@ -57,7 +52,12 @@ namespace FlexWiki.Web.Admin
 			UIResponse.WriteSubmitButton("Upgrade", "Upgrade my configuration");
 			UIResponse.WriteEndForm();
 		}
-
+		
+		private void Page_Load(object sender, System.EventArgs e)
+		{
+			// Put user code to initialize the page here
+		}
+		
 		private void ProcessUpgradeRequest()
 		{
             throw new NotImplementedException(); 
@@ -99,7 +99,8 @@ namespace FlexWiki.Web.Admin
             //UIResponse.WritePara("Visit <a href='default.aspx'>Administration Home</a>.");
 
 		}
-   
+
+
 		#region Web Form Designer generated code
 		override protected void OnInit(EventArgs e)
 		{
@@ -109,7 +110,6 @@ namespace FlexWiki.Web.Admin
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.

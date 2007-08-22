@@ -27,5 +27,9 @@ namespace FlexWiki.Caching
             // Return an empty list - we don't hold anything.
             get { return new string[0]; }
         }
+
+        public void Clear()
+        {
+        }
     }
 }

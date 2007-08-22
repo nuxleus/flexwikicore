@@ -9,6 +9,7 @@ namespace FlexWiki.Caching
         // We use an array because we need the collection to be stable - a live
         // collection can't be iterated over and modified at the same time, which 
         // is a common situation when enumerating the cache keys. 
+        void Clear();
         string[] Keys { get; }
     }
 }

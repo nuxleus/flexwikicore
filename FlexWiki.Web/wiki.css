@@ -586,7 +586,7 @@ color:#FF0000;
 font-weight:bold;
 }
 .FieldHelp {
-font-size:.74em;
+font-size:x-small;
 color:#808080;
 padding-bottom:3px;
 }
@@ -738,3 +738,13 @@ text-align:center;
 .Deemphasis {
 color:#A0A0A0;
 }
+/* Admin */
+h1.Admin {
+border-color:#FFF;
+color:#FFF;
+}
+#TopicBody.Admin {
+overflow:auto;
+width:79%;
+}
+/* End of Admin */

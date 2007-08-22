@@ -926,14 +926,14 @@ Add your wiki text here.
 		        strbldr.AppendLine("</div>");
 		        strbldr.AppendLine("<div id=\"tip_boldtip\">");
 			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Surround the text with three ticks (\"\"\").");
-				strbldr.AppendLine("For example, \"\"\"<b>this text will be bold</b>\"\"\"");
+				strbldr.AppendLine("Surround the text with three ticks (''').");
+				strbldr.AppendLine("For example, '''<b>this text will be bold</b>'''");
 			    strbldr.AppendLine("</div>");
 		        strbldr.AppendLine("</div>");
 		        strbldr.AppendLine("<div id=\"tip_italicstip\">");
 			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Surround the text with two ticks (\"\").");
-				strbldr.AppendLine("For example, \"\"<i>this text will be italic</i>\"\"");
+				strbldr.AppendLine("Surround the text with two ticks ('').");
+				strbldr.AppendLine("For example, ''<i>this text will be italic</i>''");
 			    strbldr.AppendLine("</div>");
 		        strbldr.AppendLine("</div>");
 		        strbldr.AppendLine("<div id=\"tip_headingtip\">");

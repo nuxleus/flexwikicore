@@ -27,27 +27,8 @@ namespace FlexWiki.Web.Admin
 {
 	public class ReloadConfiguration : AdminPage
 	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
-
-		protected void ShowPage()
-		{
-			UIResponse.ShowPage("Reload Configuration", new UIResponse.MenuWriter(ShowMenu), new UIResponse.BodyWriter(ShowMain));
-		}
-
-		private void ShowMenu()
-		{
-			UIResponse.WriteStartMenu("Configuration");
-			UIResponse.WriteMenuItem("ReloadConfiguration.aspx?reload=1", "Reload", "Reread the FlexWiki configuration file from disk.");
-			UIResponse.WriteEndMenu();
-			UIResponse.WritePara("&nbsp;");
-
-			ShowAdminMenu();
-		}
-   
-		protected void ShowMain()
+		
+		protected override void ShowMain()
 		{
             string reload = Request.QueryString["reload"];
             if (reload == "1")
@@ -64,7 +45,20 @@ namespace FlexWiki.Web.Admin
             }
 
 		}
+		
+		protected override void ShowMenu()
+		{
+			UIResponse.WriteStartMenu("Configuration");
+			UIResponse.WriteMenuItem("ReloadConfiguration.aspx?reload=1", "Reload", "Reread the FlexWiki configuration file from disk.");
+			UIResponse.WriteEndMenu();
+			UIResponse.WritePara("&nbsp;");
 
+			base.ShowMenu();
+		}
+		private void Page_Load(object sender, System.EventArgs e)
+		{
+			// Put user code to initialize the page here
+		}
 
 
 		#region Web Form Designer generated code
@@ -76,7 +70,6 @@ namespace FlexWiki.Web.Admin
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.

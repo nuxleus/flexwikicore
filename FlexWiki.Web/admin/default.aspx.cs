@@ -30,16 +30,7 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class Default : AdminPage
 	{
-
-		protected override void PageLoad()
-		{
-		}
-
-		protected void ShowBody()
-		{
-			UIResponse.ShowPage("FlexWiki Administration Home", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
-		}
-
+		
 		protected override void EnsurePluginsLoaded()
 		{
 			// We ignore errors as the config checker will get them in the context of this specific page
@@ -51,8 +42,12 @@ namespace FlexWiki.Web.Admin
 			{
 			}
 		}
-   
-		private void ShowMain()
+		
+		protected override void PageLoad()
+		{
+		}
+		
+		protected override void ShowMain()
 		{
 			if (CheckForConfigurationFormatUpgrade())
 				return;
@@ -81,8 +76,6 @@ namespace FlexWiki.Web.Admin
             }
 
         }
-
-
 		private void ShowFederationInfo(Federation aFederation)
 		{
 			LinkMaker lm = new LinkMaker(RootUrl);
@@ -130,6 +123,7 @@ namespace FlexWiki.Web.Admin
 			}
 			UIResponse.WriteEndTable();
 		}
+
 
 	}
 }

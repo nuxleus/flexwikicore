@@ -30,17 +30,8 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class ShowUpdates : AdminPage
 	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
-
-		protected void ShowUpdateInfo()
-		{
-			UIResponse.ShowPage("Federation Update History", new UIResponse.MenuWriter(ShowAdminMenu), new UIResponse.BodyWriter(ShowMain));
-		}
-   
-		private void ShowMain()
+		
+		protected override void ShowMain()
 		{
             UIResponse.Write("Updates not currently implemented."); 
 
@@ -162,6 +153,11 @@ namespace FlexWiki.Web.Admin
 			}
 			UIResponse.Write("</table>");
 		}
+		private void Page_Load(object sender, System.EventArgs e)
+		{
+			// Put user code to initialize the page here
+		}
+
 
 		#region Web Form Designer generated code
 		override protected void OnInit(EventArgs e)
@@ -172,7 +168,6 @@ namespace FlexWiki.Web.Admin
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.

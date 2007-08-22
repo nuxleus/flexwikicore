@@ -109,31 +109,35 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\Config.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\ReloadConfiguration.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\default.aspx">
+    </Content>
+    <Content Include="admin\EditLinksBlacklist.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="admin\EditLinksBlacklist.aspx" />
     <Content Include="admin\EditProvider.aspx">
     </Content>
     <Content Include="admin\Newsletter.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\Providers.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\ShowCache.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="admin\ShowUpdates.aspx" />
-    <Content Include="admin\UpgradeConfigFile.aspx" />
-    <Content Include="admin\Users.aspx" />
-    <Content Include="Blade.aspx">
+    <Content Include="admin\ShowUpdates.aspx">
       <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\UpgradeConfigFile.aspx">
+    </Content>
+    <Content Include="admin\Users.aspx" />
+    <Content Include="admin\WikiAdmin.js" />
+    <Content Include="admin\WikiAdminConstants.js" />
+    <Content Include="Blade.aspx">
     </Content>
     <Content Include="Compare.aspx">
       <SubType>ASPXCodeBehind</SubType>

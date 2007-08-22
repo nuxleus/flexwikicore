@@ -30,123 +30,119 @@ namespace FlexWiki.Web.Admin
 	/// </summary>
 	public class ShowCache : AdminPage
 	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
+		
+		// If you update these you MUST update the corresponding
+        // constants in WikiAdminConstants.js
+		private const string keyDataPrefix = "keyData";
+		private const string keyPrefix = "keyRow";
 
-		protected void ShowPage()
+		protected override void ShowMain()
 		{
-			UIResponse.ShowPage("Cache Information", new UIResponse.MenuWriter(ShowMenu), new UIResponse.BodyWriter(ShowMain));
-		}
+            string clear = Request.QueryString["clear"];
+            if (clear == "1")
+            {
+                FlexWikiWebApplication.Cache.Clear();
+                Response.Redirect("ShowCache.aspx");
+                return;
+            }
 
-		private void ShowMenu()
+            ShowKeys();
+		}
+		
+		protected override void ShowMenu()
 		{
 			UIResponse.WriteStartMenu("Cache");
 			UIResponse.WriteMenuItem("ShowCache.aspx?clear=1", "Clear", "Clear the cache");
 			UIResponse.WriteEndMenu();
 			UIResponse.WritePara("&nbsp;");
 
-			ShowAdminMenu();
+			base.ShowMenu();
 		}
-   
-		protected void ShowMain()
+		private void Page_Load(object sender, System.EventArgs e)
 		{
-            Response.Write("Caching is not currently implemented."); 
-            //string clear = Request.QueryString["clear"];
-            //if (clear == "1")
-            //{
-            //    CacheManager.Clear();
-            //    Response.Redirect("ShowCache.aspx");
-            //    return;
-            //}
-
-            //string key = Request.QueryString["key"];
-            //if (key == null)
-            //    ShowKeys();
-            //else
-            //    ShowKey(key);
+			// Put user code to initialize the page here
 		}
+		
+		private void ShowKeys()
+        {
+            // Get the number of pages to the value specified in the query string.
+            // Default to 15 if it's null.
+            // Get the start and end index of the keys to show.
+            int numKeys = 15;
+            try { numKeys = Int32.Parse(Request["keys"]); }
+            catch { }
+            int firstKey = 0;
+            try { firstKey = Int32.Parse(Request["start"]); } catch {}
+            int lastKey = firstKey + numKeys - 1;
+            try { lastKey = Int32.Parse(Request["end"]); }
+            catch { }
 
-//        private void WriteFilterScript()
-//        {
-//            Response.Write("<script language='javascript'>");
-//            Response.Write(@"
-//
-//function FilterChanged()
-//{
-//	var filterControl = document.getElementById('Filter');
-//	var filter = filterControl.value;
-//	var id = 0;
-//	while (true)
-//	{
-//		var headerPrefix = '" + headerPrefix + @"' + id;
-//		var valuePrefix = '" + valuePrefix + @"' + id;
-//
-//		var valueElement = document.getElementById(valuePrefix);
-//		if (valueElement == null)
-//			break;
-//		var show = true;
-//		var test = """" + valueElement.innerText.toUpperCase();
-//		if (filter != """" && test.indexOf(filter.toUpperCase()) < 0)
-//			show = false;
-//		var styleString = show ? 'block' : 'none';
-//
-//		var headerPrefixElement = document.getElementById(headerPrefix);
-//		headerPrefixElement.style.display = styleString;
-//		id++;
-//	}
-//}
-//
-//");
+            Response.Write("<p>Search for key in current results: <input id=\"Filter\" onkeyup=\"javascript:FilterChanged()\" length=\"60\"/><br />");
+            Response.Write(@"Number of results per page: <select id=""pages"" onchange=""javascript:PagesChanged()"">
+    <option value=""5""" + ((5 == numKeys) ? "selected=\"selected\"" : string.Empty) + @">5</option>
+    <option value=""10""" + ((10 == numKeys) ? "selected=\"selected\"" : string.Empty) + @">10</option>
+    <option value=""15""" + ((15 == numKeys) ? "selected=\"selected\"" : string.Empty) + @">15</option>
+    <option value=""20""" + ((20 == numKeys) ? "selected=\"selected\"" : string.Empty) + @">20</option>
+    <option value=""25""" + ((25 == numKeys) ? "selected=\"selected\"" : string.Empty) + @">25</option>
+</select></p>");
+            
+            int id = 0;
 
-//            Response.Write("</script>");
-//        }
+            // get and sort the cahce keys.
+            ArrayList keys = new ArrayList();
+            keys.AddRange(FlexWikiWebApplication.Cache.Keys);
+            keys.Sort();
+            // Make sure that the first and last key indices are valid.
+            if (firstKey >= keys.Count)
+            {
+                firstKey = 0;
+            }
+            if (lastKey >= keys.Count)
+            {
+                lastKey = keys.Count - 1;
+            }
 
-//        private const string headerPrefix = "Row";
-//        private const string valuePrefix = "RowData";
-
-//        private void ShowKeys()
-//        {
-//            WriteFilterScript();
-//            Response.Write("<p>Search for key: <input id='Filter' onkeyup='javascript:FilterChanged()' length=30/></p>");
-//            int id = 0;
-//            ArrayList keys = new ArrayList();
-//            keys.AddRange(CacheManager.Keys);
-//            keys.Sort();
-//            foreach (string key in keys)
-//            {
-//                Response.Write("<div  id='" + headerPrefix + id + "' class='CacheKey'><a href='ShowCache.aspx?key=" + key + "'><span id='" + valuePrefix + id + "'>" + key + "</span></a></div>");
-//                id++;
-//            }
-//        }
-
-//        private void ShowKey(string key)
-//        {
-//            Response.Write("<h2>" + EscapeHTML(key) + "</h2>");
-//            Response.Write("<h3>Cache Rule:</h3>");
-//            CacheRule rule = CacheManager.GetRuleForKey(key);
-//            if (rule != null)
-//                WriteLineNicely(Response.Output, rule);
-//            Response.Write("<h3>Value</h3>");
-//            object shortValue = CacheManager[key];
-//            if (shortValue != null)
-//            {
-//                if (shortValue is IEnumerable && !(shortValue is string))
-//                {
-//                    Response.Output.WriteLine("<table width='100%' border=1 cellpadding=3 cellspacing=0>");
-//                    foreach (object each in (IEnumerable)shortValue)
-//                    {
-//                        Response.Output.WriteLine("<tr><td valign='top'>");
-//                        WriteLineNicely(Response.Output, each);
-//                        Response.Output.WriteLine("</tr>");
-//                    }
-//                    Response.Output.WriteLine("</table>");
-//                }
-//                else
-//                    WriteLineNicely(Response.Output, shortValue);
-//            }
-//        }
+            // Write out the cache results.
+            Response.Write("<table cellpadding=\"2\" cellspacing=\"2\" class=\"TableClass\">");
+            Response.Write("<tr>\r\n<td><strong>Cache Key</strong></td>");
+            Response.Write("<td><strong>Cache Item Type</strong></td>\r\n<tr>");
+            for (int i = firstKey; i <= lastKey; i++)
+            {
+                string key = keys[i] as string;
+                Response.Write(string.Format("<tr id=\"{0}{1}\">",
+                    keyPrefix, id));
+                Response.Write(string.Format(
+                    "<td class=\"{0}\"><span id=\"{1}{2}\">{3}</span></td>",
+                    (((id & 1) == 0) ? "SearchOddRow" : "SearchEvenRow"), keyDataPrefix, id, key));
+                Response.Write(string.Format(
+                    "<td class=\"{0}\"><span>{1}</span></td>",
+                    (((id & 1) == 0) ? "SearchOddRow" : "SearchEvenRow"),
+                    FlexWikiWebApplication.Cache[key].GetType().ToString()));
+                Response.Write("</tr>");
+                id++;
+            }
+            // Write out the navigation elements.
+            Response.Write("<tr>\r\n<td><strong>");
+            if (firstKey > 0)
+            {
+                Response.Write(string.Format("<a href=\"ShowCache.aspx?keys={0}\" title=\"First page\">&lt;&lt;</a>&nbsp;|&nbsp;",
+                    numKeys));
+                Response.Write(string.Format("<a href=\"ShowCache.aspx?keys={0}&start={1}\" title=\"Previous page\">&lt;</a>",
+                    numKeys, ((firstKey - numKeys >= 0) ? firstKey - numKeys : 0)));
+            }
+            Response.Write("</strong></td>\r\n<td><strong>");
+            if (firstKey <= (keys.Count - numKeys))
+            {
+                Response.Write(string.Format("<a href=\"ShowCache.aspx?keys={0}&start={1}\" title=\"Next page\">&gt;</a>&nbsp;|&nbsp;",
+                    numKeys, lastKey + 1));
+                Response.Write(string.Format("<a href=\"ShowCache.aspx?keys={0}&start={1}\" title=\"Last page\">&gt;&gt;</a></strong></td>",
+                    numKeys, (keys.Count / numKeys) * numKeys));
+            }
+            Response.Write("</tr>");
+            Response.Write("</table>");
+            Response.Write(string.Format("<p>Showing {0} of {1} cache keys", 
+                lastKey - firstKey + 1, keys.Count));
+        }
 
 
 		#region Web Form Designer generated code
@@ -158,7 +154,6 @@ namespace FlexWiki.Web.Admin
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
