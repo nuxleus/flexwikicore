@@ -109,21 +109,31 @@ namespace FlexWiki.Caching
         }
         public override void DeleteAllTopicsAndHistory()
         {
-            Next.DeleteAllTopicsAndHistory();
-
-            if (CacheEnabled)
+            try
             {
-                InvalidateAllItemsForNamespace();
+                Next.DeleteAllTopicsAndHistory();
+            }
+            finally
+            {
+                if (CacheEnabled)
+                {
+                    InvalidateAllItemsForNamespace();
+                }
             }
         }
         public override void DeleteTopic(UnqualifiedTopicName topic)
         {
-            Next.DeleteTopic(topic);
-
-            if (CacheEnabled)
+            try
             {
-                InvalidateItemsForAnyRevisionOfTopic(topic);
-                InvalidateTopicListItem(); 
+                Next.DeleteTopic(topic);
+            }
+            finally
+            {
+                if (CacheEnabled)
+                {
+                    InvalidateItemsForAnyRevisionOfTopic(topic);
+                    InvalidateTopicListItem();
+                }
             }
         }
         public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
@@ -145,6 +155,40 @@ namespace FlexWiki.Caching
             else
             {
                 return Next.GetParsedTopic(topicRevision); 
+            }
+        }
+        public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
+        {
+            if (CacheEnabled)
+            {
+                string key = GetKeyForTopicPermission(topic, permission);
+                object cachedValue = Cache[key];
+
+                if (cachedValue == null)
+                {
+                    bool hasPermission = Next.HasPermission(topic, permission);
+                    Cache[key] = hasPermission;
+                    return hasPermission;
+                }
+                else
+                {
+                    return (bool)cachedValue; 
+                }
+            }
+            else
+            {
+                return Next.HasPermission(topic, permission);
+            }
+        }
+        public override void LockTopic(UnqualifiedTopicName topic)
+        {
+            try
+            {
+                Next.LockTopic(topic);
+            }
+            finally
+            {
+                InvalidateTopicPermissionItems(topic); 
             }
         }
         public override TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
@@ -184,30 +228,43 @@ namespace FlexWiki.Caching
                 else
                 {
                     return (bool)cachedValue;
-                }
-                
+                }                
             }
             else
             {
                 return base.TopicExists(topic);
             }
         }
-
+        public override void UnlockTopic(UnqualifiedTopicName topic)
+        {
+            try
+            {
+                Next.UnlockTopic(topic);
+            }
+            finally
+            {
+                InvalidateTopicPermissionItems(topic); 
+            }
+        }
         public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
-            Next.WriteTopic(topicRevision, content);
-            
-            if (CacheEnabled)
+            try
             {
-                // This may seem like overkill - why not just invalidate only the revision that has 
-                // changed? But the problem is that there's an equivalence between the latest revision
-                // and a null revision, and we don't know which two are the same. So on the principal
-                // that writes are rare and reads of non-tip revisions are common, we invalidate 
-                // all revisions. 
-                InvalidateItemsForAnyRevisionOfTopic(topicRevision.AsUnqualifiedTopicName());
-                InvalidateTopicListItem(); 
+                Next.WriteTopic(topicRevision, content);
             }
-
+            finally
+            {
+                if (CacheEnabled)
+                {
+                    // This may seem like overkill - why not just invalidate only the revision that has 
+                    // changed? But the problem is that there's an equivalence between the latest revision
+                    // and a null revision, and we don't know which two are the same. So on the principal
+                    // that writes are rare and reads of non-tip revisions are common, we invalidate 
+                    // all revisions. 
+                    InvalidateItemsForAnyRevisionOfTopic(topicRevision.AsUnqualifiedTopicName());
+                    InvalidateTopicListItem();
+                }
+            }
         }
 
 
@@ -228,6 +285,24 @@ namespace FlexWiki.Caching
         private string GetKeyForTopicList()
         {
             return new TopicCacheKey(new QualifiedTopicRevision("AllTopics", Namespace), "TopicList").ToString(); 
+        }
+        private string GetKeyForTopicPermission(UnqualifiedTopicName topic, TopicPermission permission)
+        {
+            string path; 
+            if (permission == TopicPermission.Edit)
+            {
+                path = "EditPermission"; 
+            }
+            else if (permission == TopicPermission.Read)
+            {
+                path = "ReadPermission";
+            }
+            else
+            {
+                throw new ArgumentException("Unsupported topic permission " + permission.ToString(), "permission"); 
+            }
+
+            return new TopicCacheKey(topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), path).ToString(); 
         }
         private void InvalidateAllItemsForNamespace()
         {
@@ -263,6 +338,13 @@ namespace FlexWiki.Caching
         {
             string key = GetKeyForTopicList();
             Cache[key] = null;
+        }
+        private void InvalidateTopicPermissionItems(UnqualifiedTopicName topic)
+        {
+            string readKey = GetKeyForTopicPermission(topic, TopicPermission.Read);
+            string editKey = GetKeyForTopicPermission(topic, TopicPermission.Edit);
+            Cache[readKey] = null;
+            Cache[editKey] = null; 
         }
 
         private bool IsKeyForAnyRevisionOfTopic(string key, UnqualifiedTopicName topic)

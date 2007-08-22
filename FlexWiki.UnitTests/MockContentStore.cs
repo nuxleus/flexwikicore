@@ -29,6 +29,7 @@ namespace FlexWiki.UnitTests
         private bool _allChangesForTopicSinceCalled;
         private bool _allTopicsCalled; 
         private DateTime _created;
+        private bool _hasPermissionCalled; 
         private MockSetupOptions _options;
         private bool _textReaderForTopicCalled;
         private bool _topicExistsCalled;
@@ -78,6 +79,11 @@ namespace FlexWiki.UnitTests
         {
             get { return _allTopicsCalled; }
             set { _allTopicsCalled = value; }
+        }
+        internal bool HasPermissionCalled
+        {
+            get { return _hasPermissionCalled; }
+            set { _hasPermissionCalled = value; }
         }
         internal bool TextReaderForTopicCalled
         {
@@ -166,6 +172,8 @@ namespace FlexWiki.UnitTests
 
         public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
+            _hasPermissionCalled = true; 
+
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             if (mockTopic == null)
             {

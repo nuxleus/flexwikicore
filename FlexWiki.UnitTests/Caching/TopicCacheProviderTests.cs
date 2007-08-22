@@ -234,6 +234,33 @@ namespace FlexWiki.UnitTests.Caching
             );
         }
         [Test]
+        public void HasPermission()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                ClearCache(parameters.Cache);
+                UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
+
+                AssertHasPermission(parameters, topicName, "Initial retrieval");
+
+                parameters.Provider.LockTopic(topicName);
+                AssertHasPermission(parameters, topicName, "After LockTopic");
+
+                parameters.Provider.UnlockTopic(topicName);
+                AssertHasPermission(parameters, topicName, "After UnlockTopic");
+
+                parameters.Provider.WriteTopic(new UnqualifiedTopicRevision(topicName), "New content");
+                AssertHasPermission(parameters, topicName, "After WriteTopic");
+
+                parameters.Provider.DeleteTopic(topicName);
+                AssertHasPermission(parameters, topicName, "After DeleteTopic");
+
+                parameters.Provider.DeleteAllTopicsAndHistory();
+                AssertHasPermission(parameters, topicName, "After DeleteAllTopicsAndHistory");
+
+            }); 
+        }
+        [Test]
         public void TextReaderForTopic()
         {
             DoTest(delegate(TestParameters parameters)
@@ -360,6 +387,51 @@ namespace FlexWiki.UnitTests.Caching
         private void AssertCacheDoesNotContainTopicChanges(MockCache mockCache, QualifiedTopicName qualifiedTopicName)
         {
             throw new Exception("The method or operation is not implemented.");
+        }
+        private void AssertHasPermission(TestParameters parameters, UnqualifiedTopicName topicName, string messageTag)
+        {
+            AssertHasPermissionNotFromCache(parameters, topicName, messageTag);
+            AssertHasPermissionFromCache(parameters, topicName, messageTag);
+        }
+        private void AssertHasPermissionFromCache(
+            TestParameters parameters, 
+            UnqualifiedTopicName topicName, 
+            string messageTag)
+        {
+            AssertHasPermissionFromCache(parameters, topicName, TopicPermission.Read, messageTag);
+            AssertHasPermissionFromCache(parameters, topicName, TopicPermission.Edit, messageTag);
+        }
+        private void AssertHasPermissionFromCache(
+            TestParameters parameters, 
+            UnqualifiedTopicName topicName, 
+            TopicPermission topicPermission, 
+            string messageTag)
+        {
+            string messageFormat = "Checking that retrieval comes from cache: {0} {1}";
+            parameters.Store.HasPermissionCalled = false;
+            bool thirteenthRetrieval = parameters.Provider.HasPermission(topicName, topicPermission);
+            Assert.IsFalse(parameters.Store.HasPermissionCalled,
+                string.Format(messageFormat, topicPermission, messageTag));
+        }
+        private void AssertHasPermissionNotFromCache(
+            TestParameters parameters, 
+            UnqualifiedTopicName topicName, 
+            string messageTag)
+        {
+            AssertHasPermissionNotFromCache(parameters, topicName, TopicPermission.Read, messageTag);
+            AssertHasPermissionNotFromCache(parameters, topicName, TopicPermission.Edit, messageTag);
+        }
+        private static void AssertHasPermissionNotFromCache(
+            TestParameters parameters, 
+            UnqualifiedTopicName topicName,
+            TopicPermission topicPermission, 
+            string messageTag)
+        {
+            string messageFormat = "Checking that retrieval does not come from cache: {0} {1}";
+            parameters.Store.HasPermissionCalled = false;
+            bool thirteenthRetrieval = parameters.Provider.HasPermission(topicName, topicPermission);
+            Assert.IsTrue(parameters.Store.HasPermissionCalled,
+                string.Format(messageFormat, topicPermission, messageTag));
         }
         private void ClearCache(MockCache cache)
         {
