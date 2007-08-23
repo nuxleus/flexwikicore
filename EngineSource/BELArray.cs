@@ -118,9 +118,9 @@ namespace FlexWiki
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer this array after the supplied array has been appended on the end.")]
 		public BELArray Append(ArrayList array)
 		{
-			foreach (IBELObject each in array)
+			foreach (object each in array)
 			{
-				Array.Add(each);
+				_Array.Add(BELObject.ConvertToBELObjectIfNeeded(each));
 			}
 			return this;
 		}
