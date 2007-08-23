@@ -570,19 +570,38 @@ namespace FlexWiki
         /// sort the output, or null not to sort.</param>
         /// <returns>A (potentially sorted) list of <see cref="QualifiedTopicName"/> objects.</returns>
         /// <remarks>Order is not guaranteed in the absence of a sortCriteria.</remarks>
-        public QualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy, Comparison<QualifiedTopicName> sortCriterion)
+		public QualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy, Comparison<QualifiedTopicName> sortCriterion)
+		{
+			return AllTopics(importPolicy, sortCriterion, null);
+		}
+        /// <summary>
+        /// Returns a list of all topics in the namespace, sorted using the specified comparison and filtered using the specified
+		/// predicate. 
+        /// </summary>
+        /// <param name="importPolicy">Indicates whether topics in imported namespaces
+        /// should be included in the details.</param>
+        /// <param name="sortCriterion">A <see cref="Comparision&gt;QualifiedTopicName&lt;"/> to use to
+        /// sort the output, or null not to sort.</param>
+        /// <param name="selectionCriterion">A <see cref="Predicate&gt;QualifiedTopicName&lt;"/> to use to
+        /// filter the output, or null not to filter.</param>
+        /// <returns>A (potentially sorted and filtered) list of <see cref="QualifiedTopicName"/> objects.</returns>
+        /// <remarks>Order is not guaranteed in the absence of a sortCriteria.</remarks>
+        public QualifiedTopicNameCollection AllTopics(ImportPolicy importPolicy, Comparison<QualifiedTopicName> sortCriterion, Predicate<QualifiedTopicName> selectionCriterion)
         {
             QualifiedTopicNameCollection answer = new QualifiedTopicNameCollection();
 
             QualifiedTopicNameCollection unsortedTopics = ContentProviderChain.AllTopics();
 
-            answer.AddRange(unsortedTopics); 
+			if (selectionCriterion == null)
+				answer.AddRange(unsortedTopics);
+			else
+				answer.AddRange(unsortedTopics.FindAll(selectionCriterion));
 
             if (importPolicy == ImportPolicy.IncludeImports)
             {
                 foreach (NamespaceManager namespaceManager in ImportedNamespaceManagers)
                 {
-                    answer.AddRange(namespaceManager.AllTopics(ImportPolicy.DoNotIncludeImports));
+                    answer.AddRange(namespaceManager.AllTopics(ImportPolicy.DoNotIncludeImports,null,selectionCriterion));
                 }
             }
 
@@ -594,12 +613,21 @@ namespace FlexWiki
             return answer;
         }
         /// <summary>
-        /// Answer an enumeration of all topic in the <see cref="ContentBase"/>, sorted by last modified (does not include those in imported namespaces)
+        /// Answer a collection of all topics in the <see cref="NamespaceManager"/>, sorted by last modified (does not include those in imported namespaces)
         /// </summary>
         /// <returns>List of <see cref="QualifiedTopicName"/> objects.</returns>
         public QualifiedTopicNameCollection AllTopicsSortedLastModifiedDescending()
         {
-            return AllTopics(ImportPolicy.DoNotIncludeImports, CompareModificationTime);
+			return AllTopicsSortedLastModifiedDescending(null);
+        }
+        /// <summary>
+        /// Answer a collection of all selected topics in the <see cref="NamespaceManager"/>, sorted by last modified (does not include those in imported namespaces)
+        /// </summary>
+		/// <param name="selectionCriterion"><see cref="Predicate{QualifiedTopicName}"/> to filter topic inclusion</param>
+        /// <returns>List of <see cref="QualifiedTopicName"/> objects.</returns>
+        public QualifiedTopicNameCollection AllTopicsSortedLastModifiedDescending(Predicate<QualifiedTopicName> selectionCriterion)
+        {
+            return AllTopics(ImportPolicy.DoNotIncludeImports, CompareModificationTime, selectionCriterion);
         }
         [ExposedMethod(ExposedMethodFlags.NeedContext, "Gets the topics with the specified property and value (including those in the imported namespaces).  If desiredValue is omitted, all topics with the property are answered.")]
         public TopicInfoArray AllTopicsWith(ExecutionContext ctx, string property, [ExposedParameter(true)] string desiredValue)
@@ -1479,7 +1507,8 @@ namespace FlexWiki
             }
 
             return any;
-        }///// <summary>
+        }
+		///// <summary>
         ///// Write a new version of the topic (doesn't write a new version).  Generate all needed federation update changes via the supplied generator.
         ///// </summary>
         ///// <param name="topic">Topic to write</param>
@@ -1488,14 +1517,12 @@ namespace FlexWiki
         //private void WriteTopic(LocalTopicName topic, string content, FederationUpdateGenerator gen)
         //{
         //}
-        private TopicInfoArray RetrieveAllTopicsWith(string propertyName, string desiredValue, ImportPolicy importPolicy)
-        {
+		private TopicInfoArray RetrieveAllTopicsWith(string propertyName, string desiredValue, ImportPolicy importPolicy)
+		{
             TopicInfoArray topicInfos = new TopicInfoArray();
-            foreach (QualifiedTopicName namespaceQualifiedTopicName in AllTopics(importPolicy))
-            {
-                TopicProperty property = Federation.GetTopicProperty(namespaceQualifiedTopicName, 
-                    propertyName);
-
+			Predicate<QualifiedTopicName> propval = delegate (QualifiedTopicName namespaceQualifiedTopicName)
+			{
+                TopicProperty property = Federation.GetTopicProperty(namespaceQualifiedTopicName, propertyName);
                 if (property != null)
                 {
                     if (property.HasValue)
@@ -1505,18 +1532,20 @@ namespace FlexWiki
                             string value = propertyValue.RawValue; 
                             if (desiredValue == null || (0 == String.Compare(desiredValue, value, true)))
                             {
-                                topicInfos.Add(new TopicVersionInfo(this.Federation,
-                                    new QualifiedTopicRevision(namespaceQualifiedTopicName)));
-                                break;
+								return true;
                             }
                         }
                     }
                 }
-            }
-
-            return topicInfos;
-
-        }
+				return false;
+			};
+			foreach (QualifiedTopicName namespaceQualifiedTopicName in AllTopics(importPolicy, null, propval))
+			{
+                topicInfos.Add(new TopicVersionInfo(this.Federation,
+                    new QualifiedTopicRevision(namespaceQualifiedTopicName)));
+			}
+			return topicInfos;
+		}
 
         private bool TopicVersionExists(UnqualifiedTopicRevision revision)
         {

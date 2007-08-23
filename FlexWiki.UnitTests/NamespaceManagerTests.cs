@@ -389,6 +389,26 @@ namespace FlexWiki.UnitTests
                 new TopicName("HomePage", "NamespaceOne")
             );
         }
+
+		[Test]
+        public void AllTopicsSortedLastModifiedDescendingWithPredicate()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              TestContentSets.ImportingReferencingSet);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+			Predicate<QualifiedTopicName> predicate = delegate(QualifiedTopicName qtn)
+			{
+				return !qtn.LocalName.StartsWith("Referen");
+			};
+            QualifiedTopicNameCollection topics = manager.AllTopicsSortedLastModifiedDescending(predicate);
+
+            WikiTestUtilities.AssertTopicsCorrectOrdered(topics,
+                new TopicName("_ContentBaseDefinition", "NamespaceOne"),
+                new TopicName("_NormalBorders", "NamespaceOne"),
+                new TopicName("HomePage", "NamespaceOne")
+            );
+        }
         [Test]
         public void AllTopicsWithNegativeNoProperty()
         {
