@@ -26,7 +26,7 @@ namespace FlexWiki.Web
     /// <summary>
     /// Summary description for WebForm1.
     /// </summary>
-    partial class Default2 : BasePage
+    public class Default2 : BasePage
     {
         private void Page_Load(object sender, System.EventArgs e)
         {
@@ -323,25 +323,25 @@ namespace FlexWiki.Web
             }
 
             // Insert the TopicBody to hold the topic content
-            //strbldr.AppendLine("<div id=\"TopicBody\">");
-            //strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
-            //strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
-            //strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
-            //strbldr.AppendLine("<div id=\"DynamicTopicBar\" class=\"DynamicTopicBar\" style=\"display: none\">");
-            ////strbldr.AppendLine("<!-- <input id=\"TopicBarNamespace\" style=\"display: none\" type=\"text\"  name=\"QuickLinkNamespace\" /> -->");
-            //strbldr.AppendLine("<input id=\"TopicBarInputBox\" title=\"Enter a topic here to go to or create\" class=\"QuickLinkInput\" type=\"text\"  name=\"QuickLink\" />");
-            //strbldr.AppendLine("<div class=\"DynamicTopicBarHelp\">Enter a topic name to show or a new topic name to create; then press Enter</div>");
-            //strbldr.AppendLine("</div></div></form>");
+            strbldr.AppendLine("<div id=\"TopicBody\">");
+            strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
+            strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
+            strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
+            strbldr.AppendLine("<div id=\"DynamicTopicBar\" class=\"DynamicTopicBar\" style=\"display: none\">");
+            //strbldr.AppendLine("<!-- <input id=\"TopicBarNamespace\" style=\"display: none\" type=\"text\"  name=\"QuickLinkNamespace\" /> -->");
+            strbldr.AppendLine("<input id=\"TopicBarInputBox\" title=\"Enter a topic here to go to or create\" class=\"QuickLinkInput\" type=\"text\"  name=\"QuickLink\" />");
+            strbldr.AppendLine("<div class=\"DynamicTopicBarHelp\">Enter a topic name to show or a new topic name to create; then press Enter</div>");
+            strbldr.AppendLine("</div></div></form>");
 
             if (isBlacklistedRestore)
             {
                 strbldr.AppendLine("<div class=\"BlacklistedRestore\"><font color=\"red\"><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
             }
 
-            //strbldr.AppendLine(formattedBody);
+            strbldr.AppendLine(formattedBody);
 
-            //// Close the TopicBody.
-            //strbldr.AppendLine("</div>");
+            // Close the TopicBody.
+            strbldr.AppendLine("</div>");
 
             // Insert the RightBorder if it is required.
             if (!String.IsNullOrEmpty(tempright))
