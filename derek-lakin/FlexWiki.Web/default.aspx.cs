@@ -304,7 +304,7 @@ namespace FlexWiki.Web
             tempbottom = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
             if (!String.IsNullOrEmpty(tempbottom))
             {
-                bottomBorder.AppendLine("<div class=\"Border\" id=\"BorderBottom\">");
+                bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
                 bottomBorder.AppendLine(tempbottom);
                 bottomBorder.AppendLine("</div>");
             }
