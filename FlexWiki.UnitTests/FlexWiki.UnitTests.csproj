@@ -93,6 +93,10 @@
       <Project>{7362F597-DAB3-437E-8A07-37D8D2FE6E56}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <ProjectReference Include="..\FlexWiki.Web\FlexWiki.Web.csproj">
+      <Project>{0EE80D53-C65E-4AFE-953A-AB9160521890}</Project>
+      <Name>FlexWiki.Web</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -101,6 +105,7 @@
       <Link>SharedAssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ApplicationConfigurationTests.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
