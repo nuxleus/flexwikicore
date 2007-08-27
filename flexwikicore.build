@@ -505,7 +505,7 @@
 
     <!-- Zip up all the files that we just put in the staging
 	        directory into the web full binaries zip -->
-    <zip zipfile="${dist.web.full.binzip}">
+    <zip zipfile="${dist.web.full.binzip}" includeemptydirs="true">
       <fileset basedir="${dist.webdir}">
         <include name="**/*" />
       </fileset>
@@ -528,7 +528,7 @@
 
     <!-- Zip up all files, except those that we shouldn't overwrite in
 	      an upgrade install -->
-    <zip zipfile="${dist.web.upgrade.binzip}">
+    <zip zipfile="${dist.web.upgrade.binzip}" includeemptydirs="true">
       <fileset basedir="${dist.webdir}">
         <include name="**/*" />
         <exclude name="*.config" />
@@ -538,7 +538,7 @@
     </zip>
 
     <!-- Zip up all the non-web files into the tools zip -->
-    <zip zipfile="${dist.tools.binzip}">
+    <zip zipfile="${dist.tools.binzip}" includeemptydirs="true">
       <fileset basedir="${dist.toolsdir}">
         <include name="**/*" />
       </fileset>
@@ -584,7 +584,7 @@
 
     <!-- Zip up all the files specified in the staging directory into
       	 the sources zip -->
-    <zip zipfile="${dist.srczip}">
+    <zip zipfile="${dist.srczip}" includeemptydirs="true">
       <fileset basedir="${dist.srcdir}">
         <include name="**/*" />
       </fileset>
