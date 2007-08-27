@@ -11,7 +11,8 @@ namespace FlexWiki.Web
     {
         // Fields
 
-		private AlternateStylesheetConfiguration[] _alternateStylesheets;
+        private AlternateStylesheetConfiguration[] _alternateStylesheets;
+        private AttachmentIconConfiguration[] _attachmentIcons;
         private string _captchaKey;
         private int _captchaLinkThreshold;
         private string _contentUploadPath;
@@ -33,17 +34,33 @@ namespace FlexWiki.Web
         
         // Properties
 
-		[XmlArrayItem("AlternateStylesheet")]
-		public AlternateStylesheetConfiguration[] AlternateStylesheets
-		{
-			get 
-			{
-				if (_alternateStylesheets == null)
-					_alternateStylesheets = new AlternateStylesheetConfiguration[0];
-				return _alternateStylesheets; 
-			}
-			set { _alternateStylesheets = value; }
-		}
+        [XmlArrayItem("AlternateStylesheet")]
+        public AlternateStylesheetConfiguration[] AlternateStylesheets
+        {
+            get
+            {
+                if (_alternateStylesheets == null)
+                {
+                    _alternateStylesheets = new AlternateStylesheetConfiguration[0];
+                }
+                return _alternateStylesheets;
+            }
+            set { _alternateStylesheets = value; }
+        }
+
+        [XmlArrayItem("AttachmentIcon")]
+        public AttachmentIconConfiguration[] AttachmentIcons
+        {
+            get
+            {
+                if (_attachmentIcons == null)
+                {
+                    _attachmentIcons = new AttachmentIconConfiguration[0];
+                }
+                return _attachmentIcons;
+            }
+            set { _attachmentIcons = value; }
+        }
 
         public string CaptchaKey
         {

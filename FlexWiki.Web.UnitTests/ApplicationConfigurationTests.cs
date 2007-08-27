@@ -55,8 +55,8 @@ namespace FlexWiki.Web.UnitTests
         {
             Assert.AreEqual(_applicationConfiguration.AttachmentIcons.GetUpperBound(0), 19);
             Assert.AreEqual(_applicationConfiguration.AttachmentIcons[0].Href, "page_white_picture.png");
-            Assert.AreEqual(_applicationConfiguration.AttachmentIcons[1].IconKey, "gif");
-            Assert.AreEqual(_applicationConfiguration.AttachmentIcons[18].IconKey, "divx");
+            Assert.AreEqual(_applicationConfiguration.AttachmentIcons[1].IconKey, ".gif");
+            Assert.AreEqual(_applicationConfiguration.AttachmentIcons[18].IconKey, ".divx");
             Assert.AreEqual(_applicationConfiguration.AttachmentIcons[19].Href, "film.png");
         }
 

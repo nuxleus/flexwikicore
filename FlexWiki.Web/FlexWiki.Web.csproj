@@ -139,6 +139,7 @@
     <Content Include="admin\WikiAdminConstants.js" />
     <Content Include="Blade.aspx">
     </Content>
+    <Content Include="classic.css" />
     <Content Include="Compare.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -152,6 +153,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="default.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="DoSearch.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -217,6 +219,7 @@
     <Compile Include="Analysis\Island.cs" />
     <Compile Include="Analysis\Ocean.cs" />
     <Compile Include="AspNetWikiCache.cs" />
+    <Compile Include="AttachmentIconConfiguration.cs" />
     <Compile Include="CaptchaImage.cs" />
     <Compile Include="CaptchaImageHandler.cs" />
     <Compile Include="CaptchaRequired.cs" />
@@ -245,7 +248,7 @@
     <Content Include="images\tile-title.gif" />
     <Content Include="images\versions.gif" />
     <Content Include="LastModified.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Login.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -254,37 +257,43 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="LostAndFound.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Preview.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Print.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="QuickLink.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Rename.aspx">
     </Content>
-    <Content Include="RequestNamespace.aspx" />
+    <Content Include="RequestNamespace.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Rss.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RssFace.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="SafeMode.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Search.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="diagnostics\SecurityContext.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="ShowNewsletter.aspx">
-      <SubType>Form</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="UpgradeConfigurationFile.aspx" />
+    <Content Include="UpgradeConfigurationFile.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Versions.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -292,6 +301,7 @@
     <Content Include="wiki.css" />
     <Content Include="WikiDefault.js" />
     <Content Include="WikiEdit.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="WikiEdit.js" />
     <Content Include="WikiMenu.js" />

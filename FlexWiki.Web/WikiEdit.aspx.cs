@@ -29,6 +29,7 @@ using System.Web.UI.HtmlControls;
 using FlexWiki.Collections; 
 using FlexWiki.Formatting;
 
+
 namespace FlexWiki.Web
 {
     /// <summary>
@@ -45,6 +46,7 @@ namespace FlexWiki.Web
         private string _fileName = "";
         private string _fileSize = "";
         private string _fileUrl = "";
+        private string _fileIconUrl = "";
         private QualifiedTopicRevision _theTopic;
 
         private void Page_Load(object sender, System.EventArgs e)
@@ -396,6 +398,7 @@ namespace FlexWiki.Web
             strbldr.AppendFormat("<input type=\"text\" id=\"_fileName\" value=\"{0}\" />&nbsp;Filename</p>", _fileName);
             strbldr.AppendFormat("<p><input type=\"text\" id=\"_fileSize\" value=\"{0}\" />&nbsp;Size</p>", _fileSize);
             strbldr.AppendFormat("<p><input type=\"text\" id=\"_fileUrl\" value=\"{0}\" />&nbsp;URL</p>", Formatter.EscapeHTML(_fileUrl));
+            strbldr.AppendFormat("<p><input type=\"text\" id=\"_fileIconUrl\" value=\"{0}\" />&nbsp;Icon URL</p>", Formatter.EscapeHTML(_fileIconUrl));
             strbldr.AppendLine("<p><input id=\"Form3DocTitle\" type=\"text\" size=\"20\" />&nbsp;Document Title</p></div>");
             strbldr.AppendLine("<div id=\"VersionFields\" style=\"display:none\" ><p><input id=\"Form3Version\" type=\"text\" /> Document Version</p></div>");
             strbldr.AppendLine("<div id=\"FileNoFields\" style=\"display:none\" ><p><input id=\"Form3FileNo\" type=\"text\" /> Orig File No</p></div>");
@@ -498,6 +501,7 @@ namespace FlexWiki.Web
                         _fileSize = "File size: " + fileLength.ToString("0,0") + " bytes";
                         // show        the        full path
                         _fileUrl = RootUrl + directoryToWriteTo.Replace(@"\", @"/") + "/" + Path.GetFileName(writeToFile);
+                        _fileIconUrl =  "images/attach/" + ReturnIconForAttach(fileName);
 
 
                         // Set URL of the the object to        point to the file we've        just saved
@@ -622,6 +626,26 @@ namespace FlexWiki.Web
             {
                 ShowEditPage(true);
             }
+        }
+        protected string ReturnIconForAttach(string fileName)
+        {
+            string iconHref = "";
+            fileName = fileName.ToLower();
+            string extensionName = Path.GetExtension(fileName);
+
+            foreach (AttachmentIconConfiguration attIcon in FlexWikiWebApplication.ApplicationConfiguration.AttachmentIcons)
+            {
+                if (extensionName == attIcon.IconKey)
+                {
+                    iconHref = attIcon.Href;
+                    break;
+                }
+            }
+            if (String.IsNullOrEmpty(iconHref))
+            {
+                iconHref = "page_white_text.png";
+            }
+            return iconHref;
         }
         private string ReturnDirectoryToWriteTo(string fileName)
         {

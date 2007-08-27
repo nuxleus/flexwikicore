@@ -7,6 +7,7 @@ function attachFile_OnClick()
     var textArea = document.forms["Form1"].EditBox;
     var docTitle = document.getElementById("Form3DocTitle").value;
     var urlString = document.getElementById("_fileUrl").value;
+    var iconUrlString = document.getElementById("_fileIconUrl").value;
     var sizeString = document.getElementById("_fileSize").value;
     var filedDate = document.getElementById("Form3Filed").value;
     var publishedDate = document.getElementById("Form3Published").value;
@@ -23,18 +24,18 @@ function attachFile_OnClick()
     }
     if (attachFormatString == "Normal")
     {
-        insertText1 = '@@Presentations.Image(federation.LinkMaker.LinkToImage("images/attach/file.gif"))@@ '; 
+        insertText1 = '@@Presentations.Image(federation.LinkMaker.LinkToImage("' + iconUrlString + '"))@@ '; 
         insertText2 = '@@Presentations.Link("' + urlString + '", "' + docTitle + '", "' + sizeString + '")@@';
     }
     if (attachFormatString == "Folder")
     {
-        insertText1 = '|| ' + filedDate + ' || @@Presentations.Image(federation.LinkMaker.LinkToImage("images/attach/file.gif"))@@ ';
+        insertText1 = '|| ' + filedDate + ' || @@Presentations.Image(federation.LinkMaker.LinkToImage("' + iconUrlString + '"))@@ ';
         insertText2 = '@@Presentations.Link("' + urlString + '", "' + docTitle + '", "' + sizeString + '")@@ || ';
         insertText3 = fileNo + ' || ' + authorName + ' || ' + publishedDate + ' || ' + commentText + ' ||';
     }
     if (attachFormatString == "DocMan")
     {
-        insertText1 = '|| ' + filedDate + ' || @@Presentations.Image(federation.LinkMaker.LinkToImage("images/attach/file.gif"))@@ ';
+        insertText1 = '|| ' + filedDate + ' || @@Presentations.Image(federation.LinkMaker.LinkToImage("' + iconUrlString + '"))@@ ';
         insertText2 = '@@Presentations.Link("' + urlString + '", "' + docTitle + '", "' + sizeString + '")@@ || ';
         insertText3 = fileNo + ' || ' + authorName + ' || ' + statusString + ' || ' + statusDate + ' || ';
         insertText4 = versionNo +  ' || @@Presentations.Checkbox("checkOut_' + statusString + '_' + versionNo + '", "strUrl", false)@@ ||' + commentText + ' ||';

@@ -155,26 +155,26 @@ namespace FlexWiki.Web.UnitTests
         Depending upon the file extension of the upload, that extension is matched with the IconKey
         to determine what icon is displayed -->
   <AttachmentIcons>
-    <AttachmentIcon Href=""page_white_picture.png"" IconKey=""png"" />
-    <AttachmentIcon Href=""page_white_picture.png"" IconKey=""gif"" />
-    <AttachmentIcon Href=""page_white_picture.png"" IconKey=""jpg"" />
-    <AttachmentIcon Href=""page_white_picture.png"" IconKey=""jpeg"" />
-    <AttachmentIcon Href=""page_white_word.png"" IconKey=""doc"" />
-    <AttachmentIcon Href=""page_excel.png"" IconKey=""xls"" />
-    <AttachmentIcon Href=""page_white_acrobat.png"" IconKey=""pdf"" />
-    <AttachmentIcon Href=""page_white_csharp.png"" IconKey=""cs"" />
-    <AttachmentIcon Href=""html.png"" IconKey=""html"" />
-    <AttachmentIcon Href=""html.png"" IconKey=""htm"" />
-    <AttachmentIcon Href=""html.png"" IconKey=""aspx"" />
-    <AttachmentIcon Href=""page_white_database.png"" IconKey=""mdb"" />
-    <AttachmentIcon Href=""page_white_database.png"" IconKey=""sql"" />
-    <AttachmentIcon Href=""page_white_compressed.png"" IconKey=""zip"" />
-    <AttachmentIcon Href=""page_white_text.png"" IconKey=""txt"" />
-    <AttachmentIcon Href=""film.png"" IconKey=""avi"" />
-    <AttachmentIcon Href=""film.png"" IconKey=""mpg"" />
-    <AttachmentIcon Href=""film.png"" IconKey=""mpeg"" />
-    <AttachmentIcon Href=""film.png"" IconKey=""divx"" />
-    <AttachmentIcon Href=""film.png"" IconKey=""wma"" />
+    <AttachmentIcon Href=""page_white_picture.png"" IconKey="".png"" />
+    <AttachmentIcon Href=""page_white_picture.png"" IconKey="".gif"" />
+    <AttachmentIcon Href=""page_white_picture.png"" IconKey="".jpg"" />
+    <AttachmentIcon Href=""page_white_picture.png"" IconKey="".jpeg"" />
+    <AttachmentIcon Href=""page_white_word.png"" IconKey="".doc"" />
+    <AttachmentIcon Href=""page_excel.png"" IconKey="".xls"" />
+    <AttachmentIcon Href=""page_white_acrobat.png"" IconKey="".pdf"" />
+    <AttachmentIcon Href=""page_white_csharp.png"" IconKey="".cs"" />
+    <AttachmentIcon Href=""html.png"" IconKey="".html"" />
+    <AttachmentIcon Href=""html.png"" IconKey="".htm"" />
+    <AttachmentIcon Href=""html.png"" IconKey="".aspx"" />
+    <AttachmentIcon Href=""page_white_database.png"" IconKey="".mdb"" />
+    <AttachmentIcon Href=""page_white_database.png"" IconKey="".sql"" />
+    <AttachmentIcon Href=""page_white_compressed.png"" IconKey="".zip"" />
+    <AttachmentIcon Href=""page_white_text.png"" IconKey="".txt"" />
+    <AttachmentIcon Href=""film.png"" IconKey="".avi"" />
+    <AttachmentIcon Href=""film.png"" IconKey="".mpg"" />
+    <AttachmentIcon Href=""film.png"" IconKey="".mpeg"" />
+    <AttachmentIcon Href=""film.png"" IconKey="".divx"" />
+    <AttachmentIcon Href=""film.png"" IconKey="".wma"" />
   </AttachmentIcons>
   
   
