@@ -81,6 +81,7 @@ namespace WebTestConsole
                         stopwatch.Stop();
                         stopwatch.Reset();
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(absoluteUrl);
+                        request.AllowAutoRedirect = false; 
                         stopwatch.Start();
                         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                         ttfb = stopwatch.ElapsedMilliseconds;

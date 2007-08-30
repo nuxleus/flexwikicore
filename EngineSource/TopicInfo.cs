@@ -27,8 +27,27 @@ namespace FlexWiki
     {
         // Fields
 
-        private NamespaceManager _namespaceManager;
+        private bool _haveChanges;
+        private bool _haveCreated;
+        private bool _haveExists;
+        private bool _haveKeywords;
+        private bool _haveKeywordsList;
+        private bool _haveLastModified;
+        private bool _haveLastModifiedBy;
+        private bool _havePropertyNames;
+        private bool _haveSummary; 
+
+        private TopicChangeCollection _changes;
+        private DateTime _created;
+        private bool _exists;
         private Federation _federation;
+        private string _keywords;
+        private ArrayList _keywordsList; 
+        private DateTime _lastModified;
+        private string _lastModifiedBy; 
+        private NamespaceManager _namespaceManager;
+        private IList<string> _propertyNames;
+        private string _summary; 
         private QualifiedTopicRevision _topicVersionKey;
 
         // Constructors
@@ -46,12 +65,18 @@ namespace FlexWiki
         {
             get
             {
-                TopicChangeCollection answer = new TopicChangeCollection();
-                foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicRevision.DottedName)))
+                if (!_haveChanges)
                 {
-                    answer.Add(each);
+                    TopicChangeCollection answer = new TopicChangeCollection();
+                    foreach (TopicChange each in Federation.GetTopicChanges(new TopicName(TopicRevision.DottedName)))
+                    {
+                        answer.Add(each);
+                    }
+                    _changes = answer;
+                    _haveChanges = true; 
                 }
-                return answer;
+
+                return _changes; 
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime inndicating when the topic was created")]
@@ -59,14 +84,26 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicCreationTime(TopicRevision);
+                if (!_haveCreated)
+                {
+                    _created = Federation.GetTopicCreationTime(TopicRevision);
+                    _haveCreated = true;
+                }
+
+                return _created; 
             }
         }
         public bool Exists
         {
             get
             {
-                return NamespaceManager.TopicExists(TopicRevision.LocalName, ImportPolicy.DoNotIncludeImports);
+                if (!_haveExists)
+                {
+                    _exists = NamespaceManager.TopicExists(TopicRevision.LocalName, ImportPolicy.DoNotIncludeImports);
+                    _haveExists = true;
+                }
+
+                return _exists; 
             }
         }
         [ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the complete name of the topic (including namespace and version, if present)")]
@@ -90,7 +127,13 @@ namespace FlexWiki
         {
             get
             {
-                return GetProperty("Keywords");
+                if (!_haveKeywords)
+                {
+                    _keywords = GetProperty("Keywords");
+                    _haveKeywords = true; 
+                }
+
+                return _keywords; 
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer an array containgin all the keywords listed in the Keywords property")]
@@ -98,7 +141,13 @@ namespace FlexWiki
         {
             get
             {
-                return GetListProperty("Keywords");
+                if (!_haveKeywordsList)
+                {
+                    _keywordsList = GetListProperty("Keywords");
+                    _haveKeywordsList = true; 
+                }
+
+                return _keywordsList; 
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime inndicating when the topic was last modified")]
@@ -106,7 +155,13 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicModificationTime(TopicRevision);
+                if (!_haveLastModified)
+                {
+                    _lastModified = Federation.GetTopicModificationTime(TopicRevision);
+                    _haveLastModified = true; 
+                }
+
+                return _lastModified; 
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a string indicating who last modified the topic")]
@@ -114,7 +169,13 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicLastModifiedBy(TopicName);
+                if (!_haveLastModifiedBy)
+                {
+                    _lastModifiedBy = Federation.GetTopicLastModifiedBy(TopicName);
+                    _haveLastModifiedBy = true; 
+                }
+
+                return _lastModifiedBy; 
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a the (full)name of the topic")]
@@ -141,7 +202,13 @@ namespace FlexWiki
         {
             get
             {
-                return Federation.GetTopicProperties(TopicRevision).Names;
+                if (!_havePropertyNames)
+                {
+                    _propertyNames = Federation.GetTopicProperties(TopicRevision).Names;
+                    _havePropertyNames = true; 
+                }
+
+                return _propertyNames; 
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the Summary property's value")]
@@ -149,7 +216,13 @@ namespace FlexWiki
         {
             get
             {
-                return GetProperty("Summary");
+                if (!_haveSummary)
+                {
+                    _summary = GetProperty("Summary");
+                    _haveSummary = true;
+                }
+
+                return _summary; 
             }
         }
         public TopicName TopicName
