@@ -628,6 +628,45 @@ namespace FlexWiki.UnitTests
             Assert.IsFalse(manager.DisplaySpacesInWikiLinks,
                 "Checking that an illegal value results is a false answer.");
         }
+		[Test]
+		public void DisplaySpacesInWikiLinksValueFromConfigurationInvalid()
+		{
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SingleEmptyNamespace);
+			federation.Configuration.DisplaySpacesInWikiLinks = true;
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            manager.WriteTopicAndNewVersion("_ContentBaseDefinition",
+                "DisplaySpacesInWikiLinks: blah", "author");
+
+			Assert.IsTrue(manager.DisplaySpacesInWikiLinks,
+				"Checking that configuration values are picked up if topic property is invalid.");
+		}
+		[Test]
+		public void DisplaySpacesInWikiLinksValueFromConfigurationMissing()
+		{
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SingleEmptyNamespace);
+			federation.Configuration.DisplaySpacesInWikiLinks = true;
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            manager.WriteTopicAndNewVersion("_ContentBaseDefinition",
+                "DisplaySpacesInWikiLinks:", "author");
+
+			Assert.IsTrue(manager.DisplaySpacesInWikiLinks,
+				"Checking that configuration values are picked up if topic property is not set.");
+		}
+		[Test]
+		public void DisplaySpacesInWikiLinksValueFromConfigurationNotDefined()
+		{
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SingleEmptyNamespace);
+			federation.Configuration.DisplaySpacesInWikiLinks = true;
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+			Assert.IsTrue(manager.DisplaySpacesInWikiLinks,
+				"Checking that configuration values are picked up.");
+		}
         [Test]
         public void DisplaySpacesInWikiLinksMissingValue()
         {

@@ -127,6 +127,10 @@ namespace FlexWiki
                 return property.LastValue;
             }
         }
+		/// <summary>
+		/// Value is based on the DisplaySpacesInWikiLinks TopicProperty if it is defined and legal in the 
+		/// DefinitionTopic; otherwise, value is based on Federation.Configuration.DisplaySpacesInWikiLinks
+		/// </summary>
         public bool DisplaySpacesInWikiLinks
         {
             get
@@ -134,28 +138,23 @@ namespace FlexWiki
                 TopicProperty property = GetTopicProperty(DefinitionTopicLocalName,
                     "DisplaySpacesInWikiLinks");
 
-                if (property == null)
+                if (property == null || !property.HasValue)
                 {
-                    return false;
-                }
-
-                if (!property.HasValue)
-                {
-                    return false;
+					return Federation.Configuration.DisplaySpacesInWikiLinks;
                 }
 
                 string stringValue = property.LastValue;
                 bool boolValue = false;
                 bool conversionSucceeded = Boolean.TryParse(stringValue, out boolValue);
 
-                // If the value is not a valid boolean, default to false. 
+                // If the value is not a valid boolean, default to Federation.Configuration. 
                 if (conversionSucceeded)
                 {
                     return boolValue;
                 }
                 else
                 {
-                    return false;
+                    return Federation.Configuration.DisplaySpacesInWikiLinks;
                 }
             }
         }
