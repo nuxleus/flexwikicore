@@ -202,6 +202,7 @@ function ResizeEditBox()
     if (null != editBox)
     {
         editBox.style.height = Math.max(100, height) + "px";
+        editBox.focus();
     }
 }
 
