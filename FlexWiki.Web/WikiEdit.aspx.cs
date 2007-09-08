@@ -715,6 +715,11 @@ Add your wiki text here.
 
 ";
             string content = null;
+			bool isValidName = Formatter.extractWikiNames.IsMatch("["+TheTopic.Name.LocalName+"]");
+			if (!isValidName)
+			{
+				content = String.Format("Topic Name not valid for this wiki: {0}\nPlease go back and choose a different name.",TheTopic.Name);
+			}
             if (Federation.TopicExists(TheTopic))
             {
                 content = Federation.Read(TheTopic);
@@ -788,7 +793,8 @@ Add your wiki text here.
             Response.Write(Formatter.EscapeHTML(content));
 
             Response.Write(@"</textarea>");
-            if (IsWritable)
+			bool isWritable = this.IsWritable && isValidName;
+            if (isWritable)
             {
                 Response.Write("<input type=\"text\" style=\"display:none\" name=\"CaptchaEnteredSubmitted\" value =\"\" />");
                 Response.Write("<input type=\"text\" style=\"display:none\" name=\"CaptchaContextSubmitted\" value =\"\" />");
@@ -814,7 +820,7 @@ Add your wiki text here.
 
             /////////////////////////////
             OpenPane(Response.Output, "Edit&nbsp;" + BELString.MaxLengthString2(Formatter.EscapeHTML(TheTopic.ToString()), 20, "..."));
-            if (IsWritable)
+            if (isWritable)
             {
                 NamespaceManager storeManager = Federation.NamespaceManagerForTopic(TheTopic);
                 if (storeManager.TopicExists(TheTopic.LocalName, ImportPolicy.DoNotIncludeImports))
@@ -866,7 +872,7 @@ Add your wiki text here.
 
 
             ///////////////////////////////
-            if (IsWritable)
+            if (isWritable)
             {
                 OpenPane(Response.Output, "Attribution");
                 if (User.Identity.IsAuthenticated)
@@ -892,7 +898,7 @@ Add your wiki text here.
 
             ///////////////////////////////
 
-            if (IsWritable)
+            if (isWritable)
             {
                 OpenPane(Response.Output, "Formatting Tips");
                 Response.Write("<div id=\"ShowTips\" style=\"display: block\"><a onclick=\"javascript:Swap('ShowTips', 'HideTips')\">Show tips...</a></div>");
@@ -999,7 +1005,7 @@ Add your wiki text here.
             }
 
             //////////////////////////////
-            if (IsWritable && templateSelect.Length > 0)
+            if (isWritable && templateSelect.Length > 0)
             {
                 // Render the template selection dropdown.
                 OpenPane(Response.Output, "Topic Templates");
@@ -1012,7 +1018,7 @@ Add your wiki text here.
             //////////////////////////////
 
             strbldr = new StringBuilder();
-            if (IsWritable)
+            if (isWritable)
             {
                 if (IsCaptchaRequired())
                 {
@@ -1065,7 +1071,7 @@ Add your wiki text here.
 
             strbldr.AppendLine("</table></div>");
 
-            if (IsUploadable && IsWritable)
+            if (IsUploadable && isWritable)
             {
                 strbldr.AppendLine("<div id=\"AttachFile\" style=\"display: block\">");
             }
