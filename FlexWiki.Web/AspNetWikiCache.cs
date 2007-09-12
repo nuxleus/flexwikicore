@@ -27,6 +27,8 @@ namespace FlexWiki.Web
         {
             get
             {
+				if (HttpContext.Current == null) return new string[0];
+
                 List<string> keys = new List<string>(); 
                 foreach (DictionaryEntry entry in HttpContext.Current.Cache)
                 {
@@ -41,10 +43,13 @@ namespace FlexWiki.Web
         {
             get
             {
+				if (HttpContext.Current == null) return null;
                 return HttpContext.Current.Cache[key]; 
             }
             set
             {
+				if (HttpContext.Current == null) return;
+
                 if (value == null)
                 {
                     HttpContext.Current.Cache.Remove(key);
@@ -59,6 +64,8 @@ namespace FlexWiki.Web
 
 		public void Clear()
         {
+			if (HttpContext.Current == null) return;
+
             string[] keys = Keys;
             foreach (string key in keys)
             {
