@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using FlexWiki.Formatting;
@@ -417,6 +418,18 @@ function tbinput()
 			Response.Write("</tr></table>");
 
 		}
+        protected string GetTitle()
+        {
+            StringBuilder titlebldr = new StringBuilder();
+
+            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
+            if (String.IsNullOrEmpty(title))
+            {
+                title = GetTopicVersionKey().FormattedName;
+            }
+
+            return HtmlStringWriter.Escape(title);
+        }
 
 		private void WriteRecentPane()
 		{
