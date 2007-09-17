@@ -241,9 +241,6 @@
     <Compile Include="NamespaceManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CustomSorter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DefaultSorter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -637,11 +634,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BelArrayEntry.cs" />
     <Compile Include="Caching\TopicCacheKey.cs" />
     <Compile Include="Caching\IWikiCache.cs" />
     <Compile Include="Caching\NullCache.cs" />
     <Compile Include="Caching\TopicCacheProvider.cs" />
     <Compile Include="Caching\TopicChangesCacheItem.cs" />
+    <Compile Include="CustomSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

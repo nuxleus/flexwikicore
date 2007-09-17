@@ -34,6 +34,7 @@ namespace FlexWiki
         private bool _haveKeywordsList;
         private bool _haveLastModified;
         private bool _haveLastModifiedBy;
+        private bool _haveProperties; 
         private bool _havePropertyNames;
         private bool _haveSummary; 
 
@@ -46,6 +47,7 @@ namespace FlexWiki
         private DateTime _lastModified;
         private string _lastModifiedBy; 
         private NamespaceManager _namespaceManager;
+        private TopicPropertyCollection _properties; 
         private IList<string> _propertyNames;
         private string _summary; 
         private QualifiedTopicRevision _topicVersionKey;
@@ -267,10 +269,17 @@ namespace FlexWiki
         [ExposedMethod(ExposedMethodFlags.Default, "Answer true if the given toipic has the given property; else false")]
         public bool HasProperty(string propertyName)
         {
-            TopicPropertyCollection properties = Federation.GetTopicProperties(TopicRevision);
-            if (properties == null)
+            if (!_haveProperties)
+            {
+                _properties = Federation.GetTopicProperties(TopicRevision);
+                _haveProperties = true; 
+            }
+
+            if (_properties == null)
+            {
                 return false;
-            return properties.Contains(propertyName);
+            }
+            return _properties.Contains(propertyName);
         }
         public override string ToString()
         {

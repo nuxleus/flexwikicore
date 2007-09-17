@@ -27,8 +27,10 @@ namespace FlexWiki
     {
         private static Regex s_historicalFileNameRegex = new Regex("[^(]+\\((?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})-(?<hour>[0-9]{2})-(?<minute>[0-9]{2})-(?<second>[0-9]{2})(\\.(?<fraction>[0-9]+))?(-(?<name>.*))?\\)");
 
-        private string _namespace;
         private IFileInformation _fileInformation;
+        private bool _haveLastModificationTime;
+        private DateTime _lastModificationTime; 
+        private string _namespace;
 
         public FileInfoTopicData(IFileInformation info, string ns)
         {
@@ -68,7 +70,12 @@ namespace FlexWiki
         {
             get
             {
-                return _fileInformation.LastWriteTime;
+                if (!_haveLastModificationTime)
+                {
+                    _lastModificationTime = _fileInformation.LastWriteTime;
+                    _haveLastModificationTime = true; 
+                }
+                return _lastModificationTime;
             }
         }
         public override string Name

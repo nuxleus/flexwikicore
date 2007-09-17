@@ -33,6 +33,42 @@ namespace FlexWiki.Caching
                 return Federation.Application.Cache; 
             }
         }
+
+        public override bool Exists
+        {
+            get
+            {
+                if (CacheEnabled)
+                {
+                    string key = GetKeyForNamespaceExistence();
+                    object cachedValue = Cache[key];
+
+                    if (cachedValue == null)
+                    {
+                        bool exists = Next.Exists;
+                        Cache[key] = exists;
+                        return exists;
+                    }
+                    else
+                    {
+                        return (bool)cachedValue;
+                    }
+                }
+                else
+                {
+                    return Next.Exists; 
+                }
+            }
+        }
+
+        //public override bool IsReadOnly
+        //{
+        //    get
+        //    {
+        //        throw new NotImplementedException(); 
+        //    }
+        //}
+
         private bool CacheEnabled
         {
             get
@@ -279,7 +315,10 @@ namespace FlexWiki.Caching
             }
         }
 
-
+        private string GetKeyForNamespaceExistence()
+        {
+            return new TopicCacheKey(new QualifiedTopicRevision("AllTopics", Namespace), "NamespaceExistence").ToString(); 
+        }
         private string GetKeyForParsedTopic(UnqualifiedTopicRevision topicRevision)
         {
             return new TopicCacheKey(topicRevision.ResolveRelativeTo(Namespace), "ParsedTopic").ToString(); 
