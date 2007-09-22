@@ -21,6 +21,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
+
 using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
@@ -42,12 +43,26 @@ namespace FlexWiki.Web
 			LinkMaker lm = TheLinkMaker;
 
 			string [] topics = ((string)(Request.QueryString["topics"])).Split (new char[] {','});
-			string [] fields = ((string)(Request.QueryString["imports"])).Split (new char[] {','});
+			string [] fields = ((string)(Request.QueryString["properties"])).Split (new char[] {','});
+            NamespaceManager storeManager;
         
 			foreach (string topic in topics)
 			{
 				QualifiedTopicRevision abs;
-				IList tops = DefaultNamespaceManager.AllQualifiedTopicNamesThatExist(topic);
+                IList tops;
+                if (topic.IndexOf('.') > 0)
+                {
+                    string[] names = topic.Split (new char[] {'.'});
+                    storeManager = Federation.NamespaceManagerForNamespace(names[0]);
+                    tops = storeManager.AllQualifiedTopicNamesThatExist(names[1]);
+
+                }
+                else
+                {
+                    storeManager = Federation.NamespaceManagerForNamespace(DefaultNamespace);
+                    tops = DefaultNamespaceManager.AllQualifiedTopicNamesThatExist(topic);
+                }
+
 				if (tops.Count == 0)
 				{
                     // topic doesn't exist, assume in the wiki's home content base
@@ -59,7 +74,8 @@ namespace FlexWiki.Web
 				}
 				else	// we got just one!
 				{
-					abs = (QualifiedTopicRevision)tops[0];
+                    QualifiedTopicName extract = (QualifiedTopicName)tops[0];
+                    abs = extract.AsQualifiedTopicRevision();
 				}
 
 				foreach (string field in fields)
@@ -77,13 +93,16 @@ namespace FlexWiki.Web
 						fieldClass = fieldAndClassMatch.Groups["class"].Value;
 					}
 			
-					string ns = DefaultNamespaceManager.UnambiguousTopicNameFor(abs.LocalName).Namespace;
 					string fieldValue = Federation.GetTopicPropertyValue(abs, fieldName);
 					string s1;
-					if (fieldName == "_Body")
-						s1 = Formatter.FormattedString(abs, fieldValue, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker);
-					else
-						s1 = fieldValue;
+                    if (fieldName == "_Body")
+                    {
+                        s1 = Formatter.FormattedString(abs, fieldValue, OutputFormat.HTML, storeManager, TheLinkMaker);
+                    }
+                    else
+                    {
+                        s1 = fieldValue;
+                    }
 					// YUCK!  We need to wrap the enclosing <p> (if present) and replace it with the <div>
 					s1 = s1.Trim();
 					if (s1.StartsWith("<p>"))
@@ -98,7 +117,6 @@ namespace FlexWiki.Web
 				}
 			}
 		}
-
 		#region Web Form Designer generated code
 		override protected void OnInit(EventArgs e)
 		{
