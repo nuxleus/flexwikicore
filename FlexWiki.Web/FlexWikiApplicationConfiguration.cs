@@ -29,7 +29,8 @@ namespace FlexWiki.Web
         private int _captchaLinkThreshold;
         private string _contentUploadPath;
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
-        private bool _disableRenameFixup; 
+        private bool _disableRenameFixup;
+        private bool _disableXslTransform = false;
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
@@ -98,6 +99,11 @@ namespace FlexWiki.Web
         {
             get { return _disableRenameFixup; }
             set { _disableRenameFixup = value; }
+        }
+        public bool DisableXslTransform
+        {
+            get { return _disableXslTransform; }
+            set { _disableXslTransform = value; }
         }
         public bool EditOnDoubleClick
         {

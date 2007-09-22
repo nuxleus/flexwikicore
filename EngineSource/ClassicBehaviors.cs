@@ -317,12 +317,24 @@ namespace FlexWiki
             return "classic behaviors object";
         }
 
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer the result of transforming the given XML using the given transform")]
-        public string XmlTransform(string xmlURL, string xslURL)
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer the result of transforming the given XML using the given transform")]
+        public string XmlTransform(ExecutionContext ctx, [ExposedParameter(true)] string xmlURL, [ExposedParameter(true)] string xslURL)
         {
             string result = null;
+            Federation fed = ctx.CurrentFederation;
             XmlDocument xmlDoc = new XmlDocument();
             XslCompiledTransform xslTransform = new XslCompiledTransform();
+            XsltSettings xsltSetting = new XsltSettings();
+            bool disableXslt = (bool) fed.Application["DisableXslTransform"];
+
+            if (!disableXslt)
+            {
+                xsltSetting.EnableScript = true;
+            }
+            else
+            {
+                xsltSetting.EnableScript = false;
+            }
 
             try
             {
@@ -338,7 +350,7 @@ namespace FlexWiki
                 try
                 {
                     // Load the XSL File
-                    xslTransform.Load(xslURL);
+                    xslTransform.Load(xslURL, xsltSetting, null);
                 }
                 catch (Exception ex)
                 {

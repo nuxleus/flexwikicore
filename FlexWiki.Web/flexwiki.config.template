@@ -78,7 +78,19 @@
         is renamed. When set to false, FlexWiki will. Automatic update allows users to change
         many topics at once, and as such can lead to abuse of the wiki. -->
   <DisableRenameFixup>false</DisableRenameFixup>
-
+  
+  <!-- When set to true, FlexWiki will not process XslTransform behavior requests. 
+        The error message will be: 
+        
+        "Failed to Transform Execution of scripts was prohibited. 
+        Use the XsltSettings.EnableScript property to enable it. "
+        
+        When set to false, or if the setting is not present, or present and empty it will 
+        process XslTransform requests. XslTransform may have security concerns from time 
+        to time and it may be necessary to have a means of shuting it down wiki wide. 
+        XslTransform is normally used with dynamic topics containing external rss feeds. -->
+  <DisableXslTransform>false</DisableXslTransform>
+  
   <!-- When set to true, a user can double-click a topic web page to go to the edit page. 
         When set to false, a user must click the Edit link to go to the edit page. Note that
         setting this value to true makes it impossible to select a word by double-clicking it. -->
