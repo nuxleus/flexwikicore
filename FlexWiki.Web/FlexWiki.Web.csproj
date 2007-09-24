@@ -136,7 +136,6 @@
     </Content>
     <Content Include="admin\Users.aspx" />
     <Content Include="admin\WikiAdmin.js" />
-    <Content Include="admin\WikiAdminConstants.js" />
     <Content Include="Blade.aspx">
     </Content>
     <Content Include="classic.css" />

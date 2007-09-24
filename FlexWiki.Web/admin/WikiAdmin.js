@@ -8,42 +8,6 @@
 //
 // You must not remove this notice, or any other, from this software.
 
-function FilterChanged()
-{
-    var filterControl = document.getElementById("Filter");
-    var filter = filterControl.value;
-    var id = 0;
-    while (true)
-    {
-        var keyData = KEYDATAPREFIX + id;
-        var key = KEYPREFIX + id;
-
-        var valueElement = document.getElementById(keyData);
-        if (valueElement == null)
-            break;
-        var show = true;
-        var test = "";
-        try 
-        {
-            if (!valueElement.textContent)
-                test = "" + valueElement.innerText.toUpperCase();
-            else
-                test = "" + valueElement.textContent.toUpperCase();
-        } 
-        catch (e) 
-        {
-            test = "" + valueElement.textContent.toUpperCase();
-        }
-        if (filter != "" && test.indexOf(filter.toUpperCase()) < 0)
-            show = false;
-        var styleString = show ? "" : "none";
-
-        var keyPrefixElement = document.getElementById(key);
-        keyPrefixElement.style.display = styleString;
-        id++;
-    }
-}
-
 function PagesChanged()
 {
     var pagesCombo = document.getElementById("pages");
@@ -63,6 +27,11 @@ function PagesChanged()
             if (null != lastKey)
             {
                 url += "&end=" + lastKey;
+            }
+            var searchBox = document.getElementById("filter");
+            if (searchBox.value.length > 0)
+            {
+                url += "&search=" + searchBox.value;
             }
             window.location = url;
         }
