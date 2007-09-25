@@ -643,6 +643,7 @@
     <Compile Include="CustomSorter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RequestContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

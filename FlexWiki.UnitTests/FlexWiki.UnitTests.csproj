@@ -124,6 +124,7 @@
     <Compile Include="Formatting\WikiPagePropertyTests.cs" />
     <Compile Include="MockTopicStorePermissions.cs" />
     <Compile Include="ParsingProviderTests.cs" />
+    <Compile Include="RequestContextTests.cs" />
     <Compile Include="Security\AuthorizationProviderTests.cs" />
     <Compile Include="MockDirectory.cs" />
     <Compile Include="MockFile.cs" />

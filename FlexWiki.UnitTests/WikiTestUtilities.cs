@@ -139,6 +139,10 @@ namespace FlexWiki.UnitTests
             MockSetupOptions options, NamespaceProviderParameterCollection parameters)
         {
             MockContentStore store = new MockContentStore(options);
+            if ((options & MockSetupOptions.CacheDisabled) != 0)
+            {
+                parameters.AddOrReplace(new NamespaceProviderParameter("Cache.Disabled", "true"));
+            }
             return federation.RegisterNamespace(store, ns, parameters);
         }
 

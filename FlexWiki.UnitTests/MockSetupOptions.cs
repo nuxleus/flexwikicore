@@ -23,5 +23,6 @@ namespace FlexWiki.UnitTests
         ReadOnlyStore               = 0x01, 
         EnableBuiltinTopics         = 0x02,
         StoreDoesNotExist           = 0x04,
+        CacheDisabled               = 0x08,
     }
 }

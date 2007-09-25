@@ -35,6 +35,19 @@ namespace FlexWiki.Security
         {
             get
             {
+                string key = GetKey("exists");
+
+                if (RequestContext.Current != null)
+                {
+                    object cached = RequestContext.Current[key];
+
+                    if (cached != null && cached is bool)
+                    {
+                        return (bool)cached; 
+                    }
+                }
+
+                bool value; 
                 AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
                 rules.AddRange(GetWikiScopeRules());
                 rules.AddRange(GetNamespaceScopeRules());
@@ -43,15 +56,25 @@ namespace FlexWiki.Security
                 // it doesn't exist as far as they're concerned.
                 if (!IsAllowed(SecurableAction.Read, rules))
                 {
-                    return false; 
+                    value = false;
+                }
+                else
+                {
+                    using (CreateRecursionContext())
+                    {
+                        value = _next.Exists;
+                    }
                 }
 
-                using (CreateRecursionContext())
+                if (RequestContext.Current != null)
                 {
-                    return _next.Exists;
+                    RequestContext.Current[key] = value; 
                 }
+
+                return value; 
             }
         }
+
         public bool IsReadOnly
         {
             get 
@@ -136,6 +159,19 @@ namespace FlexWiki.Security
                 throw new ArgumentException("Unrecognized topic permission " + permission.ToString());
             }
 
+            RequestContext context = RequestContext.Current;
+            string key = null; 
+            if (context != null)
+            {
+                key = GetKey(topic, permission, "HasPermission");
+                object value = context[key];
+
+                if (value != null && value is bool)
+                {
+                    return (bool) value; 
+                }
+            }
+
             // Do not allow the operation if the rest of the chain denies it.
             bool nextHasPermission;
             using (CreateRecursionContext())
@@ -168,7 +204,14 @@ namespace FlexWiki.Security
             }
 
             SecurableAction action = GetActionFromPermission(permission, isDefinitionTopic);
-            return IsAllowed(action, rules);
+            bool isAllowed = IsAllowed(action, rules);
+
+            if (context != null)
+            {
+                context[key] = isAllowed; 
+            }
+
+            return isAllowed; 
         }
         public void Initialize(NamespaceManager namespaceManager)
         {
@@ -289,8 +332,32 @@ namespace FlexWiki.Security
                 throw new ArgumentException("Unexpected permission " + permission.ToString());
             }
         }
+        private string GetKey(string tag)
+        {
+            return string.Format("authorizationProvider://{0}/{1}", Namespace, tag); 
+        }
+        private string GetKey(UnqualifiedTopicName topic, string tag)
+        {
+            return string.Format("authorizationProvider://{0}/{1}/{2}", Namespace, topic.LocalName, tag);
+        }
+        private string GetKey(UnqualifiedTopicName topic, TopicPermission permission, string tag)
+        {
+            return string.Format("authorizationProvider://{0}/{1}/{2}/{3}", Namespace, topic.LocalName, tag, permission); 
+        }
         private AuthorizationRuleCollection GetNamespaceScopeRules()
         {
+            string key = GetKey("NamespaceScopeRules");
+
+            if (RequestContext.Current != null)
+            {
+                AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
+
+                if (cached != null)
+                {
+                    return cached; 
+                }
+            }
+
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             ParsedTopic parsedDefinitionTopic = Next.GetParsedTopic(
                 new UnqualifiedTopicRevision(_namespaceManager.DefinitionTopicName.LocalName));
@@ -298,6 +365,12 @@ namespace FlexWiki.Security
             {
                 rules.AddRange(GetSecurityRules(parsedDefinitionTopic, AuthorizationRuleScope.Namespace));
             }
+
+            if (RequestContext.Current != null)
+            {
+                RequestContext.Current[key] = rules; 
+            }
+
             return rules;
         }
         private AuthorizationRuleCollection GetSecurityRules(ParsedTopic parsedTopic, AuthorizationRuleScope scope)
@@ -331,11 +404,30 @@ namespace FlexWiki.Security
         }
         private AuthorizationRuleCollection GetTopicScopeRules(UnqualifiedTopicName topic)
         {
+            string key = GetKey(topic, "TopicScopeRules");
+
+            if (RequestContext.Current != null)
+            {
+                AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
+
+                if (cached != null)
+                {
+                    return cached;
+                }
+            }
+
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             ParsedTopic parsedTopic = Next.GetParsedTopic(new UnqualifiedTopicRevision(topic));
             rules.AddRange(GetSecurityRules(parsedTopic, AuthorizationRuleScope.Topic));
+
+            if (RequestContext.Current != null)
+            {
+                RequestContext.Current[key] = rules;
+            }
+
             return rules;
         }
+
         private AuthorizationRuleCollection GetWikiScopeRules()
         {
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();

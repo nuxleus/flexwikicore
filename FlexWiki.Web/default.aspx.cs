@@ -220,144 +220,147 @@ namespace FlexWiki.Web
 
         protected string DoPage()
         {
-            QualifiedTopicRevision topic = GetTopicVersionKey();
-            NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
-            LinkMaker lm = TheLinkMaker;
-            bool diffs = Request.QueryString["diff"] == "y";
-            QualifiedTopicRevision diffVersion = null;
-            bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
-            bool isBlacklistedRestore = false;
-
-
-            if (restore == true)
+            using (RequestContext.Create())
             {
-                // Prevent restoring a topic with blacklisted content
-                if (Federation.IsBlacklisted(Federation.Read(topic)))
+                QualifiedTopicRevision topic = GetTopicVersionKey();
+                NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
+                LinkMaker lm = TheLinkMaker;
+                bool diffs = Request.QueryString["diff"] == "y";
+                QualifiedTopicRevision diffVersion = null;
+                bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
+                bool isBlacklistedRestore = false;
+
+
+                if (restore == true)
                 {
-                    isBlacklistedRestore = true;
+                    // Prevent restoring a topic with blacklisted content
+                    if (Federation.IsBlacklisted(Federation.Read(topic)))
+                    {
+                        isBlacklistedRestore = true;
+                    }
+                    else
+                    {
+                        Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
+                        return "";
+                    }
                 }
-                else
+
+                // Go edit if we try to view it and it doesn't exist
+                if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
                 {
-                    Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
+                    Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
                     return "";
                 }
+
+                StringBuilder strbldr = new StringBuilder();
+
+                urlForDiffs = lm.LinkToTopic(topic, true);
+                urlForNoDiffs = lm.LinkToTopic(topic, false);
+
+                if (diffs)
+                {
+                    diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
+                }
+
+
+                strbldr.AppendLine("<span id=\"TopicTip\" class=\"TopicTip\" ></span>");
+
+                //////////////////////////
+                ///
+
+                // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
+                string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
+
+
+                StringBuilder leftBorder = new StringBuilder();
+                StringBuilder rightBorder = new StringBuilder();
+                StringBuilder topBorder = new StringBuilder();
+                StringBuilder bottomBorder = new StringBuilder();
+
+                string templeft;
+                string tempright;
+                string temptop;
+                string tempbottom;
+
+                templeft = Federation.GetTopicFormattedBorder(topic, Border.Left);
+                if (!String.IsNullOrEmpty(templeft))
+                {
+                    leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
+                    leftBorder.AppendLine(templeft);
+                    leftBorder.AppendLine("</div>");
+                }
+                tempright = Federation.GetTopicFormattedBorder(topic, Border.Right);
+                if (!String.IsNullOrEmpty(tempright))
+                {
+                    rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
+                    rightBorder.AppendLine(tempright);
+                    rightBorder.AppendLine("</div>");
+                }
+                temptop = Federation.GetTopicFormattedBorder(topic, Border.Top);
+                if (!String.IsNullOrEmpty(temptop))
+                {
+                    topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
+                    topBorder.AppendLine(temptop);
+                    topBorder.AppendLine("</div>");
+                }
+                tempbottom = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
+                if (!String.IsNullOrEmpty(tempbottom))
+                {
+                    bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
+                    bottomBorder.AppendLine(tempbottom);
+                    bottomBorder.AppendLine("</div>");
+                }
+
+                // Using a simple 5 box model for Top/Left/Right/BottomBorder and TopicBody.
+                // Insert the TopBorder if it is required.
+                if (!String.IsNullOrEmpty(temptop))
+                {
+                    strbldr.AppendLine(topBorder.ToString());
+                }
+
+                // Insert the LeftBorder if it is required.
+                if (!String.IsNullOrEmpty(templeft))
+                {
+                    strbldr.AppendLine(leftBorder.ToString());
+                }
+
+                // Insert the TopicBody to hold the topic content
+                strbldr.AppendLine("<div id=\"TopicBody\">");
+                strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
+                strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
+                strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
+                strbldr.AppendLine("<div id=\"DynamicTopicBar\" class=\"DynamicTopicBar\" style=\"display: none\">");
+                //strbldr.AppendLine("<!-- <input id=\"TopicBarNamespace\" style=\"display: none\" type=\"text\"  name=\"QuickLinkNamespace\" /> -->");
+                strbldr.AppendLine("<input id=\"TopicBarInputBox\" title=\"Enter a topic here to go to or create\" class=\"QuickLinkInput\" type=\"text\"  name=\"QuickLink\" />");
+                strbldr.AppendLine("<div class=\"DynamicTopicBarHelp\">Enter a topic name to show or a new topic name to create; then press Enter</div>");
+                strbldr.AppendLine("</div></div></form>");
+
+                if (isBlacklistedRestore)
+                {
+                    strbldr.AppendLine("<div class=\"BlacklistedRestore\"><font color=\"red\"><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
+                }
+
+                strbldr.AppendLine(formattedBody);
+
+                // Close the TopicBody.
+                strbldr.AppendLine("</div>");
+
+                // Insert the RightBorder if it is required.
+                if (!String.IsNullOrEmpty(tempright))
+                {
+                    strbldr.AppendLine(rightBorder.ToString());
+                }
+
+                // Insert the BottomBorder if it is required.
+                if (!String.IsNullOrEmpty(tempbottom))
+                {
+                    strbldr.AppendLine(bottomBorder.ToString());
+                }
+
+                string page = strbldr.ToString();
+
+                return page;
             }
-
-            // Go edit if we try to view it and it doesn't exist
-            if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
-            {
-                Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
-                return "";
-            }
-
-            StringBuilder strbldr = new StringBuilder();
-
-            urlForDiffs = lm.LinkToTopic(topic, true);
-            urlForNoDiffs = lm.LinkToTopic(topic, false);
-
-            if (diffs)
-            {
-                diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
-            }
-
-
-            strbldr.AppendLine("<span id=\"TopicTip\" class=\"TopicTip\" ></span>");
-
-            //////////////////////////
-            ///
-
-            // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-            string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
-
-
-            StringBuilder leftBorder = new StringBuilder();
-            StringBuilder rightBorder = new StringBuilder();
-            StringBuilder topBorder = new StringBuilder();
-            StringBuilder bottomBorder = new StringBuilder();
-
-            string templeft;
-            string tempright;
-            string temptop;
-            string tempbottom;
-
-            templeft = Federation.GetTopicFormattedBorder(topic, Border.Left);
-            if (!String.IsNullOrEmpty(templeft))
-            {
-                leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
-                leftBorder.AppendLine(templeft);
-                leftBorder.AppendLine("</div>");
-            }
-            tempright = Federation.GetTopicFormattedBorder(topic, Border.Right);
-            if (!String.IsNullOrEmpty(tempright))
-            {
-                rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
-                rightBorder.AppendLine(tempright);
-                rightBorder.AppendLine("</div>");
-            }
-            temptop = Federation.GetTopicFormattedBorder(topic, Border.Top);
-            if (!String.IsNullOrEmpty(temptop))
-            {
-                topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
-                topBorder.AppendLine(temptop);
-                topBorder.AppendLine("</div>");
-            }
-            tempbottom = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
-            if (!String.IsNullOrEmpty(tempbottom))
-            {
-                bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
-                bottomBorder.AppendLine(tempbottom);
-                bottomBorder.AppendLine("</div>");
-            }
-
-            // Using a simple 5 box model for Top/Left/Right/BottomBorder and TopicBody.
-            // Insert the TopBorder if it is required.
-            if (!String.IsNullOrEmpty(temptop))
-            {
-                strbldr.AppendLine(topBorder.ToString());
-            }
-
-            // Insert the LeftBorder if it is required.
-            if (!String.IsNullOrEmpty(templeft))
-            {
-                strbldr.AppendLine(leftBorder.ToString());
-            }
-
-            // Insert the TopicBody to hold the topic content
-            strbldr.AppendLine("<div id=\"TopicBody\">");
-            strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
-            strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
-            strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
-            strbldr.AppendLine("<div id=\"DynamicTopicBar\" class=\"DynamicTopicBar\" style=\"display: none\">");
-            //strbldr.AppendLine("<!-- <input id=\"TopicBarNamespace\" style=\"display: none\" type=\"text\"  name=\"QuickLinkNamespace\" /> -->");
-            strbldr.AppendLine("<input id=\"TopicBarInputBox\" title=\"Enter a topic here to go to or create\" class=\"QuickLinkInput\" type=\"text\"  name=\"QuickLink\" />");
-            strbldr.AppendLine("<div class=\"DynamicTopicBarHelp\">Enter a topic name to show or a new topic name to create; then press Enter</div>");
-            strbldr.AppendLine("</div></div></form>");
-
-            if (isBlacklistedRestore)
-            {
-                strbldr.AppendLine("<div class=\"BlacklistedRestore\"><font color=\"red\"><b>The version of the topic you are trying to restore contains content that has been banned by policy of this site.  Restore can not be completed.</b></font></div>");
-            }
-
-            strbldr.AppendLine(formattedBody);
-
-            // Close the TopicBody.
-            strbldr.AppendLine("</div>");
-
-            // Insert the RightBorder if it is required.
-            if (!String.IsNullOrEmpty(tempright))
-            {
-                strbldr.AppendLine(rightBorder.ToString());
-            }
-
-            // Insert the BottomBorder if it is required.
-            if (!String.IsNullOrEmpty(tempbottom))
-            {
-                strbldr.AppendLine(bottomBorder.ToString());
-            }
-
-            string page = strbldr.ToString();
-
-            return page;
         }
 
         private void WriteRecentPane()

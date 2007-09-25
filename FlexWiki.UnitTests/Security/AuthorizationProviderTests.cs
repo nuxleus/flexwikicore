@@ -448,6 +448,42 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void HasPermissionFromRequestContext()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleTopicNoImports, MockSetupOptions.CacheDisabled);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+            MockContentStore store = (MockContentStore) manager.GetProvider(typeof(MockContentStore)); 
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                store.TextReaderForTopicCalled = false; 
+
+                UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
+                provider.HasPermission(topicName, TopicPermission.Read);
+
+                Assert.IsTrue(store.TextReaderForTopicCalled,
+                    "Checking that cache was not used when no RequestContext has been established.");
+
+                using (RequestContext.Create())
+                {
+                    store.TextReaderForTopicCalled = false;
+                    bool first = provider.HasPermission(topicName, TopicPermission.Read);
+
+                    Assert.IsTrue(store.TextReaderForTopicCalled,
+                        "Checking that store was called while populating cache.");
+
+                    store.TextReaderForTopicCalled = false;
+                    bool second = provider.HasPermission(topicName, TopicPermission.Read);
+
+                    Assert.IsFalse(store.TextReaderForTopicCalled,
+                        "Checking that the store was not called after cache is populated."); 
+                }
+            }
+        }
+
+        [Test]
         public void HasPermissionNonexistentTopicAllowed()
         {
             FederationConfiguration configuration = new FederationConfiguration();
