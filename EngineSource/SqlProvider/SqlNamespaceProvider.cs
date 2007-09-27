@@ -236,10 +236,6 @@ namespace FlexWiki.SqlProvider
             {
                 Title = value;
             }
-            else
-            {
-                throw new ArgumentException("Unknown parameter: " + name);
-            }
 
             _parameters.AddOrReplace(new NamespaceProviderParameter(name, value)); 
             

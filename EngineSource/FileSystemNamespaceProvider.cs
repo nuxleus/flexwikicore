@@ -216,10 +216,6 @@ namespace FlexWiki
             {
                 Title = value;
             }
-            else
-            {
-                throw new Exception("Unknown parameter: " + parameter);
-            }
 
             _parameters.AddOrReplace(new NamespaceProviderParameter(parameter, value));
         }
