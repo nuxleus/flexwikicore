@@ -1,0 +1,684 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0EE80D53-C65E-4AFE-953A-AB9160521890}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FlexWiki.Web</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FlexWiki.Web</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\EngineSource\FlexWikiEngine.csproj">
+      <Name>FlexWikiEngine</Name>
+      <Project>{7362F597-DAB3-437E-8A07-37D8D2FE6E56}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AboutCaptcha.html" />
+    <Content Include="AccessDenied.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\Config.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\ReloadConfiguration.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\default.aspx">
+    </Content>
+    <Content Include="admin\EditLinksBlacklist.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\EditProvider.aspx">
+    </Content>
+    <Content Include="admin\Newsletter.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\Providers.aspx">
+    </Content>
+    <Content Include="admin\ShowCache.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\ShowUpdates.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\UpgradeConfigFile.aspx">
+    </Content>
+    <Content Include="admin\Users.aspx" />
+    <Content Include="admin\WikiAdmin.js" />
+    <Content Include="Blade.aspx">
+    </Content>
+    <Content Include="classic.css" />
+    <Content Include="Compare.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="HttpsRequired.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="RegisterUser.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="RecoverPassword.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="default.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="DoSearch.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="EditService.asmx" />
+    <Content Include="emoticons\angel_smile.gif" />
+    <Content Include="emoticons\angry_smile.gif" />
+    <Content Include="emoticons\bat.gif" />
+    <Content Include="emoticons\beer_yum.gif" />
+    <Content Include="emoticons\bowwow.gif" />
+    <Content Include="emoticons\broken_heart.gif" />
+    <Content Include="emoticons\cake.gif" />
+    <Content Include="emoticons\camera.gif" />
+    <Content Include="emoticons\clock.gif" />
+    <Content Include="emoticons\coffee.gif" />
+    <Content Include="emoticons\confused_smile.gif" />
+    <Content Include="emoticons\cry_smile.gif" />
+    <Content Include="emoticons\devil_smile.gif" />
+    <Content Include="emoticons\dude_hug.gif" />
+    <Content Include="emoticons\embaressed_smile.gif" />
+    <Content Include="emoticons\envelope.gif" />
+    <Content Include="emoticons\film.gif" />
+    <Content Include="emoticons\girl_handsacrossamerica.gif" />
+    <Content Include="emoticons\girl_hug.gif" />
+    <Content Include="emoticons\guy_handsacrossamerica.gif" />
+    <Content Include="emoticons\heart.gif" />
+    <Content Include="emoticons\kiss.gif" />
+    <Content Include="emoticons\kittykay.gif" />
+    <Content Include="emoticons\lightbulb.gif" />
+    <Content Include="emoticons\martini_shaken.gif" />
+    <Content Include="emoticons\messenger.gif" />
+    <Content Include="emoticons\moon.gif" />
+    <Content Include="emoticons\musical_note.gif" />
+    <Content Include="emoticons\omg_smile.gif" />
+    <Content Include="emoticons\phone.gif" />
+    <Content Include="emoticons\present.gif" />
+    <Content Include="emoticons\regular_smile.gif" />
+    <Content Include="emoticons\rose.gif" />
+    <Content Include="emoticons\sad_smile.gif" />
+    <Content Include="emoticons\shades_smile.gif" />
+    <Content Include="emoticons\star.gif" />
+    <Content Include="emoticons\teeth_smile.gif" />
+    <Content Include="emoticons\thumbs_down.gif" />
+    <Content Include="emoticons\thumbs_up.gif" />
+    <Content Include="emoticons\tounge_smile.gif" />
+    <Content Include="emoticons\whatchutalkingabout_smile.gif" />
+    <Content Include="emoticons\wilted_rose.gif" />
+    <Content Include="emoticons\wink_smile.gif" />
+    <Compile Include="AccessDenied.aspx.cs">
+      <DependentUpon>AccessDenied.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\ReloadConfiguration.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\ShowCache.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\Users.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AlternateStylesheetConfiguration.cs" />
+    <Compile Include="Analysis\Island.cs" />
+    <Compile Include="Analysis\Ocean.cs" />
+    <Compile Include="AspNetWikiCache.cs" />
+    <Compile Include="AttachmentIconConfiguration.cs" />
+    <Compile Include="CaptchaImage.cs" />
+    <Compile Include="CaptchaImageHandler.cs" />
+    <Compile Include="CaptchaRequired.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="HttpsRequired.aspx.cs">
+      <DependentUpon>HttpsRequired.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PageUtilities.cs" />
+    <Compile Include="RegisterUser.aspx.cs">
+      <DependentUpon>RegisterUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FlexWikiApplicationConfiguration.cs" />
+    <Content Include="Global.asax">
+    </Content>
+    <Content Include="images\go-dark.gif" />
+    <Content Include="images\go.gif" />
+    <Content Include="images\help.gif" />
+    <Content Include="images\home.gif" />
+    <Content Include="images\p-off.gif" />
+    <Content Include="images\p-on.gif" />
+    <Content Include="images\perma.gif" />
+    <Content Include="images\pin.gif" />
+    <Content Include="images\search.gif" />
+    <Content Include="images\tile-title.gif" />
+    <Content Include="images\versions.gif" />
+    <Content Include="LastModified.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Login.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Logoff.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="LostAndFound.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Preview.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Print.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="QuickLink.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Rename.aspx">
+    </Content>
+    <Content Include="RequestNamespace.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Rss.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="RssFace.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="SafeMode.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Search.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="diagnostics\SecurityContext.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="ShowNewsletter.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="UpgradeConfigurationFile.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Versions.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Web.config" />
+    <Content Include="wiki.css" />
+    <Content Include="WikiDefault.js" />
+    <Content Include="WikiEdit.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="WikiEdit.js" />
+    <Content Include="WikiMenu.js" />
+    <Content Include="WikiTopicBar.js" />
+    <Content Include="xslt\rssToWikiList.xslt" />
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="admin\AdminPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\Config.aspx.cs">
+      <DependentUpon>Config.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\ConfigurationChecker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="admin\default.aspx.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\EditLinksBlacklist.aspx.cs">
+      <DependentUpon>EditLinksBlacklist.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\EditProvider.aspx.cs">
+      <DependentUpon>EditProvider.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\Level.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="admin\Newsletter.aspx.cs">
+      <DependentUpon>Newsletter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\Providers.aspx.cs">
+      <DependentUpon>Providers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\Result.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="admin\ShowUpdates.aspx.cs">
+      <DependentUpon>ShowUpdates.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\UpgradeConfigFile.aspx.cs">
+      <DependentUpon>UpgradeConfigFile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BasePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Blade.aspx.cs">
+      <DependentUpon>Blade.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChoiceSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Command.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Compare.aspx.cs">
+      <DependentUpon>Compare.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Analysis\ContentStoreAnalysis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="default.aspx.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DoSearch.aspx.cs">
+      <DependentUpon>DoSearch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditService.asmx.cs">
+      <DependentUpon>EditService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FlexWikiWebApplication.cs" />
+    <Compile Include="FormValues.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HTMLStringWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HTMLWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LastModified.aspx.cs">
+      <DependentUpon>LastModified.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Logoff.aspx.cs">
+      <DependentUpon>Logoff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LostAndFound.aspx.cs">
+      <DependentUpon>LostAndFound.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NewsletterConfiguration.cs" />
+    <Compile Include="Newsletters\DaemonBasedDeliveryBoy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Newsletters\NewsletterDaemon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Newsletters\NewsletterManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Preview.aspx.cs">
+      <DependentUpon>Preview.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Print.aspx.cs">
+      <DependentUpon>Print.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="QuickLink.aspx.cs">
+      <DependentUpon>QuickLink.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RecoverPassword.aspx.cs">
+      <DependentUpon>RecoverPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Rename.aspx.cs">
+      <DependentUpon>Rename.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RequestNamespace.aspx.cs">
+      <DependentUpon>RequestNamespace.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Rss.aspx.cs">
+      <DependentUpon>Rss.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RssFace.aspx.cs">
+      <DependentUpon>RssFace.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SafeMode.aspx.cs">
+      <DependentUpon>SafeMode.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security.cs" />
+    <Compile Include="Services\EditServiceImplementation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\WireTypes\AbsoluteTopicName.cs" />
+    <Compile Include="Services\WireTypes\AbsoluteTopicNameCollection.cs" />
+    <Compile Include="Services\WireTypes\BELObject.cs" />
+    <Compile Include="Services\WireTypes\ContentBase.cs" />
+    <Compile Include="Services\WireTypes\ContentBaseCollection.cs" />
+    <Compile Include="Services\WireTypes\ReflectedValueSource.cs" />
+    <Compile Include="Services\WireTypes\TopicName.cs" />
+    <Compile Include="Services\WireTypes\TopicNameCollection.cs" />
+    <Compile Include="Services\WireTypes\WikiVersion.cs" />
+    <Compile Include="ShowNewsletter.aspx.cs">
+      <DependentUpon>ShowNewsletter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Analysis\TopicAnalysis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UIColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UIResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UITable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UpdateInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UpdateMonitor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UpgradeConfigurationFile.aspx.cs">
+      <DependentUpon>UpgradeConfigurationFile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Versions.aspx.cs">
+      <DependentUpon>Versions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebApplicationLogEventFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WikiEdit.aspx.cs">
+      <DependentUpon>WikiEdit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <EmbeddedResource Include="AccessDenied.aspx.resx">
+      <DependentUpon>AccessDenied.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\Config.aspx.resx">
+      <DependentUpon>Config.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\ReloadConfiguration.aspx.resx">
+      <DependentUpon>ReloadConfiguration.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\default.aspx.resx">
+      <DependentUpon>default.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\EditLinksBlacklist.aspx.resx">
+      <DependentUpon>EditLinksBlacklist.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\EditProvider.aspx.resx">
+      <DependentUpon>EditProvider.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\Newsletter.aspx.resx">
+      <DependentUpon>Newsletter.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\Providers.aspx.resx">
+      <DependentUpon>Providers.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\ShowCache.aspx.resx">
+      <DependentUpon>ShowCache.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\ShowUpdates.aspx.resx">
+      <DependentUpon>ShowUpdates.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="admin\UpgradeConfigFile.aspx.resx">
+      <DependentUpon>UpgradeConfigFile.aspx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Blade.aspx.resx">
+      <DependentUpon>Blade.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Compare.aspx.resx">
+      <DependentUpon>Compare.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HttpsRequired.aspx.resx">
+      <DependentUpon>HttpsRequired.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegisterUser.aspx.resx">
+      <DependentUpon>RegisterUser.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="default.aspx.resx">
+      <DependentUpon>default.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DoSearch.aspx.resx">
+      <DependentUpon>DoSearch.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditService.asmx.resx">
+      <DependentUpon>EditService.asmx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Global.asax.resx">
+      <DependentUpon>Global.asax.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LastModified.aspx.resx">
+      <DependentUpon>LastModified.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login.aspx.resx">
+      <DependentUpon>Login.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Logoff.aspx.resx">
+      <DependentUpon>Logoff.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LostAndFound.aspx.resx">
+      <DependentUpon>LostAndFound.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Preview.aspx.resx">
+      <DependentUpon>Preview.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Print.aspx.resx">
+      <DependentUpon>Print.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QuickLink.aspx.resx">
+      <DependentUpon>QuickLink.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecoverPassword.aspx.resx">
+      <DependentUpon>RecoverPassword.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Rename.aspx.resx">
+      <DependentUpon>Rename.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RequestNamespace.aspx.resx">
+      <DependentUpon>RequestNamespace.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Rss.aspx.resx">
+      <DependentUpon>Rss.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RssFace.aspx.resx">
+      <DependentUpon>RssFace.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SafeMode.aspx.resx">
+      <DependentUpon>SafeMode.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Search.aspx.resx">
+      <DependentUpon>Search.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Services\EditServiceImplementation.resx">
+      <DependentUpon>EditServiceImplementation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShowNewsletter.aspx.resx">
+      <DependentUpon>ShowNewsletter.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpgradeConfigurationFile.aspx.resx">
+      <DependentUpon>UpgradeConfigurationFile.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Versions.aspx.resx">
+      <DependentUpon>Versions.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WikiEdit.aspx.resx">
+      <DependentUpon>WikiEdit.aspx.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="CaptchaImage.ashx" />
+    <None Include="flexwiki.config.template" />
+    <None Include="log4net.config.template" />
+    <None Include="flexwiki.config" />
+    <None Include="log4net.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="logs\" />
+    <Folder Include="Namespaces\SampleNamespaceOne\" />
+    <Folder Include="Namespaces\SampleNamespaceTwo\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
