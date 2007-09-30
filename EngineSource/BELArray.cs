@@ -90,21 +90,9 @@ namespace FlexWiki
 
             foreach (IBELObject each in Array)
             {
-                try
-                {
                     ArrayList parms = new ArrayList();
                     parms.Add(each);
                     answer.Add(block.Value(ctx, parms));
-                }
-                catch (FlexWikiAuthorizationException ex)
-                {
-                    //do nothing - error is inside WikiTalk and may be safely ignored
-                    if (ex != null)
-                    {
-                        ex = null;
-                    }
-                }
-
             }
             return answer;
         }
@@ -126,8 +114,6 @@ namespace FlexWiki
             {
                 ArrayList parms = new ArrayList();
 
-                try
-                {
                     parms.Add(each);
                     IBELObject objValue = block.Value(ctx, parms);
                     BELBoolean test = objValue as BELBoolean;
@@ -135,15 +121,6 @@ namespace FlexWiki
                         throw new ExecutionException(ctx.CurrentLocation, "Select block must evaluate to a boolean.  Got " + BELType.BELTypeForType(objValue.GetType()).ExternalTypeName + " instead.");
                     if (test.Value)
                         answer.Add(each);
-                }
-                catch(FlexWikiAuthorizationException ex)
-                {
-                    //do nothing - error is inside WikiTalk and may be safely ignored
-                    if (ex != null)
-                    {
-                        ex = null;
-                    }
-                }
             }
             return answer;
         }

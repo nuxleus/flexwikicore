@@ -869,6 +869,10 @@ namespace FlexWiki
         }
         public TopicPropertyCollection GetTopicProperties(UnqualifiedTopicName topic)
         {
+            if (!HasPermission(topic, TopicPermission.Read))
+            {
+                return null;
+            }
             ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(new UnqualifiedTopicRevision(topic));
             
             if (parsedTopic == null)
@@ -942,7 +946,6 @@ namespace FlexWiki
             {
                 return null;
             }
-
             return changes.Latest.Version;
 
         }
@@ -1156,6 +1159,10 @@ namespace FlexWiki
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicName topic)
         {
+            if (!HasPermission(topic, TopicPermission.Read))
+            {
+                return null;
+            }
             return TextReaderForTopic(new UnqualifiedTopicRevision(topic.LocalName, null));
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
