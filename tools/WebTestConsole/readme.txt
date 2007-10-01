@@ -13,15 +13,15 @@ Usage of WebTestConsole is as follows:
 
 webtestconsole /baseUrl=http://your.server.com/path/to/wiki/
   /iterations=n /urllist=path\to\urls.txt /output=path\to\output.csv
-  /tag=your-tag
+  /tag=your-tag /depthfirst
 
 An example would be: 
 
 webtestconsole /baseUrl=http://w2k3baseline/wiki/ /iterations=3
   /urllist=urls.txt /output=flexwiki20.csv /tag=flexwiki20
 
-The command line switches are all required, and have the following
-meanings: 
+Most command line switches are required (all but /depthfirst), and 
+have the following meanings: 
 
 /baseUrl=	Specifies the "base URL". URLs in the URL file (see
 		/urllist below), are appended to this base URL. 
@@ -35,6 +35,10 @@ meanings:
 /tag=		A bit of text that is copied into the result file for
 		every result. Meant as a short, descriptive tag for
 		the test being run. E.g. "flexwiki20". 
+/depthfirst Perform a depth-first traversal of the URLs. That is, 
+        instead of going through the whole list n times, go through
+        each URL n times, then move on to the next URL. If this
+        switch is omitted, the traversal defaults to breadth-first.
 
 WebTestConsole creates two output files for every run of the program:
 a results file and an errors file. The errors file is simply a

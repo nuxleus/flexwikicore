@@ -10,6 +10,7 @@ namespace WebTestConsole
     class Program
     {
         private string _baseUrl;
+        private bool _depthFirst; 
         private int _iterations;
         private string _outputFile;
         private string _tag; 
@@ -63,62 +64,26 @@ namespace WebTestConsole
             StreamWriter outputWriter = new StreamWriter(outputPath);
             StreamWriter errorWriter = new StreamWriter(errorPath);
 
-            outputWriter.WriteLine("tag, starttime, time, iteration, exception, statuscode, ttfb, ttlb, bytes, url"); 
-            for (int iteration = 0; iteration < _iterations; ++iteration)
+            outputWriter.WriteLine("tag, starttime, time, iteration, exception, statuscode, ttfb, ttlb, bytes, url");
+
+            if (_depthFirst)
             {
                 foreach (string relativeUrl in urls)
                 {
-                    bool succeeded = false;
-                    string absoluteUrl = string.Empty; 
-                    long ttfb = 0; 
-                    long ttlb = 0; 
-                    long bytes = 0; 
-                    int status = 0;
-                    string statusDescription = string.Empty; 
-                    try
+                    for (int iteration = 0; iteration < _iterations; ++iteration)
                     {
-                        absoluteUrl = UrlCombine(_baseUrl, relativeUrl);
-                        stopwatch.Stop();
-                        stopwatch.Reset();
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(absoluteUrl);
-                        request.AllowAutoRedirect = false; 
-                        stopwatch.Start();
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                        ttfb = stopwatch.ElapsedMilliseconds;
-                        bytes = ConsumeStream(response.GetResponseStream());
-                        stopwatch.Stop();
-                        ttlb = stopwatch.ElapsedMilliseconds;
-                        status = (int) response.StatusCode;
-                        statusDescription = response.StatusDescription; 
-                        response.Close();
-                        succeeded = true; 
+                        DoUrl(stopwatch, startTime, outputWriter, errorWriter, iteration, relativeUrl);
                     }
-                    catch (Exception x)
+                }
+            }
+            else
+            {
+                for (int iteration = 0; iteration < _iterations; ++iteration)
+                {
+                    foreach (string relativeUrl in urls)
                     {
-                        errorWriter.WriteLine("URL: ({0}) {1}", iteration, absoluteUrl);
-                        errorWriter.WriteLine(x);
-                        errorWriter.WriteLine(); 
+                        DoUrl(stopwatch, startTime, outputWriter, errorWriter, iteration, relativeUrl);
                     }
-
-                    outputWriter.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-                        _tag,
-                        startTime, 
-                        DateTime.Now,
-                        iteration,
-                        !succeeded,
-                        status,
-                        ttfb,
-                        ttlb,
-                        bytes,
-                        absoluteUrl
-                    ); 
-
-                    Console.WriteLine("Iteration: {0} {1}", iteration, absoluteUrl);
-                    Console.WriteLine("Exception? {0}", !succeeded); 
-                    Console.WriteLine("TTFB/TTLB: {0}/{1}", ttfb, ttlb);
-                    Console.WriteLine("Bytes: {0}", bytes); 
-                    Console.WriteLine("Status: {0} {1}", status, statusDescription);
-                    Console.WriteLine(); 
                 }
             }
 
@@ -139,6 +104,60 @@ namespace WebTestConsole
             }
 
             return bytesRead;
+        }
+        private void DoUrl(Stopwatch stopwatch, DateTime startTime, StreamWriter outputWriter, StreamWriter errorWriter, int iteration, string relativeUrl)
+        {
+            bool succeeded = false;
+            string absoluteUrl = string.Empty;
+            long ttfb = 0;
+            long ttlb = 0;
+            long bytes = 0;
+            int status = 0;
+            string statusDescription = string.Empty;
+            try
+            {
+                absoluteUrl = UrlCombine(_baseUrl, relativeUrl);
+                stopwatch.Stop();
+                stopwatch.Reset();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(absoluteUrl);
+                request.AllowAutoRedirect = false;
+                stopwatch.Start();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                ttfb = stopwatch.ElapsedMilliseconds;
+                bytes = ConsumeStream(response.GetResponseStream());
+                stopwatch.Stop();
+                ttlb = stopwatch.ElapsedMilliseconds;
+                status = (int)response.StatusCode;
+                statusDescription = response.StatusDescription;
+                response.Close();
+                succeeded = true;
+            }
+            catch (Exception x)
+            {
+                errorWriter.WriteLine("URL: ({0}) {1}", iteration, absoluteUrl);
+                errorWriter.WriteLine(x);
+                errorWriter.WriteLine();
+            }
+
+            outputWriter.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
+                _tag,
+                startTime,
+                DateTime.Now,
+                iteration,
+                !succeeded,
+                status,
+                ttfb,
+                ttlb,
+                bytes,
+                absoluteUrl
+            );
+
+            Console.WriteLine("Iteration: {0} {1}", iteration, absoluteUrl);
+            Console.WriteLine("Exception? {0}", !succeeded);
+            Console.WriteLine("TTFB/TTLB: {0}/{1}", ttfb, ttlb);
+            Console.WriteLine("Bytes: {0}", bytes);
+            Console.WriteLine("Status: {0} {1}", status, statusDescription);
+            Console.WriteLine();
         }
         private static Program ParseOptions(string[] args)
         {
@@ -174,6 +193,10 @@ namespace WebTestConsole
                     else if (command.StartsWith("tag=", StringComparison.CurrentCultureIgnoreCase))
                     {
                         program._tag = ParseValue(command); 
+                    }
+                    else if (command.Equals("/depthfirst", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        program._depthFirst = true; 
                     }
                     else
                     {
