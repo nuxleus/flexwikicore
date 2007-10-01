@@ -499,6 +499,17 @@ file://servername/umuff&#126;/folder%20name/file.txt",
 
         }
         [Test]
+        public void IncludedTopicNoReadPermission()
+        {
+            WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
+            QualifiedTopicRevision top = new QualifiedTopicRevision("TopicWithInclude", _namespaceManager.Namespace);
+            Formatter.Format(top, Federation.NamespaceManagerForTopic(top).Read(top.LocalName), output,
+                _namespaceManager, _lm, _externals, 0);
+            string result = output.ToString();
+            Assert.AreEqual("<span style=\"display:none\">.</span>\r\n", result, 
+                "Checking that the formatter returned no text for an included topic with DenyRead permission.");
+        }
+        [Test]
         public void InlineExternalReference()
         {
             FormatTest(

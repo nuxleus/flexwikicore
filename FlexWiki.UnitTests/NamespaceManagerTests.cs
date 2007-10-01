@@ -1266,6 +1266,24 @@ namespace FlexWiki.UnitTests
                 "Checking that null is returned for a nonexistent topic.");
         }
         [Test]
+        public void GetTopicPropertiesNoReadPermission()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              new TestContentSet(
+                new TestNamespace("NamespaceOne",
+                  new TestTopic("NoReadTopic", "author", @"DenyRead: all
+PropertyOne: ValueOne
+PropertyTwo: Value Two
+PropertyOne: List, of, values")
+                  )
+                )
+              );
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            Assert.IsNull(manager.GetTopicProperties("NoReadTopic"),
+                "Checking that null is returned for a topic with no read permission.");
+        }
+        [Test]
         public void GetTopicProperty()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
@@ -1344,6 +1362,27 @@ PropertyOne: List, of, values")
             TopicProperty property = manager.GetTopicProperty("NoSuchTopic", "NoSuchProperty");
 
             Assert.IsNull(property, "Checking that property comes back null when topic does not exist.");
+        }
+        [Test]
+        public void GetTopicPropertyNoReadPermission()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+              new TestContentSet(
+                new TestNamespace("NamespaceOne",
+                  new TestTopic("TopicOneNoRead", "author", @"DenyRead: all
+PropertyOne: ValueOne
+PropertyTwo: Value Two
+PropertyOne: List, of, values")
+                  )
+                )
+              );
+
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            TopicProperty property = manager.GetTopicProperty("TopicOneNoRead", "PropertyOne");
+
+            Assert.IsNull(property,
+                "Checking that null is returned for a property within a topic with no read permission.");
         }
         [Test]
         public void HasPermissionAllowedEdit()
@@ -1941,6 +1980,25 @@ PropertyOne: List, of, values")
             Assert.IsNull(textReader, "Checking that null text reader is returned for nonexistent version");
         }
         [Test]
+        public void TextReaderForTopicNoReadPermission()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+              new TestContentSet(
+                new TestNamespace("NamespaceOne",
+                  new TestTopic("TopicOneNoRead", "author", @"DenyRead: all
+PropertyOne: ValueOne
+PropertyTwo: Value Two
+PropertyOne: List, of, values")
+                  )
+                )
+              );
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            TextReader textReader = manager.TextReaderForTopic("TopicOneNoRead");
+
+            Assert.IsNull(textReader, "Checking that null text reader is returned for topicName with no read permission");
+        }
+        [Test]
         public void Title()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
@@ -2109,6 +2167,22 @@ PropertyOne: List, of, values")
             WikiTestUtilities.AssertTopicsCorrectUnordered(topics,
                 new TopicName("NamespaceOne.TopicOne"),
                 new TopicName("NamespaceOne._ContentBaseDefinition"),
+                new TopicName("NamespaceOne.HomePage"),             // Built-in
+                new TopicName("NamespaceOne._NormalBorders"));      // Built-in
+        }
+        [Test]
+        public void TopicsWithANoReadPermission()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SecuredTopicsSet);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            ArrayList topics = manager.Topics(new ExecutionContext());
+
+            Assert.AreEqual(4, topics.Count, "Checking that two topics were returned.");
+            WikiTestUtilities.AssertTopicsCorrectUnordered(topics,
+                new TopicName("NamespaceOne.ReadWrite"),
+                new TopicName("NamespaceOne.ReadOnly"),
                 new TopicName("NamespaceOne.HomePage"),             // Built-in
                 new TopicName("NamespaceOne._NormalBorders"));      // Built-in
         }

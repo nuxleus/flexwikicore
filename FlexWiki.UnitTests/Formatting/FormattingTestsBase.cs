@@ -96,8 +96,14 @@ len=@@topics.TopicWithBehaviorProperties.Face@@
 lenWith=@@topics.TopicWithBehaviorProperties.FaceWithArg(""superb"")@@
 lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is wonderful"")@@
 ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestTopicWithBehaviorProperty", 
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestTopicWithBehaviorProperty",
 @"lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is wonderful"")@@", _user);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithInclude","{{TopicOneNoRead}}", _user);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicOneNoRead",
+@"DenyRead: all
+PropertyOne: ValueOne
+PropertyTwo: Value Two
+PropertyOne: List, of, values", _user);
 
 
             _externals = new ExternalReferencesMap();
