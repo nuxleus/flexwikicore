@@ -779,7 +779,6 @@ namespace FlexWiki
         public DateTime GetTopicCreationTime(UnqualifiedTopicRevision revision)
         {
             TopicChangeCollection changes = AllChangesForTopic(revision.DottedName);
-
             if (changes == null)
             {
                 throw TopicNotFoundException.ForTopic(revision, Namespace); 
@@ -901,6 +900,10 @@ namespace FlexWiki
         }
         public TopicProperty GetTopicProperty(UnqualifiedTopicRevision revision, string propertyName)
         {
+            if (!HasPermission(new UnqualifiedTopicName(revision.LocalName), TopicPermission.Read))
+            {
+                return null;
+            }
             ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(revision);
 
             if (parsedTopic == null)
@@ -1159,14 +1162,14 @@ namespace FlexWiki
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicName topic)
         {
-            if (!HasPermission(topic, TopicPermission.Read))
-            {
-                return null;
-            }
             return TextReaderForTopic(new UnqualifiedTopicRevision(topic.LocalName, null));
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
         {
+            if (!HasPermission(new UnqualifiedTopicName(revision.LocalName), TopicPermission.Read))
+            {
+                return null;
+            }
             return ContentProviderChain.TextReaderForTopic(revision); 
         }
         public bool TopicExists(string topic, ImportPolicy importPolicy)
@@ -1247,7 +1250,10 @@ namespace FlexWiki
             ArrayList answer = new ArrayList();
             foreach (TopicName name in AllTopics(ImportPolicy.DoNotIncludeImports))
             {
-                answer.Add(new TopicVersionInfo(Federation, new QualifiedTopicRevision(name)));
+                if (HasPermission(new UnqualifiedTopicName(name.LocalName), TopicPermission.Read))
+                {
+                    answer.Add(new TopicVersionInfo(Federation, new QualifiedTopicRevision(name)));
+                }
             }
 
             // Add cache rules for all the topics in the namespaces and for the definition (in case the imports change)

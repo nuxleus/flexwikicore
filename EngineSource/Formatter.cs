@@ -1382,7 +1382,11 @@ namespace FlexWiki.Formatting
             string ns = NamespaceManager.UnambiguousTopicNameFor(topic.LocalName).Namespace;
             NamespaceManager containingNamespaceManager = Federation.NamespaceManagerForNamespace(ns);
             QualifiedTopicRevision abs = new QualifiedTopicRevision(topic.LocalName, ns);
-            string content = containingNamespaceManager.Read(abs.LocalName).TrimEnd();
+            string content = "";
+            if (containingNamespaceManager.HasPermission(new UnqualifiedTopicName(abs.LocalName), TopicPermission.Read))
+            {
+                content = containingNamespaceManager.Read(abs.LocalName).TrimEnd();
+            }
             WikiOutput output = WikiOutput.ForFormat(_output.Format, Output);
             Formatter.Format(abs, content, output, NamespaceManager, LinkMaker(), _externalWikiMap, headingLevelBase);
             return output.ToString().Trim();
