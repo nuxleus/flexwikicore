@@ -95,6 +95,7 @@ namespace FlexWiki
                 return _created; 
             }
         }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer true if topic exists, otherwise false)")]
         public bool Exists
         {
             get
