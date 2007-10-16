@@ -229,12 +229,12 @@ namespace FlexWiki
             int frac = 0;
             if (match.Groups["fraction"] != null)
             {
-                string fracs = "0." + match.Groups["fraction"].Value;
-                Decimal f;
-                bool parsed = Decimal.TryParse(fracs, out f);
+                string fracs = match.Groups["fraction"].Value + "000";
+                int f;
+                bool parsed = int.TryParse(fracs.Substring(0,3), out f);
                 if (parsed)
                 {
-                    frac = (int) (1000 * f); 
+                        frac = f;
                 }
             }
 
