@@ -29,6 +29,7 @@ namespace FlexWiki.UnitTests
         private bool _allChangesForTopicSinceCalled;
         private bool _allTopicsCalled; 
         private DateTime _created;
+        private bool _hasNamespacePermissionCalled; 
         private bool _hasPermissionCalled; 
         private MockSetupOptions _options;
         private bool _textReaderForTopicCalled;
@@ -79,6 +80,11 @@ namespace FlexWiki.UnitTests
         {
             get { return _allTopicsCalled; }
             set { _allTopicsCalled = value; }
+        }
+        internal bool HasNamespacePermissionCalled
+        {
+            get { return _hasNamespacePermissionCalled; }
+            set { _hasNamespacePermissionCalled = value; }
         }
         internal bool HasPermissionCalled
         {
@@ -169,7 +175,12 @@ namespace FlexWiki.UnitTests
             base.Initialize(manager); 
             _created = manager.Federation.TimeProvider.Now;
         }
-
+        public override bool HasNamespacePermission(NamespacePermission permission)
+        {
+            _hasNamespacePermissionCalled = true; 
+            // We don't do anything with namespace permission policy at this level. 
+            return true;
+        }
         public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             _hasPermissionCalled = true; 

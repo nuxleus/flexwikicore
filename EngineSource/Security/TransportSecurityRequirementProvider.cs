@@ -109,6 +109,13 @@ namespace FlexWiki.Security
                 return _next.GetParsedTopic(topicRevision);
             }
         }
+        public bool HasNamespacePermission(NamespacePermission permission)
+        {
+            using (CreateRecursionContext())
+            {
+                return _next.HasNamespacePermission(permission); 
+            }
+        }
         public bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             using (CreateRecursionContext())

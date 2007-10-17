@@ -179,8 +179,7 @@ namespace FlexWiki.Caching
             {
                 if (CacheEnabled)
                 {
-                    InvalidateItemsForAnyRevisionOfTopic(topic);
-                    InvalidateTopicListItem();
+                    InvalidateAllItemsForNamespace();
                 }
             }
         }
@@ -205,6 +204,30 @@ namespace FlexWiki.Caching
                 return Next.GetParsedTopic(topicRevision); 
             }
         }
+        public override bool HasNamespacePermission(NamespacePermission permission)
+        {
+            if (CacheEnabled)
+            {
+                string key = GetKeyForNamespacePermission(permission);
+                object cachedValue = Cache[key];
+
+                if (cachedValue == null)
+                {
+                    bool hasPermission = Next.HasNamespacePermission(permission);
+                    Cache[key] = hasPermission;
+                    return hasPermission;
+                }
+                else
+                {
+                    return (bool)cachedValue;
+                }
+            }
+            else
+            {
+                return Next.HasNamespacePermission(permission);
+            }
+        }
+
         public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             if (CacheEnabled)
@@ -309,8 +332,9 @@ namespace FlexWiki.Caching
                     // and a null revision, and we don't know which two are the same. So on the principal
                     // that writes are rare and reads of non-tip revisions are common, we invalidate 
                     // all revisions. 
-                    InvalidateItemsForAnyRevisionOfTopic(topicRevision.AsUnqualifiedTopicName());
-                    InvalidateTopicListItem();
+                    // On top of that, writes to some topics (e.g. _ContentBaseDefinition) can change the
+                    // results of other topics. Thus on write we flush the whole cache. 
+                    InvalidateAllItemsForNamespace(); 
                 }
             }
         }
@@ -318,6 +342,11 @@ namespace FlexWiki.Caching
         private string GetKeyForNamespaceExistence()
         {
             return new TopicCacheKey(new QualifiedTopicRevision("AllTopics", Namespace), "NamespaceExistence").ToString(); 
+        }
+        private string GetKeyForNamespacePermission(NamespacePermission permission)
+        {
+            return new TopicCacheKey(new QualifiedTopicRevision("AllTopics", Namespace), 
+                "NamespacePermission-" + permission.ToString()).ToString(); 
         }
         private string GetKeyForParsedTopic(UnqualifiedTopicRevision topicRevision)
         {

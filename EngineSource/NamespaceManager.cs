@@ -677,7 +677,12 @@ namespace FlexWiki
         {
             return Description;
         }
-
+        [ExposedMethod("HasManageNamespacePermission", ExposedMethodFlags.Default, 
+            "Determine whether the current user has ManageNamespace permission.")]
+        public bool ExposedHasManageNamespacePermission()
+        {
+            return HasNamespacePermission(NamespacePermission.Manage); 
+        }
         /// <summary>
         /// Answer the Image URL for the ContentProviderChain (or null)
         /// </summary>
@@ -926,6 +931,10 @@ namespace FlexWiki
             {
                 return new TopicProperty(propertyName);
             }
+        }
+        public bool HasNamespacePermission(NamespacePermission permission)
+        {
+            return ContentProviderChain.HasNamespacePermission(permission); 
         }
         public bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {

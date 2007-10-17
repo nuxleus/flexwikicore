@@ -210,6 +210,11 @@ namespace FlexWiki.SqlProvider
         {
             throw new NotImplementedException(); 
         }
+        public override bool HasNamespacePermission(NamespacePermission permission)
+        {
+            // We don't do anything with namespace permission policy at this level. 
+            return true;
+        }
         public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             if (!_sqlHelper.TopicExists(Namespace, topic.LocalName))

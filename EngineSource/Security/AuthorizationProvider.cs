@@ -152,6 +152,54 @@ namespace FlexWiki.Security
                 return _next.GetParsedTopic(topicRevision);
             }
         }
+        public bool HasNamespacePermission(NamespacePermission permission)
+        {
+            if (permission != NamespacePermission.Manage)
+            {
+                throw new ArgumentException("Unrecognized namespace permission " + permission.ToString()); 
+            }
+
+            RequestContext context = RequestContext.Current;
+            string key = null;
+            if (context != null)
+            {
+                key = GetKey(permission, "HasNamespacePermission");
+                object value = context[key];
+
+                if (value != null && value is bool)
+                {
+                    return (bool)value;
+                }
+            }
+
+            // Do not allow the operation if the rest of the chain denies it.
+            bool nextHasPermission;
+            using (CreateRecursionContext())
+            {
+                nextHasPermission = _next.HasNamespacePermission(permission);
+            }
+            if (!nextHasPermission)
+            {
+                return false;
+            }
+
+            // Assemble the rules. First wiki, then namespace
+            AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
+            rules.AddRange(GetWikiScopeRules());
+            rules.AddRange(GetNamespaceScopeRules());
+
+            SecurableAction action = SecurableAction.ManageNamespace;
+            bool isAllowed = IsAllowed(action, rules);
+
+            if (context != null)
+            {
+                context[key] = isAllowed;
+            }
+
+            return isAllowed; 
+
+        }
+
         public bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             if (permission != TopicPermission.Edit && permission != TopicPermission.Read)
@@ -335,6 +383,10 @@ namespace FlexWiki.Security
         private string GetKey(string tag)
         {
             return string.Format("authorizationProvider://{0}/{1}", Namespace, tag); 
+        }
+        private string GetKey(NamespacePermission permission, string tag)
+        {
+            return string.Format("authorizationProvider://{0}/{1}/{2}", Namespace, tag, permission);
         }
         private string GetKey(UnqualifiedTopicName topic, string tag)
         {

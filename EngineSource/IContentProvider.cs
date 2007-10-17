@@ -78,6 +78,12 @@ namespace FlexWiki
         /// <returns>A <see cref="ParsedTopic"/> object containing the parsed representation of the topic.</returns>
         ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision);
         /// <summary>
+        /// Answers whether the current user has the given permission for this namespace. 
+        /// </summary>
+        /// <param name="permission">The permission to query about.</param>
+        /// <returns>True if the current user has the specified permission, false otherwise.</returns>
+        bool HasNamespacePermission(NamespacePermission permission);
+        /// <summary>
         /// Answer whether the current user has the given permission for the specified topic.
         /// </summary>
         /// <param name="topic">The topic </param>

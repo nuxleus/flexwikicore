@@ -119,6 +119,10 @@ namespace FlexWiki
         {
             return _next.GetParsedTopic(topicRevision);
         }
+        public virtual bool HasNamespacePermission(NamespacePermission permission)
+        {
+            return _next.HasNamespacePermission(permission);
+        }
         /// <summary>
         /// Answer whether the current user has the given permission for the specified topic.
         /// </summary>

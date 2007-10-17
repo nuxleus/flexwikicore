@@ -1385,6 +1385,30 @@ PropertyOne: List, of, values")
                 "Checking that null is returned for a property within a topic with no read permission.");
         }
         [Test]
+        public void HasNamespacePermissionManageAllowed()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            Assert.IsTrue(manager.HasNamespacePermission(NamespacePermission.Manage),
+                "Making sure that manage namespace permission is granted."); 
+        }
+        [Test]
+        public void HasNamespacePermissionManageDenied()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName,
+                "DenyManageNamespace: anonymous", "test"); 
+
+            Assert.IsFalse(manager.HasNamespacePermission(NamespacePermission.Manage), 
+                "Making sure that manage namespace permission is denied."); 
+
+        }
+        [Test]
         public void HasPermissionAllowedEdit()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",

@@ -194,6 +194,11 @@ namespace FlexWiki
             // Create the directory if it doesn't already exist.
             _fileSystem.CreateDirectory(_root); 
         }
+        public override bool HasNamespacePermission(NamespacePermission permission)
+        {
+            // We don't do anything with namespace permission policy at this level. 
+            return true; 
+        }
         /// <summary>
         /// Answer whether a topic is readable or writable
         /// </summary>

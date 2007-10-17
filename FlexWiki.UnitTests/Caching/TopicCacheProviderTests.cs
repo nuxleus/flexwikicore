@@ -246,6 +246,26 @@ namespace FlexWiki.UnitTests.Caching
             );
         }
         [Test]
+        public void HasNamespacePermission()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                ClearCache(parameters.Cache);
+                UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
+
+                AssertHasNamespacePermission(parameters, "Initial retrieval");
+
+                parameters.Provider.WriteTopic(new UnqualifiedTopicRevision(topicName), "New content");
+                AssertHasNamespacePermission(parameters, "After WriteTopic");
+
+                parameters.Provider.DeleteTopic(topicName);
+                AssertHasNamespacePermission(parameters, "After DeleteTopic");
+
+                parameters.Provider.DeleteAllTopicsAndHistory();
+                AssertHasNamespacePermission(parameters, "After DeleteAllTopicsAndHistory");
+            }); 
+        }
+        [Test]
         public void HasPermission()
         {
             DoTest(delegate(TestParameters parameters)
@@ -399,6 +419,28 @@ namespace FlexWiki.UnitTests.Caching
         private void AssertCacheDoesNotContainTopicChanges(MockCache mockCache, QualifiedTopicName qualifiedTopicName)
         {
             throw new Exception("The method or operation is not implemented.");
+        }
+        private void AssertHasNamespacePermission(TestParameters parameters, string messageTag)
+        {
+            AssertHasNamespacePermissionNotFromCache(parameters, messageTag);
+            AssertHasNamespacePermissionFromCache(parameters, messageTag); 
+        }
+        private void AssertHasNamespacePermissionNotFromCache(TestParameters parameters, string messageTag)
+        {
+            string messageFormat = "Checking that retrieval does not come from cache: {0}";
+            parameters.Store.HasNamespacePermissionCalled = false;
+            bool hasPermission = parameters.Provider.HasNamespacePermission(NamespacePermission.Manage);
+            Assert.IsTrue(parameters.Store.HasNamespacePermissionCalled,
+                string.Format(messageFormat, messageTag));
+        }
+
+        private void AssertHasNamespacePermissionFromCache(TestParameters parameters, string messageTag)
+        {
+            string messageFormat = "Checking that retrieval comes from cache: {0}";
+            parameters.Store.HasNamespacePermissionCalled = false;
+            bool hasPermission = parameters.Provider.HasNamespacePermission(NamespacePermission.Manage);
+            Assert.IsFalse(parameters.Store.HasNamespacePermissionCalled,
+                string.Format(messageFormat, messageTag));
         }
         private void AssertHasPermission(TestParameters parameters, UnqualifiedTopicName topicName, string messageTag)
         {

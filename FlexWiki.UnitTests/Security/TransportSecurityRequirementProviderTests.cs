@@ -126,6 +126,16 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void HasNamespacePermission()
+        {
+            TestAllPossibleConfigurations(delegate(TestParameters parameters)
+            {
+                parameters.Provider.HasNamespacePermission(NamespacePermission.Manage);
+            }
+            );
+        }
+
+        [Test]
         public void HasPermission()
         {
             TestAllPossibleConfigurations(delegate(TestParameters parameters)

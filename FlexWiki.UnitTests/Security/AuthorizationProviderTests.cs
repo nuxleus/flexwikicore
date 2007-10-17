@@ -336,6 +336,46 @@ namespace FlexWiki.UnitTests.Security
         }
 
         [Test]
+        public void HasNamespacePermissionManageAllowed()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+
+            // Grant the ManageNamespace permission, which should be what is needed.
+            AuthorizationRule allow = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.User, "someuser"),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Namespace, SecurableAction.ManageNamespace, 0);
+            WikiTestUtilities.WriteTopicAndNewVersionBypassingSecurity(manager,
+                manager.DefinitionTopicName.LocalName, allow.ToString("T"), "test");
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsTrue(provider.HasNamespacePermission(NamespacePermission.Manage));
+            }
+        }
+
+        [Test]
+        public void HasNamespacePermissionManageDenied()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://AuthorizationProviderTests",
+              TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
+            AuthorizationProvider provider = GetSecurityProvider(manager);
+
+            // Use the default configuration, where everything is denied
+            federation.Configuration.AuthorizationRules.Clear();
+
+            using (new TestSecurityContext("someuser", "somerole"))
+            {
+                Assert.IsFalse(provider.HasNamespacePermission(NamespacePermission.Manage)); 
+            }
+        }
+
+        [Test]
         public void HasPermission()
         {
             foreach (AuthorizationRule firstRule in AuthorizationRules.GetAll("someuser", "somerole", 0))
