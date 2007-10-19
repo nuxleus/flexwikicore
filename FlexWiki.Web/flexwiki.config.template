@@ -91,6 +91,34 @@
         XslTransform is normally used with dynamic topics containing external rss feeds. -->
   <DisableXslTransform>false</DisableXslTransform>
   
+  <!-- When set to true, FlexWiki will not process New Forum, Threaded Message or Talkback requests.
+        The user will be directed to the CreateMessage.aspx page which will have the following 
+        message:
+        
+        "The use of Forums, Threaded Messages or Talkback capabilities has been prohibited 
+        by an Administrator policy "
+         
+         When set to false, or if the setting is not present, or present and empty, it will
+         allow access to the CreateMessage.aspx functionality. -->
+  <DisableThreadedMessaging>false</DisableThreadedMessaging>
+  
+  <!-- When this key exists all message related topics will include properties controlling authorization
+        as follows:
+        
+            :DenyEdit: all
+            :AllowEdit: <value_provided_in_string>
+            
+       if set with the following:
+       <ThreadedMessagingEditPermissions>role:Administrators</ThreadedMessagingEditPermissions>
+       
+       it would create:
+       
+            :DenyEdit: all
+            :AllowEdit: role:Administrators 
+            
+       If this key is blank or not present then these properties will not be added -->
+  <ThreadedMessagingEditPermissions>role:WikiManagers</ThreadedMessagingEditPermissions>
+  
   <!-- When set to true, a user can double-click a topic web page to go to the edit page. 
         When set to false, a user must click the Edit link to go to the edit page. Note that
         setting this value to true makes it impossible to select a word by double-clicking it. -->

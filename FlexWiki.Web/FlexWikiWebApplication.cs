@@ -271,6 +271,7 @@ namespace FlexWiki.Web
                 }
             }
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
+            this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)
 			{
 				string[] titles = new string[_applicationConfiguration.AlternateStylesheets.Length+1];

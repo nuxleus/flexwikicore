@@ -31,6 +31,8 @@ namespace FlexWiki.Web
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
         private bool _disableRenameFixup;
         private bool _disableXslTransform = false;
+        private bool _disableThreadedMessaging = false;
+        private string _threadedMessagingEditPermissions;
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
@@ -104,6 +106,16 @@ namespace FlexWiki.Web
         {
             get { return _disableXslTransform; }
             set { _disableXslTransform = value; }
+        }
+        public bool DisableThreadedMessaging
+        {
+            get { return _disableThreadedMessaging; }
+            set { _disableThreadedMessaging = value; }
+        }
+        public string ThreadedMessagingEditPermissions
+        {
+            get { return _threadedMessagingEditPermissions; }
+            set { _threadedMessagingEditPermissions = value; }
         }
         public bool EditOnDoubleClick
         {
