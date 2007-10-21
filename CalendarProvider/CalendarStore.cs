@@ -178,7 +178,10 @@ namespace FlexWiki.CalendarProvider
             //}
             //return false;
         }
-        
+        public override bool TopicIsReadOnly(UnqualifiedTopicName name)
+        {
+            throw new NotImplementedException();
+        }
         public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
             throw new NotImplementedException();

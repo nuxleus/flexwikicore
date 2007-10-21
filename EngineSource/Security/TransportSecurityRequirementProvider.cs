@@ -150,6 +150,13 @@ namespace FlexWiki.Security
                 return _next.TopicExists(name);
             }
         }
+        public bool TopicIsReadOnly(UnqualifiedTopicName name)
+        {
+            using (CreateRecursionContext())
+            {
+                return _next.TopicIsReadOnly(name);
+            }
+        }
         public void UnlockTopic(UnqualifiedTopicName topic)
         {
             using (CreateRecursionContext())

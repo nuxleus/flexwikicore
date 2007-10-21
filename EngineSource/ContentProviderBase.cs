@@ -170,6 +170,10 @@ namespace FlexWiki
         {
             return _next.TopicExists(name); 
         }
+        public virtual bool TopicIsReadOnly(UnqualifiedTopicName name)
+        {
+            return _next.TopicIsReadOnly(name);
+        }
         /// <summary>
         /// Makes an existing topic read-write. 
         /// </summary>

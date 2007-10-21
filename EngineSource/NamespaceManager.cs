@@ -1230,6 +1230,25 @@ namespace FlexWiki
                 return TopicExists(topic.LocalName, importPolicy);
             }
         }
+        public bool TopicIsReadOnly(string topic)
+        {
+            return TopicIsReadOnly(new UnqualifiedTopicName(topic));
+        }
+        public bool TopicIsReadOnly(UnqualifiedTopicName topic)
+        {
+            return ContentProviderChain.TopicIsReadOnly(topic);
+        }
+        public bool TopicIsReadOnly(TopicRevision topic)
+        {
+            if (topic.IsQualified)
+            {
+                return Federation.TopicIsReadOnly(new QualifiedTopicRevision(topic.LocalName, topic.Namespace));
+            }
+            else
+            {
+                return TopicIsReadOnly(topic.LocalName);
+            }
+        }
         /// <summary>
         /// Answer a collection of namespaces in which the topic actually exists
         /// </summary>

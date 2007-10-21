@@ -259,7 +259,8 @@ namespace FlexWiki.Caching
             }
             finally
             {
-                InvalidateTopicPermissionItems(topic); 
+                InvalidateTopicPermissionItems(topic);
+                InvalidateTopicIsReadOnly(topic);
             }
         }
         public override TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
@@ -299,11 +300,34 @@ namespace FlexWiki.Caching
                 else
                 {
                     return (bool)cachedValue;
-                }                
+                }
             }
             else
             {
                 return base.TopicExists(topic);
+            }
+        }
+        public override bool TopicIsReadOnly(UnqualifiedTopicName topic)
+        {
+            if (CacheEnabled)
+            {
+                string key = GetKeyForTopicIsReadOnly(topic);
+                object cachedValue = Cache[key];
+
+                if (cachedValue == null)
+                {
+                    bool existence = Next.TopicIsReadOnly(topic);
+                    Cache[key] = existence;
+                    return existence;
+                }
+                else
+                {
+                    return (bool)cachedValue;
+                }
+            }
+            else
+            {
+                return base.TopicIsReadOnly(topic);
             }
         }
         public override void UnlockTopic(UnqualifiedTopicName topic)
@@ -314,7 +338,8 @@ namespace FlexWiki.Caching
             }
             finally
             {
-                InvalidateTopicPermissionItems(topic); 
+                InvalidateTopicPermissionItems(topic);
+                InvalidateTopicIsReadOnly(topic);
             }
         }
         public override void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
@@ -360,7 +385,12 @@ namespace FlexWiki.Caching
         private string GetKeyForTopicExistence(UnqualifiedTopicName topic)
         {
             return new TopicCacheKey(
-                topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), "TopicExistence").ToString(); 
+                topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), "TopicExistence").ToString();
+        }
+        private string GetKeyForTopicIsReadOnly(UnqualifiedTopicName topic)
+        {
+            return new TopicCacheKey(
+                topic.ResolveRelativeTo(Namespace).AsQualifiedTopicRevision(), "TopicIsReadOnly").ToString();
         }
         private string GetKeyForTopicList()
         {
@@ -413,6 +443,11 @@ namespace FlexWiki.Caching
                     Cache[key] = null; 
                 }
             }
+        }
+        private void InvalidateTopicIsReadOnly(UnqualifiedTopicName topic)
+        {
+            string key = GetKeyForTopicIsReadOnly(topic);
+            Cache[key] = null;
         }
         private void InvalidateTopicListItem()
         {

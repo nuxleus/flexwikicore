@@ -111,6 +111,7 @@ namespace FlexWiki
         /// <param name="name">Name of the topic</param>
         /// <returns>true if it exists</returns>
         bool TopicExists(UnqualifiedTopicName name);
+        bool TopicIsReadOnly(UnqualifiedTopicName name);
         /// <summary>
         /// Makes an existing topic read-write. 
         /// </summary>

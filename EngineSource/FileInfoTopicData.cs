@@ -121,6 +121,11 @@ namespace FlexWiki
             int close = filename.LastIndexOf(")");
             return filename.Substring(p + 1, close - p - 1);
         }
-
+        public override bool IsReadOnly
+        {
+            get { return _fileInformation.IsReadOnly; }
+        }
+           
+       
     }
 }

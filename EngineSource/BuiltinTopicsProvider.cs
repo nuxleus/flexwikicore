@@ -107,6 +107,15 @@ aTopic|
     ]
   },
   Newline, ""----"", Newline,
+  namespace.HasManageNamespacePermission.IfTrueIfFalse
+  ({
+     [
+       ""*\""\""FlexWiki\""\"" Administration*"", Newline,
+       MenuItem(""Show Main FlexWiki Administration Page"", ""Administration Page"", federation.LinkMaker.SimpleLinkTo(""admin/default.aspx"")),
+       MenuItem(""Show Topic Lock Management Page"", ""Topic Locks"", federation.LinkMaker.SimpleLinkTo(""admin/TopicLocks.aspx"")),
+       Newline, ""----"", Newline,
+     ]
+  }, { """" }),
   ""*Recent Topics*"",
   Newline,
   request.UniqueVisitorEvents.Snip(15).Collect
@@ -388,7 +397,17 @@ request.AreDifferencesShown.IfTrue
 
             return Next.TopicExists(name); 
         }
-
+        public override bool TopicIsReadOnly(UnqualifiedTopicName name)
+        {
+            if (IsBuiltInTopic(name))
+            {
+                return false;
+            }
+            else
+            {
+                return Next.TopicIsReadOnly(name);
+            }
+        }
         private string DefaultContentFor(string topic)
         {
             QualifiedTopicName topicName = new QualifiedTopicName(topic, Namespace);

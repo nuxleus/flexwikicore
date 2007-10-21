@@ -72,7 +72,10 @@ namespace FlexWiki.SqlProvider
                 return _revision.Version; 
             }
         }
-
+        public override bool IsReadOnly
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
 
     }
 }

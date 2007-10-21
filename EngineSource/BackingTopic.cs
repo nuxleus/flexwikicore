@@ -106,7 +106,13 @@ namespace FlexWiki
                 _LastModificationTime = value;
             }
         }
-
+        public bool IsReadOnly
+        {
+            get
+            {
+                return IsReadOnly;
+            }
+        }
 
 
     }

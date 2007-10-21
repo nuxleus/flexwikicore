@@ -72,6 +72,10 @@ namespace FlexWiki
         return LastModificationTime.ToString("yyyy-MM-dd-HH-mm-ss.ffff") + "-" + u;
       }
     }
+      public override bool IsReadOnly
+      {
+          get { return _back.IsReadOnly; }
+      }
 
   }
 }

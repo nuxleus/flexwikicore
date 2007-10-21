@@ -50,5 +50,12 @@ namespace FlexWiki.UnitTests
         {
             get { return Path.GetFileNameWithoutExtension(Name); }
         }
+        public bool IsReadOnly
+        {
+            get 
+            {
+                return _mockFile.IsReadOnly;
+            }
+        }
     }
 }

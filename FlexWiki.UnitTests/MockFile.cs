@@ -21,7 +21,8 @@ namespace FlexWiki.UnitTests
         private DateTime _created;
         private DateTime _lastModified; 
         private string _name;
-        private MockTopicStorePermissions _permissions; 
+        private MockTopicStorePermissions _permissions;
+        private bool _isReadOnly;
         
         public MockFile(string name, DateTime created, string contents)
             : this(name, created, created, contents, MockTopicStorePermissions.ReadWrite)
@@ -34,12 +35,18 @@ namespace FlexWiki.UnitTests
         }
 
         public MockFile(string name, DateTime created, DateTime lastModified, string contents, MockTopicStorePermissions permissions)
+            : this(name, created, lastModified, contents, permissions, false)
+        {
+        }
+
+        public MockFile(string name, DateTime created, DateTime lastModified, string contents, MockTopicStorePermissions permissions, bool isReadOnly)
         {
             _name = name;
             _created = created; 
             _lastModified = lastModified; 
             _contents = contents;
             _permissions = permissions; 
+            _isReadOnly = isReadOnly;
         }
 
         public bool CanRead
@@ -135,6 +142,13 @@ namespace FlexWiki.UnitTests
         {
             get { return _name; }
             set { _name = value; }
+        }
+        public bool IsReadOnly
+        {
+            get
+            {
+                return _isReadOnly;
+            }
         }
     }
 }

@@ -49,5 +49,10 @@ namespace FlexWiki
             get { return Path.GetFileNameWithoutExtension(_fileInfo.Name); }
         }
 
+        public bool IsReadOnly
+        {
+            get { return _fileInfo.IsReadOnly; }
+        }
+
     }
 }

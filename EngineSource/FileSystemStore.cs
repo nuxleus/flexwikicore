@@ -263,6 +263,20 @@ namespace FlexWiki
         {
             return FileSystem.FileExists(MakePath(Root, topicName.LocalName));
         }
+        public override bool TopicIsReadOnly(UnqualifiedTopicName topicName)
+        {
+            string path = TopicPath(topicName, null);
+            if (FileSystem.FileExists(path))
+            {
+                FileInfo file = new FileInfo(path);
+                return file.IsReadOnly;
+            }
+            else
+            {
+                // this is a new topic so should not be locked unless the file store itself is locked
+                return false;
+            }
+       }
         /// <summary>
         /// Implements <see cref="ContentProviderBase.LockTopic"/>.
         /// </summary>

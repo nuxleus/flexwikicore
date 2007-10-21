@@ -132,17 +132,24 @@
     <Content Include="admin\ShowUpdates.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="admin\TopicLocks.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="admin\UpgradeConfigFile.aspx">
     </Content>
     <Content Include="admin\Users.aspx" />
     <Content Include="admin\WikiAdmin.js" />
     <Content Include="Blade.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="classic.css" />
     <Content Include="Compare.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="HttpsRequired.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="MessagePost.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RegisterUser.aspx">
@@ -227,6 +234,10 @@
       <DependentUpon>HttpsRequired.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="MessagePost.aspx.cs">
+      <DependentUpon>MessagePost.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="PageUtilities.cs" />
     <Compile Include="RegisterUser.aspx.cs">
       <DependentUpon>RegisterUser.aspx</DependentUpon>
@@ -247,7 +258,6 @@
     <Content Include="images\tile-title.gif" />
     <Content Include="images\versions.gif" />
     <Content Include="LastModified.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Login.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -348,6 +358,10 @@
     </Compile>
     <Compile Include="admin\ShowUpdates.aspx.cs">
       <DependentUpon>ShowUpdates.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\TopicLocks.aspx.cs">
+      <DependentUpon>TopicLocks.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="admin\UpgradeConfigFile.aspx.cs">

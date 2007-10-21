@@ -84,6 +84,11 @@ namespace FlexWiki.UnitTests
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
+        public override bool TopicIsReadOnly(UnqualifiedTopicName name)
+        {
+            RegisterCall(MethodInfo.GetCurrentMethod());
+            throw new NotImplementedException();
+        }
         public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());

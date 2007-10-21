@@ -990,6 +990,15 @@ namespace FlexWiki
             }
             return namespaceManager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports);
         }
+        public bool TopicIsReadOnly(QualifiedTopicRevision topic)
+        {
+            NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
+            if (namespaceManager == null)
+            {
+                return false;
+            }
+            return namespaceManager.TopicIsReadOnly(topic.LocalName);
+        }
         /// <summary>
         /// Answer the full name of the topic (qualified with namespace) if it exists.  
         /// If it doesn't exist at all, answer null.

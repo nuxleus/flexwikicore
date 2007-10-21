@@ -21,5 +21,6 @@ namespace FlexWiki
     abstract public string Name {get;}	// get the name of the topic (unqualified and without version)
     abstract public string Namespace {get;}
     abstract public string Version {get;}
+    abstract public bool IsReadOnly { get;}
   }
 }

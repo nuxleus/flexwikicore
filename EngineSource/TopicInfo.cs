@@ -36,12 +36,14 @@ namespace FlexWiki
         private bool _haveLastModifiedBy;
         private bool _haveProperties; 
         private bool _havePropertyNames;
-        private bool _haveSummary; 
+        private bool _haveSummary;
+        private bool _haveIsLocked;
 
         private TopicChangeCollection _changes;
         private DateTime _created;
         private bool _exists;
         private Federation _federation;
+        private bool _isLocked;
         private string _keywords;
         private ArrayList _keywordsList; 
         private DateTime _lastModified;
@@ -123,6 +125,19 @@ namespace FlexWiki
             get
             {
                 return _federation;
+            }
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer true if topic is locked (topic is read only), otherwise false (topic is writable)")]
+        public bool IsLocked
+        {
+            get
+            {
+                if (!_haveIsLocked)
+                {
+                    _isLocked = NamespaceManager.TopicIsReadOnly(TopicRevision.LocalName);
+                    _haveIsLocked = true;
+                }
+                return _isLocked;
             }
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the Keywords property's value")]

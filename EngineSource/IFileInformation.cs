@@ -21,5 +21,6 @@ namespace FlexWiki
         DateTime LastWriteTime { get; }
         string Name { get; }
         string NameWithoutExtension { get; }
+        bool IsReadOnly { get; }
     }
 }
