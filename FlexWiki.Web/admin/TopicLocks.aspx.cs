@@ -59,7 +59,14 @@ namespace FlexWiki.Web
                 {
                     ProcessPost();
                 }
-                Response.Redirect("TopicLocks.aspx?namespace=" + _preferredNamespace);
+                if (!String.IsNullOrEmpty(Request.Form["returnUrl"]))
+                {
+                    Response.Redirect(Request.Form["returnUrl"]);
+                }
+                else
+                {
+                    Response.Redirect("TopicLocks.aspx?namespace=" + _preferredNamespace);
+                }
             }
 
         }
@@ -189,12 +196,12 @@ namespace FlexWiki.Web
                 }
                 strbldr.AppendLine("</td>");
                 strbldr.AppendLine("<td>");
-                strbldr.AppendLine(storeManager.GetTopicInfo(topic.LocalName).IsLocked ? "Is Locked" : "Is Unlocked");
+                strbldr.AppendLine(storeManager.GetTopicInfo(topic.LocalName).IsTopicLocked ? "Is Locked" : "Is Unlocked");
                 strbldr.AppendLine("</td>");
                 if (storeManager.HasNamespacePermission(NamespacePermission.Manage))
                 {
                     strbldr.AppendLine("<td>");
-                    if (!storeManager.GetTopicInfo(topic.LocalName).IsLocked)
+                    if (!storeManager.GetTopicInfo(topic.LocalName).IsTopicLocked)
                     {
                         strbldr.AppendLine("<input type=\"button\" value=\"Create Lock\" id=\"" + topic.LocalName + "_Btn\" ");
                         strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Lock')\" />");

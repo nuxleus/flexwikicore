@@ -52,7 +52,7 @@ namespace FlexWiki.UnitTests
         }
         public bool IsReadOnly
         {
-            get 
+            get
             {
                 return _mockFile.IsReadOnly;
             }

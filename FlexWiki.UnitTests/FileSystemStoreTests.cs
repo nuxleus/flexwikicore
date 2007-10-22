@@ -72,10 +72,14 @@ namespace FlexWiki.UnitTests
                                 new MockFile(@"CodeImprovementIdeas(2003-11-23-14-34-08.123-Name).awiki",
                                     new DateTime(2004, 11, 04), @"Oldest"),
 
-                                new MockFile(@"ReadOnlyTopic.wiki", 
-                                    new DateTime(2004, 11, 05), @"", MockTopicStorePermissions.ReadOnly), 
-                                new MockFile(@"ReadOnlyTopic(2004-11-05-00-00-00-Name).awiki", 
+                                new MockFile(@"ReadOnlyTopic.wiki",
+                                    new DateTime(2004, 11, 05), @"", MockTopicStorePermissions.ReadOnly),
+                                new MockFile(@"ReadOnlyTopic(2004-11-05-00-00-00-Name).awiki",
                                     new DateTime(2004, 11, 05), @""),
+                                new MockFile(@"ReadOnlyTopic2.wiki",
+                                    new DateTime(2004, 11, 05), new DateTime(2007, 10, 22), @"", MockTopicStorePermissions.ReadOnly, true),
+                                new MockFile(@"ReadWriteTopic.wiki",
+                                    new DateTime(2004, 11, 05), new DateTime(2007, 10, 22), @"", MockTopicStorePermissions.ReadWrite, false),
 
                                 new MockFile(@"DeletedTopic(2004-11-11-00-00-00-Name).awiki", 
                                     new DateTime(2004, 11, 11), @"This topic was deleted.")
@@ -178,7 +182,7 @@ namespace FlexWiki.UnitTests
         {
             QualifiedTopicNameCollection topics = _provider.AllTopics();
 
-            Assert.AreEqual(5, topics.Count, "Checking that the right number of topics was returned.");
+            Assert.AreEqual(7, topics.Count, "Checking that the right number of topics was returned.");
 
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.HomePage")),
                 "Checking that HomePage is present.");
@@ -189,6 +193,10 @@ namespace FlexWiki.UnitTests
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.CodeImprovementIdeas")),
                 "Checking that CodeImprovementIdeas is present.");
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.ReadOnlyTopic")),
+                "Checking that ReadOnlyTopic is present.");
+            Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.ReadWriteTopic")),
+                "Checking that CodeImprovementIdeas is present.");
+            Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.ReadOnlyTopic2")),
                 "Checking that ReadOnlyTopic is present.");
         }
 
@@ -377,6 +385,65 @@ namespace FlexWiki.UnitTests
                 "Checking that a deleted topic returns false.");
             Assert.IsTrue(_provider.TopicExists(new UnqualifiedTopicName("HomePage")),
                 "Checking that an existing topic returns true."); 
+        }
+
+        [Test]
+        public void TopicIsReadOnly()
+        {
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "ReadOnlyTopic2.wiki")].CanRead,
+                "Checking that file starts out readable.");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "ReadOnlyTopic2.wiki")].CanWrite,
+                "Checking that file starts not writable.");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "ReadOnlyTopic2.wiki")].IsReadOnly,
+                "Checking that file starts as read-only.");
+        }
+
+        [Test]
+        public void TopisIsReadOnlyNegative()
+        {
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "ReadWriteTopic.wiki")].CanRead,
+                "Checking that file starts out readable");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "ReadWriteTopic.wiki")].CanWrite,
+                "Checking that file starts out writable.");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "ReadWriteTopic.wiki")].IsReadOnly,
+                "Checking that file is starts as read-write.");
+        }
+
+        [Test]
+        public void TopicIsReadOnlyLockTopic()
+        {
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file starts out readable.");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file starts out writable.");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
+                "Checking that file starts as read-write.");
+            _provider.LockTopic(new UnqualifiedTopicName("TopicOne"));
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file is still readable after a call to LockTopic");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file was set non-writable by a call to LockTopic");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
+                "Checking that file is now read-only.");
+        }
+
+        [Test]
+        public void TopicIsReadOnlyUnlockTopic()
+        {
+            _provider.LockTopic(new UnqualifiedTopicName("TopicOne"));
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file starts out readable");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file starts out non-writable");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
+                "Checking that file starts as read-only.");
+            _provider.UnlockTopic(new UnqualifiedTopicName("TopicOne"));
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanRead,
+                "Checking that file ends up readable");
+            Assert.IsTrue(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].CanWrite,
+                "Checking that file ends up writable");
+            Assert.IsFalse(_fileSystem[Path.Combine(Root, "TopicOne.wiki")].IsReadOnly,
+                "Checking that file starts is now read-write.");
         }
 
         [Test]

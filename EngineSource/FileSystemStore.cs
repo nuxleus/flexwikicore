@@ -268,8 +268,9 @@ namespace FlexWiki
             string path = TopicPath(topicName, null);
             if (FileSystem.FileExists(path))
             {
-                FileInfo file = new FileInfo(path);
-                return file.IsReadOnly;
+                //FileInfo file = new FileInfo(path);
+                //return file.IsReadOnly;
+                return FileSystem.FileIsReadOnly(path);
             }
             else
             {

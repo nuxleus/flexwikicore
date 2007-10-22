@@ -161,6 +161,11 @@ namespace FlexWiki.UnitTests
             return this[path].CanWrite; 
         }
 
+        public bool FileIsReadOnly(string path)
+        {
+            return !this[path].CanWrite;
+        }
+
         public void MakeReadOnly(string path)
         {
             if (this[path] == null)

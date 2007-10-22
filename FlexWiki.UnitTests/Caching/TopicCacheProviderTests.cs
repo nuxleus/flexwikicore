@@ -293,6 +293,23 @@ namespace FlexWiki.UnitTests.Caching
             }); 
         }
         [Test]
+        public void TopicIsReadOnly()
+        {
+            DoTest(delegate(TestParameters parameters)
+            {
+                ClearCache(parameters.Cache);
+                UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
+
+                AssertTopicIsReadOnly(parameters, topicName, "Initial retrieval");
+
+                parameters.Provider.LockTopic(topicName);
+                AssertTopicIsReadOnly(parameters, topicName, "After LockTopic");
+
+                parameters.Provider.UnlockTopic(topicName);
+                AssertTopicIsReadOnly(parameters, topicName, "After UnlockTopic");
+            });
+        }
+        [Test]
         public void TextReaderForTopic()
         {
             DoTest(delegate(TestParameters parameters)
@@ -487,6 +504,35 @@ namespace FlexWiki.UnitTests.Caching
             Assert.IsTrue(parameters.Store.HasPermissionCalled,
                 string.Format(messageFormat, topicPermission, messageTag));
         }
+
+        private void AssertTopicIsReadOnly(TestParameters parameters, UnqualifiedTopicName topicName, string messageTag)
+        {
+            AssertTopicIsReadOnlyNotFromCache(parameters, topicName, messageTag);
+            AssertTopicIsReadOnlyFromCache(parameters, topicName, messageTag);
+        }
+        private void AssertTopicIsReadOnlyFromCache(
+            TestParameters parameters,
+            UnqualifiedTopicName topicName,
+            string messageTag)
+        {
+            string messageFormat = "Checking that retrieval comes from cache: {0}";
+            parameters.Store.TopicIsReadOnlyCalled = false;
+            bool fourteenthRetrieval = parameters.Provider.TopicIsReadOnly(topicName);
+            Assert.IsFalse(parameters.Store.TopicIsReadOnlyCalled,
+                string.Format(messageFormat, messageTag));
+        }
+        private static void AssertTopicIsReadOnlyNotFromCache(
+            TestParameters parameters,
+            UnqualifiedTopicName topicName,
+            string messageTag)
+        {
+            string messageFormat = "Checking that retrieval does not come from cache: {0}";
+            parameters.Store.TopicIsReadOnlyCalled = false;
+            bool fourteenthRetrieval = parameters.Provider.TopicIsReadOnly(topicName);
+            Assert.IsTrue(parameters.Store.TopicIsReadOnlyCalled,
+                string.Format(messageFormat, messageTag));
+        }
+
         private void ClearCache(MockCache cache)
         {
             cache.GetCacheContents().Clear();

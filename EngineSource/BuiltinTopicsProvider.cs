@@ -12,10 +12,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO; 
+using System.IO;
+using System.Security.Principal;
 using System.Text;
+using System.Web;
 
+using FlexWiki;
 using FlexWiki.Collections;
+
 
 namespace FlexWiki
 {
@@ -107,15 +111,6 @@ aTopic|
     ]
   },
   Newline, ""----"", Newline,
-  namespace.HasManageNamespacePermission.IfTrueIfFalse
-  ({
-     [
-       ""*\""\""FlexWiki\""\"" Administration*"", Newline,
-       MenuItem(""Show Main FlexWiki Administration Page"", ""Administration Page"", federation.LinkMaker.SimpleLinkTo(""admin/default.aspx"")),
-       MenuItem(""Show Topic Lock Management Page"", ""Topic Locks"", federation.LinkMaker.SimpleLinkTo(""admin/TopicLocks.aspx"")),
-       Newline, ""----"", Newline,
-     ]
-  }, { """" }),
   ""*Recent Topics*"",
   Newline,
   request.UniqueVisitorEvents.Snip(15).Collect
@@ -170,7 +165,21 @@ request.AreDifferencesShown.IfTrue
   {
     """"
   },
-  ""----"", Newline,
+  MenuItem(""Show Main FlexWiki Administration Page"", ""Administration Page"", federation.LinkMaker.SimpleLinkTo(""admin/default.aspx"")),
+  namespace.HasManageNamespacePermission.IfTrueIfFalse
+  ({
+     [
+       MenuItem(""Show Topic Lock Management Page"", ""Topic Locks"", federation.LinkMaker.SimpleLinkTo(""admin/TopicLocks.aspx"")),
+       Presentations.FormStart(federation.LinkMaker.SimpleLinkTo(""admin/TopicLocks.aspx""), ""post""),
+       Presentations.HiddenField(""namespace"", aTopic.Namespace.Name),
+       Presentations.HiddenField(""topic"", [aTopic.Namespace.Name, ""."", aTopic.Name].ToOneString),
+       Presentations.HiddenField(""returnUrl"", federation.LinkMaker.LinkToTopic(aTopic.Fullname)),
+       Presentations.HiddenField(""fileaction"", aTopic.IsTopicLocked.IfFalseIfTrue({""Lock""},{""Unlock""})),
+       Presentations.SubmitButton(""goButton"", aTopic.IsTopicLocked.IfFalseIfTrue({""Lock Topic""},{""Unlock Topic""})), 
+       Presentations.FormEnd(),
+     ]
+  }, { """" }),
+  Newline,""----"", Newline,
   [
     ""||{T-}"",
     ""'''Search'''"", 
@@ -285,6 +294,32 @@ request.AreDifferencesShown.IfTrue
         }
 
         // Methods
+
+        public override void LockTopic(UnqualifiedTopicName name)
+        {
+            if (IsBuiltInTopic(name))
+            {
+                if (Next.TopicExists(name))
+                {
+                    Next.LockTopic(name);
+                }
+                else
+                {
+                    //materialize in the namespacemanager
+                    string content = DefaultContentFor(name.LocalName);
+                    string author = "FlexWiki Locking";
+
+                    QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(name.LocalName, NamespaceManager.Namespace);
+                    newVersionName.Version = TopicRevision.NewVersionStringForUser(author, Federation.TimeProvider);
+                    NamespaceManager.WriteTopicAndNewVersion(newVersionName.LocalName, content, author);
+                    Next.LockTopic(name);
+                }
+            }
+            else
+            {
+                Next.LockTopic(name);
+            }
+        }
 
         public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp)
         {
@@ -401,7 +436,15 @@ request.AreDifferencesShown.IfTrue
         {
             if (IsBuiltInTopic(name))
             {
-                return false;
+                if (Next.TopicExists(name))
+                {
+                    // If it does, whatever is true here is true there
+                    return Next.TopicIsReadOnly(name);
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

@@ -23,7 +23,8 @@ namespace FlexWiki
         void DeleteDirectory(string directory); 
         void DeleteFile(string path); 
         bool DirectoryExists(string path);
-        bool FileExists(string path); 
+        bool FileExists(string path);
+        bool FileIsReadOnly(string path);
         FileInformationCollection GetFiles(string directory); 
         FileInformationCollection GetFiles(string directory, string pattern);
         DateTime GetLastWriteTime(string path); 

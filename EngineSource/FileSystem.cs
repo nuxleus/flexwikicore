@@ -110,6 +110,13 @@ namespace FlexWiki
             return true; 
         }
 
+        public bool FileIsReadOnly(string path)
+        {
+            bool isreadonly = (File.GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
+
+            return isreadonly;
+        }
+
         public void MakeReadOnly(string path)
         {
             FileAttributes attributes = File.GetAttributes(path);

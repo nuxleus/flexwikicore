@@ -2152,6 +2152,56 @@ PropertyOne: List, of, values")
                 "Checking that an existing topic returns true from TopicExists.");
         }
         [Test]
+        public void TopicIsReadOnlyLockTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic starts read-write.");
+            Assert.IsFalse(manager.TopicIsReadOnly(topic), "Check that topic is not read-only.");
+            manager.LockTopic(topic);
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic is now read-only.");
+            Assert.IsTrue(manager.TopicIsReadOnly(topic), "Check that topic is now read-only.");
+            manager.LockTopic(topic);
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit),
+                "Checking that calling LockTopic on read-only topic has no effect.");
+            Assert.IsTrue(manager.TopicIsReadOnly(topic), "Check that topic is now read-only after a second call of LockTopic.");
+        }
+        [Test]
+        public void TopicIsReadOnlyNonexistentTopic()
+        {
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("NoSuchTopic");
+            Assert.IsFalse(manager.TopicIsReadOnly(topic), "Check that topic is not read-only.");
+        }
+        [Test]
+        public void TopicIsReadOnlyUnlockTopic()
+        {
+
+            Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests/",
+                TestContentSets.SingleTopicNoImports);
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+
+            UnqualifiedTopicName topic = new UnqualifiedTopicName("TopicOne");
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic starts read-write.");
+            Assert.IsFalse(manager.TopicIsReadOnly(topic), "Check that topic is not read-only.");
+            manager.LockTopic(topic);
+            Assert.IsFalse(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic is now read-only.");
+            Assert.IsTrue(manager.TopicIsReadOnly(topic), "Check that topic is now read-only.");
+            manager.UnlockTopic(topic);
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit), "Checking that topic is read-write again.");
+            Assert.IsFalse(manager.TopicIsReadOnly(topic), "Check that topic is read-write again.");
+            manager.UnlockTopic(topic);
+            Assert.IsTrue(manager.HasPermission(topic, TopicPermission.Edit),
+                "Checking that calling UnlockTopic on read-write topic has no effect.");
+            Assert.IsFalse(manager.TopicIsReadOnly(topic), "Check that topic is remains read-write after second call to UnlockTopic.");
+        }
+        [Test]
         public void TopicNamespacesForImport()
         {
             Federation federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",

@@ -34,6 +34,7 @@ namespace FlexWiki.UnitTests
         private MockSetupOptions _options;
         private bool _textReaderForTopicCalled;
         private bool _topicExistsCalled;
+        private bool _topicIsReadOnlyCalled;
         private readonly MockTopicCollection _topics = new MockTopicCollection();
 
         internal MockContentStore()
@@ -100,6 +101,11 @@ namespace FlexWiki.UnitTests
         {
             get { return _topicExistsCalled; }
             set { _topicExistsCalled = value; }
+        }
+        internal bool TopicIsReadOnlyCalled
+        {
+            get { return _topicIsReadOnlyCalled; }
+            set { _topicIsReadOnlyCalled = value; }
         }
 
         public override TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topicName, DateTime stamp)
@@ -218,7 +224,20 @@ namespace FlexWiki.UnitTests
 
             return GetTopic(name, ExistencePolicy.ExistingOnly) != null;
         }
+        public override bool TopicIsReadOnly(UnqualifiedTopicName name)
+        {
+            _topicIsReadOnlyCalled = true;
 
+            MockTopic topic = GetTopic(name, ExistencePolicy.ExistingOnly);
+            if (topic == null)
+            {
+                return false;
+            }
+            else
+            {
+                return !topic.Latest.CanWrite;
+            }
+        }
         public override TextReader TextReaderForTopic(UnqualifiedTopicRevision revision)
         {
             _textReaderForTopicCalled = true; 

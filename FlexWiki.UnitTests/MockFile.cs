@@ -42,10 +42,10 @@ namespace FlexWiki.UnitTests
         public MockFile(string name, DateTime created, DateTime lastModified, string contents, MockTopicStorePermissions permissions, bool isReadOnly)
         {
             _name = name;
-            _created = created; 
-            _lastModified = lastModified; 
+            _created = created;
+            _lastModified = lastModified;
             _contents = contents;
-            _permissions = permissions; 
+            _permissions = permissions;
             _isReadOnly = isReadOnly;
         }
 
@@ -99,12 +99,14 @@ namespace FlexWiki.UnitTests
                 if (value == true)
                 {
                     _permissions = MockTopicStorePermissions.ReadWrite;
+                    _isReadOnly = false;
                 }
                 else
                 {
                     if (_permissions == MockTopicStorePermissions.ReadWrite)
                     {
-                        _permissions = MockTopicStorePermissions.ReadOnly; 
+                        _permissions = MockTopicStorePermissions.ReadOnly;
+                        _isReadOnly = true;
                     }
                 }
             }
@@ -145,10 +147,8 @@ namespace FlexWiki.UnitTests
         }
         public bool IsReadOnly
         {
-            get
-            {
-                return _isReadOnly;
-            }
+            get { return _isReadOnly; }
+            set { _isReadOnly = value; }
         }
     }
 }
