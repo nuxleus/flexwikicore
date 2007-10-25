@@ -123,6 +123,28 @@ fake=http://should.not.be/recognized");
         }
 
         [Test]
+        public void ParseHeaders()
+        {
+            ParsedTopic parsedTopic = TopicParser.Parse(@"!Header 1
+a line of text
+!!Header 2
+more text 
+and another line of text
+!A Second Header1
+more text again");
+
+            Assert.AreEqual(3, parsedTopic.Headers.Split(new char[] { '\n' }).Length - 1,
+                "Checking that all headers were properly extracted");
+            Assert.AreEqual("!Header 1", parsedTopic.Headers.Split(new char[] { '\n' }).GetValue(0).ToString().Trim(),
+                "Checking that the first header content is correct");
+            Assert.AreEqual("!!Header 2", parsedTopic.Headers.Split(new char[] { '\n' }).GetValue(1).ToString().Trim(),
+                "Checking that the first header content is correct");
+            Assert.AreEqual("!A Second Header1", parsedTopic.Headers.Split(new char[] { '\n' }).GetValue(2).ToString().Trim(),
+                "Checking that the first header content is correct");
+
+        }
+
+        [Test]
         public void ParseMultilineProperty()
         {
             ParsedTopic parsedTopic = TopicParser.Parse(@"Multiline:[

@@ -474,9 +474,9 @@ Write("<span style=\"display:none\">.</span>");
 			}
 		}
 
-		override public void WriteHeading(string text, int level)
+		override public void WriteHeading(string anchor, string text, int level)
 		{
-			WriteLine("<h" + level  + css() + ">" + text + "</h" + level + ">");
+			WriteLine("<h" + level  + css() + "><a name=\"" + anchor + "\" class=\"Anchor\"></a>" + text + "</h" + level + ">");
 		}
 
 		override public void WriteOpenProperty(string name)

@@ -68,7 +68,7 @@ second line
 !Heading1
 '''bold''' ''italics'' -deleted-
 ]",
-                @"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><div class=""PropertyValue""><a name=""Multiline"" class=""Anchor""><h1>Heading1</h1>
+                @"<fieldset  class=""Property"" style=""width: auto""><legend class=""PropertyName"">Multiline</legend><div class=""PropertyValue""><a name=""Multiline"" class=""Anchor""><h1><a name=""Heading1"" class=""Anchor""></a>Heading1</h1>
 
 <p><strong>bold</strong> <em>italics</em> <del>deleted</del></p>
 </a></div>

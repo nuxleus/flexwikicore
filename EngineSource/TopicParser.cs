@@ -34,6 +34,10 @@ namespace FlexWiki
         /// Regex pattern string for extracting the first line of a multi-line propertyName
         /// </summary>
         private const string c_multilinePropertyPattern = "^(?<leader>:?)(?<name>([A-Z_][_a-zA-Z0-9]+)):(?<delim>[\\[{])(?<val>.*)";
+        /// <summary>
+        /// Regex pattern string for extracting all headers from a topic
+        /// </summary>
+        private const string c_headersPattern = "^(!+.+)$";
 
         /// <summary>
         /// Regex for extracting a multi-line propertyName
@@ -133,8 +137,9 @@ namespace FlexWiki
             TopicPropertyCollection properties = ParseProperties(text);
             TopicRevisionCollection topicLinks = ParseTopicLinks(text);
             ExternalReferencesMap externalReferences = ParseExternalReferences(text);
+            string headers = ParseHeaders(text);
 
-            ParsedTopic parsedTopic = new ParsedTopic(properties, topicLinks, externalReferences);
+            ParsedTopic parsedTopic = new ParsedTopic(properties, topicLinks, externalReferences, headers);
 
             return parsedTopic;
         }
@@ -190,6 +195,20 @@ namespace FlexWiki
 
             return references;
 
+        }
+        private static string ParseHeaders(string text)
+        {
+            StringBuilder strbldr = new StringBuilder();
+
+            MatchCollection hdrs = (Regex.Matches(text, c_headersPattern, RegexOptions.Multiline));
+            if (hdrs.Count > 0)
+            {
+                foreach (Match match in hdrs)
+                {
+                    strbldr.AppendLine(match.ToString());
+                }
+            }
+            return strbldr.ToString();
         }
         private static void ParseMultiLineProperties(string text, TopicPropertyCollection properties)
         {

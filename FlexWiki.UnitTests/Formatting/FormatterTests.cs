@@ -419,25 +419,25 @@ file://servername/umuff&#126;/folder%20name/file.txt",
         [Test]
         public void HeadingTests()
         {
-            FormatTest("!Hey Dog", @"<h1>Hey Dog</h1>
+            FormatTest("!Hey Dog", @"<h1><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h1>
 
 ");
-            FormatTest("!!Hey Dog", @"<h2>Hey Dog</h2>
+            FormatTest("!!Hey Dog", @"<h2><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h2>
 
 ");
-            FormatTest("!!!Hey Dog", @"<h3>Hey Dog</h3>
+            FormatTest("!!!Hey Dog", @"<h3><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h3>
 
 ");
-            FormatTest("!!!!Hey Dog", @"<h4>Hey Dog</h4>
+            FormatTest("!!!!Hey Dog", @"<h4><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h4>
 
 ");
-            FormatTest("!!!!!Hey Dog", @"<h5>Hey Dog</h5>
+            FormatTest("!!!!!Hey Dog", @"<h5><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h5>
 
 ");
-            FormatTest("!!!!!!Hey Dog", @"<h6>Hey Dog</h6>
+            FormatTest("!!!!!!Hey Dog", @"<h6><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h6>
 
 ");
-            FormatTest("!!!!!!!Hey Dog", @"<h7>Hey Dog</h7>
+            FormatTest("!!!!!!!Hey Dog", @"<h7><a name=""Hey Dog"" class=""Anchor""></a>Hey Dog</h7>
 
 ");
         }
@@ -548,7 +548,7 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
         {
             FormatTest(
               @"!HelloWorld",
-              @"<h1><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HelloWorld")) + @""">HelloWorld</a></h1>
+              @"<h1><a name=""HelloWorld"" class=""Anchor""></a><a title=""Click here to create this topic"" class=""create"" href=""" + _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HelloWorld")) + @""">HelloWorld</a></h1>
 
 ");
         }
@@ -643,8 +643,8 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
         [Test]
         public void NestedWikiSpec()
         {
-            FormatTest(@"		{{IncludeNest}}", @"<h5>hey there</h5>
-<h6>black dog</h6>
+            FormatTest(@"		{{IncludeNest}}", @"<h5><a name=""hey there"" class=""Anchor""></a>hey there</h5>
+<h6><a name=""black dog"" class=""Anchor""></a>black dog</h6>
 ");
         }
         [Test]
@@ -968,12 +968,12 @@ blah blah EndOfLineShouldLink",
 	{{IncludeTwo}}
 		{{IncludeThree}}
 	{{IncludeFour}}
-", @"<h1>Head1</h1>
+", @"<h1><a name=""Head1"" class=""Anchor""></a>Head1</h1>
 
 <p>inc1</p>
-<h2>inc2</h2>
-<h4>inc3</h4>
-<h2>inc4</h2>
+<h2><a name=""inc2"" class=""Anchor""></a>inc2</h2>
+<h4><a name=""inc3"" class=""Anchor""></a>inc3</h4>
+<h2><a name=""inc4"" class=""Anchor""></a>inc4</h2>
 ");
         }
         [Test]

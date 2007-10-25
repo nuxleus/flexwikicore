@@ -21,14 +21,16 @@ namespace FlexWiki
     {
         private readonly ExternalReferencesMap _externalReferences = new ExternalReferencesMap(); 
         private readonly TopicPropertyCollection _properties = new TopicPropertyCollection();
-        private readonly TopicRevisionCollection _topicLinks = new TopicRevisionCollection(); 
+        private readonly TopicRevisionCollection _topicLinks = new TopicRevisionCollection();
+        private readonly string _headers;
 
         public ParsedTopic(TopicPropertyCollection properties, TopicRevisionCollection topicLinks, 
-            ExternalReferencesMap externalReferences)
+            ExternalReferencesMap externalReferences, string headers)
         {
             _properties.AddRange(properties);
             _topicLinks.AddRange(topicLinks);
-            _externalReferences.AddRange(externalReferences); 
+            _externalReferences.AddRange(externalReferences);
+            _headers = headers;
         }
 
         public ExternalReferencesMap ExternalReferences
@@ -38,7 +40,13 @@ namespace FlexWiki
                 return _externalReferences; 
             }
         }
-
+        public string Headers
+        {
+            get
+            {
+                return _headers;
+            }
+        }
         public TopicPropertyCollection Properties
         {
             get

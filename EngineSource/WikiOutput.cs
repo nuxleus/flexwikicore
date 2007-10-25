@@ -108,7 +108,7 @@ namespace FlexWiki.Formatting
 		abstract public void WriteEndLine();
 		abstract public void WriteSingleLine(string each);
 		abstract public void WriteListItem(string each);
-		abstract public void WriteHeading(string text, int level);
+		abstract public void WriteHeading(string anchor, string text, int level);
 		abstract public LineStyle Style {get; set;}
 		abstract public void WriteOpenPara();
 		abstract public void WriteClosePara();

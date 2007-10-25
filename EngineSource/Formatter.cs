@@ -1104,7 +1104,7 @@ namespace FlexWiki.Formatting
 
                         if (heading != -1)
                         {
-                            _output.WriteHeading(ProcessLineElements(each.Substring(heading)), _headingLevelBase + heading);
+                            _output.WriteHeading(each.Substring(heading), ProcessLineElements(each.Substring(heading)), _headingLevelBase + heading);
                         }
                         else
                         {

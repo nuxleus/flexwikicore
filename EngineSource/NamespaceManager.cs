@@ -806,6 +806,25 @@ namespace FlexWiki
 
             throw TopicNotFoundException.ForTopic(revision, Namespace); 
         }
+        public string GetTopicHeaders(string topic)
+        {
+            return GetTopicHeaders(new UnqualifiedTopicName(topic));
+        }
+        public string GetTopicHeaders(UnqualifiedTopicName topic)
+        {
+            if (!HasPermission(topic, TopicPermission.Read))
+            {
+                return null;
+            }
+            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(new UnqualifiedTopicRevision(topic));
+
+            if (parsedTopic == null)
+            {
+                return null;
+            }
+
+            return parsedTopic.Headers;
+        }
         [ExposedMethod(ExposedMethodFlags.Default, "Get information about the given topic")]
         public TopicVersionInfo GetTopicInfo(string topicName)
         {

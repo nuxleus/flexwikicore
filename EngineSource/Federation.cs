@@ -575,6 +575,15 @@ namespace FlexWiki
             }
             return answer;
         }
+        public string GetTopicHeaders(QualifiedTopicRevision topic)
+        {
+            NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
+            if (namespaceManager == null)
+            {
+                return null;
+            }
+            return namespaceManager.GetTopicHeaders(topic.LocalName);
+        }
         /// <summary>
         /// Answer the TopicInfo for the given topic (or null if it's an absent)
         /// </summary>

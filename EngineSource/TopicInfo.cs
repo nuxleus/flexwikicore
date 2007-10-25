@@ -13,6 +13,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using System.Web;
 
 using FlexWiki.Collections; 
 
@@ -83,7 +85,7 @@ namespace FlexWiki
                 return _changes; 
             }
         }
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime inndicating when the topic was created")]
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime indicating when the topic was created")]
         public DateTime Created
         {
             get
@@ -154,7 +156,7 @@ namespace FlexWiki
                 return _keywords; 
             }
         }
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer an array containgin all the keywords listed in the Keywords property")]
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer an array containing all the keywords listed in the Keywords property")]
         public ArrayList KeywordsList
         {
             get
@@ -168,7 +170,7 @@ namespace FlexWiki
                 return _keywordsList; 
             }
         }
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime inndicating when the topic was last modified")]
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a DateTime indicating when the topic was last modified")]
         public DateTime LastModified
         {
             get
@@ -282,7 +284,7 @@ namespace FlexWiki
         {
             return Federation.GetTopicPropertyValue(TopicRevision, propertyName);
         }
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer true if the given toipic has the given property; else false")]
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer true if the given topic has the given property; else false")]
         public bool HasProperty(string propertyName)
         {
             if (!_haveProperties)
@@ -305,6 +307,35 @@ namespace FlexWiki
                 answer += TopicRevision;
             }
             return answer;
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a formatted Table of Contents for the topic. Valid values for style are 'bullet' or 'numeric'")]
+        public string TableOfContents(string style)
+        {
+            StringBuilder strbldr = new StringBuilder();
+            string _spaces = "                                                        "; //56 spaces = 7 x 8 spaces
+            string _style;
+
+            string _headers = Federation.GetTopicHeaders(TopicRevision);
+            if (style.ToLower().Equals("numeric"))
+            {
+                _style = "1.";
+            }
+            else
+            {
+                _style = "*";
+            }
+
+            string[] hdrLine = _headers.Split(new char[] { '\n' });
+
+            for (int x = 0; x < hdrLine.Length - 1; x++)
+            {
+                string tempIn = hdrLine[x].Trim();
+                int y = tempIn.LastIndexOf('!');
+                string temp = tempIn.Substring(y + 1, tempIn.Length - y - 1);
+                temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""Default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""",""#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
+                strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
+            }
+            return strbldr.ToString();
         }
     }
 }
