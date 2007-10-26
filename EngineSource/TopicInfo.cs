@@ -330,8 +330,23 @@ namespace FlexWiki
             for (int x = 0; x < hdrLine.Length - 1; x++)
             {
                 string tempIn = hdrLine[x].Trim();
-                int y = tempIn.LastIndexOf('!');
+                int maxWidth = tempIn.Length > 6 ? 7 : tempIn.Length;
+                int y = tempIn.Substring(0,maxWidth).LastIndexOf('!'); //ensure y has max value of 7 and only uses chars at the start of the Header
                 string temp = tempIn.Substring(y + 1, tempIn.Length - y - 1);
+                while (temp.Contains("\"\"")) 
+                {
+                    int z = temp.IndexOf("\"\"");
+                    if (z == 0)
+                    {
+                        temp = temp.Substring(2);
+                    }
+                    else
+                    {
+                        temp = temp.Substring(0, z) + temp.Substring(z + 2);
+                    }
+                    
+                } 
+
                 temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""Default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""",""#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
                 strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
             }
