@@ -40,35 +40,37 @@ namespace FlexWiki.Web
 
 		private void Page_Load(object sender, System.EventArgs e)
 		{
-            FlexWikiAuthorizationException ex = Context.Items["LastError"] as FlexWikiAuthorizationException;
+            using (RequestContext.Create())
+            {
+                FlexWikiAuthorizationException ex = Context.Items["LastError"] as FlexWikiAuthorizationException;
 
-            if (ex != null)
-            {
-                Msg.Text = "Access was denied. The error message was: " + ex.Message;
-            }
-            else
-            {
-                Msg.Text = "Access was denied. No further information is available."; 
-            }
-
-            LoginLink.NavigateUrl = TheLinkMaker.LinkToLogin("");
-            ReturnLink.NavigateUrl = TheLinkMaker.LinkToTopic("");
-            try
-            {
-                QualifiedTopicRevision revision = PageUtilities.GetTopicRevision(Federation);
-                if (revision != null)
+                if (ex != null)
                 {
-                    LoginLink.NavigateUrl = TheLinkMaker.LinkToLogin(revision.DottedNameWithVersion); 
+                    Msg.Text = "Access was denied. The error message was: " + ex.Message;
+                }
+                else
+                {
+                    Msg.Text = "Access was denied. No further information is available.";
+                }
+
+                LoginLink.NavigateUrl = TheLinkMaker.LinkToLogin("");
+                ReturnLink.NavigateUrl = TheLinkMaker.LinkToTopic("");
+                try
+                {
+                    QualifiedTopicRevision revision = PageUtilities.GetTopicRevision(Federation);
+                    if (revision != null)
+                    {
+                        LoginLink.NavigateUrl = TheLinkMaker.LinkToLogin(revision.DottedNameWithVersion);
+                    }
+                }
+                catch (Exception x)
+                {
+                    // Swallow any exceptions: this is error handling code so we're not 
+                    // interested in blowing up while we try to publish a helpful page. 
+                    FlexWikiWebApplication.LogError(typeof(AccessDenied).ToString(),
+                        "Error trying to figure out what page the user was on: " + x.ToString());
                 }
             }
-            catch (Exception x)
-            {
-                // Swallow any exceptions: this is error handling code so we're not 
-                // interested in blowing up while we try to publish a helpful page. 
-                FlexWikiWebApplication.LogError(typeof(AccessDenied).ToString(),
-                    "Error trying to figure out what page the user was on: " + x.ToString()); 
-            }
-
 		}
 
 		#region Web Form Designer generated code

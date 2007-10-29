@@ -56,18 +56,21 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			LinkMaker lm = TheLinkMaker;
+            using (RequestContext.Create())
+            {
+                LinkMaker lm = TheLinkMaker;
 
-			string body = Request.Form["body"];
-			string ns = Request.Form["defaultNamespace"];
-			string tn = Request.Form["topic"];
+                string body = Request.Form["body"];
+                string ns = Request.Form["defaultNamespace"];
+                string tn = Request.Form["topic"];
 
-			QualifiedTopicRevision topicName = new QualifiedTopicRevision(tn, ns);
+                QualifiedTopicRevision topicName = new QualifiedTopicRevision(tn, ns);
 
-			Response.Write("<div class='PreviewMain'>");
-			Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker));
-			Response.Write("</div>");
-			Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
-		}
+                Response.Write("<div class='PreviewMain'>");
+                Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker));
+                Response.Write("</div>");
+                Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
+            }
+        }
 	}
 }

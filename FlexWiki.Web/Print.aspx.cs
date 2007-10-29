@@ -56,40 +56,46 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			QualifiedTopicRevision topic = GetTopicVersionKey();
-			NamespaceManager storeManager = Federation.NamespaceManagerForTopic(topic);
-			LinkMaker lm = TheLinkMaker;
+            using (RequestContext.Create())
+            {
+                QualifiedTopicRevision topic = GetTopicVersionKey();
+                NamespaceManager storeManager = Federation.NamespaceManagerForTopic(topic);
+                LinkMaker lm = TheLinkMaker;
 
-			Response.Write("<div style='font-family: Verdana'>");
-		
-			Response.Write("<div style='font-size: 18pt; font-weight: bold; '>");
-			Response.Write(topic.FormattedName);
-			Response.Write("</div>");
+                Response.Write("<div style='font-family: Verdana'>");
 
-			Response.Write("<div style='font-size: 8pt'>");
-			Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName));
-			Response.Write("</div>");
+                Response.Write("<div style='font-size: 18pt; font-weight: bold; '>");
+                Response.Write(topic.FormattedName);
+                Response.Write("</div>");
 
-			Response.Write("<hr noshade size='2' />");
-			Response.Write("</div>");
+                Response.Write("<div style='font-size: 8pt'>");
+                Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName));
+                Response.Write("</div>");
 
-			Response.Write("<div class='PrintMain'>");
+                Response.Write("<hr noshade size='2' />");
+                Response.Write("</div>");
 
-			// TODO - enable diffs for print too!
-			// TODO - an opportunity for caching
-			Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, Federation, TheLinkMaker));
+                Response.Write("<div class='PrintMain'>");
 
-			Response.Write("</div>");
+                // TODO - enable diffs for print too!
+                // TODO - an opportunity for caching
+                Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, Federation, TheLinkMaker));
+
+                Response.Write("</div>");
+            }
 		}
 
         protected string GetTitle()
         {
-            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
-            if (string.IsNullOrEmpty(title))
+            using (RequestContext.Create())
             {
-                title = GetTopicVersionKey().FormattedName;
+                string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
+                if (string.IsNullOrEmpty(title))
+                {
+                    title = GetTopicVersionKey().FormattedName;
+                }
+                return HtmlStringWriter.Escape(title);
             }
-            return HtmlStringWriter.Escape(title);
         }
 
 	}

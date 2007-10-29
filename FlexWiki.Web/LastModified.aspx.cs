@@ -37,20 +37,21 @@ namespace FlexWiki.Web
 
         private void Page_Load(object sender, System.EventArgs e)
         {
-            _uniqueNamespaces = new ArrayList();
-            foreach (string ns in Federation.Namespaces)
+            using (RequestContext.Create())
             {
-                _uniqueNamespaces.Add(ns);
+                _uniqueNamespaces = new ArrayList();
+                foreach (string ns in Federation.Namespaces)
+                {
+                    _uniqueNamespaces.Add(ns);
+                }
+                _uniqueNamespaces.Sort();
+
+                _preferredNamespace = Request.QueryString["namespace"];
+                if (_preferredNamespace == null)
+                {
+                    _preferredNamespace = DefaultNamespace;
+                }
             }
-            _uniqueNamespaces.Sort();
-
-            _preferredNamespace = Request.QueryString["namespace"];
-            if (_preferredNamespace == null)
-            {
-                _preferredNamespace = DefaultNamespace;
-            }
-
-
         }
 
         #region Web Form Designer generated code
@@ -100,81 +101,83 @@ namespace FlexWiki.Web
 
         protected void DoSearch()
         {
-            LinkMaker lm = TheLinkMaker;
-
-            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(_preferredNamespace);
-
-            // Get the complete list of topics and authors 
-            QualifiedTopicNameCollection topics = storeManager.AllTopicsSortedLastModifiedDescending();
-
-            // Omit topics for which we don't have read permission - we're not going to be able 
-            // to access information about them anyway. 
-            QualifiedTopicNameCollection permittedTopics = new QualifiedTopicNameCollection();
-            foreach (QualifiedTopicName topic in topics)
+            using (RequestContext.Create())
             {
-                if (storeManager.HasPermission(new UnqualifiedTopicName(topic.LocalName), TopicPermission.Read))
+                LinkMaker lm = TheLinkMaker;
+
+                NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(_preferredNamespace);
+
+                // Get the complete list of topics and authors 
+                QualifiedTopicNameCollection topics = storeManager.AllTopicsSortedLastModifiedDescending();
+
+                // Omit topics for which we don't have read permission - we're not going to be able 
+                // to access information about them anyway. 
+                QualifiedTopicNameCollection permittedTopics = new QualifiedTopicNameCollection();
+                foreach (QualifiedTopicName topic in topics)
                 {
-                    permittedTopics.Add(topic); 
+                    if (storeManager.HasPermission(new UnqualifiedTopicName(topic.LocalName), TopicPermission.Read))
+                    {
+                        permittedTopics.Add(topic);
+                    }
                 }
-            }
 
-            Dictionary<QualifiedTopicName, string> authorMap = new Dictionary<QualifiedTopicName, string>();
-            SortedList<string, string> authors = new SortedList<string, string>();
-            foreach (QualifiedTopicName topic in permittedTopics)
-            {
-                string author = storeManager.GetTopicLastAuthor(topic.LocalName);
-                authorMap[topic] = author;
-                // Overwrites the entry for author if it already exists, thus giving
-                // us only unique authors. 
-                authors[author] = author;
-            }
+                Dictionary<QualifiedTopicName, string> authorMap = new Dictionary<QualifiedTopicName, string>();
+                SortedList<string, string> authors = new SortedList<string, string>();
+                foreach (QualifiedTopicName topic in permittedTopics)
+                {
+                    string author = storeManager.GetTopicLastAuthor(topic.LocalName);
+                    authorMap[topic] = author;
+                    // Overwrites the entry for author if it already exists, thus giving
+                    // us only unique authors. 
+                    authors[author] = author;
+                }
 
-            Response.Write("<table cellspacing='0' cellpadding='2' border='0'>");
-            Response.Write("<thead>");
-            Response.Write("<td class=\"SearchColumnHeading\" width=\"300\">Topic</td>");
-            Response.Write("<td class=\"SearchColumnHeading\" width=\"100\">Modified</td>");
-            Response.Write("<td class=\"SearchColumnHeading\" width=\"200\">Author: ");
-            Response.Write("<select  onchange='filter()' class='SearchColumnFilterBox' id='AuthorFilter'>");
-            Response.Write("<option value='" + All + "'>" + All + "</option>");
-            foreach (string author in authors.Values)
-            {
-                Response.Write("<option value='" + author + "'>" + author + "</option>");
-            }
-            Response.Write(@"</select>");
-            Response.Write("</td>");
-
-            Response.Write("</thead><tbody id=\"MainTable\">");
-
-            int row = 0;
-            foreach (QualifiedTopicName topic in permittedTopics)
-            {
-                Response.Write("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
-                row++;
-
-                Response.Write("<td>");
-                Response.Write("<b><a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
-                Response.Write(topic.LocalName);
-                Response.Write("</a></b>");
+                Response.Write("<table cellspacing='0' cellpadding='2' border='0'>");
+                Response.Write("<thead>");
+                Response.Write("<td class=\"SearchColumnHeading\" width=\"300\">Topic</td>");
+                Response.Write("<td class=\"SearchColumnHeading\" width=\"100\">Modified</td>");
+                Response.Write("<td class=\"SearchColumnHeading\" width=\"200\">Author: ");
+                Response.Write("<select  onchange='filter()' class='SearchColumnFilterBox' id='AuthorFilter'>");
+                Response.Write("<option value='" + All + "'>" + All + "</option>");
+                foreach (string author in authors.Values)
+                {
+                    Response.Write("<option value='" + author + "'>" + author + "</option>");
+                }
+                Response.Write(@"</select>");
                 Response.Write("</td>");
 
-                Response.Write("<td>");
-                DateTime stamp = storeManager.GetTopicLastModificationTime(topic.LocalName);
-                if (stamp.Date == DateTime.Now.Date)
-                {
-                    Response.Write(stamp.ToString("h:mm tt"));
-                }
-                else
-                {
-                    Response.Write(stamp.ToString("MM/dd/yyyy h:mm tt"));
-                }
-                Response.Write("</td>");
-                Response.Write("<td>");
-                Response.Write(Escape((string)(authorMap[topic])));
-                Response.Write("</td>");
-                Response.Write("</tr>");
-            }
-            Response.Write("</tbody></table>");
+                Response.Write("</thead><tbody id=\"MainTable\">");
 
+                int row = 0;
+                foreach (QualifiedTopicName topic in permittedTopics)
+                {
+                    Response.Write("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
+                    row++;
+
+                    Response.Write("<td>");
+                    Response.Write("<b><a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
+                    Response.Write(topic.LocalName);
+                    Response.Write("</a></b>");
+                    Response.Write("</td>");
+
+                    Response.Write("<td>");
+                    DateTime stamp = storeManager.GetTopicLastModificationTime(topic.LocalName);
+                    if (stamp.Date == DateTime.Now.Date)
+                    {
+                        Response.Write(stamp.ToString("h:mm tt"));
+                    }
+                    else
+                    {
+                        Response.Write(stamp.ToString("MM/dd/yyyy h:mm tt"));
+                    }
+                    Response.Write("</td>");
+                    Response.Write("<td>");
+                    Response.Write(Escape((string)(authorMap[topic])));
+                    Response.Write("</td>");
+                    Response.Write("</tr>");
+                }
+                Response.Write("</tbody></table>");
+            }
         }
     }
 }

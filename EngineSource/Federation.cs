@@ -943,7 +943,8 @@ namespace FlexWiki
             providerChain = new ParsingProvider(providerChain);
             providerChain = new TopicCacheProvider(providerChain); 
             providerChain = new AuthorizationProvider(providerChain);
-            providerChain = new TransportSecurityRequirementProvider(providerChain); 
+            providerChain = new TransportSecurityRequirementProvider(providerChain);
+            providerChain = new DependencyRecorder(providerChain); 
             
             NamespaceManager namespaceManager = new NamespaceManager(this, providerChain, ns, parameters);
 

@@ -53,8 +53,11 @@ namespace FlexWiki.Web.Admin
 		
 		protected virtual void ShowHead()
         {
-            Response.Write(PageUtilities.InsertStylesheetReferences(
-                Federation, FlexWikiWebApplication));
+            using (RequestContext.Create())
+            {
+                Response.Write(PageUtilities.InsertStylesheetReferences(
+                    Federation, FlexWikiWebApplication));
+            }
         }
 		
 		protected virtual void ShowMain()

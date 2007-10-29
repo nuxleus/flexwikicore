@@ -36,7 +36,7 @@
 	   if="${file::exists(personalpropspath)}" />
 
   <!-- Read in things like environment variables into nant properties -->
-  <sysinfo />
+  <!-- <sysinfo /> -->
 
   <!-- Read the base version numbers from the version.xml file -->
   <property name="versionfile" value="${basedir}/version.xml" />

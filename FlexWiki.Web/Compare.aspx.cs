@@ -94,13 +94,21 @@ namespace FlexWiki.Web
 
 		protected string GetTitle()
 		{
-			string title = Federation.GetTopicPropertyValue(RequestedTopic, "Title");
-			if (title == null || title == "")
-			{
-				title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName, GetTopicVersionKey().Namespace);
-			}
-			return HtmlStringWriter.Escape(title);
+            using (RequestContext.Create())
+            {
+                return GetTitleInExistingContext();
+            }
 		}
+
+        private string GetTitleInExistingContext()
+        {
+            string title = Federation.GetTopicPropertyValue(RequestedTopic, "Title");
+            if (title == null || title == "")
+            {
+                title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName, GetTopicVersionKey().Namespace);
+            }
+            return HtmlStringWriter.Escape(title);
+        }
 		
 		protected void StartPage()
 		{
@@ -121,30 +129,32 @@ namespace FlexWiki.Web
 
 		protected void DoPage()
 		{
-			QualifiedTopicRevision newestTopicVersion = null;
-			QualifiedTopicRevision oldTopicVersion	 = null;
-			int counter = 0;
-			IEnumerable changeList = Federation.GetTopicChanges(RequestedTopic.AsQualifiedTopicName());
-			foreach (TopicChange change in changeList)
-			{
-				if (counter == _diff)
-				{
-					newestTopicVersion = new QualifiedTopicRevision(change.DottedName);
-				}
-				else if (counter == _oldid)
-				{
-					oldTopicVersion = new QualifiedTopicRevision(change.DottedName);
-					break;
-				}
-				counter++;
-			}
+            using (RequestContext.Create())
+            {
+                QualifiedTopicRevision newestTopicVersion = null;
+                QualifiedTopicRevision oldTopicVersion = null;
+                int counter = 0;
+                IEnumerable changeList = Federation.GetTopicChanges(RequestedTopic.AsQualifiedTopicName());
+                foreach (TopicChange change in changeList)
+                {
+                    if (counter == _diff)
+                    {
+                        newestTopicVersion = new QualifiedTopicRevision(change.DottedName);
+                    }
+                    else if (counter == _oldid)
+                    {
+                        oldTopicVersion = new QualifiedTopicRevision(change.DottedName);
+                        break;
+                    }
+                    counter++;
+                }
 
-			if (newestTopicVersion != null && oldTopicVersion != null)
-			{
-				Response.Write(@"<div id=""MainRegion"" class=""TopicBody"">
+                if (newestTopicVersion != null && oldTopicVersion != null)
+                {
+                    Response.Write(@"<div id=""MainRegion"" class=""TopicBody"">
 <form method=""post"" action=""" + TheLinkMaker.LinkToQuicklink() + @"?QuickLinkNamespace=" + RequestedTopic.Namespace + @""" name=""QuickLinkForm"">
 <div id=""TopicBar"" title=""Click here to quickly jump to or create a topic"" class=""TopicBar"" onmouseover=""javascript:TopicBarMouseOver()""  onclick=""javascript:TopicBarClick(event)""  onmouseout=""javascript:TopicBarMouseOut()"">
-<div  id=""StaticTopicBar"" class=""StaticTopicBar"" style=""display: block"">" + GetTitle() + @"</div>
+<div  id=""StaticTopicBar"" class=""StaticTopicBar"" style=""display: block"">" + GetTitleInExistingContext() + @"</div>
 <div id=""DynamicTopicBar"" class=""DynamicTopicBar"" style=""display: none"">
 <!-- <input id=""TopicBarNamespace"" style=""display: none"" type=""text""  name=""QuickLinkNamespace""/> -->
 <input id=""TopicBarInputBox"" title=""Enter a topic here to go to or create"" class=""QuickLinkInput"" type=""text""  name=""QuickLink""/>
@@ -153,12 +163,12 @@ namespace FlexWiki.Web
 </div>
 </form>
 ");
-				string formattedBody = Federation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
-				Response.Write(formattedBody);
-				Response.Write("</div>");
+                    string formattedBody = Federation.GetTopicFormattedContent(newestTopicVersion, oldTopicVersion);
+                    Response.Write(formattedBody);
+                    Response.Write("</div>");
 
-			}
-			
+                }
+            }
 		}
 	}
 }

@@ -19,7 +19,8 @@ using NUnit.Framework;
 
 using FlexWiki.Collections;
 using FlexWiki.Security;
-using FlexWiki.UnitTests.Security; 
+using FlexWiki.UnitTests.Caching;
+using FlexWiki.UnitTests.Security;
 
 namespace FlexWiki.UnitTests
 {
@@ -146,6 +147,32 @@ namespace FlexWiki.UnitTests
             return federation.RegisterNamespace(store, ns, parameters);
         }
 
+        internal static void DoProviderTest<TProvider>(TestContentSet testContentSet, 
+            string siteUrl, 
+            Action<TestParameters<TProvider>> test)
+        {
+            TestParameters<TProvider> parameters = new TestParameters<TProvider>();
+            parameters.Federation = WikiTestUtilities.SetupFederation(siteUrl, testContentSet);
+            
+            using (RequestContext.Create())
+            {
+                parameters.Manager = parameters.Federation.NamespaceManagerForNamespace("NamespaceOne");
+                parameters.Provider = (TProvider)parameters.Manager.GetProvider(typeof(TProvider));
+                parameters.Store = (MockContentStore)parameters.Manager.GetProvider(typeof(MockContentStore));
+                parameters.Cache = GetCache(parameters.Federation);
+            }
+
+            using (RequestContext.Create())
+            {
+                test(parameters);
+            }
+        }
+
+        internal static MockCache GetCache(Federation federation)
+        {
+            return (MockCache)federation.Application.Cache;
+        }
+
         internal static NamespaceManager GetNamespaceManagerBypassingSecurity(Federation federation, string ns)
         {
             // We use reflection to retrieve the NamespaceManager for a particular namespace, 
@@ -200,13 +227,16 @@ namespace FlexWiki.UnitTests
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
             Federation federation = new Federation(application);
 
-            foreach (TestNamespace ns in content.Namespaces)
+            using (RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
             {
-                NamespaceManager storeManager = CreateMockStore(federation, ns.Name, options, ns.Parameters);
-
-                foreach (TestTopic topic in ns.Topics)
+                foreach (TestNamespace ns in content.Namespaces)
                 {
-                    WriteTopicAndNewVersionBypassingSecurity(storeManager, topic.Name, topic.Content, topic.Author);
+                    NamespaceManager storeManager = CreateMockStore(federation, ns.Name, options, ns.Parameters);
+
+                    foreach (TestTopic topic in ns.Topics)
+                    {
+                        WriteTopicAndNewVersionBypassingSecurity(storeManager, topic.Name, topic.Content, topic.Author);
+                    }
                 }
             }
 

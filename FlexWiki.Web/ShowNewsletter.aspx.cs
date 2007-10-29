@@ -69,46 +69,49 @@ namespace FlexWiki.Web
 
         protected void DoPage()
         {
-            NewsletterManager manager = new NewsletterManager(Federation, TheLinkMaker, null, null, null);
-            QualifiedTopicName newsletter = Newsletter;
-
-            DateTime since;
-            string headInsert = null;
-            string description = null;
-            string newsletterName = null;
-            string newsletterLink = null;
-            IEnumerable<QualifiedTopicName> topics = null;
-            string homeNamespace = null;
-
-
-            if (newsletter != null)
+            using (RequestContext.Create())
             {
-                description = manager.GetDescriptionForNewsletter(newsletter);
-                since = manager.GetLastUpdateForNewsletter(newsletter);
-                newsletterName = newsletter.LocalName;
-                newsletterLink = TheLinkMaker.LinkToTopic(newsletter);
-                topics = manager.AllTopicsForNewsletter(newsletter);
-                homeNamespace = newsletter.Namespace;
-            }
-            else
-            {
-                since = DateTime.Now;
+                NewsletterManager manager = new NewsletterManager(Federation, TheLinkMaker, null, null, null);
+                QualifiedTopicName newsletter = Newsletter;
+
+                DateTime since;
+                string headInsert = null;
+                string description = null;
+                string newsletterName = null;
+                string newsletterLink = null;
+                IEnumerable<QualifiedTopicName> topics = null;
+                string homeNamespace = null;
+
+
+                if (newsletter != null)
+                {
+                    description = manager.GetDescriptionForNewsletter(newsletter);
+                    since = manager.GetLastUpdateForNewsletter(newsletter);
+                    newsletterName = newsletter.LocalName;
+                    newsletterLink = TheLinkMaker.LinkToTopic(newsletter);
+                    topics = manager.AllTopicsForNewsletter(newsletter);
+                    homeNamespace = newsletter.Namespace;
+                }
+                else
+                {
+                    since = DateTime.Now;
+                    since = since.Subtract(new TimeSpan(24, 0, 0));
+                    // Arbitrary newsletter
+                    QualifiedTopicNameCollection al = new QualifiedTopicNameCollection();
+                    al.Add(new QualifiedTopicName("Microsoft.Projects.Wiki.HomePage"));
+                    al.Add(new QualifiedTopicName("Microsoft.Projects.Wiki.SecondPage"));
+                    topics = al;
+                    homeNamespace = Federation.DefaultNamespace;
+                }
+
                 since = since.Subtract(new TimeSpan(24, 0, 0));
-                // Arbitrary newsletter
-                QualifiedTopicNameCollection al = new QualifiedTopicNameCollection();
-                al.Add(new QualifiedTopicName("Microsoft.Projects.Wiki.HomePage"));
-                al.Add(new QualifiedTopicName("Microsoft.Projects.Wiki.SecondPage"));
-                topics = al;
-                homeNamespace = Federation.DefaultNamespace;
+
+                headInsert = InsertStylesheetReferences();
+
+                string html = manager.BuildArbitraryNewsletter(newsletterName, newsletterLink, topics, since, headInsert, description, homeNamespace);
+
+                Response.Write(html);
             }
-
-            since = since.Subtract(new TimeSpan(24, 0, 0));
-
-            headInsert = InsertStylesheetReferences();
-
-            string html = manager.BuildArbitraryNewsletter(newsletterName, newsletterLink, topics, since, headInsert, description, homeNamespace);
-
-            Response.Write(html);
         }
     }
 }

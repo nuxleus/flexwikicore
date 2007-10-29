@@ -58,83 +58,86 @@ namespace FlexWiki.Web
 
         protected void ShowPage()
         {
-            StringBuilder strbldr = new StringBuilder();
-            
-            strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Lost And Found</legend>");
-            strbldr.AppendLine("<form id=\"Form\" action=\"\">");
-
-            ArrayList uniqueNamespaces = new ArrayList();
-            foreach (string ns in Federation.Namespaces)
+            using (RequestContext.Create())
             {
-                uniqueNamespaces.Add(ns);
-            }
-            uniqueNamespaces.Sort();
+                StringBuilder strbldr = new StringBuilder();
 
-            string preferredNamespace = Request.QueryString["namespace"];
-            if (preferredNamespace == null)
-                preferredNamespace = DefaultNamespace;
+                strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Lost And Found</legend>");
+                strbldr.AppendLine("<form id=\"Form\" action=\"\">");
 
-            strbldr.AppendLine("<p>Namespace:<br /><select title=\"to explore the list and found for another namespace, select it here\" name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
-            foreach (string ns in uniqueNamespaces)
-            {
-                string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
-                strbldr.AppendLine("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
-            }
-            strbldr.AppendLine("</select> <input title=\"click here to explore the lost and found for the selected namespace\" type=\"submit\" id=\"Go\" value=\"Change namespace\" /></p></form>");
-
-
-            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
-            LinkMaker lm = TheLinkMaker;
-
-            if (storeManager == null)
-            {
-            
-                strbldr.AppendLine("<h1>Inaccessible namespace</h1>");
-                strbldr.AppendLine("<p>The namespace you have selected is not accessible.</p>");
-            }
-            else
-            {
-            	strbldr.AppendLine("<h1>Lost and Found</h1>");
-	            strbldr.AppendLine("<p>Below are listed pages that are not reachable from the home page of this namespace.</p>");
-	            strbldr.AppendLine("<p>Related pages (ones that link to each other) are listed together.  Bold topics are completely unreferenced.  Other topics are referenced, but only from within the related topic group.</p>");
-	
-                ContentStoreAnalysis analysis = new ContentStoreAnalysis(storeManager);
-
-                QualifiedTopicRevision home = new QualifiedTopicRevision(storeManager.HomePage, storeManager.Namespace);
-                strbldr.AppendLine("<ul>");
-                foreach (Island eachIsland in analysis.Islands)
+                ArrayList uniqueNamespaces = new ArrayList();
+                foreach (string ns in Federation.Namespaces)
                 {
-                    if (eachIsland.Contains(home))
-                    {
-                        continue;		// skip the mainland!
-                    }
-                    bool first = true;
-                    strbldr.AppendLine("<li>");
-                    foreach (QualifiedTopicRevision eachTopic in eachIsland)
-                    {
-                        TopicAnalysis tan = analysis.AnalysisFor(eachTopic);
-                        if (!first)
-                        {
-                            strbldr.AppendLine(", ");
-                        }
-                        first = false;
-                        int refs = tan.RefCount;
-                        if (refs == 0)
-                        {
-                            strbldr.AppendLine("<b>");
-                        }
-                        strbldr.AppendLine("<a href=\"" + lm.LinkToTopic(eachTopic) + "\">" + eachTopic.LocalName + "</a>");
-                        if (refs == 0)
-                        {
-                            strbldr.AppendLine("</b>");
-                        }
-                    }
-                    strbldr.AppendLine("</li>");
+                    uniqueNamespaces.Add(ns);
                 }
-                strbldr.AppendLine("</ul>");
+                uniqueNamespaces.Sort();
+
+                string preferredNamespace = Request.QueryString["namespace"];
+                if (preferredNamespace == null)
+                    preferredNamespace = DefaultNamespace;
+
+                strbldr.AppendLine("<p>Namespace:<br /><select title=\"to explore the list and found for another namespace, select it here\" name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
+                foreach (string ns in uniqueNamespaces)
+                {
+                    string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
+                    strbldr.AppendLine("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
+                }
+                strbldr.AppendLine("</select> <input title=\"click here to explore the lost and found for the selected namespace\" type=\"submit\" id=\"Go\" value=\"Change namespace\" /></p></form>");
+
+
+                NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
+                LinkMaker lm = TheLinkMaker;
+
+                if (storeManager == null)
+                {
+
+                    strbldr.AppendLine("<h1>Inaccessible namespace</h1>");
+                    strbldr.AppendLine("<p>The namespace you have selected is not accessible.</p>");
+                }
+                else
+                {
+                    strbldr.AppendLine("<h1>Lost and Found</h1>");
+                    strbldr.AppendLine("<p>Below are listed pages that are not reachable from the home page of this namespace.</p>");
+                    strbldr.AppendLine("<p>Related pages (ones that link to each other) are listed together.  Bold topics are completely unreferenced.  Other topics are referenced, but only from within the related topic group.</p>");
+
+                    ContentStoreAnalysis analysis = new ContentStoreAnalysis(storeManager);
+
+                    QualifiedTopicRevision home = new QualifiedTopicRevision(storeManager.HomePage, storeManager.Namespace);
+                    strbldr.AppendLine("<ul>");
+                    foreach (Island eachIsland in analysis.Islands)
+                    {
+                        if (eachIsland.Contains(home))
+                        {
+                            continue;		// skip the mainland!
+                        }
+                        bool first = true;
+                        strbldr.AppendLine("<li>");
+                        foreach (QualifiedTopicRevision eachTopic in eachIsland)
+                        {
+                            TopicAnalysis tan = analysis.AnalysisFor(eachTopic);
+                            if (!first)
+                            {
+                                strbldr.AppendLine(", ");
+                            }
+                            first = false;
+                            int refs = tan.RefCount;
+                            if (refs == 0)
+                            {
+                                strbldr.AppendLine("<b>");
+                            }
+                            strbldr.AppendLine("<a href=\"" + lm.LinkToTopic(eachTopic) + "\">" + eachTopic.LocalName + "</a>");
+                            if (refs == 0)
+                            {
+                                strbldr.AppendLine("</b>");
+                            }
+                        }
+                        strbldr.AppendLine("</li>");
+                    }
+                    strbldr.AppendLine("</ul>");
+                }
+                strbldr.AppendLine("</fieldset>");
+                Response.Write(strbldr.ToString());
             }
-            strbldr.AppendLine("</fieldset>");
-            Response.Write(strbldr.ToString());
         }
     }
 

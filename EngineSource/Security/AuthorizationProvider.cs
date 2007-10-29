@@ -21,7 +21,7 @@ namespace FlexWiki.Security
 {
     public class AuthorizationProvider : IContentProvider
     {
-        private const string c_recursionContextKey = "AuthorizationProviderRecursionContextKey"; 
+        private const string c_recursionContextKey = "AuthorizationProviderRecursionContextKey";
 
         private NamespaceManager _namespaceManager;
         private IContentProvider _next;
@@ -43,11 +43,11 @@ namespace FlexWiki.Security
 
                     if (cached != null && cached is bool)
                     {
-                        return (bool)cached; 
+                        return (bool)cached;
                     }
                 }
 
-                bool value; 
+                bool value;
                 AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
                 rules.AddRange(GetWikiScopeRules());
                 rules.AddRange(GetNamespaceScopeRules());
@@ -68,16 +68,16 @@ namespace FlexWiki.Security
 
                 if (RequestContext.Current != null)
                 {
-                    RequestContext.Current[key] = value; 
+                    RequestContext.Current[key] = value;
                 }
 
-                return value; 
+                return value;
             }
         }
 
         public bool IsReadOnly
         {
-            get 
+            get
             {
                 // Because you could mark a namespace as read-only for a particular user 
                 // but still have writable topics in it (via AllowEdit commands in individual 
@@ -134,6 +134,7 @@ namespace FlexWiki.Security
             using (CreateRecursionContext())
             {
                 _next.DeleteAllTopicsAndHistory();
+                InvalidateAllCachedPermissions();
             }
         }
         public void DeleteTopic(UnqualifiedTopicName topic)
@@ -142,6 +143,14 @@ namespace FlexWiki.Security
             using (CreateRecursionContext())
             {
                 _next.DeleteTopic(topic);
+                if (IsDefinitionTopic(topic))
+                {
+                    InvalidateAllCachedPermissions();
+                }
+                else
+                {
+                    InvalidateCachedPermissions(topic);
+                }
             }
         }
         public ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
@@ -156,7 +165,7 @@ namespace FlexWiki.Security
         {
             if (permission != NamespacePermission.Manage)
             {
-                throw new ArgumentException("Unrecognized namespace permission " + permission.ToString()); 
+                throw new ArgumentException("Unrecognized namespace permission " + permission.ToString());
             }
 
             RequestContext context = RequestContext.Current;
@@ -196,10 +205,9 @@ namespace FlexWiki.Security
                 context[key] = isAllowed;
             }
 
-            return isAllowed; 
+            return isAllowed;
 
         }
-
         public bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             if (permission != TopicPermission.Edit && permission != TopicPermission.Read)
@@ -208,7 +216,7 @@ namespace FlexWiki.Security
             }
 
             RequestContext context = RequestContext.Current;
-            string key = null; 
+            string key = null;
             if (context != null)
             {
                 key = GetKey(topic, permission, "HasPermission");
@@ -216,7 +224,7 @@ namespace FlexWiki.Security
 
                 if (value != null && value is bool)
                 {
-                    return (bool) value; 
+                    return (bool)value;
                 }
             }
 
@@ -224,7 +232,7 @@ namespace FlexWiki.Security
             bool nextHasPermission;
             using (CreateRecursionContext())
             {
-                nextHasPermission = _next.HasPermission(topic, permission); 
+                nextHasPermission = _next.HasPermission(topic, permission);
             }
             if (!nextHasPermission)
             {
@@ -256,10 +264,10 @@ namespace FlexWiki.Security
 
             if (context != null)
             {
-                context[key] = isAllowed; 
+                context[key] = isAllowed;
             }
 
-            return isAllowed; 
+            return isAllowed;
         }
         public void Initialize(NamespaceManager namespaceManager)
         {
@@ -271,15 +279,16 @@ namespace FlexWiki.Security
         }
         public void LockTopic(UnqualifiedTopicName topic)
         {
-            AssertNamespacePermission(SecurableAction.ManageNamespace); 
+            AssertNamespacePermission(SecurableAction.ManageNamespace);
             using (CreateRecursionContext())
             {
                 _next.LockTopic(topic);
+                InvalidateCachedPermissions(topic);
             }
         }
         public TextReader TextReaderForTopic(UnqualifiedTopicRevision topicRevision)
         {
-            AssertTopicPermission(topicRevision.AsUnqualifiedTopicName(), TopicPermission.Read); 
+            AssertTopicPermission(topicRevision.AsUnqualifiedTopicName(), TopicPermission.Read);
             using (CreateRecursionContext())
             {
                 return _next.TextReaderForTopic(topicRevision);
@@ -305,29 +314,28 @@ namespace FlexWiki.Security
             using (CreateRecursionContext())
             {
                 _next.UnlockTopic(topic);
+                InvalidateCachedPermissions(topic);
             }
         }
         public void WriteTopic(UnqualifiedTopicRevision topicRevision, string content)
         {
-            string definitionTopicName = null;
-            using (CreateRecursionContext())
+            if (IsDefinitionTopic(topicRevision.AsUnqualifiedTopicName()))
             {
-                definitionTopicName = _namespaceManager.DefinitionTopicName.LocalName; 
-            }
-            // You need ManageNamespace permission to edit the definition topic
-            if (topicRevision.LocalName.Equals(definitionTopicName))
-            {
+                // You need ManageNamespace permission to edit the definition topic
                 AssertNamespacePermission(SecurableAction.ManageNamespace);
+                InvalidateAllCachedPermissions();
             }
-            // For all other topics, Edit will do.
             else
             {
+                // For all other topics, Edit will do.
                 AssertTopicPermission(topicRevision.AsUnqualifiedTopicName(), TopicPermission.Edit);
+                InvalidateCachedPermissions(topicRevision.AsUnqualifiedTopicName());
             }
             using (CreateRecursionContext())
             {
                 _next.WriteTopic(topicRevision, content);
             }
+
         }
 
         private void AssertNamespacePermission(SecurableAction action)
@@ -358,7 +366,7 @@ namespace FlexWiki.Security
         }
         private IDisposable CreateRecursionContext()
         {
-            return new RecursionContextHelper(c_recursionContextKey); 
+            return new RecursionContextHelper(c_recursionContextKey);
         }
         private SecurableAction GetActionFromPermission(TopicPermission permission)
         {
@@ -371,7 +379,7 @@ namespace FlexWiki.Security
                 // Editing the definition topic requires ManageNamespace, not Edit. 
                 if (isDefinitionTopic)
                 {
-                    return SecurableAction.ManageNamespace; 
+                    return SecurableAction.ManageNamespace;
                 }
                 else
                 {
@@ -389,7 +397,7 @@ namespace FlexWiki.Security
         }
         private string GetKey(string tag)
         {
-            return string.Format("authorizationProvider://{0}/{1}", Namespace, tag); 
+            return string.Format("authorizationProvider://{0}/{1}", Namespace, tag);
         }
         private string GetKey(NamespacePermission permission, string tag)
         {
@@ -401,20 +409,17 @@ namespace FlexWiki.Security
         }
         private string GetKey(UnqualifiedTopicName topic, TopicPermission permission, string tag)
         {
-            return string.Format("authorizationProvider://{0}/{1}/{2}/{3}", Namespace, topic.LocalName, tag, permission); 
+            return string.Format("authorizationProvider://{0}/{1}/{2}/{3}", Namespace, topic.LocalName, tag, permission);
         }
         private AuthorizationRuleCollection GetNamespaceScopeRules()
         {
             string key = GetKey("NamespaceScopeRules");
 
-            if (RequestContext.Current != null)
-            {
-                AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
+            AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
 
-                if (cached != null)
-                {
-                    return cached; 
-                }
+            if (cached != null)
+            {
+                return cached;
             }
 
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
@@ -425,10 +430,7 @@ namespace FlexWiki.Security
                 rules.AddRange(GetSecurityRules(parsedDefinitionTopic, AuthorizationRuleScope.Namespace));
             }
 
-            if (RequestContext.Current != null)
-            {
-                RequestContext.Current[key] = rules; 
-            }
+            RequestContext.Current[key] = rules;
 
             return rules;
         }
@@ -439,7 +441,7 @@ namespace FlexWiki.Security
 
             if (parsedTopic == null)
             {
-                return rules; 
+                return rules;
             }
 
             foreach (TopicProperty property in parsedTopic.Properties)
@@ -464,29 +466,21 @@ namespace FlexWiki.Security
         private AuthorizationRuleCollection GetTopicScopeRules(UnqualifiedTopicName topic)
         {
             string key = GetKey(topic, "TopicScopeRules");
+            AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
 
-            if (RequestContext.Current != null)
+            if (cached != null)
             {
-                AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
-
-                if (cached != null)
-                {
-                    return cached;
-                }
+                return cached;
             }
 
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
             ParsedTopic parsedTopic = Next.GetParsedTopic(new UnqualifiedTopicRevision(topic));
             rules.AddRange(GetSecurityRules(parsedTopic, AuthorizationRuleScope.Topic));
 
-            if (RequestContext.Current != null)
-            {
-                RequestContext.Current[key] = rules;
-            }
+            RequestContext.Current[key] = rules;
 
             return rules;
         }
-
         private AuthorizationRuleCollection GetWikiScopeRules()
         {
             AuthorizationRuleCollection rules = new AuthorizationRuleCollection();
@@ -499,6 +493,26 @@ namespace FlexWiki.Security
             }
             return rules;
         }
+        private void InvalidateCachedPermissions(UnqualifiedTopicName unqualifiedTopicName)
+        {
+            string prefix = GetKey(unqualifiedTopicName, "");
+            InvalidateCacheItemsStartingWith(prefix);
+        }
+        private void InvalidateAllCachedPermissions()
+        {
+            string prefix = GetKey("");
+            InvalidateCacheItemsStartingWith(prefix);
+        }
+        private void InvalidateCacheItemsStartingWith(string prefix)
+        {
+            foreach (string key in RequestContext.Current.Keys)
+            {
+                if (key.StartsWith(prefix))
+                {
+                    RequestContext.Current[key] = null;
+                }
+            }
+        }
         private bool IsAllowed(SecurableAction action, AuthorizationRuleCollection rules)
         {
             // If this is a recursive call, then we need to allow the action - otherwise we might
@@ -506,7 +520,7 @@ namespace FlexWiki.Security
             // to determine namespace permissions
             if (IsRecursing)
             {
-                return true; 
+                return true;
             }
 
             // If the security provider is disabled, always return true. 
@@ -514,7 +528,7 @@ namespace FlexWiki.Security
             {
                 if (_namespaceManager.Parameters["Security.Disabled"].Value.Equals("true", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return true; 
+                    return true;
                 }
             }
 
@@ -546,6 +560,15 @@ namespace FlexWiki.Security
             }
 
             return allowed;
+        }
+        private bool IsDefinitionTopic(UnqualifiedTopicName unqualifiedTopicName)
+        {
+            UnqualifiedTopicName definitionTopicName = null;
+            using (CreateRecursionContext())
+            {
+                definitionTopicName = new UnqualifiedTopicName(_namespaceManager.DefinitionTopicName.LocalName);
+            }
+            return unqualifiedTopicName.Equals(definitionTopicName);
         }
     }
 }

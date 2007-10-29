@@ -127,13 +127,11 @@
     <Content Include="admin\Providers.aspx">
     </Content>
     <Content Include="admin\ShowCache.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\ShowUpdates.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\TopicLocks.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\UpgradeConfigFile.aspx">
     </Content>
@@ -286,7 +284,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RssFace.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="SafeMode.aspx">
       <SubType>ASPXCodeBehind</SubType>

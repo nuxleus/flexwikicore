@@ -47,7 +47,7 @@ namespace FlexWiki.UnitTests
             // Grant everyone full control so we don't have security issues for the test. 
             configuration.AuthorizationRules.Add(new WikiAuthorizationRule(
                 new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll), AuthorizationRulePolarity.Allow,
-                    AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0))); 
+                    AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0)));
             MockWikiApplication application = new MockWikiApplication(
                 configuration,
                 new LinkMaker("http://boobar"), OutputFormat.HTML,
@@ -58,47 +58,56 @@ namespace FlexWiki.UnitTests
             _imp2 = WikiTestUtilities.CreateMockStore(Federation, "FlexWiki.Projects.Wiki2");
 
             string author = "tester-joebob";
-            WikiTestUtilities.WriteTestTopicAndNewVersion(
-                _base,
-                _base.DefinitionTopicName.LocalName, 
-@"
+            using (RequestContext.Create())
+            {
+                WikiTestUtilities.WriteTestTopicAndNewVersion(
+                    _base,
+                    _base.DefinitionTopicName.LocalName,
+    @"
 Description: Test description
 Import: FlexWiki.Projects.Wiki1",
-                author);
+                    author);
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(
-                _imp1, 
-                _imp1.DefinitionTopicName.LocalName, 
-@"
+                WikiTestUtilities.WriteTestTopicAndNewVersion(
+                    _imp1,
+                    _imp1.DefinitionTopicName.LocalName,
+    @"
 Description: Test1 description
-Import: FlexWiki.Projects.Wiki2", 
-                author);
+Import: FlexWiki.Projects.Wiki2",
+                    author);
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(
-                _imp2, 
-                _imp2.DefinitionTopicName.LocalName, 
-@"
+                WikiTestUtilities.WriteTestTopicAndNewVersion(
+                    _imp2,
+                    _imp2.DefinitionTopicName.LocalName,
+    @"
 Description: Test1 description
-Import: FlexWiki.Projects.Wiki", 
-                author);
+Import: FlexWiki.Projects.Wiki",
+                    author);
 
+            }
         }
 
         [TearDown]
         public void TearDown()
         {
-            _base.DeleteAllTopicsAndHistory();
-            _imp1.DeleteAllTopicsAndHistory();
-            _imp2.DeleteAllTopicsAndHistory();
+            using (RequestContext.Create())
+            {
+                _base.DeleteAllTopicsAndHistory();
+                _imp1.DeleteAllTopicsAndHistory();
+                _imp2.DeleteAllTopicsAndHistory();
+            }
         }
 
 
         [Test]
         public void TestRecurse()
         {
-            Assert.AreEqual("FlexWiki.Projects.Wiki", _base.Namespace);
-            Assert.AreEqual("FlexWiki.Projects.Wiki1", _imp1.Namespace);
-            Assert.AreEqual("FlexWiki.Projects.Wiki2", _imp2.Namespace);
+            using (RequestContext.Create())
+            {
+                Assert.AreEqual("FlexWiki.Projects.Wiki", _base.Namespace);
+                Assert.AreEqual("FlexWiki.Projects.Wiki1", _imp1.Namespace);
+                Assert.AreEqual("FlexWiki.Projects.Wiki2", _imp2.Namespace);
+            }
         }
 
     }

@@ -62,16 +62,18 @@ namespace FlexWiki.Web
 
         protected void DoSearch()
         {
-            string search = Request.QueryString["search"];
-            bool regexSearch = false;
-            if (null != Request.QueryString["regex"])
+            using (RequestContext.Create())
             {
-                if (true == string.Equals(Request.QueryString["regex"], "on", StringComparison.CurrentCultureIgnoreCase))
+                string search = Request.QueryString["search"];
+                bool regexSearch = false;
+                if (null != Request.QueryString["regex"])
                 {
-                    regexSearch = true;
+                    if (true == string.Equals(Request.QueryString["regex"], "on", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        regexSearch = true;
+                    }
                 }
-            }
-            Response.Write(@"
+                Response.Write(@"
 <div id=""TopicTip"" class=""TopicTip"" ></div>
 <fieldset><legend class=""DialogTitle"">Search</legend>
 <form id=""SearchForm"" action="""">
@@ -80,134 +82,135 @@ namespace FlexWiki.Web
 <input type=""checkbox"" id=""regex"" name=""regex"" " + (regexSearch == true ? @"checked=""checked"" />" : "/>") + @"Use Regular Expressions for search
 </p>");
 
-            ArrayList uniqueNamespaces = new ArrayList();
-            foreach (string ns in Federation.Namespaces)
-            {
-                uniqueNamespaces.Add(ns);
-            }
-            uniqueNamespaces.Sort();
-
-            string preferredNamespace = Request.QueryString["namespace"];
-            if (preferredNamespace == null)
-            {
-                preferredNamespace = DefaultNamespace;
-            }
-
-            Response.Write("<p>Namespace:<br /><select name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
-            Response.Write("<option value=\"" + All + "\">" + All + "</option>");
-            foreach (string ns in uniqueNamespaces)
-            {
-                string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
-                Response.Write("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
-            }
-            Response.Write("</select></p></form>");
-
-            if (search != null)
-            {
-                Response.Write("<fieldset><legend>Search Result</legend>");
-                Response.Write("<div class=\"SearchMain\">");
-
-                // Check to see if we've been given a valid regular expression.
-                bool validRegex = true;
-                if (true == regexSearch)
+                ArrayList uniqueNamespaces = new ArrayList();
+                foreach (string ns in Federation.Namespaces)
                 {
-                    try
-                    {
-                        Regex regex = new Regex(search, RegexOptions.IgnoreCase);
-                    }
-                    catch (ArgumentException)
-                    {
-                        validRegex = false;
-                    }
+                    uniqueNamespaces.Add(ns);
+                }
+                uniqueNamespaces.Sort();
+
+                string preferredNamespace = Request.QueryString["namespace"];
+                if (preferredNamespace == null)
+                {
+                    preferredNamespace = DefaultNamespace;
                 }
 
-                if (false == validRegex)
+                Response.Write("<p>Namespace:<br /><select name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
+                Response.Write("<option value=\"" + All + "\">" + All + "</option>");
+                foreach (string ns in uniqueNamespaces)
                 {
-                    Response.Write(@"<div class=""ErrorMessage"">
+                    string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
+                    Response.Write("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
+                }
+                Response.Write("</select></p></form>");
+
+                if (search != null)
+                {
+                    Response.Write("<fieldset><legend>Search Result</legend>");
+                    Response.Write("<div class=\"SearchMain\">");
+
+                    // Check to see if we've been given a valid regular expression.
+                    bool validRegex = true;
+                    if (true == regexSearch)
+                    {
+                        try
+                        {
+                            Regex regex = new Regex(search, RegexOptions.IgnoreCase);
+                        }
+                        catch (ArgumentException)
+                        {
+                            validRegex = false;
+                        }
+                    }
+
+                    if (false == validRegex)
+                    {
+                        Response.Write(@"<div class=""ErrorMessage"">
     <div class=""ErrorMessageTitle"">Regular Expression Error</div>
     <div class=""ErrorMessageBody"">The regular expression that you entered is not valid. Please correct it and try again.</div>
 </div>");
-                }
-                else
-                {
-                    LinkMaker lm = TheLinkMaker;
-
-                    Dictionary<NamespaceManager, QualifiedTopicNameCollection> searchTopics =
-                        new Dictionary<NamespaceManager, QualifiedTopicNameCollection>();
-                    if (preferredNamespace == All)
-                    {
-                        foreach (string ns in uniqueNamespaces)
-                        {
-                            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(ns);
-                            if (storeManager == null)
-                                continue;
-                            searchTopics[storeManager] = storeManager.AllTopics(ImportPolicy.DoNotIncludeImports);
-                        }
                     }
                     else
                     {
-                        NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
-                        searchTopics[storeManager] = storeManager.AllTopics(ImportPolicy.DoNotIncludeImports);
-                    }
+                        LinkMaker lm = TheLinkMaker;
 
-                    foreach (NamespaceManager storeManager in searchTopics.Keys)
-                    {
-                        string ns = storeManager.Namespace;
-                        bool header = false;
-                        foreach (QualifiedTopicName topic in searchTopics[storeManager])
+                        Dictionary<NamespaceManager, QualifiedTopicNameCollection> searchTopics =
+                            new Dictionary<NamespaceManager, QualifiedTopicNameCollection>();
+                        if (preferredNamespace == All)
                         {
-                            // Skip topics we don't have read permission for - they don't exist as far as search
-                            // is concerned.
-                            if (Federation.HasPermission(topic.AsQualifiedTopicRevision(), TopicPermission.Read))
+                            foreach (string ns in uniqueNamespaces)
                             {
-                                string s = Federation.Read(topic);
-                                string bodyWithTitle = topic.ToString() + s;
+                                NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(ns);
+                                if (storeManager == null)
+                                    continue;
+                                searchTopics[storeManager] = storeManager.AllTopics(ImportPolicy.DoNotIncludeImports);
+                            }
+                        }
+                        else
+                        {
+                            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(preferredNamespace);
+                            searchTopics[storeManager] = storeManager.AllTopics(ImportPolicy.DoNotIncludeImports);
+                        }
 
-                                bool found = false;
-                                if (true == regexSearch)
+                        foreach (NamespaceManager storeManager in searchTopics.Keys)
+                        {
+                            string ns = storeManager.Namespace;
+                            bool header = false;
+                            foreach (QualifiedTopicName topic in searchTopics[storeManager])
+                            {
+                                // Skip topics we don't have read permission for - they don't exist as far as search
+                                // is concerned.
+                                if (Federation.HasPermission(topic.AsQualifiedTopicRevision(), TopicPermission.Read))
                                 {
-                                    found = Regex.IsMatch(bodyWithTitle, search, RegexOptions.IgnoreCase);
-                                }
-                                else
-                                {
-                                    found = bodyWithTitle.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) > -1;
-                                }
-                                if (true == found)
-                                {
-                                    if (!header && searchTopics.Count > 1)
-                                        Response.Write("<h1>" + ns + "</h1>");
-                                    header = true;
+                                    string s = Federation.Read(topic);
+                                    string bodyWithTitle = topic.ToString() + s;
 
-                                    Response.Write("<div class=\"searchHitHead\">");
-                                    Response.Write("<a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
-                                    Response.Write(topic.LocalName);
-                                    Response.Write("</a>");
-                                    Response.Write("</div>");
-
-                                    string[] lines = s.Split(new char[] { '\n' });
-                                    Response.Write("<div class=\"searchHitBody\">");
-                                    foreach (string each in lines)
+                                    bool found = false;
+                                    if (true == regexSearch)
                                     {
-                                        bool foundInLine = false;
-                                        if (true == regexSearch)
-                                        {
-                                            foundInLine = Regex.IsMatch(each, search, RegexOptions.IgnoreCase);
-                                        }
-                                        else
-                                        {
-                                            foundInLine = each.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) > -1;
-                                        }
-                                        if (true == foundInLine)
-                                        {
-                                            Response.Write(Formatter.FormattedString(topic.AsQualifiedTopicRevision(), each, OutputFormat.HTML, storeManager, TheLinkMaker));
-                                        }
+                                        found = Regex.IsMatch(bodyWithTitle, search, RegexOptions.IgnoreCase);
                                     }
-                                    Response.Write("</div>");
+                                    else
+                                    {
+                                        found = bodyWithTitle.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) > -1;
+                                    }
+                                    if (true == found)
+                                    {
+                                        if (!header && searchTopics.Count > 1)
+                                            Response.Write("<h1>" + ns + "</h1>");
+                                        header = true;
+
+                                        Response.Write("<div class=\"searchHitHead\">");
+                                        Response.Write("<a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
+                                        Response.Write(topic.LocalName);
+                                        Response.Write("</a>");
+                                        Response.Write("</div>");
+
+                                        string[] lines = s.Split(new char[] { '\n' });
+                                        Response.Write("<div class=\"searchHitBody\">");
+                                        foreach (string each in lines)
+                                        {
+                                            bool foundInLine = false;
+                                            if (true == regexSearch)
+                                            {
+                                                foundInLine = Regex.IsMatch(each, search, RegexOptions.IgnoreCase);
+                                            }
+                                            else
+                                            {
+                                                foundInLine = each.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) > -1;
+                                            }
+                                            if (true == foundInLine)
+                                            {
+                                                Response.Write(Formatter.FormattedString(topic.AsQualifiedTopicRevision(), each, OutputFormat.HTML, storeManager, TheLinkMaker));
+                                            }
+                                        }
+                                        Response.Write("</div>");
+                                    }
                                 }
                             }
                         }
+                        Response.Write("</div></fieldset></fieldset>");
                     }
-                    Response.Write("</div></fieldset></fieldset>");
                 }
             }
         }

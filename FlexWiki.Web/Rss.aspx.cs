@@ -59,24 +59,27 @@ namespace FlexWiki.Web
 
         protected void DoSearch()
         {
-            string preferredNamespace = Request.QueryString["namespace"];
-            string newsletterName = Request.QueryString["newsletter"];
-
-            XmlTextWriter newsletter = new XmlTextWriter(Response.Output);
-
-            newsletter.Formatting = System.Xml.Formatting.Indented;
-
-            if (newsletterName != null)
+            using (RequestContext.Create())
             {
-                NewsletterFeed(newsletterName, newsletter);
-            }
-            else
-            {
-                if (preferredNamespace == null)
+                string preferredNamespace = Request.QueryString["namespace"];
+                string newsletterName = Request.QueryString["newsletter"];
+
+                XmlTextWriter newsletter = new XmlTextWriter(Response.Output);
+
+                newsletter.Formatting = System.Xml.Formatting.Indented;
+
+                if (newsletterName != null)
                 {
-                    preferredNamespace = DefaultNamespace;
+                    NewsletterFeed(newsletterName, newsletter);
                 }
-                NamespaceFeed(preferredNamespace, newsletter);
+                else
+                {
+                    if (preferredNamespace == null)
+                    {
+                        preferredNamespace = DefaultNamespace;
+                    }
+                    NamespaceFeed(preferredNamespace, newsletter);
+                }
             }
         }
 

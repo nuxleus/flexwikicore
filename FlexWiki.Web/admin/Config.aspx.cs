@@ -46,14 +46,17 @@ namespace FlexWiki.Web.Admin
 		
 		protected override void ShowMain()
 		{
-			if (CheckForConfigurationFormatUpgrade())
-				return;
+            using (RequestContext.Create())
+            {
+                if (CheckForConfigurationFormatUpgrade())
+                    return;
 
-            ConfigurationChecker checker = new ConfigurationChecker();
+                ConfigurationChecker checker = new ConfigurationChecker();
 
-            checker.Check();
-            checker.WriteStoplightTo(UIResponse);
-            checker.WriteTo(UIResponse);
+                checker.Check();
+                checker.WriteStoplightTo(UIResponse);
+                checker.WriteTo(UIResponse);
+            }
 		}
 		private void Page_Load(object sender, System.EventArgs e)
 		{

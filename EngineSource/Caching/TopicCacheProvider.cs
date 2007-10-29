@@ -19,7 +19,8 @@ namespace FlexWiki.Caching
 {
     public class TopicCacheProvider : ContentProviderBase
     {
-        private const string c_disableParameterName = "caching.disabled"; 
+        private const string c_disableParameterName = "caching.disabled";
+        private UnqualifiedTopicName _definitionTopicName; 
 
         public TopicCacheProvider(IContentProvider next)
             : base(next)
@@ -87,6 +88,18 @@ namespace FlexWiki.Caching
                 }
 
                 return true; 
+            }
+        }
+        private UnqualifiedTopicName DefinitionTopicName
+        {
+            get
+            {
+                if (_definitionTopicName == null)
+                {
+                    _definitionTopicName = new UnqualifiedTopicName(NamespaceManager.DefinitionTopicLocalName); 
+                }
+
+                return _definitionTopicName; 
             }
         }
 
@@ -179,7 +192,15 @@ namespace FlexWiki.Caching
             {
                 if (CacheEnabled)
                 {
-                    InvalidateAllItemsForNamespace();
+                    if (topic.Equals(DefinitionTopicName))
+                    {
+                        InvalidateAllItemsForNamespace();
+                    }
+                    else
+                    {
+                        InvalidateItemsForAnyRevisionOfTopic(topic);
+                        InvalidateTopicListItem();
+                    }
                 }
             }
         }
@@ -227,7 +248,6 @@ namespace FlexWiki.Caching
                 return Next.HasNamespacePermission(permission);
             }
         }
-
         public override bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission)
         {
             if (CacheEnabled)
@@ -352,14 +372,21 @@ namespace FlexWiki.Caching
             {
                 if (CacheEnabled)
                 {
-                    // This may seem like overkill - why not just invalidate only the revision that has 
-                    // changed? But the problem is that there's an equivalence between the latest revision
-                    // and a null revision, and we don't know which two are the same. So on the principal
-                    // that writes are rare and reads of non-tip revisions are common, we invalidate 
-                    // all revisions. 
-                    // On top of that, writes to some topics (e.g. _ContentBaseDefinition) can change the
-                    // results of other topics. Thus on write we flush the whole cache. 
-                    InvalidateAllItemsForNamespace(); 
+                    if (topicRevision.AsUnqualifiedTopicName().Equals(DefinitionTopicName))
+                    {
+                        InvalidateAllItemsForNamespace();
+                    }
+                    else
+                    {
+                        // This may seem like overkill - why not just invalidate only the revision that has 
+                        // changed? But the problem is that there's an equivalence between the latest revision
+                        // and a null revision, and we don't know which two are the same. So on the principal
+                        // that writes are rare and reads of non-tip revisions are common, we invalidate 
+                        // all revisions. 
+                        InvalidateItemsForAnyRevisionOfTopic(topicRevision.AsUnqualifiedTopicName());
+                        // This might be a new topic, so we need to invalidate the topic list
+                        InvalidateTopicListItem(); 
+                    }
                 }
             }
         }
@@ -433,6 +460,8 @@ namespace FlexWiki.Caching
                     Cache[key] = null;
                 }
             }
+
+            InvalidateTopicPermissionItems(topic); 
         }
         private void InvalidateItemsForRevision(UnqualifiedTopicRevision topicRevision)
         {

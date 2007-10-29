@@ -267,20 +267,23 @@ namespace FlexWiki.Web
 
         protected void DoPage()
         {
-            if (IsPost && !IsConflictingChange && !IsBanned)
+            using (RequestContext.Create())
             {
-                if (IsCaptchaVerified)
+                if (IsPost && !IsConflictingChange && !IsBanned)
                 {
-                    ProcessPost();
+                    if (IsCaptchaVerified)
+                    {
+                        ProcessPost();
+                    }
+                    else
+                    {
+                        ShowEditPage(true);
+                    }
                 }
                 else
                 {
-                    ShowEditPage(true);
+                    ShowEditPage();
                 }
-            }
-            else
-            {
-                ShowEditPage();
             }
         }
 

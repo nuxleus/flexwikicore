@@ -635,16 +635,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BelArrayEntry.cs" />
+    <Compile Include="Caching\DependencyRecorder.cs" />
+    <Compile Include="Caching\MissingContextException.cs" />
+    <Compile Include="Caching\ModificationRecorder.cs" />
+    <Compile Include="Caching\RecorderBase.cs" />
     <Compile Include="Caching\TopicCacheKey.cs" />
     <Compile Include="Caching\IWikiCache.cs" />
     <Compile Include="Caching\NullCache.cs" />
     <Compile Include="Caching\TopicCacheProvider.cs" />
     <Compile Include="Caching\TopicChangesCacheItem.cs" />
+    <Compile Include="Collections\DependencyCollection.cs" />
     <Compile Include="CustomSorter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dependency.cs" />
     <Compile Include="NamespacePermission.cs" />
+    <Compile Include="NamespaceDependency.cs" />
+    <Compile Include="NamespaceExistenceDependency.cs" />
+    <Compile Include="NamespacePermissionsDependency.cs" />
+    <Compile Include="NamespacePropertiesDependency.cs" />
+    <Compile Include="NestedContextUnexpectedException.cs" />
     <Compile Include="RequestContext.cs" />
+    <Compile Include="RequestContextOptions.cs" />
+    <Compile Include="TopicContentsDependency.cs" />
+    <Compile Include="TopicDependency.cs" />
+    <Compile Include="TopicExistenceDependency.cs" />
+    <Compile Include="TopicListDependency.cs" />
+    <Compile Include="TopicPermissionsDependency.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

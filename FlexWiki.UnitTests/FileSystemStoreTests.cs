@@ -289,9 +289,12 @@ namespace FlexWiki.UnitTests
                 new NamespaceProviderParameterCollection(
                     new NamespaceProviderParameter("Root", Root)));
 
-            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            using (RequestContext.Create())
+            {
+                NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-            Assert.IsTrue(fileSystem.DirectoryExists(Root)); 
+                Assert.IsTrue(fileSystem.DirectoryExists(Root));
+            }
         }
 
         [Test]

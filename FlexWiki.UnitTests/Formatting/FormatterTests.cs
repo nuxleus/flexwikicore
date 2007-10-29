@@ -37,8 +37,11 @@ namespace FlexWiki.UnitTests.Formatting
         [Test]
         public void AllNamespacesBehavior()
         {
-            FormatTestContains("@@AllNamespacesWithDetails@@", "FlexWiki");
-            FormatTestContains("@@AllNamespacesWithDetails@@", "Friendly Title");
+            using (RequestContext.Create())
+            {
+                FormatTestContains("@@AllNamespacesWithDetails@@", "FlexWiki");
+                FormatTestContains("@@AllNamespacesWithDetails@@", "Friendly Title");
+            }
         }
         [Test]
         public void Ampersand()
@@ -71,16 +74,19 @@ namespace FlexWiki.UnitTests.Formatting
         [Test]
         public void BracketedLinks()
         {
-            string s = FormattedTestText(@"[BigBox] summer [eDocuments] and [e] and [HelloWorld] and [aZero123]");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
-            AssertStringContains(s, @"<a title=""Click here to create this topic"" class=""create"" href=""" + 
-                _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("eDocuments")) + 
-                @""">eDocuments</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + 
-                _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("e")) + 
-                @""">e</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + 
-                _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HelloWorld")) + 
-                @""">HelloWorld</a> and <a title=""Click here to create this topic"" class=""create"" href=""" + 
-                _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("aZero123")) + @""">aZero123</a>");
+            using (RequestContext.Create())
+            {
+                string s = FormattedTestText(@"[BigBox] summer [eDocuments] and [e] and [HelloWorld] and [aZero123]");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
+                AssertStringContains(s, @"<a title=""Click here to create this topic"" class=""create"" href=""" +
+                    _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("eDocuments")) +
+                    @""">eDocuments</a> and <a title=""Click here to create this topic"" class=""create"" href=""" +
+                    _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("e")) +
+                    @""">e</a> and <a title=""Click here to create this topic"" class=""create"" href=""" +
+                    _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("HelloWorld")) +
+                    @""">HelloWorld</a> and <a title=""Click here to create this topic"" class=""create"" href=""" +
+                    _lm.LinkToEditTopic(_namespaceManager.QualifiedTopicNameFor("aZero123")) + @""">aZero123</a>");
+            }
         }
         [Test]
         public void ContainerTests()
@@ -501,13 +507,16 @@ file://servername/umuff&#126;/folder%20name/file.txt",
         [Test]
         public void IncludedTopicNoReadPermission()
         {
-            WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
-            QualifiedTopicRevision top = new QualifiedTopicRevision("TopicWithInclude", _namespaceManager.Namespace);
-            Formatter.Format(top, Federation.NamespaceManagerForTopic(top).Read(top.LocalName), output,
-                _namespaceManager, _lm, _externals, 0);
-            string result = output.ToString();
-            Assert.AreEqual("<span style=\"display:none\">.</span>\r\n", result, 
-                "Checking that the formatter returned no text for an included topic with DenyRead permission.");
+            using (RequestContext.Create())
+            {
+                WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
+                QualifiedTopicRevision top = new QualifiedTopicRevision("TopicWithInclude", _namespaceManager.Namespace);
+                Formatter.Format(top, Federation.NamespaceManagerForTopic(top).Read(top.LocalName), output,
+                    _namespaceManager, _lm, _externals, 0);
+                string result = output.ToString();
+                Assert.AreEqual("<span style=\"display:none\">.</span>\r\n", result,
+                    "Checking that the formatter returned no text for an included topic with DenyRead permission.");
+            }
         }
         [Test]
         public void InlineExternalReference()
@@ -536,12 +545,15 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
         [Test]
         public void InlineWikiTalk()
         {
-            WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
-            QualifiedTopicRevision top = new QualifiedTopicRevision("InlineTestTopic", _namespaceManager.Namespace);
-            Formatter.Format(top, Federation.NamespaceManagerForTopic(top).Read(top.LocalName), output,
-                _namespaceManager, _lm, _externals, 0);
-            string result = output.ToString();
-            Assert.IsTrue(result.IndexOf("aaa foo zzz") >= 0);
+            using (RequestContext.Create())
+            {
+                WikiOutput output = WikiOutput.ForFormat(OutputFormat.HTML, null);
+                QualifiedTopicRevision top = new QualifiedTopicRevision("InlineTestTopic", _namespaceManager.Namespace);
+                Formatter.Format(top, Federation.NamespaceManagerForTopic(top).Read(top.LocalName), output,
+                    _namespaceManager, _lm, _externals, 0);
+                string result = output.ToString();
+                Assert.IsTrue(result.IndexOf("aaa foo zzz") >= 0);
+            }
         }
         [Test]
         public void LinkAfterBangTests()
@@ -636,9 +648,12 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
         [Test]
         public void NamespaceAsTopicPreceedsQualifiedNames()
         {
-            string s = FormattedTestText(@"FlexWiki bad FlexWiki.OneMinuteWiki");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a> bad");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("OneMinuteWiki")) + @""">OneMinuteWiki</a>");
+            using (RequestContext.Create())
+            {
+                string s = FormattedTestText(@"FlexWiki bad FlexWiki.OneMinuteWiki");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a> bad");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("OneMinuteWiki")) + @""">OneMinuteWiki</a>");
+            }
         }
         [Test]
         public void NestedWikiSpec()
@@ -722,23 +737,26 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
         [Test]
         public void PluralLinkTests()
         {
-            FormatTestContains(
-              @"BigDogs",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">BigDogs</a>");
-            FormatTestContains(
-              @"BigPolicies",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigPolicy")) + @""">BigPolicies</a>");
-            FormatTestContains(
-              @"BigAddresses",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigAddress")) + @""">BigAddresses</a>");
-            FormatTestContains(
-              @"BigBoxes",
-              @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
+            using (RequestContext.Create())
+            {
+                FormatTestContains(
+                  @"BigDogs",
+                  @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">BigDogs</a>");
+                FormatTestContains(
+                  @"BigPolicies",
+                  @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigPolicy")) + @""">BigPolicies</a>");
+                FormatTestContains(
+                  @"BigAddresses",
+                  @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigAddress")) + @""">BigAddresses</a>");
+                FormatTestContains(
+                  @"BigBoxes",
+                  @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
 
-            // Test for plural before singular
-            string s = FormattedTestText(@"See what happens when I mention BigBoxes; the topic is called BigBox.");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
+                // Test for plural before singular
+                string s = FormattedTestText(@"See what happens when I mention BigBoxes; the topic is called BigBox.");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBoxes</a>");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigBox")) + @""">BigBox</a>");
+            }
         }
         [Test]
         public void PreFormattedBlockTests()
@@ -909,8 +927,11 @@ Baz
         [Test]
         public void RelabelTests()
         {
-            string s = FormattedTestText(@"""tell me about dogs"":BigDog");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">tell me about dogs</a>");
+            using (RequestContext.Create())
+            {
+                string s = FormattedTestText(@"""tell me about dogs"":BigDog");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("BigDog")) + @""">tell me about dogs</a>");
+            }
         }
         [Test]
         public void Rule()
@@ -1098,9 +1119,12 @@ file://servername/umuff~/folder%20name/file.txt",
         [Test]
         public void TopicBehaviorProperty()
         {
-            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "len=5");
-            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenWith=6");
-            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenSpanning=20");
+            using (RequestContext.Create())
+            {
+                FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "len=5");
+                FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenWith=6");
+                FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperties", _namespaceManager.Namespace), "lenSpanning=20");
+            }
         }
         [Test]
         public void TopicBehaviorPropertyBug()
@@ -1108,7 +1132,10 @@ file://servername/umuff~/folder%20name/file.txt",
             // A simplified version of TopicBehaviorProperty to help track down a bug
             // introduced during the refactor. Looks like the WikiTalk interpreter got
             // screwed up by something in the NamespaceManager reorganization. 
-            FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperty", _namespaceManager.Namespace), "lenSpanning=20");
+            using (RequestContext.Create())
+            {
+                FormattedTopicContainsTest(new QualifiedTopicRevision("TestTopicWithBehaviorProperty", _namespaceManager.Namespace), "lenSpanning=20");
+            }
         }
         [Test]
         public void TopicNameRegexTests()
@@ -1249,8 +1276,11 @@ file://servername/umuff~/folder%20name/file.txt",
         [Test]
         public void WikiURIForTopic()
         {
-            string s = FormattedTestText("wiki://IncludeNestURI");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("IncludeNestURI")) + @""">IncludeNestURI</a>");
+            using (RequestContext.Create())
+            {
+                string s = FormattedTestText("wiki://IncludeNestURI");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("IncludeNestURI")) + @""">IncludeNestURI</a>");
+            }
         }
         [Test]
         public void WikiURIForTopicProperty()

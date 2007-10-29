@@ -23,49 +23,10 @@ namespace FlexWiki.UnitTests.Caching
     [TestFixture]
     public class TopicCacheProviderTests
     {
-        private class TestParameters
-        {
-            private MockCache _cache;
-            private Federation _federation;
-            private NamespaceManager _manager;
-            private TopicCacheProvider _provider;
-            private MockContentStore _store;
-
-            public MockCache Cache
-            {
-                get { return _cache; }
-                set { _cache = value; }
-            }
-
-            public Federation Federation
-            {
-                get { return _federation; }
-                set { _federation = value; }
-            }
-
-            public NamespaceManager Manager
-            {
-                get { return _manager; }
-                set { _manager = value; }
-            }
-
-            public TopicCacheProvider Provider
-            {
-                get { return _provider; }
-                set { _provider = value; }
-            }
-
-            public MockContentStore Store
-            {
-                get { return _store; }
-                set { _store = value; }
-            }
-        }
-
         [Test]
         public void AllChangesForTopicSince()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
@@ -143,7 +104,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void AllTopics()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 parameters.Store.AllTopicsCalled = false;
@@ -183,7 +144,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void DeleteAllTopicsAndHistory()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 QualifiedTopicRevision topicRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
@@ -198,23 +159,49 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void DeleteTopic()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
-                QualifiedTopicRevision topicRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
+                QualifiedTopicRevision topicOneRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
+                QualifiedTopicRevision topicTwoRevision = new QualifiedTopicRevision("TopicTwo", "NamespaceOne");
                 ParsedTopic firstRetrieval = parameters.Provider.GetParsedTopic(
-                    topicRevision.AsUnqualifiedTopicRevision());
+                    topicOneRevision.AsUnqualifiedTopicRevision());
+                ParsedTopic secondRetrieval = parameters.Provider.GetParsedTopic(
+                    topicTwoRevision.AsUnqualifiedTopicRevision()); 
                 AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval);
+                AssertCacheContainsParsedTopic(parameters.Cache, secondRetrieval);
                 parameters.Provider.DeleteTopic(
-                    topicRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName());
+                    topicOneRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName());
                 AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval);
+                AssertCacheContainsParsedTopic(parameters.Cache, secondRetrieval);
+            }
+            );
+        }
+        [Test]
+        public void DeleteDefinitionTopic()
+        {
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
+            {
+                ClearCache(parameters.Cache);
+                QualifiedTopicRevision topicOneRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
+                QualifiedTopicRevision definitionTopicRevision = new QualifiedTopicRevision("_ContentBaseDefinition", "NamespaceOne");
+                ParsedTopic firstRetrieval = parameters.Provider.GetParsedTopic(
+                    topicOneRevision.AsUnqualifiedTopicRevision());
+                ParsedTopic secondRetrieval = parameters.Provider.GetParsedTopic(
+                    definitionTopicRevision.AsUnqualifiedTopicRevision());
+                AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval);
+                AssertCacheContainsParsedTopic(parameters.Cache, secondRetrieval);
+                parameters.Provider.DeleteTopic(
+                    definitionTopicRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName());
+                AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval);
+                AssertCacheDoesNotContainsParsedTopic(parameters.Cache, secondRetrieval);
             }
             );
         }
         [Test]
         public void GetParsedTopic()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 QualifiedTopicRevision topicRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
@@ -248,18 +235,26 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void HasNamespacePermission()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
 
                 AssertHasNamespacePermission(parameters, "Initial retrieval");
 
+                // Writing to a non-definition topic shouldn't flush the cache for namespace permission
                 parameters.Provider.WriteTopic(new UnqualifiedTopicRevision(topicName), "New content");
-                AssertHasNamespacePermission(parameters, "After WriteTopic");
+                AssertHasNamespacePermissionFromCache(parameters, "After WriteTopic (normal topic)");
+
+                // But writing to the definition topic should
+                parameters.Provider.WriteTopic(new UnqualifiedTopicRevision("_ContentBaseDefinition"), "New content");
+                AssertHasNamespacePermission(parameters, "After WriteTopic (definition topic)");
 
                 parameters.Provider.DeleteTopic(topicName);
-                AssertHasNamespacePermission(parameters, "After DeleteTopic");
+                AssertHasNamespacePermissionFromCache(parameters, "After DeleteTopic (normal topic)");
+
+                parameters.Provider.DeleteTopic(new UnqualifiedTopicName("_ContentBaseDefinition"));
+                AssertHasNamespacePermission(parameters, "After DeleteTopic (normal topic)");
 
                 parameters.Provider.DeleteAllTopicsAndHistory();
                 AssertHasNamespacePermission(parameters, "After DeleteAllTopicsAndHistory");
@@ -268,7 +263,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void HasPermission()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
@@ -295,7 +290,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void TopicIsReadOnly()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
@@ -312,7 +307,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void TextReaderForTopic()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 UnqualifiedTopicRevision revision = new UnqualifiedTopicRevision("TopicOne");
 
@@ -353,7 +348,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void TopicExists()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 UnqualifiedTopicName topicName = new UnqualifiedTopicName("TopicOne");
@@ -400,7 +395,7 @@ namespace FlexWiki.UnitTests.Caching
         [Test]
         public void WriteTopic()
         {
-            DoTest(delegate(TestParameters parameters)
+            DoTest(delegate(TestParameters<TopicCacheProvider> parameters)
             {
                 ClearCache(parameters.Cache);
                 QualifiedTopicRevision topicRevision = new QualifiedTopicRevision("TopicOne", "NamespaceOne");
@@ -437,12 +432,12 @@ namespace FlexWiki.UnitTests.Caching
         {
             throw new Exception("The method or operation is not implemented.");
         }
-        private void AssertHasNamespacePermission(TestParameters parameters, string messageTag)
+        private void AssertHasNamespacePermission(TestParameters<TopicCacheProvider> parameters, string messageTag)
         {
             AssertHasNamespacePermissionNotFromCache(parameters, messageTag);
             AssertHasNamespacePermissionFromCache(parameters, messageTag); 
         }
-        private void AssertHasNamespacePermissionNotFromCache(TestParameters parameters, string messageTag)
+        private void AssertHasNamespacePermissionNotFromCache(TestParameters<TopicCacheProvider> parameters, string messageTag)
         {
             string messageFormat = "Checking that retrieval does not come from cache: {0}";
             parameters.Store.HasNamespacePermissionCalled = false;
@@ -451,7 +446,7 @@ namespace FlexWiki.UnitTests.Caching
                 string.Format(messageFormat, messageTag));
         }
 
-        private void AssertHasNamespacePermissionFromCache(TestParameters parameters, string messageTag)
+        private void AssertHasNamespacePermissionFromCache(TestParameters<TopicCacheProvider> parameters, string messageTag)
         {
             string messageFormat = "Checking that retrieval comes from cache: {0}";
             parameters.Store.HasNamespacePermissionCalled = false;
@@ -459,13 +454,14 @@ namespace FlexWiki.UnitTests.Caching
             Assert.IsFalse(parameters.Store.HasNamespacePermissionCalled,
                 string.Format(messageFormat, messageTag));
         }
-        private void AssertHasPermission(TestParameters parameters, UnqualifiedTopicName topicName, string messageTag)
+        private void AssertHasPermission(TestParameters<TopicCacheProvider> parameters, 
+            UnqualifiedTopicName topicName, string messageTag)
         {
             AssertHasPermissionNotFromCache(parameters, topicName, messageTag);
             AssertHasPermissionFromCache(parameters, topicName, messageTag);
         }
         private void AssertHasPermissionFromCache(
-            TestParameters parameters, 
+            TestParameters<TopicCacheProvider> parameters, 
             UnqualifiedTopicName topicName, 
             string messageTag)
         {
@@ -473,7 +469,7 @@ namespace FlexWiki.UnitTests.Caching
             AssertHasPermissionFromCache(parameters, topicName, TopicPermission.Edit, messageTag);
         }
         private void AssertHasPermissionFromCache(
-            TestParameters parameters, 
+            TestParameters<TopicCacheProvider> parameters, 
             UnqualifiedTopicName topicName, 
             TopicPermission topicPermission, 
             string messageTag)
@@ -485,7 +481,7 @@ namespace FlexWiki.UnitTests.Caching
                 string.Format(messageFormat, topicPermission, messageTag));
         }
         private void AssertHasPermissionNotFromCache(
-            TestParameters parameters, 
+            TestParameters<TopicCacheProvider> parameters, 
             UnqualifiedTopicName topicName, 
             string messageTag)
         {
@@ -493,7 +489,7 @@ namespace FlexWiki.UnitTests.Caching
             AssertHasPermissionNotFromCache(parameters, topicName, TopicPermission.Edit, messageTag);
         }
         private static void AssertHasPermissionNotFromCache(
-            TestParameters parameters, 
+            TestParameters<TopicCacheProvider> parameters, 
             UnqualifiedTopicName topicName,
             TopicPermission topicPermission, 
             string messageTag)
@@ -505,13 +501,13 @@ namespace FlexWiki.UnitTests.Caching
                 string.Format(messageFormat, topicPermission, messageTag));
         }
 
-        private void AssertTopicIsReadOnly(TestParameters parameters, UnqualifiedTopicName topicName, string messageTag)
+        private void AssertTopicIsReadOnly(TestParameters<TopicCacheProvider> parameters, UnqualifiedTopicName topicName, string messageTag)
         {
             AssertTopicIsReadOnlyNotFromCache(parameters, topicName, messageTag);
             AssertTopicIsReadOnlyFromCache(parameters, topicName, messageTag);
         }
         private void AssertTopicIsReadOnlyFromCache(
-            TestParameters parameters,
+            TestParameters<TopicCacheProvider> parameters,
             UnqualifiedTopicName topicName,
             string messageTag)
         {
@@ -522,7 +518,7 @@ namespace FlexWiki.UnitTests.Caching
                 string.Format(messageFormat, messageTag));
         }
         private static void AssertTopicIsReadOnlyNotFromCache(
-            TestParameters parameters,
+            TestParameters<TopicCacheProvider> parameters,
             UnqualifiedTopicName topicName,
             string messageTag)
         {
@@ -537,21 +533,12 @@ namespace FlexWiki.UnitTests.Caching
         {
             cache.GetCacheContents().Clear();
         }
-        private void DoTest(Action<TestParameters> test)
+        private void DoTest(Action<TestParameters<TopicCacheProvider>> test)
         {
-            TestParameters parameters = new TestParameters();
-            parameters.Federation = WikiTestUtilities.SetupFederation("test://TopicCacheProviderTests",
-                TestContentSets.MultipleTopicsWithProperties);
-            parameters.Manager = parameters.Federation.NamespaceManagerForNamespace("NamespaceOne");
-            parameters.Provider = (TopicCacheProvider)parameters.Manager.GetProvider(typeof(TopicCacheProvider));
-            parameters.Store = (MockContentStore)parameters.Manager.GetProvider(typeof(MockContentStore));
-            parameters.Cache = GetCache(parameters.Federation);
-
-            test(parameters);
-        }
-        private MockCache GetCache(Federation federation)
-        {
-            return (MockCache)federation.Application.Cache;
+            WikiTestUtilities.DoProviderTest(
+                TestContentSets.MultipleTopicsWithProperties,
+                "test://TopicCacheProviderTests/", 
+                test);
         }
     }
 }

@@ -65,11 +65,14 @@ namespace FlexWiki.Web
         {
             get
             {
-                NamespaceManager storeManager = Federation.NamespaceManagerForTopic(AbsTopicName);
-                if (storeManager == null)
-                    return true;
-                return !storeManager.HasPermission(AbsTopicName.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(), 
-                    TopicPermission.Edit);
+                using (RequestContext.Create())
+                {
+                    NamespaceManager storeManager = Federation.NamespaceManagerForTopic(AbsTopicName);
+                    if (storeManager == null)
+                        return true;
+                    return !storeManager.HasPermission(AbsTopicName.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(),
+                        TopicPermission.Edit);
+                }
             }
 
         }
@@ -116,69 +119,71 @@ namespace FlexWiki.Web
 
         protected void PerformRename()
         {
-            QualifiedTopicRevision oldName = new QualifiedTopicRevision(OldName, Namespace);
-            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(Namespace);
-
-            string defaultNamespace = DefaultNamespace;
-            string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.LocalName : oldName.DottedName;
-            string newName = NewName;
-            string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
-
-            if (storeManager == null)
+            using (RequestContext.Create())
             {
-                Response.Write("<b>No namespace was specified. Please try again.</b>");
-                return;
-            }
+                QualifiedTopicRevision oldName = new QualifiedTopicRevision(OldName, Namespace);
+                NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(Namespace);
 
-            if (newName == null || newName.Length == 0)
-            {
-                Response.Write("<b>No name was specified. Please try again.</b>");
-                return;
-            }
+                string defaultNamespace = DefaultNamespace;
+                string oldAppearsAs = (oldName.Namespace == defaultNamespace) ? oldName.LocalName : oldName.DottedName;
+                string newName = NewName;
+                string newAppearsAs = (oldName.Namespace == defaultNamespace) ? newName : Namespace + "." + newName;
 
-            // See if the new name already exists
-            if (storeManager.TopicExists(newName, ImportPolicy.DoNotIncludeImports))
-            {
-                Response.Write("<b>Topic (" + newName + ") already exists.  Choose another name...</b>");
-                return;
-            }
+                if (storeManager == null)
+                {
+                    Response.Write("<b>No namespace was specified. Please try again.</b>");
+                    return;
+                }
 
-            bool fixup = Fixup == "on";
-            bool fixupDisabled = FlexWikiWebApplication.ApplicationConfiguration.DisableRenameFixup;
-            if (fixupDisabled)
-            {
-                fixup = false;
-            }
+                if (newName == null || newName.Length == 0)
+                {
+                    Response.Write("<b>No name was specified. Please try again.</b>");
+                    return;
+                }
 
-            ReferenceFixupPolicy fixupPolicy = ReferenceFixupPolicy.DoNotFixReferences;
+                // See if the new name already exists
+                if (storeManager.TopicExists(newName, ImportPolicy.DoNotIncludeImports))
+                {
+                    Response.Write("<b>Topic (" + newName + ") already exists.  Choose another name...</b>");
+                    return;
+                }
 
-            if (fixup)
-            {
-                fixupPolicy = ReferenceFixupPolicy.FixReferences; 
-            }
+                bool fixup = Fixup == "on";
+                bool fixupDisabled = FlexWikiWebApplication.ApplicationConfiguration.DisableRenameFixup;
+                if (fixupDisabled)
+                {
+                    fixup = false;
+                }
 
-            RenameTopicDetails results = storeManager.RenameTopic(new UnqualifiedTopicName(oldName.LocalName), new UnqualifiedTopicName(newName), 
-                fixupPolicy, VisitorIdentityString);
+                ReferenceFixupPolicy fixupPolicy = ReferenceFixupPolicy.DoNotFixReferences;
 
-            Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
-            Response.Write("<br/>");
-            foreach (TopicName topic in results.UpdatedReferenceTopics)
-            {
-                Response.Write(String.Format("Topic {0} had its references updated. <br>", topic.DottedName));
-            }
-            bool redir = LeaveRedirect == "on";
-            if (redir)
-            {
-                DateTime ts = DateTime.Now.ToLocalTime();
-                storeManager.WriteTopicAndNewVersion(oldName.LocalName,
-                    "Redirect: " + newName + @"
+                if (fixup)
+                {
+                    fixupPolicy = ReferenceFixupPolicy.FixReferences;
+                }
+
+                RenameTopicDetails results = storeManager.RenameTopic(new UnqualifiedTopicName(oldName.LocalName), new UnqualifiedTopicName(newName),
+                    fixupPolicy, VisitorIdentityString);
+
+                Response.Write("Renamed <i>" + oldAppearsAs + "</i> to <i>" + newName + "</i><br/>");
+                Response.Write("<br/>");
+                foreach (TopicName topic in results.UpdatedReferenceTopics)
+                {
+                    Response.Write(String.Format("Topic {0} had its references updated. <br>", topic.DottedName));
+                }
+                bool redir = LeaveRedirect == "on";
+                if (redir)
+                {
+                    DateTime ts = DateTime.Now.ToLocalTime();
+                    storeManager.WriteTopicAndNewVersion(oldName.LocalName,
+                        "Redirect: " + newName + @"
 
 This page was automatically generated when this topic (" + oldName.LocalName + ") was renamed to " + newName + " on " +
-                    ts.ToShortDateString() + " at " + ts.ToShortTimeString() + " by " + VisitorIdentityString + "." +
-                    "\nPlease update references to point to the new topic.", 
-                    VisitorIdentityString);
+                        ts.ToShortDateString() + " at " + ts.ToShortTimeString() + " by " + VisitorIdentityString + "." +
+                        "\nPlease update references to point to the new topic.",
+                        VisitorIdentityString);
+                }
             }
-
         }
 
         protected void DoLeftBorder()
@@ -187,9 +192,12 @@ This page was automatically generated when this topic (" + oldName.LocalName + "
         }
         protected void DoRightBorder()
         {
-            string rightBorder = Federation.GetTopicFormattedBorder(GetTopicVersionKey(), Border.Right); // topic, Border.Right);
-            rightBorder = "<td width=\"140\" valign=\"top\" class=\"Border\" id=\"RenameRight\">" + rightBorder + "</td>";
-            Response.Write(rightBorder);
+            using (RequestContext.Create())
+            {
+                string rightBorder = Federation.GetTopicFormattedBorder(GetTopicVersionKey(), Border.Right); // topic, Border.Right);
+                rightBorder = "<td width=\"140\" valign=\"top\" class=\"Border\" id=\"RenameRight\">" + rightBorder + "</td>";
+                Response.Write(rightBorder);
+            }
         }
     }
 }

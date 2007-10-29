@@ -14,8 +14,8 @@ using System;
 using System.Collections;
 using System.Configuration;
 using System.IO;
-using System.Net; 
-using System.Net.Mail; 
+using System.Net;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
@@ -101,7 +101,7 @@ namespace FlexWiki.Web
         {
             get
             {
-                return (Federation) (Application[Constants.FederationCacheKey]);
+                return (Federation)(Application[Constants.FederationCacheKey]);
             }
         }
         protected FlexWikiWebApplication FlexWikiWebApplication
@@ -129,7 +129,7 @@ namespace FlexWiki.Web
         {
             get
             {
-                return (NewsletterDaemon) (Application[s_newsletterDaemonCacheKey]);
+                return (NewsletterDaemon)(Application[s_newsletterDaemonCacheKey]);
             }
             set
             {
@@ -231,7 +231,7 @@ namespace FlexWiki.Web
         }
         protected virtual void EnsurePluginsLoaded()
         {
-            string loaded = (string) (Application["PluginsLoaded"]);
+            string loaded = (string)(Application["PluginsLoaded"]);
             if (loaded == "yes")
                 return;
             LoadPlugins();
@@ -293,7 +293,7 @@ namespace FlexWiki.Web
         }
         protected QualifiedTopicRevision GetTopicVersionKey()
         {
-            return PageUtilities.GetTopicRevision(Federation); 
+            return PageUtilities.GetTopicRevision(Federation);
         }
         //		protected AbsoluteTopicName GetTopicName()
         //		{
@@ -333,7 +333,7 @@ namespace FlexWiki.Web
         /// <param name="e"></param>
         protected void LogVisitorEvent(VisitorEvent e)
         {
-            ArrayList list = (ArrayList) (System.Web.HttpContext.Current.Session["VisitorEvents"]);
+            ArrayList list = (ArrayList)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
             if (list == null)
             {
                 list = new ArrayList();
@@ -343,7 +343,10 @@ namespace FlexWiki.Web
         }
         protected string InsertStylesheetReferences()
         {
-            return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication);
+            using (RequestContext.Create())
+            {
+                return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication);
+            }
         }
         protected string MainStylesheetReference()
         {
@@ -414,10 +417,13 @@ namespace FlexWiki.Web
                 throw new Exception("No default namespace defined.");
             }
 
-            NamespaceManager namespaceManager = Federation.NamespaceManagerForNamespace(ns);
-            if (namespaceManager == null)
+            using (RequestContext.Create())
             {
-                throw new Exception("Default namespace (" + ns + ") doesn't exist.");
+                NamespaceManager namespaceManager = Federation.NamespaceManagerForNamespace(ns);
+                if (namespaceManager == null)
+                {
+                    throw new Exception("Default namespace (" + ns + ") doesn't exist.");
+                }
             }
 
             EstablishNewsletterDaemon();
@@ -461,17 +467,17 @@ namespace FlexWiki.Web
         {
             try
             {
-                SmtpClient client = new SmtpClient(); 
-                client.Send(message); 
+                SmtpClient client = new SmtpClient();
+                client.Send(message);
             }
             catch (Exception e)
             {
                 FlexWikiWebApplication.LogError(this.GetType().ToString(), "An error occurred trying to send mail: " +
                     e.ToString());
-                return e.ToString(); 
+                return e.ToString();
             }
             // Bizarre semantics, but null indicates success. 
-            return null; 
+            return null;
         }
         protected string SendRequestsTo
         {
@@ -484,7 +490,7 @@ namespace FlexWiki.Web
         {
             get
             {
-                UpdateMonitor answer = (UpdateMonitor) (Application["UpdateMonitor"]);
+                UpdateMonitor answer = (UpdateMonitor)(Application["UpdateMonitor"]);
                 if (answer != null)
                     return answer;
                 answer = new UpdateMonitor(Federation);
@@ -497,7 +503,7 @@ namespace FlexWiki.Web
         {
             if (Federation != null)
             {
-                return; 
+                return;
                 // If we have one, just make sure it's valid
                 /*
                  * Federation.Validate();
@@ -518,7 +524,7 @@ namespace FlexWiki.Web
         {
             if (!FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.Enabled)
             {
-                return; 
+                return;
             }
 
             if (TheNewsletterDaemon != null)
@@ -575,10 +581,10 @@ namespace FlexWiki.Web
             }
 
             NewsletterDaemon daemon = new NewsletterDaemon(
-                Federation, 
+                Federation,
                 rootUrl,
-                FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.NewslettersFrom, 
-                styles, 
+                FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.NewslettersFrom,
+                styles,
                 sendAsAttachments,
                 FlexWikiWebApplication.ApplicationConfiguration.NewsletterConfiguration.AuthenticateAs);
             TheNewsletterDaemon = daemon;
@@ -651,35 +657,35 @@ namespace FlexWiki.Web
         {
             return FindControl<T>(Page, id);
         }
-           
+
         public static T FindControl<T>(Control startingControl, string id) where T : Control
         {
-               //Published Friday, April 13, 2007 3:05 PM by Palermo4 
-               // this is null by default
-               T found = default(T);
-          
-              int controlCount = startingControl.Controls.Count;
-          
-              if (controlCount > 0)
-              {
-                  for (int i = 0; i < controlCount; i++)
-                  {
-                      Control activeControl = startingControl.Controls[i];
-                      if (activeControl is T)
-                      {
-                          found = startingControl.Controls[i] as T;
-                          if (string.Compare(id, found.ID, true) == 0) break;
-                          else found = null;
-                      }
-                      else
-                      {
-                          found = FindControl<T>(activeControl, id);
-                          if (found != null) break;
-                      }
-                  }
-              }
-              return found;
-       }       
+            //Published Friday, April 13, 2007 3:05 PM by Palermo4 
+            // this is null by default
+            T found = default(T);
+
+            int controlCount = startingControl.Controls.Count;
+
+            if (controlCount > 0)
+            {
+                for (int i = 0; i < controlCount; i++)
+                {
+                    Control activeControl = startingControl.Controls[i];
+                    if (activeControl is T)
+                    {
+                        found = startingControl.Controls[i] as T;
+                        if (string.Compare(id, found.ID, true) == 0) break;
+                        else found = null;
+                    }
+                    else
+                    {
+                        found = FindControl<T>(activeControl, id);
+                        if (found != null) break;
+                    }
+                }
+            }
+            return found;
+        }
 
 
     }

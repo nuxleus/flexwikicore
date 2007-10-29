@@ -39,7 +39,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationConfigurationTests.cs" />
-    <Compile Include="Caching\MockCache.cs" />
+    <Compile Include="Caching\MockCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MockWikiApplication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

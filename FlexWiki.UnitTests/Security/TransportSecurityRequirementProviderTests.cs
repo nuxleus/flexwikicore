@@ -284,29 +284,32 @@ namespace FlexWiki.UnitTests.Security
         }
         private static void TestAllPossibleConfigurations(bool exceptionsExpected, TestOperation operation)
         {
-            foreach (TransportSecurityRequirementTestConfiguration configuration in PossibleConfigurations())
+            using (RequestContext.Create())
             {
-                TestParameters parameters = Initialize(configuration);
+                foreach (TransportSecurityRequirementTestConfiguration configuration in PossibleConfigurations())
+                {
+                    TestParameters parameters = Initialize(configuration);
 
-                bool wasExceptionThrown = false;
-                try
-                {
-                    operation(parameters);
-                }
-                catch (TransportSecurityRequirementException)
-                {
-                    wasExceptionThrown = true;
-                }
+                    bool wasExceptionThrown = false;
+                    try
+                    {
+                        operation(parameters);
+                    }
+                    catch (TransportSecurityRequirementException)
+                    {
+                        wasExceptionThrown = true;
+                    }
 
-                if (exceptionsExpected)
-                {
-                    Assert.AreEqual(configuration.ShouldExceptionBeThrown, wasExceptionThrown,
-                        "Checking that TransportSecurityRequirementException was thrown if it should have been.");
-                }
-                else
-                {
-                    Assert.IsFalse(wasExceptionThrown,
-                        "Checking that no TransportSecurityRequirementException was thrown."); 
+                    if (exceptionsExpected)
+                    {
+                        Assert.AreEqual(configuration.ShouldExceptionBeThrown, wasExceptionThrown,
+                            "Checking that TransportSecurityRequirementException was thrown if it should have been.");
+                    }
+                    else
+                    {
+                        Assert.IsFalse(wasExceptionThrown,
+                            "Checking that no TransportSecurityRequirementException was thrown.");
+                    }
                 }
             }
         }

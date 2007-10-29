@@ -58,29 +58,31 @@ namespace FlexWiki.UnitTests.Formatting
             _namespaceManager = WikiTestUtilities.CreateMockStore(Federation, "FlexWiki");
             //_namespaceManager.Title  = "Friendly Title";
 
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", "Title: Friendly Title", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "HomePage", "Home is where the heart is", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigPolicy", "This is ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigDog", "This is ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigAddress", "This is ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigBox", "This is ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeOne", "inc1", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeTwo", "!inc2", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeThree", "!!inc3", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeFour", "!inc4", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNest", @"		{{IncludeNest1}}
+            using (RequestContext.Create())
+            {
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", "Title: Friendly Title", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "HomePage", "Home is where the heart is", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigPolicy", "This is ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigDog", "This is ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigAddress", "This is ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "BigBox", "This is ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeOne", "inc1", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeTwo", "!inc2", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeThree", "!!inc3", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeFour", "!inc4", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNest", @"		{{IncludeNest1}}
 			{{IncludeNest2}}", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithColor", "Color: Yellow", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNest1", "!hey there", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNest2", "!black dog", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNestURI", @"wiki://IncludeNest1 wiki://IncludeNest2 ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "ResourceReference", @"URI: http://www.google.com/$$$", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "FlexWiki", "flex ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "InlineTestTopic", @"aaa @@""foo""@@ zzz", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "OneMinuteWiki", "one ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestIncludesBehaviors", "@@ProductName@@ somthing @@Now@@ then @@Now@@", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_Underscore", "Underscore", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithBehaviorProperties", @"
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithColor", "Color: Yellow", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNest1", "!hey there", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNest2", "!black dog", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "IncludeNestURI", @"wiki://IncludeNest1 wiki://IncludeNest2 ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "ResourceReference", @"URI: http://www.google.com/$$$", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "FlexWiki", "flex ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "InlineTestTopic", @"aaa @@""foo""@@ zzz", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "OneMinuteWiki", "one ", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestIncludesBehaviors", "@@ProductName@@ somthing @@Now@@ then @@Now@@", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_Underscore", "Underscore", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithBehaviorProperties", @"
 Face: {""hello"".Length}
 one 
 FaceWithArg: {arg | arg.Length }
@@ -91,22 +93,23 @@ arg.Length
 }
 
 ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestTopicWithBehaviorProperties", @"
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestTopicWithBehaviorProperties", @"
 len=@@topics.TopicWithBehaviorProperties.Face@@
 lenWith=@@topics.TopicWithBehaviorProperties.FaceWithArg(""superb"")@@
 lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is wonderful"")@@
 ", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestTopicWithBehaviorProperty",
-@"lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is wonderful"")@@", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithInclude","{{TopicOneNoRead}}", _user);
-            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicOneNoRead",
-@"DenyRead: all
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TestTopicWithBehaviorProperty",
+    @"lenSpanning=@@topics.TopicWithBehaviorProperties.FaceSpanningLines(""parsing is wonderful"")@@", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicWithInclude", "{{TopicOneNoRead}}", _user);
+                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "TopicOneNoRead",
+    @"DenyRead: all
 PropertyOne: ValueOne
 PropertyTwo: Value Two
 PropertyOne: List, of, values", _user);
 
 
-            _externals = new ExternalReferencesMap();
+                _externals = new ExternalReferencesMap();
+            }
         }
 
         [TearDown]
@@ -141,8 +144,11 @@ PropertyOne: List, of, values", _user);
         }
         protected void FormatTestContains(string inputString, string find)
         {
-            string s = FormattedTestText(inputString);
-            AssertStringContains(s, find);
+            using (RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
+            {
+                string s = FormattedTestText(inputString);
+                AssertStringContains(s, find);
+            }
         }
         protected void FormatTest(string inputString, string outputString)
         {
@@ -150,14 +156,17 @@ PropertyOne: List, of, values", _user);
         }
         protected void FormatTest(string inputString, string outputString, QualifiedTopicRevision top)
         {
-            string o1 = FormattedTestText(inputString, top);
-            string o2 = outputString.Replace("\r", "");
-            if (o1 != o2)
+            using (RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
             {
-                Console.Error.WriteLine("Got     : " + o1);
-                Console.Error.WriteLine("Expected: " + o2);
+                string o1 = FormattedTestText(inputString, top);
+                string o2 = outputString.Replace("\r", "");
+                if (o1 != o2)
+                {
+                    Console.Error.WriteLine("Got     : " + o1);
+                    Console.Error.WriteLine("Expected: " + o2);
+                }
+                Assert.AreEqual(o2, o1);
             }
-            Assert.AreEqual(o2, o1);
         }
         protected void ShouldBeTopicName(string s)
         {

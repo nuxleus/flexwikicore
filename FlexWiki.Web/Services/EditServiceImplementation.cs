@@ -70,9 +70,11 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string CanEdit()
         {
-            string visitorIdentityString = null;
-
-            return GetVisitorIdentity(visitorIdentityString);
+            using (RequestContext.Create())
+            {
+                string visitorIdentityString = null;
+                return GetVisitorIdentity(visitorIdentityString);
+            }
         }
         /// <summary>
         /// Returns all the namespaces in the Federation.
@@ -81,15 +83,18 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public WireTypes.ContentBaseCollection GetAllNamespaces()
         {
-            WireTypes.ContentBaseCollection contentBases = new WireTypes.ContentBaseCollection();
-
-            foreach (NamespaceManager namespaceManager in Federation.NamespaceManagers)
+            using (RequestContext.Create())
             {
-                WireTypes.ContentBase wireFormat = new WireTypes.ContentBase(namespaceManager);
-                contentBases.Add(wireFormat);
-            }
+                WireTypes.ContentBaseCollection contentBases = new WireTypes.ContentBaseCollection();
 
-            return contentBases;
+                foreach (NamespaceManager namespaceManager in Federation.NamespaceManagers)
+                {
+                    WireTypes.ContentBase wireFormat = new WireTypes.ContentBase(namespaceManager);
+                    contentBases.Add(wireFormat);
+                }
+
+                return contentBases;
+            }
         }
 
         /// <summary>
@@ -100,26 +105,29 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public WireTypes.AbsoluteTopicNameCollection GetAllTopics(WireTypes.ContentBase cb)
         {
-            WireTypes.AbsoluteTopicNameCollection topicNames = new WireTypes.AbsoluteTopicNameCollection();
-
-            foreach (TopicName ab in Federation.NamespaceManagerForNamespace(cb.Namespace).AllTopics(ImportPolicy.DoNotIncludeImports))
+            using (RequestContext.Create())
             {
-                // We need to also return the current version
-                NamespaceManager contentStoreManager2 = Federation.NamespaceManagerForTopic(ab);
-                WireTypes.AbsoluteTopicName atn = new WireTypes.AbsoluteTopicName();
-                atn.Name = ab.LocalName;
-                atn.Namespace = ab.Namespace;
-                string version = contentStoreManager2.LatestVersionForTopic(ab.LocalName);
-                if (version == null)
-                {
-                    // There's only one version, so just use the empty string
-                    version = "";
-                }
-                atn.Version = version;
-                topicNames.Add(atn);
-            }
+                WireTypes.AbsoluteTopicNameCollection topicNames = new WireTypes.AbsoluteTopicNameCollection();
 
-            return topicNames;
+                foreach (TopicName ab in Federation.NamespaceManagerForNamespace(cb.Namespace).AllTopics(ImportPolicy.DoNotIncludeImports))
+                {
+                    // We need to also return the current version
+                    NamespaceManager contentStoreManager2 = Federation.NamespaceManagerForTopic(ab);
+                    WireTypes.AbsoluteTopicName atn = new WireTypes.AbsoluteTopicName();
+                    atn.Name = ab.LocalName;
+                    atn.Namespace = ab.Namespace;
+                    string version = contentStoreManager2.LatestVersionForTopic(ab.LocalName);
+                    if (version == null)
+                    {
+                        // There's only one version, so just use the empty string
+                        version = "";
+                    }
+                    atn.Version = version;
+                    topicNames.Add(atn);
+                }
+
+                return topicNames;
+            }
         }
 
         /// <summary>
@@ -129,12 +137,15 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public WireTypes.ContentBase GetDefaultNamespace()
         {
-            if (Federation.DefaultNamespaceManager == null)
+            using (RequestContext.Create())
             {
-                throw new Exception("No default namespace defined by the federation.");
-            }
+                if (Federation.DefaultNamespaceManager == null)
+                {
+                    throw new Exception("No default namespace defined by the federation.");
+                }
 
-            return new WireTypes.ContentBase(Federation.DefaultNamespaceManager);
+                return new WireTypes.ContentBase(Federation.DefaultNamespaceManager);
+            }
         }
         /// <summary>
         /// Returns the formatted HTML for a given Topic.
@@ -144,8 +155,11 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string GetHtmlForTopic(WireTypes.AbsoluteTopicName topicName)
         {
-            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-            return InternalGetHtmlForTopic(atn, null);
+            using (RequestContext.Create())
+            {
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                return InternalGetHtmlForTopic(atn, null);
+            }
         }
 
         /// <summary>
@@ -157,8 +171,11 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string GetHtmlForTopicVersion(WireTypes.AbsoluteTopicName topicName, string version)
         {
-            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-            return InternalGetHtmlForTopic(atn, version);
+            using (RequestContext.Create())
+            {
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                return InternalGetHtmlForTopic(atn, version);
+            }
         }
 
         /// <summary>
@@ -170,10 +187,13 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string GetPreviewForTopic(WireTypes.AbsoluteTopicName topicName, string textToFormat)
         {
-            // OmarS: why do I have to do this?
-            NamespaceManager relativeToBase = Federation.NamespaceManagerForNamespace(topicName.Namespace);
+            using (RequestContext.Create())
+            {
+                // OmarS: why do I have to do this?
+                NamespaceManager relativeToBase = Federation.NamespaceManagerForNamespace(topicName.Namespace);
 
-            return FlexWiki.Formatting.Formatter.FormattedString(null, textToFormat, OutputFormat.HTML, relativeToBase, TheLinkMaker);
+                return FlexWiki.Formatting.Formatter.FormattedString(null, textToFormat, OutputFormat.HTML, relativeToBase, TheLinkMaker);
+            }
         }
 
         /// <summary>
@@ -184,21 +204,24 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public string GetTextForTopic(WireTypes.AbsoluteTopicName topicName)
         {
-            string content = null;
-            // OmarS: Do I need to check for Topic existence?
-            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-            atn.Version = topicName.Version; 
-
-            if (Federation.TopicExists(atn))
+            using (RequestContext.Create())
             {
-                content = Federation.Read(atn);
-            }
-            if (content == null)
-            {
-                content = "[enter your text here]";
-            }
+                string content = null;
+                // OmarS: Do I need to check for Topic existence?
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                atn.Version = topicName.Version;
 
-            return content;
+                if (Federation.TopicExists(atn))
+                {
+                    content = Federation.Read(atn);
+                }
+                if (content == null)
+                {
+                    content = "[enter your text here]";
+                }
+
+                return content;
+            }
         }
 
         /// <summary>
@@ -209,31 +232,37 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public StringCollection GetVersionsForTopic(WireTypes.AbsoluteTopicName topicName)
         {
-            StringCollection topicVersions = new StringCollection();
-
-            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-            IEnumerable changeList = Federation.NamespaceManagerForTopic(atn).AllChangesForTopic(atn.LocalName);
-
-            foreach (TopicChange change in changeList)
+            using (RequestContext.Create())
             {
-                topicVersions.Add(change.Version);
-            }
+                StringCollection topicVersions = new StringCollection();
 
-            return topicVersions;
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                IEnumerable changeList = Federation.NamespaceManagerForTopic(atn).AllChangesForTopic(atn.LocalName);
+
+                foreach (TopicChange change in changeList)
+                {
+                    topicVersions.Add(change.Version);
+                }
+
+                return topicVersions;
+            }
         }
 
         [WebMethod]
         public WireTypes.WikiVersion GetWikiVersion()
         {
-            WireTypes.WikiVersion wikiVersion = new WireTypes.WikiVersion();
-            Version assemblyVersion = typeof(Federation).Assembly.GetName().Version;
+            using (RequestContext.Create())
+            {
+                WireTypes.WikiVersion wikiVersion = new WireTypes.WikiVersion();
+                Version assemblyVersion = typeof(Federation).Assembly.GetName().Version;
 
-            wikiVersion.Major = assemblyVersion.Major;
-            wikiVersion.Minor = assemblyVersion.Minor;
-            wikiVersion.Build = assemblyVersion.Build;
-            wikiVersion.Revision = assemblyVersion.Revision;
+                wikiVersion.Major = assemblyVersion.Major;
+                wikiVersion.Minor = assemblyVersion.Minor;
+                wikiVersion.Build = assemblyVersion.Build;
+                wikiVersion.Revision = assemblyVersion.Revision;
 
-            return wikiVersion;
+                return wikiVersion;
+            }
         }
         /// <summary>
         /// Restores a given Topic to a previous version.
@@ -244,21 +273,24 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public void RestoreTopic(WireTypes.AbsoluteTopicName topicName, string visitorIdentityString, string version)
         {
-            if (version != null && version == topicName.Version)
+            using (RequestContext.Create())
             {
-                throw new Exception("Version not found");
-            }
-            else
-            {
-                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-                IEnumerable changeList = Federation.NamespaceManagerForTopic(atn).AllChangesForTopic(atn.LocalName);
-
-                foreach (TopicChange change in changeList)
+                if (version != null && version == topicName.Version)
                 {
-                    if (change.Version == version)
+                    throw new Exception("Version not found");
+                }
+                else
+                {
+                    QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                    IEnumerable changeList = Federation.NamespaceManagerForTopic(atn).AllChangesForTopic(atn.LocalName);
+
+                    foreach (TopicChange change in changeList)
                     {
-                        WriteNewTopic(change.TopicRevision, Federation.Read(change.TopicRevision), visitorIdentityString, version);
-                        break;
+                        if (change.Version == version)
+                        {
+                            WriteNewTopic(change.TopicRevision, Federation.Read(change.TopicRevision), visitorIdentityString, version);
+                            break;
+                        }
                     }
                 }
             }
@@ -273,8 +305,11 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public void SetTextForTopic(WireTypes.AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString)
         {
-            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-            WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
+            using (RequestContext.Create())
+            {
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
+            }
         }
 
 

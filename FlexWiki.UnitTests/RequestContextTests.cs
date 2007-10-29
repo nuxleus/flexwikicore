@@ -88,39 +88,60 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
-        public void NestedContextOverrides()
+        [ExpectedException(typeof(NestedContextUnexpectedException))]
+        public void NestedContextFailure()
         {
-            using (RequestContext.Create())
+            using (RequestContext outer = RequestContext.Create())
             {
                 RequestContext.Current["foo"] = "bar";
 
-                // This new context will clobber the old one - this is by design. 
-                // The other option is to have a stack and keep pushing them on, 
-                // but since this is a weird case and it's always safe to destroy
-                // current context, this is much easier. 
-                using (RequestContext.Create())
+                using (RequestContext inner = RequestContext.Create())
                 {
-                    RequestContext.Current["foo"] = "blah"; 
+                    Assert.Fail("Should never get here."); 
                 }
-
-                Assert.IsNull(RequestContext.Current,
-                    "Checking that termination of inner context terminates the outer as well."); 
             }
         }
 
         [Test]
-        public void NewContextOverridesOld()
+        public void NestedContextSuccess()
         {
-            RequestContext context1 = RequestContext.Create();
+            using (RequestContext outer = RequestContext.Create())
+            {
+                RequestContext.Current["foo"] = "bar";
+                RequestContext.Current.Dependencies.Add(new NamespaceExistenceDependency("Outer")); 
 
-            RequestContext context2 = RequestContext.Create();
+                using (RequestContext inner = RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
+                {
+                    Assert.AreNotSame(inner, outer, "Checking that a new context was created.");
+                    RequestContext.Current["foo"] = "blah";
+                    RequestContext.Current.Dependencies.Add(new NamespaceExistenceDependency("Inner")); 
+                }
 
-            Assert.AreNotSame(context1, context2,
-                "Checking that if a context is leaked, the next creation overwrites it.");
+                Assert.AreEqual(outer, RequestContext.Current,
+                    "Checking that termination of inner context make outer current.");
 
-            Assert.AreSame(context2, RequestContext.Current,
-                "Checking that if a context is leaked, the next creation establishes a new current context."); 
+                Assert.IsTrue(RequestContext.Current.Dependencies.Contains(new NamespaceExistenceDependency("Inner")),
+                    "Checking that dependencies propagate outward.");
+                Assert.IsTrue(RequestContext.Current.Dependencies.Contains(new NamespaceExistenceDependency("Outer")),
+                    "Checking that dependencies are preserved across a nested context."); 
+
+            }
         }
+
+
+        //[Test]
+        //public void NewContextOverridesOld()
+        //{
+        //    RequestContext context1 = RequestContext.Create();
+
+        //    RequestContext context2 = RequestContext.Create();
+
+        //    Assert.AreNotSame(context1, context2,
+        //        "Checking that if a context is leaked, the next creation overwrites it.");
+
+        //    Assert.AreSame(context2, RequestContext.Current,
+        //        "Checking that if a context is leaked, the next creation establishes a new current context."); 
+        //}
 
         [Test]
         public void NullWhenOutsideUsing()
@@ -157,6 +178,12 @@ namespace FlexWiki.UnitTests
         [Test]
         public void Using()
         {
+            // Make sure we take care of any leaks first. 
+            while (RequestContext.Current != null)
+            {
+                ((IDisposable)RequestContext.Current).Dispose(); 
+            }
+
             using (RequestContext context = RequestContext.Create())
             {
                 Assert.AreSame(context, RequestContext.Current,

@@ -52,19 +52,25 @@ namespace FlexWiki.Web
 
         private void Page_Load(object sender, System.EventArgs e)
         {
-            _changeList = Federation.GetTopicChanges(new TopicName(TheTopic.LocalName, TheTopic.Namespace));
-            ShowPage();
+            using (RequestContext.Create())
+            {
+                _changeList = Federation.GetTopicChanges(new TopicName(TheTopic.LocalName, TheTopic.Namespace));
+                ShowPage();
+            }
         }
 
         protected string GetTitle()
         {
-            string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
-            if (title == null || title == "")
+            using (RequestContext.Create())
             {
-                title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName,
-                    GetTopicVersionKey().Namespace);
+                string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
+                if (title == null || title == "")
+                {
+                    title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName,
+                        GetTopicVersionKey().Namespace);
+                }
+                return HtmlStringWriter.Escape(title) + " Versions ";
             }
-            return HtmlStringWriter.Escape(title) + " Versions ";
         }
 
 

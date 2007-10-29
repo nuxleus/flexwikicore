@@ -72,9 +72,12 @@ namespace FlexWiki.Web
             if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads) != null)
                 Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads).Increment();
 
-            MainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicVersionKey().ToString(), LogEventType.ReadTopic);
-            VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
-            LogVisitorEvent(e);
+            using (RequestContext.Create())
+            {
+                MainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicVersionKey().ToString(), LogEventType.ReadTopic);
+                VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
+                LogVisitorEvent(e);
+            }
         }
 
         protected void EndPage()
@@ -83,6 +86,14 @@ namespace FlexWiki.Web
         }
 
         protected string GetTitle()
+        {
+            using (RequestContext.Create())
+            {
+                return GetTitleInExistingContext();
+            }
+        }
+
+        private string GetTitleInExistingContext()
         {
             StringBuilder titlebldr = new StringBuilder();
 
@@ -110,111 +121,114 @@ namespace FlexWiki.Web
 
         protected string DoHead()
         {
-            StringBuilder headbldr = new StringBuilder();
-            QualifiedTopicRevision topic = GetTopicVersionKey();
-            LinkMaker lm = TheLinkMaker;
-
-            // Consider establishing a redirect if there's a redirect to a topic or an URL
-            string redir = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Redirect");
-            if (redir != "")
+            using (RequestContext.Create())
             {
-                UriBuilder uri = null;
-                if (IsAbsoluteURL(redir))
-                {
-                    uri = new UriBuilder(redir);
-                }
-                else
-                {
-                    // Must be a topic name
-                    string trimmed = redir.Trim();
-                    QualifiedTopicNameCollection all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
+                StringBuilder headbldr = new StringBuilder();
+                QualifiedTopicRevision topic = GetTopicVersionKey();
+                LinkMaker lm = TheLinkMaker;
 
-                    if (all.Count == 1)
+                // Consider establishing a redirect if there's a redirect to a topic or an URL
+                string redir = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Redirect");
+                if (redir != "")
+                {
+                    UriBuilder uri = null;
+                    if (IsAbsoluteURL(redir))
                     {
-                        uri = new UriBuilder(
-                            new Uri(
-                                new Uri(FullRootUrl(Request)),
-                                lm.LinkToTopic(
-                                    new QualifiedTopicRevision(all[0]),
-                                    false,
-                                    Request.QueryString)));
+                        uri = new UriBuilder(redir);
                     }
                     else
                     {
-                        if (all.Count == 0)
-                            headbldr.AppendLine("<!-- Redirect topic does not exist -->\n");
+                        // Must be a topic name
+                        string trimmed = redir.Trim();
+                        QualifiedTopicNameCollection all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
+
+                        if (all.Count == 1)
+                        {
+                            uri = new UriBuilder(
+                                new Uri(
+                                    new Uri(FullRootUrl(Request)),
+                                    lm.LinkToTopic(
+                                        new QualifiedTopicRevision(all[0]),
+                                        false,
+                                        Request.QueryString)));
+                        }
                         else
-                            headbldr.AppendLine("<!-- Redirect topic is ambiguous -->\n");
+                        {
+                            if (all.Count == 0)
+                                headbldr.AppendLine("<!-- Redirect topic does not exist -->\n");
+                            else
+                                headbldr.AppendLine("<!-- Redirect topic is ambiguous -->\n");
+                        }
+                    }
+                    if (uri != null)
+                    {
+                        if (Request.QueryString["DelayRedirect"] == "1")
+                        {
+                            headbldr.AppendLine("<meta http-equiv=\"refresh\" content=\"10;URL=\"" + uri + "\" />");
+                        }
+                        else
+                        {
+                            Response.Redirect(uri.Uri.ToString());
+                            return "";
+                        }
                     }
                 }
-                if (uri != null)
+
+                headbldr.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />");
+
+                string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
+                if (keywords != "")
                 {
-                    if (Request.QueryString["DelayRedirect"] == "1")
-                    {
-                        headbldr.AppendLine("<meta http-equiv=\"refresh\" content=\"10;URL=\"" + uri + "\" />");
-                    }
-                    else
-                    {
-                        Response.Redirect(uri.Uri.ToString());
-                        return "";
-                    }
+                    headbldr.AppendLine("<meta name=\"keywords\" content=\"" + keywords + "\" />");
                 }
+                string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
+                if (description != "")
+                {
+                    headbldr.AppendLine("<meta name=\"description\" content=\"" + description + "\" />");
+                }
+                headbldr.AppendLine("<meta name=\"author\" content=\"" +
+                    Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) +
+                    "\" />");
+
+                if (GetTopicVersionKey().Version != null)
+                {
+                    // Don't index the versions
+                    headbldr.AppendLine("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\" />");
+                }
+
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendLine("<script type=\"text/javascript\">");
+                headbldr.AppendLine("function showChanges()");
+                headbldr.AppendLine("{");
+                headbldr.AppendLine("    nav(\"" + urlForDiffs + "\");");
+                headbldr.AppendLine("}");
+                headbldr.AppendLine();
+                headbldr.AppendLine("function hideChanges()");
+                headbldr.AppendLine("{");
+                headbldr.AppendLine("	nav(\"" + urlForNoDiffs + "\");");
+                headbldr.AppendLine("}");
+                headbldr.AppendLine("function BodyClick()");
+                headbldr.AppendLine("{");
+                headbldr.AppendLine("   SetEditing(false);");
+                headbldr.AppendLine("}");
+                headbldr.AppendLine("function BodyDblClick()");
+                headbldr.AppendLine("{");
+
+                bool editOnDoubleClick = true;
+                editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
+
+                if (editOnDoubleClick)
+                {
+                    headbldr.AppendLine("location.href=\"" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "\";");
+                }
+                headbldr.AppendLine("}");
+                headbldr.AppendLine("</script>");
+                string head = headbldr.ToString();
+
+                return head;
             }
-
-            headbldr.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />");
-
-            string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
-            if (keywords != "")
-            {
-                headbldr.AppendLine("<meta name=\"keywords\" content=\"" + keywords + "\" />");
-            }
-            string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
-            if (description != "")
-            {
-                headbldr.AppendLine("<meta name=\"description\" content=\"" + description + "\" />");
-            }
-            headbldr.AppendLine("<meta name=\"author\" content=\"" +
-                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) +
-                "\" />");
-
-            if (GetTopicVersionKey().Version != null)
-            {
-                // Don't index the versions
-                headbldr.AppendLine("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\" />");
-            }
-
-            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            headbldr.AppendLine("<script type=\"text/javascript\">");
-            headbldr.AppendLine("function showChanges()");
-            headbldr.AppendLine("{");
-            headbldr.AppendLine("    nav(\"" + urlForDiffs + "\");");
-            headbldr.AppendLine("}");
-            headbldr.AppendLine();
-            headbldr.AppendLine("function hideChanges()");
-            headbldr.AppendLine("{");
-            headbldr.AppendLine("	nav(\"" + urlForNoDiffs + "\");");
-            headbldr.AppendLine("}");
-            headbldr.AppendLine("function BodyClick()");
-            headbldr.AppendLine("{");
-            headbldr.AppendLine("   SetEditing(false);");
-            headbldr.AppendLine("}");
-            headbldr.AppendLine("function BodyDblClick()");
-            headbldr.AppendLine("{");
-
-            bool editOnDoubleClick = true;
-            editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
-
-            if (editOnDoubleClick)
-            {
-                headbldr.AppendLine("location.href=\"" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "\";");
-            }
-            headbldr.AppendLine("}");
-            headbldr.AppendLine("</script>");
-            string head = headbldr.ToString();
-
-            return head;
         }
 
 
@@ -328,7 +342,7 @@ namespace FlexWiki.Web
                 strbldr.AppendLine("<div id=\"TopicBody\">");
                 strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
                 strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
-                strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
+                strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitleInExistingContext() + "</div>");
                 strbldr.AppendLine("<div id=\"DynamicTopicBar\" class=\"DynamicTopicBar\" style=\"display: none\">");
                 //strbldr.AppendLine("<!-- <input id=\"TopicBarNamespace\" style=\"display: none\" type=\"text\"  name=\"QuickLinkNamespace\" /> -->");
                 strbldr.AppendLine("<input id=\"TopicBarInputBox\" title=\"Enter a topic here to go to or create\" class=\"QuickLinkInput\" type=\"text\"  name=\"QuickLink\" />");

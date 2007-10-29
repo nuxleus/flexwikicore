@@ -112,6 +112,7 @@
     <Compile Include="CachingTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Caching\DependencyRecorderTests.cs" />
     <Compile Include="Caching\MockCache.cs" />
     <Compile Include="Caching\TopicCacheProviderTests.cs" />
     <Compile Include="FederationConfigurationSerializationTests.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Security\TransportSecurityRequirementProviderTests.cs" />
     <Compile Include="Security\TransportSecurityRequirementTestConfiguration.cs" />
     <Compile Include="SqlProvider\TestDataSets.cs" />
+    <Compile Include="TestParameters.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicRevision.cs" />

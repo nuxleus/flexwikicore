@@ -27,8 +27,11 @@ namespace FlexWiki.UnitTests.Formatting
         [Test]
         public void BehaviorTest()
         {
-            string s = FormattedTestText(@"@@ProductName@@");
-            AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a>");
+            using (RequestContext.Create())
+            {
+                string s = FormattedTestText(@"@@ProductName@@");
+                AssertStringContains(s, @"href=""" + _lm.LinkToTopic(_namespaceManager.QualifiedTopicNameFor("FlexWiki")) + @""">FlexWiki</a>");
+            }
         }
 
         [Test]

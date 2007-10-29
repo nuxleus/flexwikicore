@@ -113,24 +113,27 @@ namespace FlexWiki.Web.Admin
 
         protected override void ShowMain()
         {
-            string providerId = ProviderIdParam;
-            if (ProviderIdParam == null)
+            using (RequestContext.Create())
             {
-                // CREATE
-                Type type = ProviderType;
-                if (type == null)
+                string providerId = ProviderIdParam;
+                if (ProviderIdParam == null)
                 {
-                    ShowTypeSelectionForm();
+                    // CREATE
+                    Type type = ProviderType;
+                    if (type == null)
+                    {
+                        ShowTypeSelectionForm();
+                    }
+                    else
+                    {
+                        ShowTypeDetailsForm(null);
+                    }
                 }
                 else
                 {
-                    ShowTypeDetailsForm(null);
+                    // EDIT
+                    ShowTypeDetailsForm(providerId);
                 }
-            }
-            else
-            {
-                // EDIT
-                ShowTypeDetailsForm(providerId);
             }
         }
         private string GetParameter(string name)

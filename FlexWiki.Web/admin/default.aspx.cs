@@ -49,32 +49,34 @@ namespace FlexWiki.Web.Admin
 		
 		protected override void ShowMain()
 		{
-			if (CheckForConfigurationFormatUpgrade())
-				return;
-
-            ConfigurationChecker checker = new ConfigurationChecker();
-
-            checker.Check();
-            checker.WriteStoplightTo(UIResponse);
-
-
-            UIResponse.WriteDivider();
-
-            Federation aFederation = null;
-            try
+            using (RequestContext.Create())
             {
-                FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker(""));
-                aFederation = new Federation(application);
-            }
-            catch (Exception)
-            {
-            }
+                if (CheckForConfigurationFormatUpgrade())
+                    return;
 
-            if (aFederation != null)
-            {
-                ShowFederationInfo(aFederation);
-            }
+                ConfigurationChecker checker = new ConfigurationChecker();
 
+                checker.Check();
+                checker.WriteStoplightTo(UIResponse);
+
+
+                UIResponse.WriteDivider();
+
+                Federation aFederation = null;
+                try
+                {
+                    FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker(""));
+                    aFederation = new Federation(application);
+                }
+                catch (Exception)
+                {
+                }
+
+                if (aFederation != null)
+                {
+                    ShowFederationInfo(aFederation);
+                }
+            }
         }
 		private void ShowFederationInfo(Federation aFederation)
 		{

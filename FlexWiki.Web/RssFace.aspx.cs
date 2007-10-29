@@ -57,37 +57,39 @@ namespace FlexWiki.Web
 
 		protected void ShowPage()
 		{
-            StringBuilder strbldr = new StringBuilder();
-			string ns = Request.QueryString["namespace"];
-			strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Subscriptions</legend>");
-            strbldr.AppendLine("<p>Listed below are the available <b>newsletters</b> and <b>RSS</b> subscriptions.");
-			if (ns == null)
-			{
-                strbldr.AppendLine(" All subscriptions available in this Wiki federation are listed.");
-			}
-			else
-			{
-                strbldr.AppendLine(" Only the subscriptions for <i>" + EscapeHTML(ns) + "</i> are listed.");
-                strbldr.AppendLine("	You can also view <a href=\"" + Request.Path + "\">all subscriptions on this site</a>.");
-			}
+            using (RequestContext.Create())
+            {
+                StringBuilder strbldr = new StringBuilder();
+                string ns = Request.QueryString["namespace"];
+                strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Subscriptions</legend>");
+                strbldr.AppendLine("<p>Listed below are the available <b>newsletters</b> and <b>RSS</b> subscriptions.");
+                if (ns == null)
+                {
+                    strbldr.AppendLine(" All subscriptions available in this Wiki federation are listed.");
+                }
+                else
+                {
+                    strbldr.AppendLine(" Only the subscriptions for <i>" + EscapeHTML(ns) + "</i> are listed.");
+                    strbldr.AppendLine("	You can also view <a href=\"" + Request.Path + "\">all subscriptions on this site</a>.");
+                }
 
-            strbldr.AppendLine("</p>");
+                strbldr.AppendLine("</p>");
 
-			strbldr.AppendLine("<p>There are three ways to subscribe to change notifications for this site:</p>");
+                strbldr.AppendLine("<p>There are three ways to subscribe to change notifications for this site:</p>");
 
-            strbldr.AppendLine("<ul>");
-            strbldr.AppendLine("<li><b>Newsletters (email and RSS).</b>  Newsletters provide notification of changes to a set of related topics.");
-            strbldr.AppendLine("To recieve newsletter updates by email, visit the newsletter topic and add your name to the Subscribers property.");
-            strbldr.AppendLine("To subscribe the the RSS feed for the newsletter directly, use the listed link below.</li>");
-            strbldr.AppendLine("<li><b>Namespace feeds (RSS).</b>  You can subscribe to RSS feeds for all of the topics in this namespace.</li>");
-            strbldr.AppendLine("</ul>");
+                strbldr.AppendLine("<ul>");
+                strbldr.AppendLine("<li><b>Newsletters (email and RSS).</b>  Newsletters provide notification of changes to a set of related topics.");
+                strbldr.AppendLine("To recieve newsletter updates by email, visit the newsletter topic and add your name to the Subscribers property.");
+                strbldr.AppendLine("To subscribe the the RSS feed for the newsletter directly, use the listed link below.</li>");
+                strbldr.AppendLine("<li><b>Namespace feeds (RSS).</b>  You can subscribe to RSS feeds for all of the topics in this namespace.</li>");
+                strbldr.AppendLine("</ul>");
 
-			strbldr.AppendLine(ShowNewsletters(ns));
-			strbldr.AppendLine(ShowNamespaceFeeds(ns));
+                strbldr.AppendLine(ShowNewsletters(ns));
+                strbldr.AppendLine(ShowNamespaceFeeds(ns));
 
-			strbldr.AppendLine("</fieldset>");
-            Response.Write(strbldr.ToString());
-
+                strbldr.AppendLine("</fieldset>");
+                Response.Write(strbldr.ToString());
+            }
 		}
 
 
