@@ -360,7 +360,7 @@ namespace FlexWiki.Web
         //{
         //    PageUtilities.MainStylesheetReference(head);
         //}
-        protected void MinimalPageLoad()
+        protected virtual void MinimalPageLoad()
         {
             _response = Response;
             EnsurePluginsLoaded();
@@ -499,7 +499,7 @@ namespace FlexWiki.Web
             }
         }
 
-        private void EstablishFederation()
+        protected void EstablishFederation()
         {
             if (Federation != null)
             {

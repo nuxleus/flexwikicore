@@ -111,6 +111,10 @@
     <Content Include="admin\Config.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="admin\ResetConfiguration.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="admin\ManageConfiguration.aspx" />
     <Content Include="admin\ReloadConfiguration.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -125,6 +129,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\Providers.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\ShowCache.aspx">
     </Content>
@@ -210,13 +215,24 @@
       <DependentUpon>AccessDenied.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="admin\ManageConfiguration.aspx.cs">
+      <DependentUpon>ManageConfiguration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="admin\ReloadConfiguration.aspx.cs">
+      <DependentUpon>Reloadconfiguration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\ResetConfiguration.aspx.cs">
+      <DependentUpon>Resetconfiguration.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="admin\ShowCache.aspx.cs">
+      <DependentUpon>ShowCache.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="admin\Users.aspx.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="AlternateStylesheetConfiguration.cs" />

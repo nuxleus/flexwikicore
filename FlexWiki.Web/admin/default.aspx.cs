@@ -59,7 +59,6 @@ namespace FlexWiki.Web.Admin
                 checker.Check();
                 checker.WriteStoplightTo(UIResponse);
 
-
                 UIResponse.WriteDivider();
 
                 Federation aFederation = null;

@@ -48,10 +48,19 @@ namespace FlexWiki.Web.Admin
 		
 		protected override void ShowMenu()
 		{
-			UIResponse.WriteStartMenu("Configuration");
-			UIResponse.WriteMenuItem("ReloadConfiguration.aspx?reload=1", "Reload", "Reread the FlexWiki configuration file from disk.");
-			UIResponse.WriteEndMenu();
-			UIResponse.WritePara("&nbsp;");
+
+            UIResponse.WriteStartMenu("Confirm Reset");
+            UIResponse.WriteMenuItem("ReloadConfiguration.aspx?reload=1", "Reload", "Reread the FlexWiki configuration file from disk.");
+            UIResponse.WriteEndMenu();
+            UIResponse.WritePara("&nbsp;");
+
+            UIResponse.WriteStartMenu("ManageConfiguration");
+            UIResponse.WriteMenuItem("Config.aspx", "Validate Configuration", "Validate that the configuration is correct.");
+            UIResponse.WriteMenuItem("EditConfiguration.aspx", "Edit Configuration", "Edit the flexwiki.config file directly.");
+            UIResponse.WriteMenuItem("ReloadConfiguration.aspx", "Reread Configuration", "Reread the FlexWiki configuration file from disk.");
+            UIResponse.WriteMenuItem("ResetConfiguration.aspx", "Reset Configuration", "Reset the flexwiki.config file to its default.");
+            UIResponse.WriteEndMenu();
+            UIResponse.WritePara("&nbsp;");
 
 			base.ShowMenu();
 		}
