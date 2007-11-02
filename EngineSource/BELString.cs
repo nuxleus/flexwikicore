@@ -152,7 +152,15 @@ namespace FlexWiki
 				return 0;
 			return Value.GetHashCode();
 		}
-
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer an integer giving the first index of the provided string, or -1 if the string does not contain the provided string.")]
+        public int IndexOf(object obj)
+        {
+            if (!(obj is string))
+            {
+                return -1;
+            }
+            return Value.IndexOf(obj as string);
+        }
 		[ExposedMethod(ExposedMethodFlags.NeedContext, "Limit a string to a particular length.")]
 		public static string MaxLengthString(ExecutionContext ctx, string s, int length, 
 			[ExposedParameter(true)] string suffix)

@@ -429,6 +429,14 @@ with(""short"")
         }
 
         [Test]
+        public void TestStringIndexOf()
+        {
+            Assert.AreEqual("P(1)", Run(@"""hello"".IndexOf(""ell"")"));
+            Assert.AreEqual("P(0)", Run(@"""hello"".IndexOf(""h"")"));
+            Assert.AreEqual("P(-1)", Run(@"""hello"".IndexOf(""xl"")"));
+        }
+
+        [Test]
         public void TestBooleanEquals()
         {
             Assert.AreEqual("P(true)", Run(@"false.Not.Equals(true)"));
