@@ -102,10 +102,14 @@ namespace FlexWiki.Web
 
         private string GetTitleInExistingContext()
         {
-            string title = Federation.GetTopicPropertyValue(RequestedTopic, "Title");
-            if (title == null || title == "")
+            string title = null;
+            if (RequestContext.Current != null)
             {
-                title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName, GetTopicVersionKey().Namespace);
+                title = Federation.GetTopicPropertyValue(RequestedTopic, "Title");
+                if (title == null || title == "")
+                {
+                    title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName, GetTopicVersionKey().Namespace);
+                }
             }
             return HtmlStringWriter.Escape(title);
         }

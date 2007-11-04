@@ -96,13 +96,15 @@ namespace FlexWiki.Web
         private string GetTitleInExistingContext()
         {
             StringBuilder titlebldr = new StringBuilder();
-
-            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
-            if (String.IsNullOrEmpty(title))
+            string title = null;
+            if (RequestContext.Current != null)
             {
-                title = GetTopicVersionKey().FormattedName;
+                title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
+                if (String.IsNullOrEmpty(title))
+                {
+                    title = GetTopicVersionKey().FormattedName;
+                }
             }
-
             return HtmlStringWriter.Escape(title);
         }
 

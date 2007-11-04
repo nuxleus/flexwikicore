@@ -206,7 +206,15 @@ namespace FlexWiki.Web.Services
         {
             using (RequestContext.Create())
             {
-                string content = null;
+                return GetTextForTopicInExistingContext(topicName);
+            }
+        }
+
+        public string GetTextForTopicInExistingContext(WireTypes.AbsoluteTopicName topicName)
+        {
+            string content = null;
+            if (RequestContext.Current != null)
+            {
                 // OmarS: Do I need to check for Topic existence?
                 QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
                 atn.Version = topicName.Version;
@@ -219,11 +227,9 @@ namespace FlexWiki.Web.Services
                 {
                     content = "[enter your text here]";
                 }
-
-                return content;
             }
+            return content;
         }
-
         /// <summary>
         /// Returns a collection of versions for a given Topic.
         /// </summary>
@@ -307,11 +313,18 @@ namespace FlexWiki.Web.Services
         {
             using (RequestContext.Create())
             {
+                SetTextForTopicInExistingContext(topicName, postedTopicText, visitorIdentityString);
+            }
+        }
+
+        public void SetTextForTopicInExistingContext(WireTypes.AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString)
+        {
+            if (RequestContext.Current != null)
+            {
                 QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
                 WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
             }
         }
-
 
         private void EstablishFederation()
         {
