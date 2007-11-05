@@ -60,16 +60,16 @@ namespace FlexWiki.Web.Admin
             }
 
             UIResponse.WritePara(@"Pressing the button below will copy your existing flexwiki.config file to 
-flexwiki.config.<datetime>.backup, and will copy flexwiki.config.template to flexwiki.config. This will 
+flexwiki.config.datetime.backup, and will copy flexwiki.config.template to flexwiki.config. This will 
 have the effect of resetting your configuration to the default, including REMOVING ANY NAMESPACE PROVIDERS
-YOU HAVE SET UP. Only press this button if you are sure you want to reset the default configuration.");
+YOU HAVE SET UP. Only press this button if you are sure you want to reset to the default configuration.");
 
             UIResponse.Write("<form action='?reset=1' method='post'><input type='submit' value='Reset Configuration To Default' /></form>"); 
         }
 
         protected override void ShowMenu()
         {
-            UIResponse.WriteStartMenu("ManageConfiguration");
+            UIResponse.WriteStartMenu("Manage Configuration");
             UIResponse.WriteMenuItem("Config.aspx", "Validate Configuration", "Validate that the configuration is correct.");
             UIResponse.WriteMenuItem("EditConfiguration.aspx", "Edit Configuration", "Edit the flexwiki.config file directly.");
             UIResponse.WriteMenuItem("ReloadConfiguration.aspx", "Reread Configuration", "Reread the FlexWiki configuration file from disk.");

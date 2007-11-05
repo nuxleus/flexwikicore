@@ -111,6 +111,7 @@
     <Content Include="admin\Config.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="admin\EditConfiguration.aspx" />
     <Content Include="admin\ResetConfiguration.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -213,6 +214,10 @@
     <Content Include="emoticons\wink_smile.gif" />
     <Compile Include="AccessDenied.aspx.cs">
       <DependentUpon>AccessDenied.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\EditConfiguration.aspx.cs">
+      <DependentUpon>EditConfiguration.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="admin\ManageConfiguration.aspx.cs">

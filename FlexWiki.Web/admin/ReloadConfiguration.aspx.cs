@@ -39,9 +39,8 @@ namespace FlexWiki.Web.Admin
             else
             {
                 UIResponse.WritePara("Use the menu to the left to reload the configuration file from disk.");
-                UIResponse.WritePara("This is necessary, for example, when you have modified the configuration file manually, " + 
-                    "and have not restarted the web application. It should never be necessary when making changes via these " + 
-                    "administrative web pages."); 
+                UIResponse.WritePara("This is necessary, for example, when you have modified the configuration " + 
+                    "and have not restarted the web application."); 
             }
 
 		}
@@ -54,7 +53,7 @@ namespace FlexWiki.Web.Admin
             UIResponse.WriteEndMenu();
             UIResponse.WritePara("&nbsp;");
 
-            UIResponse.WriteStartMenu("ManageConfiguration");
+            UIResponse.WriteStartMenu("Manage Configuration");
             UIResponse.WriteMenuItem("Config.aspx", "Validate Configuration", "Validate that the configuration is correct.");
             UIResponse.WriteMenuItem("EditConfiguration.aspx", "Edit Configuration", "Edit the flexwiki.config file directly.");
             UIResponse.WriteMenuItem("ReloadConfiguration.aspx", "Reread Configuration", "Reread the FlexWiki configuration file from disk.");
