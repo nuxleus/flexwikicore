@@ -13,9 +13,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection; 
+using System.Reflection;
 
-using NUnit.Framework; 
+using NUnit.Framework;
 
 using FlexWiki.Collections;
 using FlexWiki.Security;
@@ -65,7 +65,7 @@ namespace FlexWiki.UnitTests
                   string.Format("Checking that topic {0} was correct", i));
             }
         }
-        
+
         internal static void AssertTopicChangeCorrect(TopicChange actualChange, string expectedName,
           string expectedAuthor, DateTime expectedTimestamp, string message)
         {
@@ -73,7 +73,7 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(expectedAuthor, actualChange.Author, "Checking that author was correct for " + message);
             Assert.AreEqual(expectedTimestamp, actualChange.Created, "Checking that timestamp was correct for " + message);
         }
-        
+
         internal static void AssertTopicPropertyCorrect(TopicProperty topicProperty, string propertyName,
             params string[] values)
         {
@@ -87,7 +87,7 @@ namespace FlexWiki.UnitTests
                     string.Format("Checking that value {0} is correct.", i));
             }
         }
-        
+
         internal static void AssertTopicsCorrectOrdered(QualifiedTopicNameCollection actualTopics,
             params TopicName[] expectedTopics)
         {
@@ -100,7 +100,7 @@ namespace FlexWiki.UnitTests
                 Assert.AreEqual(expectedTopics[i].DottedName, actualTopics[i].DottedName, message);
             }
         }
-        
+
         internal static void AssertTopicsCorrectUnordered(ArrayList actualTopics, params TopicName[] expectedTopics)
         {
             QualifiedTopicNameCollection topics = new QualifiedTopicNameCollection();
@@ -113,30 +113,30 @@ namespace FlexWiki.UnitTests
 
             AssertTopicsCorrectUnordered(topics, expectedTopics);
         }
-        
+
         internal static string AuthorForLastChange(NamespaceManager manager, string topic)
         {
             TopicChangeCollection changes = manager.AllChangesForTopic(topic);
             return changes.Latest.Author;
         }
-        
+
         internal static NamespaceManager CreateMockStore(Federation federation, string ns)
         {
-            return CreateMockStore(federation, ns, MockSetupOptions.Default); 
+            return CreateMockStore(federation, ns, MockSetupOptions.Default);
         }
 
         internal static NamespaceManager CreateMockStore(Federation federation, string ns, MockSetupOptions options)
         {
-            return CreateMockStore(federation, ns, options, null); 
+            return CreateMockStore(federation, ns, options, null);
         }
 
         internal static NamespaceManager CreateMockStore(Federation federation, string ns,
             NamespaceProviderParameterCollection parameters)
         {
-            return CreateMockStore(federation, ns, MockSetupOptions.Default, parameters); 
+            return CreateMockStore(federation, ns, MockSetupOptions.Default, parameters);
         }
 
-        internal static NamespaceManager CreateMockStore(Federation federation, string ns, 
+        internal static NamespaceManager CreateMockStore(Federation federation, string ns,
             MockSetupOptions options, NamespaceProviderParameterCollection parameters)
         {
             MockContentStore store = new MockContentStore(options);
@@ -147,25 +147,19 @@ namespace FlexWiki.UnitTests
             return federation.RegisterNamespace(store, ns, parameters);
         }
 
-        internal static void DoProviderTest<TProvider>(TestContentSet testContentSet, 
-            string siteUrl, 
+        internal static void DoProviderTest<TProvider>(TestContentSet testContentSet,
+            string siteUrl,
             Action<TestParameters<TProvider>> test)
         {
             TestParameters<TProvider> parameters = new TestParameters<TProvider>();
             parameters.Federation = WikiTestUtilities.SetupFederation(siteUrl, testContentSet);
-            
-            using (RequestContext.Create())
-            {
-                parameters.Manager = parameters.Federation.NamespaceManagerForNamespace("NamespaceOne");
-                parameters.Provider = (TProvider)parameters.Manager.GetProvider(typeof(TProvider));
-                parameters.Store = (MockContentStore)parameters.Manager.GetProvider(typeof(MockContentStore));
-                parameters.Cache = GetCache(parameters.Federation);
-            }
 
-            using (RequestContext.Create())
-            {
-                test(parameters);
-            }
+            parameters.Manager = parameters.Federation.NamespaceManagerForNamespace("NamespaceOne");
+            parameters.Provider = (TProvider)parameters.Manager.GetProvider(typeof(TProvider));
+            parameters.Store = (MockContentStore)parameters.Manager.GetProvider(typeof(MockContentStore));
+            parameters.Cache = GetCache(parameters.Federation);
+
+            test(parameters);
         }
 
         internal static MockCache GetCache(Federation federation)
@@ -181,7 +175,7 @@ namespace FlexWiki.UnitTests
             // they'll have to come over here and adjust this as necessary. 
             Type type = federation.GetType();
             FieldInfo mapInfo = type.GetField("_namespaceToNamespaceManagerMap", BindingFlags.NonPublic | BindingFlags.Instance);
-            NamespaceManagerMap map = (NamespaceManagerMap) mapInfo.GetValue(federation);
+            NamespaceManagerMap map = (NamespaceManagerMap)mapInfo.GetValue(federation);
 
             if (map.ContainsKey(ns))
             {
@@ -189,7 +183,7 @@ namespace FlexWiki.UnitTests
             }
             else
             {
-                return null; 
+                return null;
             }
         }
 
@@ -212,7 +206,7 @@ namespace FlexWiki.UnitTests
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
             WikiAuthorizationRule allowAll = new WikiAuthorizationRule(rule);
             configuration.AuthorizationRules.Add(allowAll);
-            
+
             return SetupFederation(siteUrl, content, options, configuration);
         }
 
@@ -227,16 +221,13 @@ namespace FlexWiki.UnitTests
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
             Federation federation = new Federation(application);
 
-            using (RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
+            foreach (TestNamespace ns in content.Namespaces)
             {
-                foreach (TestNamespace ns in content.Namespaces)
-                {
-                    NamespaceManager storeManager = CreateMockStore(federation, ns.Name, options, ns.Parameters);
+                NamespaceManager storeManager = CreateMockStore(federation, ns.Name, options, ns.Parameters);
 
-                    foreach (TestTopic topic in ns.Topics)
-                    {
-                        WriteTopicAndNewVersionBypassingSecurity(storeManager, topic.Name, topic.Content, topic.Author);
-                    }
+                foreach (TestTopic topic in ns.Topics)
+                {
+                    WriteTopicAndNewVersionBypassingSecurity(storeManager, topic.Name, topic.Content, topic.Author);
                 }
             }
 
@@ -248,31 +239,31 @@ namespace FlexWiki.UnitTests
           string localName, string content, string author)
         {
             QualifiedTopicRevision name = new QualifiedTopicRevision(localName, namespaceManager.Namespace);
-            name.Version = QualifiedTopicRevision.NewVersionStringForUser(author, 
+            name.Version = QualifiedTopicRevision.NewVersionStringForUser(author,
                 namespaceManager.Federation.TimeProvider.Now);
             namespaceManager.WriteTopicAndNewVersion(name.LocalName, content, author);
             return name;
         }
 
-        internal static void WriteTopicAndNewVersionBypassingSecurity(NamespaceManager manager, string topic, 
+        internal static void WriteTopicAndNewVersionBypassingSecurity(NamespaceManager manager, string topic,
             string content, string author)
         {
             NamespaceProviderParameter oldValue = null;
             if (manager.Parameters.Contains("Security.Disabled"))
             {
-                oldValue = manager.Parameters["Security.Disabled"]; 
+                oldValue = manager.Parameters["Security.Disabled"];
             }
             NamespaceProviderParameter newValue = new NamespaceProviderParameter("Security.Disabled", "true");
             if (oldValue != null)
             {
-                manager.Parameters.Remove(oldValue); 
+                manager.Parameters.Remove(oldValue);
             }
-            manager.Parameters.Add(newValue); 
+            manager.Parameters.Add(newValue);
             manager.WriteTopicAndNewVersion(topic, content, author);
-            manager.Parameters.Remove(newValue); 
+            manager.Parameters.Remove(newValue);
             if (oldValue != null)
             {
-                manager.Parameters.Add(oldValue); 
+                manager.Parameters.Add(oldValue);
             }
         }
 

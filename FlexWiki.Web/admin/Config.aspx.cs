@@ -29,58 +29,55 @@ using FlexWiki;
 
 namespace FlexWiki.Web.Admin
 {
-	/// <summary>
-	/// Summary description for Config.
-	/// </summary>
-	public class Config : AdminPage
-	{
-		
-		protected override void EnsurePluginsLoaded()
-		{
-			// Don't load plugins for the checker 
-		}
-		
-		protected override void PageLoad()
-		{			
-		}
-		
-		protected override void ShowMain()
-		{
-            using (RequestContext.Create())
-            {
-                if (CheckForConfigurationFormatUpgrade())
-                    return;
+    /// <summary>
+    /// Summary description for Config.
+    /// </summary>
+    public class Config : AdminPage
+    {
 
-                ConfigurationChecker checker = new ConfigurationChecker();
+        protected override void EnsurePluginsLoaded()
+        {
+            // Don't load plugins for the checker 
+        }
 
-                checker.Check();
-                checker.WriteStoplightTo(UIResponse);
-                checker.WriteTo(UIResponse);
-            }
-		}
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
+        protected override void PageLoad()
+        {
+        }
+
+        protected override void ShowMain()
+        {
+            if (CheckForConfigurationFormatUpgrade())
+                return;
+
+            ConfigurationChecker checker = new ConfigurationChecker();
+
+            checker.Check();
+            checker.WriteStoplightTo(UIResponse);
+            checker.WriteTo(UIResponse);
+        }
+        private void Page_Load(object sender, System.EventArgs e)
+        {
+            // Put user code to initialize the page here
+        }
 
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
-	}
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
+    }
 }

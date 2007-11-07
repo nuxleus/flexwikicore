@@ -11,22 +11,22 @@
 #endregion
 
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using FlexWiki.Security; 
+using FlexWiki.Security;
 
 namespace FlexWiki.UnitTests.Security
 {
     [TestFixture]
     public class TransportSecurityRequirementProviderTests
     {
-        private delegate void TestOperation(TestParameters parameters); 
+        private delegate void TestOperation(TestParameters parameters);
 
         private class TestParameters
         {
-            private MockWikiApplication _application; 
+            private MockWikiApplication _application;
             private Federation _federation;
             private NamespaceManager _namespaceManager;
             private TransportSecurityRequirementProvider _provider;
@@ -37,7 +37,7 @@ namespace FlexWiki.UnitTests.Security
                 _federation = federation;
                 _namespaceManager = namespaceManager;
                 _application = application;
-                _provider = provider; 
+                _provider = provider;
             }
 
             public MockWikiApplication Application
@@ -80,7 +80,7 @@ namespace FlexWiki.UnitTests.Security
         {
             TestAllPossibleConfigurations(delegate(TestParameters parameters)
             {
-                parameters.Provider.AllTopics(); 
+                parameters.Provider.AllTopics();
             }
             );
         }
@@ -216,41 +216,41 @@ namespace FlexWiki.UnitTests.Security
             MockWikiApplication application = federation.Application as MockWikiApplication;
 
             // We start out "true" so we don't trip any assertions while writing out the new content
-            application.IsTransportSecure = true; 
+            application.IsTransportSecure = true;
 
             if (configuration.WikiTransportSecurityRequirement == TransportSecurityRequirement.RequiredOnContent)
             {
-                federation.Configuration.RequireTransportSecurityFor = TransportSecurityRequiredFor.Content; 
+                federation.Configuration.RequireTransportSecurityFor = TransportSecurityRequiredFor.Content;
             }
             else if (configuration.WikiTransportSecurityRequirement == TransportSecurityRequirement.RequiredOnNone)
             {
-                federation.Configuration.RequireTransportSecurityFor = TransportSecurityRequiredFor.None; 
+                federation.Configuration.RequireTransportSecurityFor = TransportSecurityRequiredFor.None;
             }
 
             if (configuration.NamespaceTransportSecurityRequirement == TransportSecurityRequirement.RequiredOnContent)
             {
                 manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName,
-                    TransportSecurityRequirementProvider.RequirementPropertyName + 
-                    ": " + 
-                    TransportSecurityRequiredFor.Content.ToString(), 
-                    "test"); 
+                    TransportSecurityRequirementProvider.RequirementPropertyName +
+                    ": " +
+                    TransportSecurityRequiredFor.Content.ToString(),
+                    "test");
             }
             else if (configuration.NamespaceTransportSecurityRequirement == TransportSecurityRequirement.RequiredOnNone)
             {
                 manager.WriteTopicAndNewVersion(manager.DefinitionTopicName.LocalName,
-                    TransportSecurityRequirementProvider.RequirementPropertyName + 
-                    ": " + 
-                    TransportSecurityRequiredFor.None.ToString(), 
-                    "test"); 
+                    TransportSecurityRequirementProvider.RequirementPropertyName +
+                    ": " +
+                    TransportSecurityRequiredFor.None.ToString(),
+                    "test");
             }
 
             // We set it back to whatever it should be now that we're done modifying the wiki.
-            application.IsTransportSecure = configuration.IsTransportSecure; 
+            application.IsTransportSecure = configuration.IsTransportSecure;
 
-            TransportSecurityRequirementProvider provider = 
-                (TransportSecurityRequirementProvider) manager.GetProvider(typeof(TransportSecurityRequirementProvider)); 
+            TransportSecurityRequirementProvider provider =
+                (TransportSecurityRequirementProvider)manager.GetProvider(typeof(TransportSecurityRequirementProvider));
 
-            return new TestParameters(federation, manager, application, provider); 
+            return new TestParameters(federation, manager, application, provider);
         }
         private static IEnumerable<TransportSecurityRequirementTestConfiguration> PossibleConfigurations()
         {
@@ -284,32 +284,29 @@ namespace FlexWiki.UnitTests.Security
         }
         private static void TestAllPossibleConfigurations(bool exceptionsExpected, TestOperation operation)
         {
-            using (RequestContext.Create())
+            foreach (TransportSecurityRequirementTestConfiguration configuration in PossibleConfigurations())
             {
-                foreach (TransportSecurityRequirementTestConfiguration configuration in PossibleConfigurations())
+                TestParameters parameters = Initialize(configuration);
+
+                bool wasExceptionThrown = false;
+                try
                 {
-                    TestParameters parameters = Initialize(configuration);
+                    operation(parameters);
+                }
+                catch (TransportSecurityRequirementException)
+                {
+                    wasExceptionThrown = true;
+                }
 
-                    bool wasExceptionThrown = false;
-                    try
-                    {
-                        operation(parameters);
-                    }
-                    catch (TransportSecurityRequirementException)
-                    {
-                        wasExceptionThrown = true;
-                    }
-
-                    if (exceptionsExpected)
-                    {
-                        Assert.AreEqual(configuration.ShouldExceptionBeThrown, wasExceptionThrown,
-                            "Checking that TransportSecurityRequirementException was thrown if it should have been.");
-                    }
-                    else
-                    {
-                        Assert.IsFalse(wasExceptionThrown,
-                            "Checking that no TransportSecurityRequirementException was thrown.");
-                    }
+                if (exceptionsExpected)
+                {
+                    Assert.AreEqual(configuration.ShouldExceptionBeThrown, wasExceptionThrown,
+                        "Checking that TransportSecurityRequirementException was thrown if it should have been.");
+                }
+                else
+                {
+                    Assert.IsFalse(wasExceptionThrown,
+                        "Checking that no TransportSecurityRequirementException was thrown.");
                 }
             }
         }

@@ -24,79 +24,73 @@ using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
 {
-	/// <summary>
-	/// Summary description for Print.
-	/// </summary>
-	public class Print : BasePage
-	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
+    /// <summary>
+    /// Summary description for Print.
+    /// </summary>
+    public class Print : BasePage
+    {
+        private void Page_Load(object sender, System.EventArgs e)
+        {
+            // Put user code to initialize the page here
+        }
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
 
-		protected void DoPage()
-		{
-            using (RequestContext.Create())
-            {
-                QualifiedTopicRevision topic = GetTopicVersionKey();
-                NamespaceManager storeManager = Federation.NamespaceManagerForTopic(topic);
-                LinkMaker lm = TheLinkMaker;
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
 
-                Response.Write("<div style='font-family: Verdana'>");
+        protected void DoPage()
+        {
+            QualifiedTopicRevision topic = GetTopicVersionKey();
+            NamespaceManager storeManager = Federation.NamespaceManagerForTopic(topic);
+            LinkMaker lm = TheLinkMaker;
 
-                Response.Write("<div style='font-size: 18pt; font-weight: bold; '>");
-                Response.Write(topic.FormattedName);
-                Response.Write("</div>");
+            Response.Write("<div style='font-family: Verdana'>");
 
-                Response.Write("<div style='font-size: 8pt'>");
-                Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName));
-                Response.Write("</div>");
+            Response.Write("<div style='font-size: 18pt; font-weight: bold; '>");
+            Response.Write(topic.FormattedName);
+            Response.Write("</div>");
 
-                Response.Write("<hr noshade size='2' />");
-                Response.Write("</div>");
+            Response.Write("<div style='font-size: 8pt'>");
+            Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName));
+            Response.Write("</div>");
 
-                Response.Write("<div class='PrintMain'>");
+            Response.Write("<hr noshade size='2' />");
+            Response.Write("</div>");
 
-                // TODO - enable diffs for print too!
-                // TODO - an opportunity for caching
-                Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, Federation, TheLinkMaker));
+            Response.Write("<div class='PrintMain'>");
 
-                Response.Write("</div>");
-            }
-		}
+            // TODO - enable diffs for print too!
+            // TODO - an opportunity for caching
+            Response.Write(Formatter.FormattedTopic(topic, OutputFormat.HTML, null, Federation, TheLinkMaker));
+
+            Response.Write("</div>");
+        }
 
         protected string GetTitle()
         {
-            using (RequestContext.Create())
+            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
+            if (string.IsNullOrEmpty(title))
             {
-                string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
-                if (string.IsNullOrEmpty(title))
-                {
-                    title = GetTopicVersionKey().FormattedName;
-                }
-                return HtmlStringWriter.Escape(title);
+                title = GetTopicVersionKey().FormattedName;
             }
+            return HtmlStringWriter.Escape(title);
         }
 
-	}
+    }
 }

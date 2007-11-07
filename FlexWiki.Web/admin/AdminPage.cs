@@ -17,58 +17,56 @@ using System.Configuration;
 
 namespace FlexWiki.Web.Admin
 {
-	/// <summary>
-	/// Summary description for AdminPage.
-	/// </summary>
-	public class AdminPage : BasePage
-	{
-		
-		public AdminPage() : base()
-		{
-		}
+    /// <summary>
+    /// Summary description for AdminPage.
+    /// </summary>
+    public class AdminPage : BasePage
+    {
+
+        public AdminPage()
+            : base()
+        {
+        }
 
         protected override void MinimalPageLoad()
         {
-            EstablishFederation(); 
+            EstablishFederation();
             base.MinimalPageLoad();
         }
 
-		protected override string RelativeBase
-		{
-			get
-			{
-				return "../";
-			}
-		}
-		protected void ShowAdminMenu()
-		{
-			UIResponse.WriteStartMenu("Administration");
-			UIResponse.WriteMenuItem("default.aspx", "Home", "Go to the home page for FlexWiki administration");
+        protected override string RelativeBase
+        {
+            get
+            {
+                return "../";
+            }
+        }
+        protected void ShowAdminMenu()
+        {
+            UIResponse.WriteStartMenu("Administration");
+            UIResponse.WriteMenuItem("default.aspx", "Home", "Go to the home page for FlexWiki administration");
             UIResponse.WriteMenuItem("Providers.aspx", "Namespace providers", "View and edit namespace providers for this federation");
             UIResponse.WriteMenuItem("ManageConfiguration.aspx", "Manage Configuration", "Manage the flexwiki.config file, including editing, reloading, and resetting to defaults");
             UIResponse.WriteMenuItem("EditLinksBlacklist.aspx", "External Links Blacklist", "Edit the list of blacklisted external links");
-			UIResponse.WriteMenuItem("Config.aspx", "Validate Configuration", "Validate that your FlexWiki site is correctly configured");
-			UIResponse.WriteMenuItem("Newsletter.aspx", "Newsletter Daemon", "Show information about the newsletter delivery daemon status");
-			UIResponse.WriteMenuItem("ShowCache.aspx", "Show Cache", "Show a list of everything in the cache (and, optionally, clear the cache)");
-			UIResponse.WriteMenuItem("ShowUpdates.aspx", "Show Updates", "Show recent changes to the federation");
-			UIResponse.WriteEndMenu();
-		}
-		protected virtual void ShowHead()
-        {
-            using (RequestContext.Create())
-            {
-                Response.Write(PageUtilities.InsertStylesheetReferences(
-                    Federation, FlexWikiWebApplication));
-            }
+            UIResponse.WriteMenuItem("Config.aspx", "Validate Configuration", "Validate that your FlexWiki site is correctly configured");
+            UIResponse.WriteMenuItem("Newsletter.aspx", "Newsletter Daemon", "Show information about the newsletter delivery daemon status");
+            UIResponse.WriteMenuItem("ShowCache.aspx", "Show Cache", "Show a list of everything in the cache (and, optionally, clear the cache)");
+            UIResponse.WriteMenuItem("ShowUpdates.aspx", "Show Updates", "Show recent changes to the federation");
+            UIResponse.WriteEndMenu();
         }
-		protected virtual void ShowMain()
+        protected virtual void ShowHead()
+        {
+            Response.Write(PageUtilities.InsertStylesheetReferences(
+                Federation, FlexWikiWebApplication));
+        }
+        protected virtual void ShowMain()
         {
         }
-		protected virtual void ShowMenu()
+        protected virtual void ShowMenu()
         {
             ShowAdminMenu();
         }
-		protected virtual void ShowTitle(string title)
+        protected virtual void ShowTitle(string title)
         {
             Response.Write(string.Format("<h1 class=\"Admin\">{0}</h1>", title));
         }

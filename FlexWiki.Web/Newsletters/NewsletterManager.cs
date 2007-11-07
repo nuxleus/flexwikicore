@@ -137,7 +137,7 @@ namespace FlexWiki.Web.Newsletters
 
             // We don't want the newsletter history page to be included, or we'll generate newsletters in an 
             // endless loop. 
-            answer.Remove(NewsletterHistoryTopicFor(newsletter).DottedName); 
+            answer.Remove(NewsletterHistoryTopicFor(newsletter).DottedName);
 
             // Now remove any topics for which we don't have read permission, as trying to include them 
             // would just result in an exception. 
@@ -366,34 +366,31 @@ namespace FlexWiki.Web.Newsletters
         }
         public void Notify()
         {
-            using (RequestContext.Create())
+            // Troll through all the newsletters and see if any of them need an update
+            foreach (QualifiedTopicName each in GetAllNewsletterNames())
             {
-                // Troll through all the newsletters and see if any of them need an update
-                foreach (QualifiedTopicName each in GetAllNewsletterNames())
+                Log(LogLevel.Debug, "Checking newsletter: " + each);
+                DateTime nextUpdate = DateTime.MaxValue;
+                DateTime lastUpdate = this.GetLastUpdateForNewsletter(each);
+                Log(LogLevel.Debug, "Last newsletter update - " + lastUpdate);
+                if (!IsNewsletterDueForUpdate(each, out nextUpdate))
                 {
-                    Log(LogLevel.Debug, "Checking newsletter: " + each);
-                    DateTime nextUpdate = DateTime.MaxValue;
-                    DateTime lastUpdate = this.GetLastUpdateForNewsletter(each);
-                    Log(LogLevel.Debug, "Last newsletter update - " + lastUpdate);
-                    if (!IsNewsletterDueForUpdate(each, out nextUpdate))
-                    {
-                        Log(LogLevel.Debug, "not due for update - " + nextUpdate);
-                        continue;
-                    }
-                    Log(LogLevel.Debug, "due for update");
-                    Log(LogLevel.Debug, "collecting changes");
-                    IEnumerable<TopicChange> changes = AllChangesForNewsletterSince(each, lastUpdate);
-                    IEnumerator<TopicChange> e = changes.GetEnumerator();
-                    if (!e.MoveNext())
-                    {
-                        Log(LogLevel.Debug, "no changes; skipping");
-                        SetLastUpdateForNewsletter(each, DateTime.Now);
-                        continue;	// no changes
-                    }
-                    Log(LogLevel.Debug, "changes found; sending newsletter");
-                    SendNewsletterUpdate(each);
-                    SetLastUpdateForNewsletter(each, DateTime.Now);
+                    Log(LogLevel.Debug, "not due for update - " + nextUpdate);
+                    continue;
                 }
+                Log(LogLevel.Debug, "due for update");
+                Log(LogLevel.Debug, "collecting changes");
+                IEnumerable<TopicChange> changes = AllChangesForNewsletterSince(each, lastUpdate);
+                IEnumerator<TopicChange> e = changes.GetEnumerator();
+                if (!e.MoveNext())
+                {
+                    Log(LogLevel.Debug, "no changes; skipping");
+                    SetLastUpdateForNewsletter(each, DateTime.Now);
+                    continue;	// no changes
+                }
+                Log(LogLevel.Debug, "changes found; sending newsletter");
+                SendNewsletterUpdate(each);
+                SetLastUpdateForNewsletter(each, DateTime.Now);
             }
         }
 

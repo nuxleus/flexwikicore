@@ -22,7 +22,7 @@ using System.Xml.Serialization;
 using NUnit.Framework;
 
 using FlexWiki.Formatting;
-using FlexWiki.Security; 
+using FlexWiki.Security;
 
 namespace FlexWiki.UnitTests
 {
@@ -58,56 +58,46 @@ namespace FlexWiki.UnitTests
             _imp2 = WikiTestUtilities.CreateMockStore(Federation, "FlexWiki.Projects.Wiki2");
 
             string author = "tester-joebob";
-            using (RequestContext.Create())
-            {
-                WikiTestUtilities.WriteTestTopicAndNewVersion(
-                    _base,
-                    _base.DefinitionTopicName.LocalName,
-    @"
+            WikiTestUtilities.WriteTestTopicAndNewVersion(
+                _base,
+                _base.DefinitionTopicName.LocalName,
+@"
 Description: Test description
 Import: FlexWiki.Projects.Wiki1",
-                    author);
+                author);
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(
-                    _imp1,
-                    _imp1.DefinitionTopicName.LocalName,
-    @"
+            WikiTestUtilities.WriteTestTopicAndNewVersion(
+                _imp1,
+                _imp1.DefinitionTopicName.LocalName,
+@"
 Description: Test1 description
 Import: FlexWiki.Projects.Wiki2",
-                    author);
+                author);
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(
-                    _imp2,
-                    _imp2.DefinitionTopicName.LocalName,
-    @"
+            WikiTestUtilities.WriteTestTopicAndNewVersion(
+                _imp2,
+                _imp2.DefinitionTopicName.LocalName,
+@"
 Description: Test1 description
 Import: FlexWiki.Projects.Wiki",
-                    author);
-
-            }
+                author);
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (RequestContext.Create())
-            {
-                _base.DeleteAllTopicsAndHistory();
-                _imp1.DeleteAllTopicsAndHistory();
-                _imp2.DeleteAllTopicsAndHistory();
-            }
+            _base.DeleteAllTopicsAndHistory();
+            _imp1.DeleteAllTopicsAndHistory();
+            _imp2.DeleteAllTopicsAndHistory();
         }
 
 
         [Test]
         public void TestRecurse()
         {
-            using (RequestContext.Create())
-            {
-                Assert.AreEqual("FlexWiki.Projects.Wiki", _base.Namespace);
-                Assert.AreEqual("FlexWiki.Projects.Wiki1", _imp1.Namespace);
-                Assert.AreEqual("FlexWiki.Projects.Wiki2", _imp2.Namespace);
-            }
+            Assert.AreEqual("FlexWiki.Projects.Wiki", _base.Namespace);
+            Assert.AreEqual("FlexWiki.Projects.Wiki1", _imp1.Namespace);
+            Assert.AreEqual("FlexWiki.Projects.Wiki2", _imp2.Namespace);
         }
 
     }

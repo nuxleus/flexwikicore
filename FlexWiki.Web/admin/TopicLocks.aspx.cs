@@ -120,110 +120,107 @@ namespace FlexWiki.Web
 
         protected void DoSearch()
         {
-            using (RequestContext.Create())
+            LinkMaker lm = TheLinkMaker;
+
+            NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(_preferredNamespace);
+
+            // Get the complete list of topics and authors 
+            QualifiedTopicNameCollection topics = storeManager.AllTopicsSortedLastModifiedDescending();
+
+            // Omit topics for which we don't have read permission - we're not going to be able 
+            // to access information about them anyway. 
+            QualifiedTopicNameCollection permittedTopics = new QualifiedTopicNameCollection();
+            foreach (QualifiedTopicName topic in topics)
             {
-                LinkMaker lm = TheLinkMaker;
-
-                NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(_preferredNamespace);
-
-                // Get the complete list of topics and authors 
-                QualifiedTopicNameCollection topics = storeManager.AllTopicsSortedLastModifiedDescending();
-
-                // Omit topics for which we don't have read permission - we're not going to be able 
-                // to access information about them anyway. 
-                QualifiedTopicNameCollection permittedTopics = new QualifiedTopicNameCollection();
-                foreach (QualifiedTopicName topic in topics)
+                if (storeManager.HasPermission(new UnqualifiedTopicName(topic.LocalName), TopicPermission.Read))
                 {
-                    if (storeManager.HasPermission(new UnqualifiedTopicName(topic.LocalName), TopicPermission.Read))
-                    {
-                        permittedTopics.Add(topic);
-                    }
+                    permittedTopics.Add(topic);
                 }
+            }
 
-                Dictionary<QualifiedTopicName, string> authorMap = new Dictionary<QualifiedTopicName, string>();
-                SortedList<string, string> authors = new SortedList<string, string>();
-                foreach (QualifiedTopicName topic in permittedTopics)
-                {
-                    string author = storeManager.GetTopicLastAuthor(topic.LocalName);
-                    authorMap[topic] = author;
-                    // Overwrites the entry for author if it already exists, thus giving
-                    // us only unique authors. 
-                    authors[author] = author;
-                }
-                StringBuilder strbldr = new StringBuilder();
+            Dictionary<QualifiedTopicName, string> authorMap = new Dictionary<QualifiedTopicName, string>();
+            SortedList<string, string> authors = new SortedList<string, string>();
+            foreach (QualifiedTopicName topic in permittedTopics)
+            {
+                string author = storeManager.GetTopicLastAuthor(topic.LocalName);
+                authorMap[topic] = author;
+                // Overwrites the entry for author if it already exists, thus giving
+                // us only unique authors. 
+                authors[author] = author;
+            }
+            StringBuilder strbldr = new StringBuilder();
 
 
-                strbldr.AppendLine("<table cellspacing='0' cellpadding='2' border='0'>");
-                strbldr.AppendLine("<thead>");
-                strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"300\">Topic</td>");
-                strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"100\">Modified</td>");
-                strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"100\">File Lock Status</td>");
-                if (storeManager.HasNamespacePermission(NamespacePermission.Manage))
-                {
-                    strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"300\">Change File Lock</td>");
-                }
-                strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"200\">Author: ");
-                strbldr.AppendLine("<select  onchange='filter()' class='SearchColumnFilterBox' id='AuthorFilter'>");
-                strbldr.AppendLine("<option value='" + All + "'>" + All + "</option>");
-                foreach (string author in authors.Values)
-                {
-                    strbldr.AppendLine("<option value='" + author + "'>" + author + "</option>");
-                }
-                strbldr.AppendLine(@"</select>");
+            strbldr.AppendLine("<table cellspacing='0' cellpadding='2' border='0'>");
+            strbldr.AppendLine("<thead>");
+            strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"300\">Topic</td>");
+            strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"100\">Modified</td>");
+            strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"100\">File Lock Status</td>");
+            if (storeManager.HasNamespacePermission(NamespacePermission.Manage))
+            {
+                strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"300\">Change File Lock</td>");
+            }
+            strbldr.AppendLine("<td class=\"SearchColumnHeading\" width=\"200\">Author: ");
+            strbldr.AppendLine("<select  onchange='filter()' class='SearchColumnFilterBox' id='AuthorFilter'>");
+            strbldr.AppendLine("<option value='" + All + "'>" + All + "</option>");
+            foreach (string author in authors.Values)
+            {
+                strbldr.AppendLine("<option value='" + author + "'>" + author + "</option>");
+            }
+            strbldr.AppendLine(@"</select>");
+            strbldr.AppendLine("</td>");
+
+            strbldr.AppendLine("</thead><tbody id=\"MainTable\">");
+
+            int row = 0;
+            foreach (QualifiedTopicName topic in permittedTopics)
+            {
+                strbldr.AppendLine("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
+                row++;
+
+                strbldr.AppendLine("<td>");
+                strbldr.AppendLine("<b><a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
+                strbldr.AppendLine(topic.LocalName);
+                strbldr.AppendLine("</a></b>");
                 strbldr.AppendLine("</td>");
 
-                strbldr.AppendLine("</thead><tbody id=\"MainTable\">");
-
-                int row = 0;
-                foreach (QualifiedTopicName topic in permittedTopics)
+                strbldr.AppendLine("<td>");
+                DateTime stamp = storeManager.GetTopicLastModificationTime(topic.LocalName);
+                if (stamp.Date == DateTime.Now.Date)
                 {
-                    strbldr.AppendLine("<tr id=\"row" + row + "\" class=\"" + (((row & 1) == 0) ? "SearchOddRow" : "SearchEvenRow") + "\">");
-                    row++;
-
+                    strbldr.AppendLine(stamp.ToString("h:mm tt"));
+                }
+                else
+                {
+                    strbldr.AppendLine(stamp.ToString("MM/dd/yyyy h:mm tt"));
+                }
+                strbldr.AppendLine("</td>");
+                strbldr.AppendLine("<td>");
+                strbldr.AppendLine(storeManager.GetTopicInfo(topic.LocalName).IsTopicLocked ? "Is Locked" : "Is Unlocked");
+                strbldr.AppendLine("</td>");
+                if (storeManager.HasNamespacePermission(NamespacePermission.Manage))
+                {
                     strbldr.AppendLine("<td>");
-                    strbldr.AppendLine("<b><a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
-                    strbldr.AppendLine(topic.LocalName);
-                    strbldr.AppendLine("</a></b>");
-                    strbldr.AppendLine("</td>");
-
-                    strbldr.AppendLine("<td>");
-                    DateTime stamp = storeManager.GetTopicLastModificationTime(topic.LocalName);
-                    if (stamp.Date == DateTime.Now.Date)
+                    if (!storeManager.GetTopicInfo(topic.LocalName).IsTopicLocked)
                     {
-                        strbldr.AppendLine(stamp.ToString("h:mm tt"));
+                        strbldr.AppendLine("<input type=\"button\" value=\"Create Lock\" id=\"" + topic.LocalName + "_Btn\" ");
+                        strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Lock')\" />");
                     }
                     else
                     {
-                        strbldr.AppendLine(stamp.ToString("MM/dd/yyyy h:mm tt"));
+                        strbldr.AppendLine("<input type=\"button\" value=\"Remove Lock\" id=\"" + topic.LocalName + "_Btn\" ");
+                        strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Unlock')\" />");
                     }
                     strbldr.AppendLine("</td>");
-                    strbldr.AppendLine("<td>");
-                    strbldr.AppendLine(storeManager.GetTopicInfo(topic.LocalName).IsTopicLocked ? "Is Locked" : "Is Unlocked");
-                    strbldr.AppendLine("</td>");
-                    if (storeManager.HasNamespacePermission(NamespacePermission.Manage))
-                    {
-                        strbldr.AppendLine("<td>");
-                        if (!storeManager.GetTopicInfo(topic.LocalName).IsTopicLocked)
-                        {
-                            strbldr.AppendLine("<input type=\"button\" value=\"Create Lock\" id=\"" + topic.LocalName + "_Btn\" ");
-                            strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Lock')\" />");
-                        }
-                        else
-                        {
-                            strbldr.AppendLine("<input type=\"button\" value=\"Remove Lock\" id=\"" + topic.LocalName + "_Btn\" ");
-                            strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Unlock')\" />");
-                        }
-                        strbldr.AppendLine("</td>");
-                    }
-                    strbldr.AppendLine("<td>");
-                    strbldr.AppendLine(Escape((string)(authorMap[topic])));
-                    strbldr.AppendLine("</td>");
-                    strbldr.AppendLine("</tr>");
-                    strbldr.AppendLine();
                 }
-                strbldr.AppendLine("</tbody></table>");
-                Response.Write(strbldr.ToString());
+                strbldr.AppendLine("<td>");
+                strbldr.AppendLine(Escape((string)(authorMap[topic])));
+                strbldr.AppendLine("</td>");
+                strbldr.AppendLine("</tr>");
+                strbldr.AppendLine();
             }
+            strbldr.AppendLine("</tbody></table>");
+            Response.Write(strbldr.ToString());
         }
         private void ProcessPost()
         {

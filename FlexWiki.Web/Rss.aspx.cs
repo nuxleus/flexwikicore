@@ -59,27 +59,24 @@ namespace FlexWiki.Web
 
         protected void DoSearch()
         {
-            using (RequestContext.Create())
+            string preferredNamespace = Request.QueryString["namespace"];
+            string newsletterName = Request.QueryString["newsletter"];
+
+            XmlTextWriter newsletter = new XmlTextWriter(Response.Output);
+
+            newsletter.Formatting = System.Xml.Formatting.Indented;
+
+            if (newsletterName != null)
             {
-                string preferredNamespace = Request.QueryString["namespace"];
-                string newsletterName = Request.QueryString["newsletter"];
-
-                XmlTextWriter newsletter = new XmlTextWriter(Response.Output);
-
-                newsletter.Formatting = System.Xml.Formatting.Indented;
-
-                if (newsletterName != null)
+                NewsletterFeed(newsletterName, newsletter);
+            }
+            else
+            {
+                if (preferredNamespace == null)
                 {
-                    NewsletterFeed(newsletterName, newsletter);
+                    preferredNamespace = DefaultNamespace;
                 }
-                else
-                {
-                    if (preferredNamespace == null)
-                    {
-                        preferredNamespace = DefaultNamespace;
-                    }
-                    NamespaceFeed(preferredNamespace, newsletter);
-                }
+                NamespaceFeed(preferredNamespace, newsletter);
             }
         }
 
@@ -134,7 +131,7 @@ namespace FlexWiki.Web
         {
             if (preferredNamespace == null)
             {
-                throw new ArgumentException("preferredNamespace may not be null"); 
+                throw new ArgumentException("preferredNamespace may not be null");
             }
 
             ImportPolicy importPolicy = ImportPolicy.DoNotIncludeImports;
@@ -148,7 +145,7 @@ namespace FlexWiki.Web
 
             if (storeManager == null)
             {
-                throw new ArgumentException("Could not locate namespace " + preferredNamespace); 
+                throw new ArgumentException("Could not locate namespace " + preferredNamespace);
             }
 
             newsletter.WriteStartDocument();
@@ -222,7 +219,7 @@ namespace FlexWiki.Web
                 Federation.GetTopicCreationTime(topic).ToUniversalTime().ToString("r")
                 );
 
-            Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(topic), 
+            Uri link = new Uri(new Uri(FullRootUrl(Request)), TheLinkMaker.LinkToTopic(new QualifiedTopicRevision(topic),
                 true));
             newsletter.WriteElementString("link", link.AbsoluteUri);
 
@@ -310,7 +307,7 @@ namespace FlexWiki.Web
                 }
                 firstName = false;
 
-                newsletter.WriteString(HtmlWriter.Escape(eachAuthor) + " (" + ((TopicChange) (changeInfo[eachAuthor])).Created.ToString() + ")");
+                newsletter.WriteString(HtmlWriter.Escape(eachAuthor) + " (" + ((TopicChange)(changeInfo[eachAuthor])).Created.ToString() + ")");
 
                 if (useHTML)
                 {

@@ -24,53 +24,50 @@ using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
 {
-	/// <summary>
-	/// Summary description for Preview.
-	/// </summary>
-	public class Preview : BasePage
-	{
-		private void Page_Load(object sender, System.EventArgs e)
-		{
-			// Put user code to initialize the page here
-		}
-
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
-
-		protected void DoPage()
-		{
-            using (RequestContext.Create())
-            {
-                LinkMaker lm = TheLinkMaker;
-
-                string body = Request.Form["body"];
-                string ns = Request.Form["defaultNamespace"];
-                string tn = Request.Form["topic"];
-
-                QualifiedTopicRevision topicName = new QualifiedTopicRevision(tn, ns);
-
-                Response.Write("<div class='PreviewMain'>");
-                Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker));
-                Response.Write("</div>");
-                Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
-            }
+    /// <summary>
+    /// Summary description for Preview.
+    /// </summary>
+    public class Preview : BasePage
+    {
+        private void Page_Load(object sender, System.EventArgs e)
+        {
+            // Put user code to initialize the page here
         }
-	}
+
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
+
+        protected void DoPage()
+        {
+            LinkMaker lm = TheLinkMaker;
+
+            string body = Request.Form["body"];
+            string ns = Request.Form["defaultNamespace"];
+            string tn = Request.Form["topic"];
+
+            QualifiedTopicRevision topicName = new QualifiedTopicRevision(tn, ns);
+
+            Response.Write("<div class='PreviewMain'>");
+            Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker));
+            Response.Write("</div>");
+            Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
+        }
+    }
 }

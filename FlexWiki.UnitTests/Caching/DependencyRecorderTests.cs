@@ -188,7 +188,13 @@ namespace FlexWiki.UnitTests.Caching
             WikiTestUtilities.DoProviderTest(
                 TestContentSets.MultipleVersions, 
                 "test://DependencyRecorderTests/", 
-                test); 
+                (Action<TestParameters<DependencyRecorder>>)delegate(TestParameters<DependencyRecorder> parameters)
+                {
+                    using (RequestContext.Create())
+                    {
+                        test(parameters);
+                    }
+                }); 
         }
     }
 }

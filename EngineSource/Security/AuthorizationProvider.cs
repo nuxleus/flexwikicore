@@ -37,14 +37,10 @@ namespace FlexWiki.Security
             {
                 string key = GetKey("exists");
 
-                if (RequestContext.Current != null)
+                object cached = RetrieveFromCache<object>(key); 
+                if (cached != null && cached is bool)
                 {
-                    object cached = RequestContext.Current[key];
-
-                    if (cached != null && cached is bool)
-                    {
-                        return (bool)cached;
-                    }
+                    return (bool)cached;
                 }
 
                 bool value;
@@ -66,10 +62,7 @@ namespace FlexWiki.Security
                     }
                 }
 
-                if (RequestContext.Current != null)
-                {
-                    RequestContext.Current[key] = value;
-                }
+                StoreInCache(key, value); 
 
                 return value;
             }
@@ -200,10 +193,7 @@ namespace FlexWiki.Security
             SecurableAction action = SecurableAction.ManageNamespace;
             bool isAllowed = IsAllowed(action, rules);
 
-            if (context != null)
-            {
-                context[key] = isAllowed;
-            }
+            StoreInCache(key, isAllowed); 
 
             return isAllowed;
 
@@ -262,10 +252,7 @@ namespace FlexWiki.Security
             SecurableAction action = GetActionFromPermission(permission, isDefinitionTopic);
             bool isAllowed = IsAllowed(action, rules);
 
-            if (context != null)
-            {
-                context[key] = isAllowed;
-            }
+            StoreInCache(key, isAllowed); 
 
             return isAllowed;
         }
@@ -414,8 +401,7 @@ namespace FlexWiki.Security
         private AuthorizationRuleCollection GetNamespaceScopeRules()
         {
             string key = GetKey("NamespaceScopeRules");
-
-            AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
+            AuthorizationRuleCollection cached = RetrieveFromCache<AuthorizationRuleCollection>(key);
 
             if (cached != null)
             {
@@ -430,7 +416,7 @@ namespace FlexWiki.Security
                 rules.AddRange(GetSecurityRules(parsedDefinitionTopic, AuthorizationRuleScope.Namespace));
             }
 
-            RequestContext.Current[key] = rules;
+            StoreInCache(key, rules); 
 
             return rules;
         }
@@ -466,7 +452,8 @@ namespace FlexWiki.Security
         private AuthorizationRuleCollection GetTopicScopeRules(UnqualifiedTopicName topic)
         {
             string key = GetKey(topic, "TopicScopeRules");
-            AuthorizationRuleCollection cached = RequestContext.Current[key] as AuthorizationRuleCollection;
+
+            AuthorizationRuleCollection cached = RetrieveFromCache<AuthorizationRuleCollection>(key);
 
             if (cached != null)
             {
@@ -477,7 +464,7 @@ namespace FlexWiki.Security
             ParsedTopic parsedTopic = Next.GetParsedTopic(new UnqualifiedTopicRevision(topic));
             rules.AddRange(GetSecurityRules(parsedTopic, AuthorizationRuleScope.Topic));
 
-            RequestContext.Current[key] = rules;
+            StoreInCache(key, rules);
 
             return rules;
         }
@@ -505,11 +492,14 @@ namespace FlexWiki.Security
         }
         private void InvalidateCacheItemsStartingWith(string prefix)
         {
-            foreach (string key in RequestContext.Current.Keys)
+            if (RequestContext.Current != null)
             {
-                if (key.StartsWith(prefix))
+                foreach (string key in RequestContext.Current.Keys)
                 {
-                    RequestContext.Current[key] = null;
+                    if (key.StartsWith(prefix))
+                    {
+                        RequestContext.Current[key] = null;
+                    }
                 }
             }
         }
@@ -570,5 +560,22 @@ namespace FlexWiki.Security
             }
             return unqualifiedTopicName.Equals(definitionTopicName);
         }
+        private T RetrieveFromCache<T>(string key) where T : class
+        {
+            if (RequestContext.Current != null)
+            {
+                return RequestContext.Current[key] as T;
+            }
+
+            return null;
+        }
+        private static void StoreInCache(string key, object item)
+        {
+            if (RequestContext.Current != null)
+            {
+                RequestContext.Current[key] = item;
+            }
+        }
+
     }
 }

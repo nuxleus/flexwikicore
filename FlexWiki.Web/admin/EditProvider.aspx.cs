@@ -31,11 +31,11 @@ using FlexWiki.Web;
 
 namespace FlexWiki.Web.Admin
 {
-	/// <summary>
-	/// Summary description for Admin.
-	/// </summary>
-	public class EditProvider : AdminPage
-	{
+    /// <summary>
+    /// Summary description for Admin.
+    /// </summary>
+    public class EditProvider : AdminPage
+    {
         private static string s_paramNameProviderID = "Provider";
         private static string s_paramNameTypeName = "TypeName";
         private static string s_paramNameSaveNow = "SaveNow";
@@ -113,27 +113,24 @@ namespace FlexWiki.Web.Admin
 
         protected override void ShowMain()
         {
-            using (RequestContext.Create())
+            string providerId = ProviderIdParam;
+            if (ProviderIdParam == null)
             {
-                string providerId = ProviderIdParam;
-                if (ProviderIdParam == null)
+                // CREATE
+                Type type = ProviderType;
+                if (type == null)
                 {
-                    // CREATE
-                    Type type = ProviderType;
-                    if (type == null)
-                    {
-                        ShowTypeSelectionForm();
-                    }
-                    else
-                    {
-                        ShowTypeDetailsForm(null);
-                    }
+                    ShowTypeSelectionForm();
                 }
                 else
                 {
-                    // EDIT
-                    ShowTypeDetailsForm(providerId);
+                    ShowTypeDetailsForm(null);
                 }
+            }
+            else
+            {
+                // EDIT
+                ShowTypeDetailsForm(providerId);
             }
         }
         private string GetParameter(string name)
@@ -190,165 +187,165 @@ namespace FlexWiki.Web.Admin
             }
         }
         private void Page_Load(object sender, System.EventArgs e)
-		{
-			DefaultPageLoad();
-		}
+        {
+            DefaultPageLoad();
+        }
         private void ShowTypeDetailsForm(string providerID)
-		{
-			bool isCreate = providerID == null;
-			INamespaceProvider provider = null;
+        {
+            bool isCreate = providerID == null;
+            INamespaceProvider provider = null;
 
-			// If we're creating, fill default values, else fill values from the specified instance (or form propertyName if the user already submitted)
-			NamespaceProviderDefinition def = null;
-			if (providerID == null)
-			{
-				// We're creating one
-				provider = (INamespaceProvider)(Activator.CreateInstance(ProviderType));
-			}
-			else
-			{
-				foreach (NamespaceProviderDefinition each in Federation.Configuration.NamespaceMappings)
-				{
-					if (each.Id == providerID)
-					{
-						def = each;
-						break;
-					}
-				}
-				if (def != null)
-					provider = (INamespaceProvider)(Activator.CreateInstance(def.ProviderType));
-				else
-				{
-					UIResponse.WritePara("Error: unknown namespace provider - " + UIResponse.Escape(providerID));
-					return;
-				}
-			}
+            // If we're creating, fill default values, else fill values from the specified instance (or form propertyName if the user already submitted)
+            NamespaceProviderDefinition def = null;
+            if (providerID == null)
+            {
+                // We're creating one
+                provider = (INamespaceProvider)(Activator.CreateInstance(ProviderType));
+            }
+            else
+            {
+                foreach (NamespaceProviderDefinition each in Federation.Configuration.NamespaceMappings)
+                {
+                    if (each.Id == providerID)
+                    {
+                        def = each;
+                        break;
+                    }
+                }
+                if (def != null)
+                    provider = (INamespaceProvider)(Activator.CreateInstance(def.ProviderType));
+                else
+                {
+                    UIResponse.WritePara("Error: unknown namespace provider - " + UIResponse.Escape(providerID));
+                    return;
+                }
+            }
 
 
-			// Decide if we're trying to save and have everything set
-			IList errors = null;
-			if (IsSave)
-			{
-				bool err = false;
-				foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
-				{
-					if (!isCreate && !each.IsPersistent)
-						continue;	// skip create only parms for non-create scenario
-					if (provider.ValidateParameter(Federation, each.ID, GetParameter(each.ID), isCreate) != null)
-					{
-						err = true;
-						break;
-					}
-				}
+            // Decide if we're trying to save and have everything set
+            IList errors = null;
+            if (IsSave)
+            {
+                bool err = false;
+                foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
+                {
+                    if (!isCreate && !each.IsPersistent)
+                        continue;	// skip create only parms for non-create scenario
+                    if (provider.ValidateParameter(Federation, each.ID, GetParameter(each.ID), isCreate) != null)
+                    {
+                        err = true;
+                        break;
+                    }
+                }
 
-				if (!err)
-				{
-					errors = provider.ValidateAggregate(Federation, isCreate);
-					if (errors == null)
-					{
-						// Great!  All's OK.  Create/modify the provider
-						if (def == null)
-						{
-							def = new NamespaceProviderDefinition(AssemblyNamePart, TypeNamePart, Guid.NewGuid().ToString());
-						}
-						foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
-						{
-							provider.SetParameter(each.ID, GetParameter(each.ID));
-						}
+                if (!err)
+                {
+                    errors = provider.ValidateAggregate(Federation, isCreate);
+                    if (errors == null)
+                    {
+                        // Great!  All's OK.  Create/modify the provider
+                        if (def == null)
+                        {
+                            def = new NamespaceProviderDefinition(AssemblyNamePart, TypeNamePart, Guid.NewGuid().ToString());
+                        }
+                        foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
+                        {
+                            provider.SetParameter(each.ID, GetParameter(each.ID));
+                        }
                         provider.SavePersistentParametersToDefinition(def);
                         IList namespaces = null;
-						if (isCreate)
-						{
-							Federation.Configuration.NamespaceMappings.Add(def);
-							namespaces = provider.CreateNamespaces(Federation);
-						}
-						else
-						{
-							// If we're editing, we will have modified the definition in place, but we'll need to rescind and recreate
-							// the namespaces
-							provider.UpdateNamespaces(Federation);
-						}
+                        if (isCreate)
+                        {
+                            Federation.Configuration.NamespaceMappings.Add(def);
+                            namespaces = provider.CreateNamespaces(Federation);
+                        }
+                        else
+                        {
+                            // If we're editing, we will have modified the definition in place, but we'll need to rescind and recreate
+                            // the namespaces
+                            provider.UpdateNamespaces(Federation);
+                        }
 
-						Federation.Application.WriteFederationConfiguration();
-						if (isCreate)
-						{
-							UIResponse.WritePara("The provider has been created.");
-							if (provider.OwnerMailingAddress != null)
-								NotifyOwnerOfCreation(provider.OwnerMailingAddress, namespaces);
-							UIResponse.WritePara("Namespaces created:");
-							UIResponse.WriteStartUnorderedList();
-							foreach (string ns in namespaces)
-							{
-								UIResponse.WriteListItem(HtmlWriter.Escape(ns));
-							}
-							UIResponse.WriteEndUnorderedList();
-						}
-						else
-						{
-							UIResponse.WritePara("The provider has been updated.");
-						}
-						UIResponse.WritePara(UIResponse.Link("Providers.aspx", "View provider list"));
-						return;
-					}
-				}
-			}
+                        Federation.Application.WriteFederationConfiguration();
+                        if (isCreate)
+                        {
+                            UIResponse.WritePara("The provider has been created.");
+                            if (provider.OwnerMailingAddress != null)
+                                NotifyOwnerOfCreation(provider.OwnerMailingAddress, namespaces);
+                            UIResponse.WritePara("Namespaces created:");
+                            UIResponse.WriteStartUnorderedList();
+                            foreach (string ns in namespaces)
+                            {
+                                UIResponse.WriteListItem(HtmlWriter.Escape(ns));
+                            }
+                            UIResponse.WriteEndUnorderedList();
+                        }
+                        else
+                        {
+                            UIResponse.WritePara("The provider has been updated.");
+                        }
+                        UIResponse.WritePara(UIResponse.Link("Providers.aspx", "View provider list"));
+                        return;
+                    }
+                }
+            }
 
-			UIResponse.WriteStartForm("EditProvider.aspx");
-			UIResponse.WriteStartFields();
-  
-			if (errors != null)
-			{
-				foreach (string s in errors)
-				{
-					UIResponse.WriteFieldError(UIResponse.Escape(s));
-				}
-			}
+            UIResponse.WriteStartForm("EditProvider.aspx");
+            UIResponse.WriteStartFields();
 
-			foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
-			{
-				if (!isCreate && !each.IsPersistent)
-					continue;	// skip create only parms for non-create scenario
-				string val = null;
-				if (IsSave)
-					val = GetParameter(each.ID);
-				else
-				{
-					if (isCreate)
-					{
-						string fromQuery = GetParameter(each.ID);
-						val = fromQuery == null ? each.DefaultValue : fromQuery;
-					}
-					else
-						val = (string)(def.ParametersAsHash[each.ID]);
-				}
-				bool readOnly = !isCreate && !provider.CanParameterBeEdited(each.ID);
-				UIResponse.WriteInputField(each.ID, each.Title, each.Description, val, readOnly);
-				string error = provider.ValidateParameter(Federation, each.ID, val, isCreate);
-				if (error != null)
-					UIResponse.WriteFieldError(UIResponse.Escape(error));
-			}
-			UIResponse.WriteHiddenField(s_paramNameSaveNow, "yup");
-			UIResponse.WriteHiddenField(s_paramNameTypeName, TypeNameParam);
-			if (!isCreate)
-				UIResponse.WriteHiddenField(s_paramNameProviderID, providerID);
+            if (errors != null)
+            {
+                foreach (string s in errors)
+                {
+                    UIResponse.WriteFieldError(UIResponse.Escape(s));
+                }
+            }
 
-			UIResponse.WriteEndFields();
+            foreach (NamespaceProviderParameterDescriptor each in provider.ParameterDescriptors)
+            {
+                if (!isCreate && !each.IsPersistent)
+                    continue;	// skip create only parms for non-create scenario
+                string val = null;
+                if (IsSave)
+                    val = GetParameter(each.ID);
+                else
+                {
+                    if (isCreate)
+                    {
+                        string fromQuery = GetParameter(each.ID);
+                        val = fromQuery == null ? each.DefaultValue : fromQuery;
+                    }
+                    else
+                        val = (string)(def.ParametersAsHash[each.ID]);
+                }
+                bool readOnly = !isCreate && !provider.CanParameterBeEdited(each.ID);
+                UIResponse.WriteInputField(each.ID, each.Title, each.Description, val, readOnly);
+                string error = provider.ValidateParameter(Federation, each.ID, val, isCreate);
+                if (error != null)
+                    UIResponse.WriteFieldError(UIResponse.Escape(error));
+            }
+            UIResponse.WriteHiddenField(s_paramNameSaveNow, "yup");
+            UIResponse.WriteHiddenField(s_paramNameTypeName, TypeNameParam);
+            if (!isCreate)
+                UIResponse.WriteHiddenField(s_paramNameProviderID, providerID);
 
-			UIResponse.WriteStartButtons();
-			UIResponse.WriteSubmitButton("next2", (isCreate ? "Create >>" : "Save >>"));
-			UIResponse.WriteEndButtons();
+            UIResponse.WriteEndFields();
 
-			UIResponse.WriteEndForm();				
+            UIResponse.WriteStartButtons();
+            UIResponse.WriteSubmitButton("next2", (isCreate ? "Create >>" : "Save >>"));
+            UIResponse.WriteEndButtons();
 
-		}
-		private void ShowTypeSelectionForm()
-		{
-			UIResponse.WriteStartForm("EditProvider.aspx");
-			UIResponse.WritePara(@"To add a new provider, you must first identify the type of provider you want.  Once you have selected a valid one, you may be prompted for additional information, depending on the type of the provider.");
+            UIResponse.WriteEndForm();
 
-			UIResponse.WriteStartFields();
-			// Pick the right default
-			string defaultProvider;
+        }
+        private void ShowTypeSelectionForm()
+        {
+            UIResponse.WriteStartForm("EditProvider.aspx");
+            UIResponse.WritePara(@"To add a new provider, you must first identify the type of provider you want.  Once you have selected a valid one, you may be prompted for additional information, depending on the type of the provider.");
+
+            UIResponse.WriteStartFields();
+            // Pick the right default
+            string defaultProvider;
             if (TypeNameParam != null && TypeNameParam != "")
             {
                 defaultProvider = TypeNameParam;
@@ -358,51 +355,51 @@ namespace FlexWiki.Web.Admin
                 defaultProvider = FlexWikiWebApplication.ApplicationConfiguration.DefaultNamespaceProviderForNamespaceCreation;
             }
 
-			string def = null;
-			// Get the list of types in the loaded assemblies that implement INamespaceProvider
-			ChoiceSet choices = new ChoiceSet();
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				foreach (Type each in assembly.GetTypes())
-				{
-					if (each.IsClass)
-					{
-						foreach (Type maybe in each.GetInterfaces())
-						{
-							if (maybe == typeof(INamespaceProvider))
-							{
-								INamespaceProvider worker = (INamespaceProvider)(Activator.CreateInstance(each));
-								string displayString = each.FullName + " (" + worker.Description + ")";
-								string val = assembly.GetName() + "#" + each.FullName;
+            string def = null;
+            // Get the list of types in the loaded assemblies that implement INamespaceProvider
+            ChoiceSet choices = new ChoiceSet();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type each in assembly.GetTypes())
+                {
+                    if (each.IsClass)
+                    {
+                        foreach (Type maybe in each.GetInterfaces())
+                        {
+                            if (maybe == typeof(INamespaceProvider))
+                            {
+                                INamespaceProvider worker = (INamespaceProvider)(Activator.CreateInstance(each));
+                                string displayString = each.FullName + " (" + worker.Description + ")";
+                                string val = assembly.GetName() + "#" + each.FullName;
                                 if (each.FullName == defaultProvider)
                                 {
                                     def = val;
                                 }
 
-								choices.Add(displayString, val);
-								break;
-							}
-						}
-					}
-				}
-			}
+                                choices.Add(displayString, val);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
-			UIResponse.WriteCombobox(s_paramNameTypeName, "Type", "The type of provider to to use", choices, def);
+            UIResponse.WriteCombobox(s_paramNameTypeName, "Type", "The type of provider to to use", choices, def);
 
-			// If there were any proposed values for the parms provided in the query string, pass them along
+            // If there were any proposed values for the parms provided in the query string, pass them along
             foreach (string pName in Request.QueryString)
             {
                 UIResponse.WriteHiddenField(pName, Request.QueryString[pName]);
             }
-			
-			UIResponse.WriteEndFields();
 
-			UIResponse.WriteStartButtons();
-			UIResponse.WriteSubmitButton("next1", "Next >>");
-			UIResponse.WriteEndButtons();
+            UIResponse.WriteEndFields();
 
-			UIResponse.WriteEndForm();
-		}
+            UIResponse.WriteStartButtons();
+            UIResponse.WriteSubmitButton("next1", "Next >>");
+            UIResponse.WriteEndButtons();
+
+            UIResponse.WriteEndForm();
+        }
 
         #region Web Form Designer generated code
         override protected void OnInit(EventArgs e)
@@ -425,5 +422,5 @@ namespace FlexWiki.Web.Admin
         }
         #endregion
 
-	}
+    }
 }

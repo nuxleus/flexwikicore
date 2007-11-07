@@ -343,10 +343,7 @@ namespace FlexWiki.Web
         }
         protected string InsertStylesheetReferences()
         {
-            using (RequestContext.Create())
-            {
-                return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication);
-            }
+            return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication);
         }
         protected string MainStylesheetReference()
         {
@@ -417,13 +414,10 @@ namespace FlexWiki.Web
                 throw new Exception("No default namespace defined.");
             }
 
-            using (RequestContext.Create())
+            NamespaceManager namespaceManager = Federation.NamespaceManagerForNamespace(ns);
+            if (namespaceManager == null)
             {
-                NamespaceManager namespaceManager = Federation.NamespaceManagerForNamespace(ns);
-                if (namespaceManager == null)
-                {
-                    throw new Exception("Default namespace (" + ns + ") doesn't exist.");
-                }
+                throw new Exception("Default namespace (" + ns + ") doesn't exist.");
             }
 
             EstablishNewsletterDaemon();

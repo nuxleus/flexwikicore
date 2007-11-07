@@ -25,106 +25,103 @@ using FlexWiki.Web;
 
 namespace FlexWiki.Web.Admin
 {
-	/// <summary>
-	/// Summary description for Admin.
-	/// </summary>
-	public class Default : AdminPage
-	{
-		
-		protected override void EnsurePluginsLoaded()
-		{
-			// We ignore errors as the config checker will get them in the context of this specific page
-			try
-			{
-				base.EnsurePluginsLoaded();
-			}
-			catch (Exception)
-			{
-			}
-		}
-		
-		protected override void PageLoad()
-		{
-		}
-		
-		protected override void ShowMain()
-		{
-            using (RequestContext.Create())
+    /// <summary>
+    /// Summary description for Admin.
+    /// </summary>
+    public class Default : AdminPage
+    {
+
+        protected override void EnsurePluginsLoaded()
+        {
+            // We ignore errors as the config checker will get them in the context of this specific page
+            try
             {
-                if (CheckForConfigurationFormatUpgrade())
-                    return;
-
-                ConfigurationChecker checker = new ConfigurationChecker();
-
-                checker.Check();
-                checker.WriteStoplightTo(UIResponse);
-
-                UIResponse.WriteDivider();
-
-                Federation aFederation = null;
-                try
-                {
-                    FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker(""));
-                    aFederation = new Federation(application);
-                }
-                catch (Exception)
-                {
-                }
-
-                if (aFederation != null)
-                {
-                    ShowFederationInfo(aFederation);
-                }
+                base.EnsurePluginsLoaded();
+            }
+            catch (Exception)
+            {
             }
         }
-		private void ShowFederationInfo(Federation aFederation)
-		{
-			LinkMaker lm = new LinkMaker(RootUrl);
 
-			UIResponse.WritePara(UIResponse.Bold("General Federation Information"));
-			UIResponse.WriteStartKVTable();
-			UIResponse.WriteKVRow("Created", HtmlWriter.Escape(aFederation.Created.ToString()));
-			UIResponse.WriteKVRow("Default Namespace", HtmlWriter.Escape(aFederation.DefaultNamespace.ToString()));
-			UIResponse.WriteEndKVTable();
+        protected override void PageLoad()
+        {
+        }
 
-			UIResponse.WriteDivider();
+        protected override void ShowMain()
+        {
+            if (CheckForConfigurationFormatUpgrade())
+                return;
 
-			UIResponse.WritePara(UIResponse.Bold("Namespace Information"));
+            ConfigurationChecker checker = new ConfigurationChecker();
 
-			UITable namespacesTable = new UITable();
-			namespacesTable.AddColumn(new UIColumn("Namespace"));
-			namespacesTable.AddColumn(new UIColumn("Title"));
-			namespacesTable.AddColumn(new UIColumn("Imports"));
+            checker.Check();
+            checker.WriteStoplightTo(UIResponse);
 
-			UIResponse.WriteStartTable(namespacesTable);
-			foreach (NamespaceManager each in aFederation.NamespaceManagers)
-			{
-				UIResponse.WriteStartRow();
+            UIResponse.WriteDivider();
 
-				string ns = each.Namespace;
-				UIResponse.WriteCell(
-					UIResponse.Bold(
-						UIResponse.Link(lm.LinkToTopic(new QualifiedTopicRevision(each.HomePage, each.Namespace), false), 
-							UIResponse.Escape(each.Namespace))));
+            Federation aFederation = null;
+            try
+            {
+                FlexWikiWebApplication application = new FlexWikiWebApplication(new LinkMaker(""));
+                aFederation = new Federation(application);
+            }
+            catch (Exception)
+            {
+            }
 
-				UIResponse.WriteCell(HtmlWriter.Escape(each.Title));
+            if (aFederation != null)
+            {
+                ShowFederationInfo(aFederation);
+            }
+        }
+        private void ShowFederationInfo(Federation aFederation)
+        {
+            LinkMaker lm = new LinkMaker(RootUrl);
 
-				string imports = "";
-				foreach (string e in each.ImportedNamespaces)
-				{
-					if (imports != "")
-						imports += ", ";
-					imports += e;
-				}
+            UIResponse.WritePara(UIResponse.Bold("General Federation Information"));
+            UIResponse.WriteStartKVTable();
+            UIResponse.WriteKVRow("Created", HtmlWriter.Escape(aFederation.Created.ToString()));
+            UIResponse.WriteKVRow("Default Namespace", HtmlWriter.Escape(aFederation.DefaultNamespace.ToString()));
+            UIResponse.WriteEndKVTable();
 
-				UIResponse.WriteCell(HtmlWriter.Escape(imports));
+            UIResponse.WriteDivider();
 
-				UIResponse.WriteEndRow();
+            UIResponse.WritePara(UIResponse.Bold("Namespace Information"));
 
-			}
-			UIResponse.WriteEndTable();
-		}
+            UITable namespacesTable = new UITable();
+            namespacesTable.AddColumn(new UIColumn("Namespace"));
+            namespacesTable.AddColumn(new UIColumn("Title"));
+            namespacesTable.AddColumn(new UIColumn("Imports"));
+
+            UIResponse.WriteStartTable(namespacesTable);
+            foreach (NamespaceManager each in aFederation.NamespaceManagers)
+            {
+                UIResponse.WriteStartRow();
+
+                string ns = each.Namespace;
+                UIResponse.WriteCell(
+                    UIResponse.Bold(
+                        UIResponse.Link(lm.LinkToTopic(new QualifiedTopicRevision(each.HomePage, each.Namespace), false),
+                            UIResponse.Escape(each.Namespace))));
+
+                UIResponse.WriteCell(HtmlWriter.Escape(each.Title));
+
+                string imports = "";
+                foreach (string e in each.ImportedNamespaces)
+                {
+                    if (imports != "")
+                        imports += ", ";
+                    imports += e;
+                }
+
+                UIResponse.WriteCell(HtmlWriter.Escape(imports));
+
+                UIResponse.WriteEndRow();
+
+            }
+            UIResponse.WriteEndTable();
+        }
 
 
-	}
+    }
 }

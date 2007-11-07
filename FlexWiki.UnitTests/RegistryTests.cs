@@ -22,7 +22,7 @@ using System.Xml.Serialization;
 using NUnit.Framework;
 
 using FlexWiki.Formatting;
-using FlexWiki.Security; 
+using FlexWiki.Security;
 
 namespace FlexWiki.UnitTests
 {
@@ -68,54 +68,48 @@ namespace FlexWiki.UnitTests
             _other3 = WikiTestUtilities.CreateMockStore(Federation, "Other3");
             _namespaceManager5 = WikiTestUtilities.CreateMockStore(Federation, "Space5");
 
-            using (RequestContext.Create())
-            {
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.LocalName, @"Import: FlexWiki.Other1, Other2", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicOne", @"OtherOneHello", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicTwo", @"FlexWiki.Other1.OtherOneGoodbye", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicThree", @"No.Such.Namespace.FooBar", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicFour", @".TopicOne", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicFive", @"FooBar
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, _base.DefinitionTopicName.LocalName, @"Import: FlexWiki.Other1, Other2", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicOne", @"OtherOneHello", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicTwo", @"FlexWiki.Other1.OtherOneGoodbye", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicThree", @"No.Such.Namespace.FooBar", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicFour", @".TopicOne", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicFive", @"FooBar
 Role:Designer", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicSix", @".GooBar
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_base, "TopicSix", @".GooBar
 Role:Developer", author);
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, _other1.DefinitionTopicName.LocalName, @"Import: Other3,Other2", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneHello", @"hello
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, _other1.DefinitionTopicName.LocalName, @"Import: Other3,Other2", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneHello", @"hello
 Role:Developer", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneGoodbye", @"goodbye", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneRefThree", @"OtherThreeTest", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneGoodbye", @"goodbye", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneRefThree", @"OtherThreeTest", author);
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicOne", @"OtherTwoHello", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicTwo", @"Other2.OtherTwoGoodbye", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicThree", @"No.Such.Namespace.FooBar", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicFour", @".OtherOneTopicOne", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicFive", @"FooBar", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicSix", @".GooBar", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicOne", @"OtherTwoHello", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicTwo", @"Other2.OtherTwoGoodbye", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicThree", @"No.Such.Namespace.FooBar", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicFour", @".OtherOneTopicOne", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicFive", @"FooBar", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other1, "OtherOneTopicSix", @".GooBar", author);
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other2, "OtherTwoHello", @"hello", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other2, "OtherTwoGoodbye", @"goodbye", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other2, "OtherTwoHello", @"hello", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other2, "OtherTwoGoodbye", @"goodbye", author);
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_other3, "OtherThreeTest", @"yo", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_other3, "OtherThreeTest", @"yo", author);
 
 
 
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager5, "AbsRef", @"Other2.OtherTwoHello", author);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager5, "AbsRef", @"Other2.OtherTwoHello", author);
 
-            }
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (RequestContext.Create())
-            {
-                _base.DeleteAllTopicsAndHistory();
-                _other1.DeleteAllTopicsAndHistory();
-                _other2.DeleteAllTopicsAndHistory();
-                _other3.DeleteAllTopicsAndHistory();
-                _namespaceManager5.DeleteAllTopicsAndHistory();
-            }
+            _base.DeleteAllTopicsAndHistory();
+            _other1.DeleteAllTopicsAndHistory();
+            _other2.DeleteAllTopicsAndHistory();
+            _other3.DeleteAllTopicsAndHistory();
+            _namespaceManager5.DeleteAllTopicsAndHistory();
         }
 
 
@@ -129,209 +123,158 @@ Role:Developer", author);
         [Test]
         public void DoubleHopImportTest()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneRefThree");
-                CompareTopic("OtherOneRefThree", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other3.OtherThreeTest")) + @""">OtherThreeTest</a>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneRefThree");
+            CompareTopic("OtherOneRefThree", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other3.OtherThreeTest")) + @""">OtherThreeTest</a>");
         }
 
         [Test]
         public void BaseToForcedLocal()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("TopicFour", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Base.TopicOne")) + @""">TopicOne</a>");
-            }
+            CompareTopic("TopicFour", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Base.TopicOne")) + @""">TopicOne</a>");
         }
 
         [Test]
         public void BaseToForeignUnqualified()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("TopicOne", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Other1.OtherOneHello")) + @""">OtherOneHello</a>");
-            }
+            CompareTopic("TopicOne", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Other1.OtherOneHello")) + @""">OtherOneHello</a>");
         }
 
         [Test]
         public void BaseToForeignQualified()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("TopicTwo", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Other1.OtherOneGoodbye")) + @""">OtherOneGoodbye</a>");
-            }
+            CompareTopic("TopicTwo", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("FlexWiki.Other1.OtherOneGoodbye")) + @""">OtherOneGoodbye</a>");
         }
 
         [Test]
         public void BaseToQualifiedAbsent()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicThree");
-                CompareTopic("TopicThree", @"<p>No.Such.Namespace.FooBar</p>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicThree");
+            CompareTopic("TopicThree", @"<p>No.Such.Namespace.FooBar</p>");
         }
 
         [Test]
         public void BaseToUnqualifiedAbsent()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicFive");
-                CompareTopic("TopicFive", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Base.FooBar")) + @""">FooBar</a>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicFive");
+            CompareTopic("TopicFive", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Base.FooBar")) + @""">FooBar</a>");
         }
 
         [Test]
         public void BaseToForcedLocalAbsent()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicSix");
-                CompareTopic("TopicSix", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Base.GooBar")) + @""">GooBar</a>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Base.TopicSix");
+            CompareTopic("TopicSix", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Base.GooBar")) + @""">GooBar</a>");
         }
 
         [Test]
         public void EnumIncludingImportsTest()
         {
 
-            using (RequestContext.Create())
+            ArrayList expecting = new ArrayList();
+            expecting.Add("FlexWiki.Base._ContentBaseDefinition");
+            expecting.Add("FlexWiki.Base.TopicOne");
+            expecting.Add("FlexWiki.Base.TopicTwo");
+            expecting.Add("FlexWiki.Base.TopicThree");
+            expecting.Add("FlexWiki.Base.TopicFour");
+            expecting.Add("FlexWiki.Base.TopicFive");
+            expecting.Add("FlexWiki.Base.TopicSix");
+            expecting.Add("FlexWiki.Base.HomePage");
+            expecting.Add("FlexWiki.Base._NormalBorders");
+            expecting.Add("FlexWiki.Other1._ContentBaseDefinition");
+            expecting.Add("FlexWiki.Other1.OtherOneHello");
+            expecting.Add("FlexWiki.Other1.OtherOneGoodbye");
+            expecting.Add("FlexWiki.Other1.OtherOneRefThree");
+            expecting.Add("FlexWiki.Other1.OtherOneTopicOne");
+            expecting.Add("FlexWiki.Other1.OtherOneTopicTwo");
+            expecting.Add("FlexWiki.Other1.OtherOneTopicThree");
+            expecting.Add("FlexWiki.Other1.OtherOneTopicFour");
+            expecting.Add("FlexWiki.Other1.OtherOneTopicFive");
+            expecting.Add("FlexWiki.Other1.OtherOneTopicSix");
+            expecting.Add("FlexWiki.Other1.HomePage");
+            expecting.Add("FlexWiki.Other1._NormalBorders");
+
+            expecting.Add("Other2.OtherTwoHello");
+            expecting.Add("Other2.OtherTwoGoodbye");
+            expecting.Add("Other2.HomePage");
+            expecting.Add("Other2._NormalBorders");
+
+            foreach (QualifiedTopicName topicName in _base.AllTopics(ImportPolicy.IncludeImports))
             {
-                ArrayList expecting = new ArrayList();
-                expecting.Add("FlexWiki.Base._ContentBaseDefinition");
-                expecting.Add("FlexWiki.Base.TopicOne");
-                expecting.Add("FlexWiki.Base.TopicTwo");
-                expecting.Add("FlexWiki.Base.TopicThree");
-                expecting.Add("FlexWiki.Base.TopicFour");
-                expecting.Add("FlexWiki.Base.TopicFive");
-                expecting.Add("FlexWiki.Base.TopicSix");
-                expecting.Add("FlexWiki.Base.HomePage");
-                expecting.Add("FlexWiki.Base._NormalBorders");
-                expecting.Add("FlexWiki.Other1._ContentBaseDefinition");
-                expecting.Add("FlexWiki.Other1.OtherOneHello");
-                expecting.Add("FlexWiki.Other1.OtherOneGoodbye");
-                expecting.Add("FlexWiki.Other1.OtherOneRefThree");
-                expecting.Add("FlexWiki.Other1.OtherOneTopicOne");
-                expecting.Add("FlexWiki.Other1.OtherOneTopicTwo");
-                expecting.Add("FlexWiki.Other1.OtherOneTopicThree");
-                expecting.Add("FlexWiki.Other1.OtherOneTopicFour");
-                expecting.Add("FlexWiki.Other1.OtherOneTopicFive");
-                expecting.Add("FlexWiki.Other1.OtherOneTopicSix");
-                expecting.Add("FlexWiki.Other1.HomePage");
-                expecting.Add("FlexWiki.Other1._NormalBorders");
-
-                expecting.Add("Other2.OtherTwoHello");
-                expecting.Add("Other2.OtherTwoGoodbye");
-                expecting.Add("Other2.HomePage");
-                expecting.Add("Other2._NormalBorders");
-
-                foreach (QualifiedTopicName topicName in _base.AllTopics(ImportPolicy.IncludeImports))
-                {
-                    Assert.IsTrue(expecting.Contains(topicName.DottedName), "Looking for " + topicName.ToString());
-                    expecting.Remove(topicName.DottedName);
-                }
-                Assert.AreEqual(expecting.Count, 0);
+                Assert.IsTrue(expecting.Contains(topicName.DottedName), "Looking for " + topicName.ToString());
+                expecting.Remove(topicName.DottedName);
             }
+            Assert.AreEqual(expecting.Count, 0);
         }
 
         [Test]
         public void ForeignToForeignUnqualified()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("OtherOneTopicOne", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
-            }
+            CompareTopic("OtherOneTopicOne", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
         }
 
         [Test]
         public void ForeignToForeignQualified()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("OtherOneTopicTwo", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoGoodbye")) + @""">OtherTwoGoodbye</a>");
-            }
+            CompareTopic("OtherOneTopicTwo", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoGoodbye")) + @""">OtherTwoGoodbye</a>");
         }
 
         [Test]
         public void ForeignToQualifiedAbsent()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicThree");
-                CompareTopic("OtherOneTopicThree", @"<p>No.Such.Namespace.FooBar</p>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicThree");
+            CompareTopic("OtherOneTopicThree", @"<p>No.Such.Namespace.FooBar</p>");
         }
 
         [Test]
         public void ForeignToForcedLocal()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("OtherOneTopicFour", @"href=""" + _lm.LinkToTopic(new TopicName("FlexWiki.Other1.OtherOneTopicOne")) + @""">OtherOneTopicOne</a>");
-            }
+            CompareTopic("OtherOneTopicFour", @"href=""" + _lm.LinkToTopic(new TopicName("FlexWiki.Other1.OtherOneTopicOne")) + @""">OtherOneTopicOne</a>");
         }
 
         [Test]
         public void ForeignToUnqualifiedAbsent()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicFive");
-                CompareTopic("OtherOneTopicFive", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Other1.FooBar")) + @""">FooBar</a>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicFive");
+            CompareTopic("OtherOneTopicFive", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Other1.FooBar")) + @""">FooBar</a>");
         }
 
         [Test]
         public void ForeignToForcedLocalAbsent()
         {
-            using (RequestContext.Create())
-            {
-                _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicSix");
-                CompareTopic("OtherOneTopicSix", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Other1.GooBar")) + @""">GooBar</a>");
-            }
+            _lm.ReturnToTopicForEditLinks = new QualifiedTopicRevision("FlexWiki.Other1.OtherOneTopicSix");
+            CompareTopic("OtherOneTopicSix", @"class=""create"" href=""" + _lm.LinkToEditTopic(new TopicName("FlexWiki.Other1.GooBar")) + @""">GooBar</a>");
         }
 
         [Test]
         [Ignore("Test failing, but I need to check in for Subversion upgrade. Revisit.")]
         public void ReferenceTopicInNonImportedNamespace()
         {
-            using (RequestContext.Create())
-            {
-                CompareTopic("Space5.AbsRef", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
-            }
+            CompareTopic("Space5.AbsRef", @"href=""" + _lm.LinkToTopic(new QualifiedTopicRevision("Other2.OtherTwoHello")) + @""">OtherTwoHello</a>");
         }
 
         [Test]
         public void TopicsWithTest()
         {
-            using (RequestContext.Create())
-            {
-                Assert.AreEqual(1, _base.TopicsWith(new ExecutionContext(), "Role", "Developer").Count, "TopicsWith Role:Developer");
-                Assert.AreEqual(1, _base.TopicsWith(new ExecutionContext(), "Role", "Designer").Count, "TopicsWith Role:Designer");
-                Assert.AreEqual(2, _base.AllTopicsWith(new ExecutionContext(), "Role", "Developer").Count, "AllTopicsWith Role:Developer");
-                Assert.AreEqual(1, _base.AllTopicsWith(new ExecutionContext(), "Role", "Designer").Count, "AllTopicsWith Role:Designer");
-            }
+            Assert.AreEqual(1, _base.TopicsWith(new ExecutionContext(), "Role", "Developer").Count, "TopicsWith Role:Developer");
+            Assert.AreEqual(1, _base.TopicsWith(new ExecutionContext(), "Role", "Designer").Count, "TopicsWith Role:Designer");
+            Assert.AreEqual(2, _base.AllTopicsWith(new ExecutionContext(), "Role", "Developer").Count, "AllTopicsWith Role:Developer");
+            Assert.AreEqual(1, _base.AllTopicsWith(new ExecutionContext(), "Role", "Designer").Count, "AllTopicsWith Role:Designer");
         }
 
 
         private void CompareTopic(string topic, string outputMustContain)
         {
-            using (RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
+            TopicName abs = _base.UnambiguousTopicNameFor(topic);
+            string o = Formatter.FormattedTopic(new QualifiedTopicRevision(abs), OutputFormat.HTML, null, Federation, _lm);
+            string o1 = o.Replace("\r", "");
+            string o2 = outputMustContain.Replace("\r", "");
+            bool pass = o1.IndexOf(o2) >= 0;
+            if (!pass)
             {
-                TopicName abs = _base.UnambiguousTopicNameFor(topic);
-                string o = Formatter.FormattedTopic(new QualifiedTopicRevision(abs), OutputFormat.HTML, null, Federation, _lm);
-                string o1 = o.Replace("\r", "");
-                string o2 = outputMustContain.Replace("\r", "");
-                bool pass = o1.IndexOf(o2) >= 0;
-                if (!pass)
-                {
-                    Console.Error.WriteLine("Got     : " + o1);
-                    Console.Error.WriteLine("But Couldn't Find: " + o2);
-                }
-                Assert.IsTrue(pass);
+                Console.Error.WriteLine("Got     : " + o1);
+                Console.Error.WriteLine("But Couldn't Find: " + o2);
             }
+            Assert.IsTrue(pass);
         }
 
 

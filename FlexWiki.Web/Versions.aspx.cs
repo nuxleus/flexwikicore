@@ -16,7 +16,7 @@ using System.Web.UI;
 using System.Web.Util;
 using System.Text;
 
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 
 namespace FlexWiki.Web
 {
@@ -52,25 +52,19 @@ namespace FlexWiki.Web
 
         private void Page_Load(object sender, System.EventArgs e)
         {
-            using (RequestContext.Create())
-            {
-                _changeList = Federation.GetTopicChanges(new TopicName(TheTopic.LocalName, TheTopic.Namespace));
-                ShowPage();
-            }
+            _changeList = Federation.GetTopicChanges(new TopicName(TheTopic.LocalName, TheTopic.Namespace));
+            ShowPage();
         }
 
         protected string GetTitle()
         {
-            using (RequestContext.Create())
+            string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
+            if (title == null || title == "")
             {
-                string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
-                if (title == null || title == "")
-                {
-                    title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName,
-                        GetTopicVersionKey().Namespace);
-                }
-                return HtmlStringWriter.Escape(title) + " Versions ";
+                title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName,
+                    GetTopicVersionKey().Namespace);
             }
+            return HtmlStringWriter.Escape(title) + " Versions ";
         }
 
 

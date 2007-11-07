@@ -94,11 +94,10 @@ namespace FlexWiki.Caching
 
         private void AddDependency(Dependency dependency)
         {
-            if (RequestContext.Current == null)
+            if (RequestContext.Current != null)
             {
-                throw new MissingContextException(); 
+                RequestContext.Current.Dependencies.Add(dependency);
             }
-            RequestContext.Current.Dependencies.Add(dependency);
         }
     }
 }

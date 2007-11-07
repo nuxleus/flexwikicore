@@ -20,7 +20,7 @@ using System.Reflection;
 
 using FlexWiki;
 using FlexWiki.Formatting;
-using FlexWiki.Security; 
+using FlexWiki.Security;
 
 using NUnit.Framework;
 
@@ -54,7 +54,7 @@ namespace FlexWiki.UnitTests.Formatting
             FederationConfiguration configuration = new FederationConfiguration();
             AuthorizationRule rule = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll, null),
                 AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
-            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule)); 
+            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule));
             MockWikiApplication application = new MockWikiApplication(
                 configuration,
                 _lm,
@@ -65,9 +65,7 @@ namespace FlexWiki.UnitTests.Formatting
             _versions = new ArrayList();
             _storeManager = WikiTestUtilities.CreateMockStore(Federation, "FlexWiki.Base");
 
-            using (RequestContext.Create())
-            {
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
 2
 3
 4
@@ -76,7 +74,7 @@ namespace FlexWiki.UnitTests.Formatting
 7
 8
 9", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
 2
 a
 b
@@ -88,7 +86,7 @@ c
 7
 8
 9", author);
-                WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_storeManager, "TopicOne", @"1
 2
 a
 b
@@ -97,20 +95,16 @@ b
 8
 9", author);
 
-                foreach (TopicChange change in _storeManager.AllChangesForTopic("TopicOne"))
-                {
-                    _versions.Add(change.Version);
-                }
+            foreach (TopicChange change in _storeManager.AllChangesForTopic("TopicOne"))
+            {
+                _versions.Add(change.Version);
             }
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (RequestContext.Create())
-            {
-                _storeManager.DeleteAllTopicsAndHistory();
-            }
+            _storeManager.DeleteAllTopicsAndHistory();
         }
 
 
@@ -118,7 +112,7 @@ b
         public void OldestTest()
         {
             // Test the oldest; should have no markers
-            VersionCompare("TopicOne", (string) _versions[_versions.Count - 1], @"<p>1</p>
+            VersionCompare("TopicOne", (string)_versions[_versions.Count - 1], @"<p>1</p>
 <p>2</p>
 <p>3</p>
 <p>4</p>
@@ -134,7 +128,7 @@ b
         public void InsertTest()
         {
             // Inserts oldest should have the 
-            VersionCompare("TopicOne", (string) _versions[_versions.Count - 2], @"<p>1</p>
+            VersionCompare("TopicOne", (string)_versions[_versions.Count - 2], @"<p>1</p>
 <p>2</p>
 <p style=""background: palegreen"">a</p>
 <p style=""background: palegreen"">b</p>
@@ -152,7 +146,7 @@ b
         [Test]
         public void DeleteTest()
         {
-            VersionCompare("TopicOne", (string) _versions[_versions.Count - 3], @"<p>1</p>
+            VersionCompare("TopicOne", (string)_versions[_versions.Count - 3], @"<p>1</p>
 <p>2</p>
 <p>a</p>
 <p>b</p>
@@ -170,24 +164,21 @@ b
 
         private void VersionCompare(string topic, string version, string expecting)
         {
-            using (RequestContext.Create())
+            QualifiedTopicRevision latest = new QualifiedTopicRevision(StoreManager.QualifiedTopicNameFor(topic));
+            latest.Version = version;
+            QualifiedTopicRevision oldTopic = StoreManager.VersionPreviousTo(
+                latest.LocalName, latest.Version);
+
+            string got = Formatter.FormattedTopic(latest, OutputFormat.Testing, oldTopic, Federation, _lm);
+            got = got.Replace("\r", "");
+            string o2 = expecting.Replace("\r", "");
+
+            if (got != o2)
             {
-                QualifiedTopicRevision latest = new QualifiedTopicRevision(StoreManager.QualifiedTopicNameFor(topic));
-                latest.Version = version;
-                QualifiedTopicRevision oldTopic = StoreManager.VersionPreviousTo(
-                    latest.LocalName, latest.Version);
-
-                string got = Formatter.FormattedTopic(latest, OutputFormat.Testing, oldTopic, Federation, _lm);
-                got = got.Replace("\r", "");
-                string o2 = expecting.Replace("\r", "");
-
-                if (got != o2)
-                {
-                    Console.Error.WriteLine("Got     : " + got);
-                    Console.Error.WriteLine("Expected: " + o2);
-                }
-                Assert.AreEqual(o2, got);
+                Console.Error.WriteLine("Got     : " + got);
+                Console.Error.WriteLine("Expected: " + o2);
             }
+            Assert.AreEqual(o2, got);
         }
     }
 }

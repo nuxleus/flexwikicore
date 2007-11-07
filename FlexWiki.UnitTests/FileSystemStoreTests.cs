@@ -11,7 +11,7 @@
 #endregion
 
 using System;
-using System.IO; 
+using System.IO;
 
 using NUnit.Framework;
 
@@ -81,7 +81,7 @@ namespace FlexWiki.UnitTests
                                 new MockFile(@"ReadWriteTopic.wiki",
                                     new DateTime(2004, 11, 05), new DateTime(2007, 10, 22), @"", MockTopicStorePermissions.ReadWrite, false),
 
-                                new MockFile(@"DeletedTopic(2004-11-11-00-00-00-Name).awiki", 
+                                new MockFile(@"DeletedTopic(2004-11-11-00-00-00-Name).awiki",
                                     new DateTime(2004, 11, 11), @"This topic was deleted.")
                              )
                          )
@@ -97,7 +97,7 @@ namespace FlexWiki.UnitTests
             // retrieved directly from the federation
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(_federation, "NamespaceOne");
 
-            _provider = (FileSystemStore) manager.GetProvider(typeof(FileSystemStore));
+            _provider = (FileSystemStore)manager.GetProvider(typeof(FileSystemStore));
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace FlexWiki.UnitTests
         public void AllChangesForTopicSinceWithDate()
         {
             TopicChangeCollection changes = _provider.AllChangesForTopicSince(
-                new UnqualifiedTopicName("CodeImprovementIdeas"), 
+                new UnqualifiedTopicName("CodeImprovementIdeas"),
                 new DateTime(2004, 11, 07));
 
             Assert.AreEqual(3, changes.Count, "Checking that the right number of changes were returned.");
@@ -137,7 +137,7 @@ namespace FlexWiki.UnitTests
                 "Checking that the latest change is correct.");
             Assert.AreEqual(new DateTime(2003, 11, 23, 14, 34, 05, 100),
                 changes.Oldest.Modified,
-                "Checking that the oldest change is correct."); 
+                "Checking that the oldest change is correct.");
         }
 
         [Test]
@@ -174,7 +174,7 @@ namespace FlexWiki.UnitTests
             Assert.AreEqual(new DateTime(2004, 10, 28), changes[0].Modified,
                 "Checking that modification time is correct.");
             Assert.AreEqual("", changes[0].Author,
-                "Checking that author is blank when no history is available."); 
+                "Checking that author is blank when no history is available.");
         }
 
         [Test]
@@ -207,7 +207,7 @@ namespace FlexWiki.UnitTests
             _provider.DeleteAllTopicsAndHistory();
 
             Assert.IsFalse(_fileSystem.DirectoryExists(basedir),
-                "Checking that the base directory was deleted."); 
+                "Checking that the base directory was deleted.");
         }
 
         [Test]
@@ -215,15 +215,15 @@ namespace FlexWiki.UnitTests
         {
             string basedir = @"C:\flexwiki\namespaces\namespaceone";
             _fileSystem[basedir].Children.Add(
-                new MockFile(@"foo.bar", DateTime.MinValue, "")); 
+                new MockFile(@"foo.bar", DateTime.MinValue, ""));
             _provider.DeleteAllTopicsAndHistory();
-            
-            Assert.IsTrue(_fileSystem.DirectoryExists(basedir), 
+
+            Assert.IsTrue(_fileSystem.DirectoryExists(basedir),
                 "Checking that namespace directory was not deleted.");
             Assert.AreEqual(1, _fileSystem[basedir].Children.Count,
                 "Checking that only one file remains.");
             Assert.AreEqual("foo.bar", _fileSystem[basedir].Children[0].Name,
-                "Checking that the extra file was not deleted."); 
+                "Checking that the extra file was not deleted.");
         }
 
         [Test]
@@ -231,16 +231,16 @@ namespace FlexWiki.UnitTests
         {
             _provider.DeleteTopic(new UnqualifiedTopicName("HomePage"));
 
-            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "HomePage.wiki")), 
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "HomePage.wiki")),
                 "Checking that tip file was deleted.");
             Assert.IsTrue(_fileSystem.FileExists(Path.Combine(Root, "HomePage(2003-11-24-20-31-20-WINGROUP-davidorn).awiki")),
-                "Checking that revision file was not deleted."); 
+                "Checking that revision file was not deleted.");
         }
 
         [Test]
         public void DeleteTopicNonexistentTopic()
         {
-            _provider.DeleteTopic(new UnqualifiedTopicName("NoSuchTopic")); 
+            _provider.DeleteTopic(new UnqualifiedTopicName("NoSuchTopic"));
 
             // Just need to check that no exception is thrown
         }
@@ -262,18 +262,18 @@ namespace FlexWiki.UnitTests
             // retrieved directly from the federation
             NamespaceManager manager = WikiTestUtilities.GetNamespaceManagerBypassingSecurity(federation, "NamespaceOne");
 
-            FileSystemStore provider = (FileSystemStore) manager.GetProvider(typeof(FileSystemStore));
+            FileSystemStore provider = (FileSystemStore)manager.GetProvider(typeof(FileSystemStore));
 
             // Need to delete the directory, because registration creates it if it doesn't alreayd exist.
-            fileSystem.DeleteDirectory(Root); 
+            fileSystem.DeleteDirectory(Root);
 
-            Assert.IsFalse(provider.Exists, "Checking that Exists returns false when the root directory does not exist."); 
+            Assert.IsFalse(provider.Exists, "Checking that Exists returns false when the root directory does not exist.");
         }
 
         [Test]
         public void ExistsPositive()
         {
-            Assert.IsTrue(_provider.Exists, "Checking that Exists returns true."); 
+            Assert.IsTrue(_provider.Exists, "Checking that Exists returns true.");
         }
 
         [Test]
@@ -284,24 +284,21 @@ namespace FlexWiki.UnitTests
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
             Federation federation = new Federation(application);
             MockFileSystem fileSystem = new MockFileSystem();
-            
+
             federation.RegisterNamespace(new FileSystemStore(fileSystem), "NamespaceOne",
                 new NamespaceProviderParameterCollection(
                     new NamespaceProviderParameter("Root", Root)));
 
-            using (RequestContext.Create())
-            {
-                NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
+            NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
-                Assert.IsTrue(fileSystem.DirectoryExists(Root));
-            }
+            Assert.IsTrue(fileSystem.DirectoryExists(Root));
         }
 
         [Test]
         [ExpectedException(typeof(NotImplementedException))]
         public void GetParsedTopic()
         {
-            _provider.GetParsedTopic(new UnqualifiedTopicRevision("HomePage")); 
+            _provider.GetParsedTopic(new UnqualifiedTopicRevision("HomePage"));
         }
 
         [Test]
@@ -312,13 +309,13 @@ namespace FlexWiki.UnitTests
                 "Checking that a read-write topic shows as writable.");
             Assert.IsTrue(_provider.HasPermission(
                 new UnqualifiedTopicName("HomePage"), TopicPermission.Read),
-                "Checking that a read-write topic shows as readable."); 
+                "Checking that a read-write topic shows as readable.");
             Assert.IsFalse(_provider.HasPermission(
-                new UnqualifiedTopicName("ReadOnlyTopic"), TopicPermission.Edit), 
+                new UnqualifiedTopicName("ReadOnlyTopic"), TopicPermission.Edit),
                 "Checking that a read-write topic shows as non-writable.");
             Assert.IsTrue(_provider.HasPermission(
                 new UnqualifiedTopicName("ReadOnlyTopic"), TopicPermission.Read),
-                "Checking that a read-only topic shows as readable."); 
+                "Checking that a read-only topic shows as readable.");
         }
 
         [Test]
@@ -336,7 +333,7 @@ namespace FlexWiki.UnitTests
         public void IsReadOnly()
         {
             Assert.IsFalse(_provider.IsReadOnly,
-                "Checking that the filesystem provider always returns false for IsReadOnly."); 
+                "Checking that the filesystem provider always returns false for IsReadOnly.");
         }
 
         [Test]
@@ -357,15 +354,15 @@ namespace FlexWiki.UnitTests
         [ExpectedException(typeof(FileNotFoundException))]
         public void LockTopicNonexistentTopic()
         {
-            _provider.LockTopic(new UnqualifiedTopicName("NoSuchTopic")); 
+            _provider.LockTopic(new UnqualifiedTopicName("NoSuchTopic"));
         }
 
         [Test]
         public void TextReaderForTopic()
         {
             Assert.AreEqual(
-                "Latest", 
-                _provider.TextReaderForTopic(new UnqualifiedTopicRevision("CodeImprovementIdeas")).ReadToEnd(), 
+                "Latest",
+                _provider.TextReaderForTopic(new UnqualifiedTopicRevision("CodeImprovementIdeas")).ReadToEnd(),
                 "Checking that topic content retrieved without version is correct.");
 
             Assert.AreEqual(
@@ -376,7 +373,7 @@ namespace FlexWiki.UnitTests
 
             Assert.IsNull(
                 _provider.TextReaderForTopic(new UnqualifiedTopicRevision("NoSuchTopic")),
-                "Checking that a nonexistent topic returns a null reader."); 
+                "Checking that a nonexistent topic returns a null reader.");
         }
 
         [Test]
@@ -387,7 +384,7 @@ namespace FlexWiki.UnitTests
             Assert.IsFalse(_provider.TopicExists(new UnqualifiedTopicName("DeletedTopic")),
                 "Checking that a deleted topic returns false.");
             Assert.IsTrue(_provider.TopicExists(new UnqualifiedTopicName("HomePage")),
-                "Checking that an existing topic returns true."); 
+                "Checking that an existing topic returns true.");
         }
 
         [Test]
@@ -481,7 +478,7 @@ namespace FlexWiki.UnitTests
                 "Checking that a write with no version changes the .wiki file.");
             Assert.AreEqual(1,
                 _provider.AllChangesForTopicSince(new UnqualifiedTopicName("HomePage"), DateTime.MinValue).Count,
-                "Checking that no new revisions were written"); 
+                "Checking that no new revisions were written");
         }
 
         [Test]
@@ -495,7 +492,7 @@ namespace FlexWiki.UnitTests
                 "Checking that the historical version was updated.");
             Assert.AreEqual("Home page.",
                 _fileSystem[Path.Combine(Root, "HomePage.wiki")].Contents,
-                "Checking that the tip file was not changed."); 
+                "Checking that the tip file was not changed.");
         }
 
         [Test]
@@ -511,7 +508,7 @@ namespace FlexWiki.UnitTests
             {
                 if (file.Name.StartsWith("NewTopic("))
                 {
-                    Assert.Fail("No historical files should have been written: " + file.Name); 
+                    Assert.Fail("No historical files should have been written: " + file.Name);
                 }
             }
         }

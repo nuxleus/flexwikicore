@@ -26,7 +26,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
-using FlexWiki.Collections; 
+using FlexWiki.Collections;
 using FlexWiki.Formatting;
 
 
@@ -157,7 +157,7 @@ namespace FlexWiki.Web
             {
                 if (!IsCaptchaRequired())
                 {
-                    return true; 
+                    return true;
                 }
 
                 string captchaContext = Request.Form["CaptchaContextSubmitted"];
@@ -166,15 +166,15 @@ namespace FlexWiki.Web
                 if (string.IsNullOrEmpty(captchaContext))
                 {
                     FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
-                        "CAPTCHA context was empty or missing."); 
-                    return false; 
+                        "CAPTCHA context was empty or missing.");
+                    return false;
                 }
 
                 if (string.IsNullOrEmpty(captchaEntered))
                 {
                     FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
                         "CAPTCHA entered by user was empty or missing.");
-                    return false; 
+                    return false;
                 }
 
                 string expectedValue = Security.Decrypt(captchaContext,
@@ -189,7 +189,7 @@ namespace FlexWiki.Web
                 else
                 {
                     FlexWikiWebApplication.LogDebug(this.GetType().ToString(),
-                        "User entered incorrect CAPTCHA value. Expected value was " + expectedValue + 
+                        "User entered incorrect CAPTCHA value. Expected value was " + expectedValue +
                         " but user entered " + captchaEntered);
                     return false;
                 }
@@ -246,7 +246,7 @@ namespace FlexWiki.Web
                     text = Federation.Read(TheTopic);
                 }
 
-                return text; 
+                return text;
             }
         }
         private string PostedTopicText
@@ -267,23 +267,20 @@ namespace FlexWiki.Web
 
         protected void DoPage()
         {
-            using (RequestContext.Create())
+            if (IsPost && !IsConflictingChange && !IsBanned)
             {
-                if (IsPost && !IsConflictingChange && !IsBanned)
+                if (IsCaptchaVerified)
                 {
-                    if (IsCaptchaVerified)
-                    {
-                        ProcessPost();
-                    }
-                    else
-                    {
-                        ShowEditPage(true);
-                    }
+                    ProcessPost();
                 }
                 else
                 {
-                    ShowEditPage();
+                    ShowEditPage(true);
                 }
+            }
+            else
+            {
+                ShowEditPage();
             }
         }
 
@@ -294,7 +291,7 @@ namespace FlexWiki.Web
             //Check Null edits
             string oldContent = OriginalTopicText;
 
-			// if the posted text is different than the orig, or if there was no orig, proceed
+            // if the posted text is different than the orig, or if there was no orig, proceed
             if (string.Compare(oldContent, PostedTopicText) != 0 || !Federation.TopicExists(TheTopic))
             {
                 bool isDelete = Regex.IsMatch(PostedTopicText, "^delete$", RegexOptions.IgnoreCase);
@@ -337,14 +334,14 @@ namespace FlexWiki.Web
                 string topic = "<<null>>";
                 if (TheTopic != null && TheTopic.DottedName != null)
                 {
-                    topic = TheTopic.DottedName; 
+                    topic = TheTopic.DottedName;
                 }
-                FlexWikiWebApplication.LogDebug(this.GetType().ToString(), "A null edit was submitted for topic " + topic); 
+                FlexWikiWebApplication.LogDebug(this.GetType().ToString(), "A null edit was submitted for topic " + topic);
             }
 
             if (returnTo == null)
             {
-               
+
                 if (TheTopic != null && TheTopic.DottedName != null)
                 {
                     Response.Redirect(TheLinkMaker.LinkToTopic(TheTopic.ToString()));
@@ -355,7 +352,7 @@ namespace FlexWiki.Web
                         "Redirecting to wiki root.");
                     Response.Redirect(RootUrl);
                 }
-                
+
             }
             else
             {
@@ -367,10 +364,10 @@ namespace FlexWiki.Web
         }
         protected void ShowCss()
         {
-            Response.Write("<script type=\"text/javascript\" language=\"javascript\" src=\""+ RootUrl + "WikiEdit.js\"></script>");
+            Response.Write("<script type=\"text/javascript\" language=\"javascript\" src=\"" + RootUrl + "WikiEdit.js\"></script>");
 
         }
-        
+
         protected void ShowEditPageFinal()
         {
             Response.Write("</td></tr></table></div></td></tr></table>");
@@ -431,7 +428,7 @@ namespace FlexWiki.Web
 
         private int CountLinks(string text)
         {
-            return TopicParser.CountExternalLinks(text); 
+            return TopicParser.CountExternalLinks(text);
         }
         private void FileUploadSendClick(object sender, System.EventArgs e)
         {
@@ -454,7 +451,7 @@ namespace FlexWiki.Web
                         string fileName;
                         // Read        uploaded file from the Stream
                         fileToUpload.InputStream.Read(fileData, 0, fileLength);
-                        
+
                         directoryToWriteTo = ReturnDirectoryToWriteTo(fileToUpload.FileName);
                         // Create a        name for the file to store
                         fileName = Path.GetFileName(fileToUpload.FileName); //
@@ -506,7 +503,7 @@ namespace FlexWiki.Web
                         _fileSize = "File size: " + fileLength.ToString("0,0") + " bytes";
                         // show        the        full path
                         _fileUrl = RootUrl + directoryToWriteTo.Replace(@"\", @"/") + "/" + Path.GetFileName(writeToFile);
-                        _fileIconUrl =  "images/attach/" + ReturnIconForAttach(fileName);
+                        _fileIconUrl = "images/attach/" + ReturnIconForAttach(fileName);
 
 
                         // Set URL of the the object to        point to the file we've        just saved
@@ -521,7 +518,7 @@ namespace FlexWiki.Web
                         }
                     }
                 }
-                
+
             }
             catch (System.IO.IOException err)
             {
@@ -559,7 +556,7 @@ namespace FlexWiki.Web
             {
                 if (!IsPost)
                 {
-                    return false; 
+                    return false;
                 }
 
                 string submitted = PostedTopicText;
@@ -572,7 +569,7 @@ namespace FlexWiki.Web
 
                 if (delta >= FlexWikiWebApplication.ApplicationConfiguration.CaptchaLinkThreshold)
                 {
-                    return true; 
+                    return true;
                 }
             }
 
@@ -655,12 +652,12 @@ namespace FlexWiki.Web
         private string ReturnDirectoryToWriteTo(string fileName)
         {
             // get the root        directory for uploaded files
-            
+
             string rootUploadDir = FlexWikiWebApplication.ApplicationConfiguration.ContentUploadPath;
             string returnDirectory = "";
             fileName = fileName.ToLower();
             string extensionName = Path.GetExtension(fileName);
-            switch(extensionName)
+            switch (extensionName)
             {
                 case ".jpg":
                 case ".gif":
@@ -682,7 +679,7 @@ namespace FlexWiki.Web
         }
         private void ShowEditPage()
         {
-            ShowEditPage(false); 
+            ShowEditPage(false);
         }
         private void ShowEditPage(bool preserveContent)
         {
@@ -694,17 +691,17 @@ namespace FlexWiki.Web
             strbldr.AppendLine("<table width=\"100%\" id=\"MasterTable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td valign=\"top\">");
             strbldr.AppendLine("<div id=\"MainRegion\" class=\"EditMain\">");
 
-		    strbldr.AppendLine("<div style=\"display: none\">");
-			strbldr.AppendLine("<form id=\"Form2\" method=\"post\" target=\"previewWindow\" action=\"Preview.aspx\">");
-			strbldr.AppendLine("<textarea id=\"body\" name=\"body\" rows=\"20\" cols=\"60\"></textarea>");
-			strbldr.AppendFormat("<input  type=\"text\" id=\"Text1\" name=\"defaultNamespace\" value =\"{0}\" />", TheTopic.Namespace);
-			strbldr.AppendFormat("<input  type=\"text\" id=\"Text2\" name=\"topic\" value =\"{0}\" />", TheTopic.LocalName);
+            strbldr.AppendLine("<div style=\"display: none\">");
+            strbldr.AppendLine("<form id=\"Form2\" method=\"post\" target=\"previewWindow\" action=\"Preview.aspx\">");
+            strbldr.AppendLine("<textarea id=\"body\" name=\"body\" rows=\"20\" cols=\"60\"></textarea>");
+            strbldr.AppendFormat("<input  type=\"text\" id=\"Text1\" name=\"defaultNamespace\" value =\"{0}\" />", TheTopic.Namespace);
+            strbldr.AppendFormat("<input  type=\"text\" id=\"Text2\" name=\"topic\" value =\"{0}\" />", TheTopic.LocalName);
 
-			strbldr.AppendLine("</form>");
-		    strbldr.AppendLine("</div>");
-		    strbldr.AppendLine("<div class=\"EditZone\" id=\"EditZone\" >");
-			strbldr.AppendLine("<form id=\"Form1\" method=\"post\" action=\"\">");
-			strbldr.AppendLine("<textarea class=\"EditBox\" onkeydown=\"javascript:textarea_OnKeyPress(event)\" rows=\"20\" cols=\"50\" id=\"EditBox\" name=\"EditBox\" onfocus=\"javascript:textArea_OnFocus(event)\" onblur=\"javascript:textArea_OnBlur(event)\">");
+            strbldr.AppendLine("</form>");
+            strbldr.AppendLine("</div>");
+            strbldr.AppendLine("<div class=\"EditZone\" id=\"EditZone\" >");
+            strbldr.AppendLine("<form id=\"Form1\" method=\"post\" action=\"\">");
+            strbldr.AppendLine("<textarea class=\"EditBox\" onkeydown=\"javascript:textarea_OnKeyPress(event)\" rows=\"20\" cols=\"50\" id=\"EditBox\" name=\"EditBox\" onfocus=\"javascript:textArea_OnFocus(event)\" onblur=\"javascript:textArea_OnBlur(event)\">");
             Response.Write(strbldr.ToString());
 
             string defaultContent = @"
@@ -720,11 +717,11 @@ Add your wiki text here.
 
 ";
             string content = null;
-			bool isValidName = Formatter.extractWikiNames.IsMatch("["+TheTopic.Name.LocalName+"]");
-			if (!isValidName)
-			{
-				content = String.Format("Topic Name not valid for this wiki: {0}\nPlease go back and choose a different name.",TheTopic.Name);
-			}
+            bool isValidName = Formatter.extractWikiNames.IsMatch("[" + TheTopic.Name.LocalName + "]");
+            if (!isValidName)
+            {
+                content = String.Format("Topic Name not valid for this wiki: {0}\nPlease go back and choose a different name.", TheTopic.Name);
+            }
             if (Federation.TopicExists(TheTopic))
             {
                 content = Federation.Read(TheTopic);
@@ -798,7 +795,7 @@ Add your wiki text here.
             Response.Write(Formatter.EscapeHTML(content));
 
             Response.Write(@"</textarea>");
-			bool isWritable = this.IsWritable && isValidName;
+            bool isWritable = this.IsWritable && isValidName;
             if (isWritable)
             {
                 Response.Write("<input type=\"text\" style=\"display:none\" name=\"CaptchaEnteredSubmitted\" value =\"\" />");
@@ -927,80 +924,80 @@ Add your wiki text here.
                 strbldr.AppendLine("<br /><div class=\"TipArea\" id=\"TipArea\"></div>");
 
                 strbldr.AppendLine("<div style=\"display: none\">");
-		        strbldr.AppendLine("<div id=\"tip_proptip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("A line that starts with a wiki word and a colon identifies a property.");
-				strbldr.AppendLine("The value of the property is everything on the line after the colon.");
-				strbldr.AppendLine("Multiline imports use PropertyName:[ and then multiple lines and then ] on a");
-				strbldr.AppendLine("blank line to mark the end.");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_imagetip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Any URL that ends with .gif, .jpeg, .jpg or .png will be turned into an image");
-				strbldr.AppendLine("tag to display the actual image.");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_pretip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Any line that starts with at least one space will be fixed-width formatted.");
-				strbldr.AppendLine("Good for code and simple tables.");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_liststip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Start a line with a tab (or 8 spaces) followed by a star \"*\".");
-				strbldr.AppendLine("Two tabs (or 16 spaces) indents to the next level, etc.");
-				strbldr.AppendLine("For ordered lists, use \"1.\" instead of \"*\"");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_linestip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Four hyphens makes a horizontal rule.");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_boldtip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Surround the text with three ticks (''').");
-				strbldr.AppendLine("For example, '''<b>this text will be bold</b>'''");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_italicstip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Surround the text with two ticks ('').");
-				strbldr.AppendLine("For example, ''<i>this text will be italic</i>''");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_headingtip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Bang (!) at the start of a line for H1.");
-				strbldr.AppendLine("Bang Bang (!!) at the start of a line for H2.");
-				strbldr.AppendLine("And so on...");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_hypertip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("Any PascalCased word becomes a link.");
-				strbldr.AppendLine("Surrounding a word with square brackets [ word ] will make non-pascalcased");
-				strbldr.AppendLine("words into links; generally this is considered \"odd\".");
-				strbldr.AppendLine("Any URL becomes a link (http://www.msn.com)");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_emoticonstip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("All the common emoticons like :-) and :-( are turned into the apprpriate");
-				strbldr.AppendLine("graphical images (like in messenger).");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("<div id=\"tip_tablestip\">");
-			    strbldr.AppendLine("<div class=\"tipBody\">");
-				strbldr.AppendLine("A line that starts and ends with || is a table row.  Cells are divided by ||.");
-				strbldr.AppendLine("For example: <br />");
-				strbldr.AppendLine("||Region || Sales||<br />");
-				strbldr.AppendLine("||East || $100||<br />");
-				strbldr.AppendLine("||West || $100||<br />");
-			    strbldr.AppendLine("</div>");
-		        strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_proptip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("A line that starts with a wiki word and a colon identifies a property.");
+                strbldr.AppendLine("The value of the property is everything on the line after the colon.");
+                strbldr.AppendLine("Multiline imports use PropertyName:[ and then multiple lines and then ] on a");
+                strbldr.AppendLine("blank line to mark the end.");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_imagetip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Any URL that ends with .gif, .jpeg, .jpg or .png will be turned into an image");
+                strbldr.AppendLine("tag to display the actual image.");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_pretip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Any line that starts with at least one space will be fixed-width formatted.");
+                strbldr.AppendLine("Good for code and simple tables.");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_liststip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Start a line with a tab (or 8 spaces) followed by a star \"*\".");
+                strbldr.AppendLine("Two tabs (or 16 spaces) indents to the next level, etc.");
+                strbldr.AppendLine("For ordered lists, use \"1.\" instead of \"*\"");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_linestip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Four hyphens makes a horizontal rule.");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_boldtip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Surround the text with three ticks (''').");
+                strbldr.AppendLine("For example, '''<b>this text will be bold</b>'''");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_italicstip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Surround the text with two ticks ('').");
+                strbldr.AppendLine("For example, ''<i>this text will be italic</i>''");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_headingtip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Bang (!) at the start of a line for H1.");
+                strbldr.AppendLine("Bang Bang (!!) at the start of a line for H2.");
+                strbldr.AppendLine("And so on...");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_hypertip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("Any PascalCased word becomes a link.");
+                strbldr.AppendLine("Surrounding a word with square brackets [ word ] will make non-pascalcased");
+                strbldr.AppendLine("words into links; generally this is considered \"odd\".");
+                strbldr.AppendLine("Any URL becomes a link (http://www.msn.com)");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_emoticonstip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("All the common emoticons like :-) and :-( are turned into the apprpriate");
+                strbldr.AppendLine("graphical images (like in messenger).");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("<div id=\"tip_tablestip\">");
+                strbldr.AppendLine("<div class=\"tipBody\">");
+                strbldr.AppendLine("A line that starts and ends with || is a table row.  Cells are divided by ||.");
+                strbldr.AppendLine("For example: <br />");
+                strbldr.AppendLine("||Region || Sales||<br />");
+                strbldr.AppendLine("||East || $100||<br />");
+                strbldr.AppendLine("||West || $100||<br />");
+                strbldr.AppendLine("</div>");
+                strbldr.AppendLine("</div>");
                 strbldr.AppendLine("</div>");
 
 
@@ -1030,22 +1027,22 @@ Add your wiki text here.
                     strbldr.AppendLine("<table class=\"SidebarTile\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\">");
                     strbldr.AppendLine("<tbody>");
                     strbldr.AppendLine("<tr>");
-                    strbldr.AppendLine("<td class=\"SidebarTileTitle\" valign=\"middle\">Spam Prevention</td>"); 
+                    strbldr.AppendLine("<td class=\"SidebarTileTitle\" valign=\"middle\">Spam Prevention</td>");
                     strbldr.AppendLine("</tr>");
                     strbldr.AppendLine("<tr class=\"SidebarTileBody\" valign=\"middle\">");
                     strbldr.AppendLine("<td>");
-                    strbldr.AppendLine("<div>"); 
+                    strbldr.AppendLine("<div>");
                     string captchaCode = GenerateNewCaptchaCode();
                     string aboutHref = TheLinkMaker.SimpleLinkTo("AboutCaptcha.html");
                     if (IsPost && !IsCaptchaVerified)
                     {
-                        strbldr.AppendLine("<span class=\"ErrorMessageBody\">To prevent automated spam attacks, you must properly enter the code shown below. Please enter the number you see in the box and then click Save. </span>"); 
+                        strbldr.AppendLine("<span class=\"ErrorMessageBody\">To prevent automated spam attacks, you must properly enter the code shown below. Please enter the number you see in the box and then click Save. </span>");
                     }
                     else
                     {
-                        strbldr.AppendLine("<span>Before saving, please enter the code you see below. </span>"); 
+                        strbldr.AppendLine("<span>Before saving, please enter the code you see below. </span>");
                     }
-                    strbldr.AppendLine("<br />"); 
+                    strbldr.AppendLine("<br />");
                     strbldr.AppendFormat("<a href=\"{0}\" target=\"_blank\">What's this?</a>", aboutHref);
                     strbldr.AppendLine("<br />");
                     string captchaHref = TheLinkMaker.SimpleLinkTo("CaptchaImage.ashx/" + captchaCode);
@@ -1053,9 +1050,9 @@ Add your wiki text here.
                     strbldr.AppendLine("<br />");
                     strbldr.AppendFormat("<input type=\"hidden\" name=\"CaptchaContext\" id=\"CaptchaContext\" value=\"{0}\" />", captchaCode);
                     strbldr.AppendLine("<input type=\"text\" name=\"CaptchaEntered\" id=\"CaptchaEntered\" value=\"\" />");
-                    strbldr.AppendLine("</div>"); 
-                    strbldr.AppendLine("</td>"); 
-                    strbldr.AppendLine("</tr>"); 
+                    strbldr.AppendLine("</div>");
+                    strbldr.AppendLine("</td>");
+                    strbldr.AppendLine("</tr>");
                     strbldr.AppendLine("</tbody>");
                     strbldr.AppendLine("</table>");
                 }
@@ -1108,7 +1105,7 @@ Add your wiki text here.
             }
             strbldr.AppendLine("<table><tr><td>");
             Response.Write(strbldr.ToString());
-            
+
 
         }
 
