@@ -312,8 +312,10 @@ namespace FlexWiki.Web
 
                     if (isDelete)
                     {
-                        returnTo = null;	// we won't be able to go back here because we're deleting it!
+                        TopicRevision homePage = new QualifiedTopicRevision(storeManager.Namespace + "." + storeManager.HomePage);	// we won't be able to go back here because we're deleting it!
+                        returnTo = null;
                         Federation.DeleteTopic(TheTopic);
+                        Response.Redirect(TheLinkMaker.LinkToTopic(homePage.ToString()));                      
                     }
 
                     if (back && ReturnTopic != null)
