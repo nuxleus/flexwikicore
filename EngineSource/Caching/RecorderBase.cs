@@ -40,6 +40,11 @@ namespace FlexWiki.Caching
             get { return _namespaceManager.Namespace; }
         }
 
+        protected NamespaceManager NamespaceManager
+        {
+            get { return _namespaceManager; }
+        }
+
         public abstract TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp);
         public abstract QualifiedTopicNameCollection AllTopics(); 
         public abstract void DeleteAllTopicsAndHistory();

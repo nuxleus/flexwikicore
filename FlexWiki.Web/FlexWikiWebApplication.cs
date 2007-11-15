@@ -201,6 +201,10 @@ namespace FlexWiki.Web
         {
             LogManager.GetLogger(source).Warn(message);
         }
+        public void NoteModification(Modification modification)
+        {
+            // TODO: Implement
+        }
         public string ResolveRelativePath(string path)
         {
             string configDir = Path.GetDirectoryName(_configPath);
@@ -310,5 +314,6 @@ namespace FlexWiki.Web
 
 
 
-    }
+
+   }
 }

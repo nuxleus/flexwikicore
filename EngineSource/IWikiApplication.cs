@@ -30,7 +30,8 @@ namespace FlexWiki
         void LogDebug(string source, string message);
         void LogError(string source, string message);
         void LogInfo(string source, string message);
-        void LogWarning(string source, string message); 
+        void LogWarning(string source, string message);
+        void NoteModification(Modification modification);
         string ResolveRelativePath(string path); 
         void WriteFederationConfiguration();
 		/// <summary>
@@ -44,5 +45,6 @@ namespace FlexWiki
 		/// <param name="key">The key of the value to get.</param>
 		/// <returns>The value associated with the specified <paramref name="key"/>. If the specified key is not found, null is returned.</returns>
 		object this[string key] { get; }
+
     }
 }

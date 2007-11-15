@@ -112,7 +112,7 @@ namespace FlexWiki
         {
             if (Current != null)
             {
-                if (options != RequestContextOptions.UnitTestConfiguration)
+                if (options != RequestContextOptions.AllowNestedContext)
                 {
                     throw new NestedContextUnexpectedException(); 
                 }

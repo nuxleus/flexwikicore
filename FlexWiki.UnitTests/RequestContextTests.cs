@@ -110,7 +110,7 @@ namespace FlexWiki.UnitTests
                 RequestContext.Current["foo"] = "bar";
                 RequestContext.Current.Dependencies.Add(new NamespaceExistenceDependency("Outer")); 
 
-                using (RequestContext inner = RequestContext.Create(RequestContextOptions.UnitTestConfiguration))
+                using (RequestContext inner = RequestContext.Create(RequestContextOptions.AllowNestedContext))
                 {
                     Assert.AreNotSame(inner, outer, "Checking that a new context was created.");
                     RequestContext.Current["foo"] = "blah";
@@ -127,21 +127,6 @@ namespace FlexWiki.UnitTests
 
             }
         }
-
-
-        //[Test]
-        //public void NewContextOverridesOld()
-        //{
-        //    RequestContext context1 = RequestContext.Create();
-
-        //    RequestContext context2 = RequestContext.Create();
-
-        //    Assert.AreNotSame(context1, context2,
-        //        "Checking that if a context is leaked, the next creation overwrites it.");
-
-        //    Assert.AreSame(context2, RequestContext.Current,
-        //        "Checking that if a context is leaked, the next creation establishes a new current context."); 
-        //}
 
         [Test]
         public void NullWhenOutsideUsing()

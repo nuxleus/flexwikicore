@@ -134,7 +134,6 @@ namespace FlexWiki.UnitTests
 
             return changes;
         }
-
         public override QualifiedTopicNameCollection AllTopics()
         {
             _allTopicsCalled = true; 
@@ -148,34 +147,20 @@ namespace FlexWiki.UnitTests
 
             return topics;
         }
-
         public override void DeleteAllTopicsAndHistory()
         {
             _topics.Clear();
         }
-
         public override void DeleteTopic(UnqualifiedTopicName topicName)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.All);
 
             topic.DeleteLatest();
         }
-
-        //public IList<TopicProperty> GetTopicProperty(LocalTopicName topicName, string propertyName)
-        //{
-        //  string content = GetTopicContents(topicName); 
-
-        //  if (content != null)
-        //  {
-        //    TopicParser parser = new TopicParser();
-        //    ParsedTopic parsedTopic = parser.Parse(content);
-
-        //    return parsedTopic.GetProperty(propertyName);
-        //  }
-
-        //  return null;
-        //}
-
+        public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
+        {
+            return null; 
+        }
         public override void Initialize(NamespaceManager manager)
         {
             base.Initialize(manager); 
@@ -210,14 +195,12 @@ namespace FlexWiki.UnitTests
                 throw new ArgumentException("Unrecognized TopicPermission " + permission.ToString()); 
             }
         }
-
         public override void LockTopic(UnqualifiedTopicName topic)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             mockTopic.Latest.CanRead = true;
             mockTopic.Latest.CanWrite = false; 
         }
-
         public override bool TopicExists(UnqualifiedTopicName name)
         {
             _topicExistsCalled = true; 
@@ -257,13 +240,11 @@ namespace FlexWiki.UnitTests
 
             return new StringReader(history.Contents);
         }
-
         public override void UnlockTopic(UnqualifiedTopicName topic)
         {
             MockTopic mockTopic = GetTopic(topic, ExistencePolicy.ExistingOnly);
             mockTopic.Latest.CanWrite = true;
         }
-
         public override void WriteTopic(UnqualifiedTopicRevision revision, string content)
         {
             MockTopic topic = RetrieveOrCreateTopic(revision.LocalName);

@@ -113,6 +113,10 @@ namespace FlexWiki.Web.UnitTests
         {
             // no-op
         }
+        public void NoteModification(Modification modification)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
         public string ResolveRelativePath(string path)
         {
             return System.IO.Path.Combine("FW:\\", path);

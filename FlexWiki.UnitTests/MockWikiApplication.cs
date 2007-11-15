@@ -18,19 +18,20 @@ using System.Xml.Serialization;
 using FlexWiki.Caching; 
 using FlexWiki.UnitTests.Caching;
 using FlexWiki.Web;
+using FlexWiki.Collections;
 
 namespace FlexWiki.UnitTests
 {
     internal class MockWikiApplication : IWikiApplication
     {
+        private FlexWikiWebApplicationConfiguration _applicationConfiguration;
         private MockCache _cache = new MockCache(); 
         private FederationConfiguration _configuration;
-        private FlexWikiWebApplicationConfiguration _applicationConfiguration;
         private bool _isTransportSecure; 
         private LinkMaker _linkMaker;
+        private readonly ModificationCollection _modificationsReported = new ModificationCollection(); 
         private OutputFormat _ouputFormat;
         private ITimeProvider _timeProvider; 
-
 
         public MockWikiApplication(FederationConfiguration configuration, LinkMaker linkMaker,
             OutputFormat outputFormat, ITimeProvider timeProvider)
@@ -78,6 +79,11 @@ namespace FlexWiki.UnitTests
             get { return _linkMaker; }
         }
 
+        public ModificationCollection ModificationsReported
+        {
+            get { return _modificationsReported; }
+        }
+
         public OutputFormat OutputFormat
         {
             get { return _ouputFormat; }
@@ -112,6 +118,10 @@ namespace FlexWiki.UnitTests
         public void LogWarning(string source, string message)
         {
             // no-op
+        }
+        public void NoteModification(Modification modification)
+        {
+            _modificationsReported.Add(modification); 
         }
         public string ResolveRelativePath(string path)
         {
@@ -251,6 +261,5 @@ namespace FlexWiki.UnitTests
             _applicationConfiguration = (FlexWikiWebApplicationConfiguration)serializer.Deserialize(reader);
 
         }
-
     }
 }

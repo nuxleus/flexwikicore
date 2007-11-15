@@ -939,7 +939,8 @@ namespace FlexWiki
         {
             // These are the default providers that every namespace gets. Later we might
             // want to make these configurable
-            IContentProvider providerChain = new BuiltinTopicsProvider(contentStore); 
+            IContentProvider providerChain = new ModificationRecorder(contentStore); 
+            providerChain = new BuiltinTopicsProvider(providerChain); 
             providerChain = new ParsingProvider(providerChain);
             providerChain = new TopicCacheProvider(providerChain); 
             providerChain = new AuthorizationProvider(providerChain);

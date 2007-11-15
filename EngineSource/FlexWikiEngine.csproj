@@ -636,15 +636,24 @@
   <ItemGroup>
     <Compile Include="BelArrayEntry.cs" />
     <Compile Include="Caching\DependencyRecorder.cs" />
-    <Compile Include="Caching\MissingContextException.cs" />
+    <Compile Include="Caching\Modification.cs" />
     <Compile Include="Caching\ModificationRecorder.cs" />
+    <Compile Include="Caching\NamespaceContentsDeletedModification.cs" />
+    <Compile Include="Caching\NamespaceModification.cs" />
+    <Compile Include="Caching\NamespacePropertiesModification.cs" />
     <Compile Include="Caching\RecorderBase.cs" />
     <Compile Include="Caching\TopicCacheKey.cs" />
     <Compile Include="Caching\IWikiCache.cs" />
     <Compile Include="Caching\NullCache.cs" />
     <Compile Include="Caching\TopicCacheProvider.cs" />
     <Compile Include="Caching\TopicChangesCacheItem.cs" />
+    <Compile Include="Caching\TopicContentsModification.cs" />
+    <Compile Include="Caching\TopicDeletedModification.cs" />
+    <Compile Include="Caching\TopicListModification.cs" />
+    <Compile Include="Caching\TopicModification.cs" />
+    <Compile Include="Caching\TopicPermissionsModification.cs" />
     <Compile Include="Collections\DependencyCollection.cs" />
+    <Compile Include="Collections\ModificationCollection.cs" />
     <Compile Include="CustomSorter.cs">
       <SubType>Code</SubType>
     </Compile>

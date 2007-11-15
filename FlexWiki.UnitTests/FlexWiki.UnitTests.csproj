@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="Caching\DependencyRecorderTests.cs" />
     <Compile Include="Caching\MockCache.cs" />
+    <Compile Include="Caching\ModificationRecorderTests.cs" />
     <Compile Include="Caching\TopicCacheProviderTests.cs" />
     <Compile Include="FederationConfigurationSerializationTests.cs" />
     <Compile Include="Formatting\BehaviorTests.cs" />

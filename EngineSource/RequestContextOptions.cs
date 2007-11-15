@@ -6,7 +6,7 @@ namespace FlexWiki
 {
     public enum RequestContextOptions
     {
-        UnitTestConfiguration,
+        AllowNestedContext,
         None, 
     }
 }

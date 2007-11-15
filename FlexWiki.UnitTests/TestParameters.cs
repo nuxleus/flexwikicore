@@ -13,6 +13,11 @@ namespace FlexWiki.UnitTests
         private TProvider _provider;
         private MockContentStore _store;
 
+        public MockWikiApplication Application
+        {
+            get { return _federation.Application as MockWikiApplication; }
+        }
+
         public MockCache Cache
         {
             get { return _cache; }
