@@ -20,11 +20,11 @@ namespace FlexWiki.Security
     {
         private string _name;
         private AuthorizationRuleWhoType _whoType;
+        private readonly Dictionary<string, SecurityIdentifier> _windowsRoleCache = new Dictionary<string, SecurityIdentifier>(); 
 
         public AuthorizationRuleWho(AuthorizationRuleWhoType whoType) : this(whoType, null)
         {
         }
-
         public AuthorizationRuleWho(AuthorizationRuleWhoType whoType, string who)
         {
             _name = who;
@@ -45,17 +45,52 @@ namespace FlexWiki.Security
                 }
             }
         }
-
         public string Who
         {
             get { return _name; }
         }
-
         public AuthorizationRuleWhoType WhoType
         {
             get { return _whoType; }
         }
 
+        public bool IsMatch(IPrincipal principal)
+        {
+            if (_whoType == AuthorizationRuleWhoType.GenericAll)
+            {
+                return true;
+            }
+            else if (_whoType == AuthorizationRuleWhoType.GenericAnonymous)
+            {
+                return !principal.Identity.IsAuthenticated;
+            }
+            else if (_whoType == AuthorizationRuleWhoType.GenericAuthenticated)
+            {
+                return principal.Identity.IsAuthenticated;
+            }
+            else if (_whoType == AuthorizationRuleWhoType.Role)
+            {
+                return IsInRole(principal, _name);
+            }
+            else if (_whoType == AuthorizationRuleWhoType.User)
+            {
+                return _name.Equals(principal.Identity.Name, StringComparison.CurrentCultureIgnoreCase);
+            }
+            else
+            {
+                throw new NotImplementedException("Principal type not supported: " + _whoType.ToString());
+            }
+        }
+        public static AuthorizationRuleWho Parse(string input)
+        {
+            AuthorizationRuleWho who;
+            if (!TryParse(input, out who))
+            {
+                throw new FormatException("Unrecognized input string " + input);
+            }
+
+            return who; 
+        }
         public override string ToString()
         {
             if (WhoType == AuthorizationRuleWhoType.User)
@@ -64,7 +99,7 @@ namespace FlexWiki.Security
             }
             else if (WhoType == AuthorizationRuleWhoType.Role)
             {
-                return  StringLiterals.RolePrefix + Who;
+                return StringLiterals.RolePrefix + Who;
             }
             else if (WhoType == AuthorizationRuleWhoType.GenericAuthenticated)
             {
@@ -83,19 +118,6 @@ namespace FlexWiki.Security
                 throw new NotImplementedException();
             }
         }
-
-        public static AuthorizationRuleWho Parse(string input)
-        {
-            AuthorizationRuleWho who;
-            if (!TryParse(input, out who))
-            {
-                throw new FormatException("Unrecognized input string " + input);
-            }
-
-            return who; 
-        }
-
-
         public static bool TryParse(string input, out AuthorizationRuleWho who)
         {
             who = null; 
@@ -132,34 +154,15 @@ namespace FlexWiki.Security
             return true;             
         }
 
-        public bool IsMatch(IPrincipal principal)
+        private SecurityIdentifier GetRoleSidFromCache(string role)
         {
-            if (_whoType == AuthorizationRuleWhoType.GenericAll)
+            if (!_windowsRoleCache.ContainsKey(role))
             {
-                return true; 
+                _windowsRoleCache.Add(role, (SecurityIdentifier)new NTAccount(role).Translate(typeof(SecurityIdentifier)));
             }
-            else if (_whoType == AuthorizationRuleWhoType.GenericAnonymous)
-            {
-                return !principal.Identity.IsAuthenticated; 
-            }
-            else if (_whoType == AuthorizationRuleWhoType.GenericAuthenticated)
-            {
-                return principal.Identity.IsAuthenticated; 
-            }
-            else if (_whoType == AuthorizationRuleWhoType.Role)
-            {
-                return principal.IsInRole(_name); 
-            }
-            else if (_whoType == AuthorizationRuleWhoType.User)
-            {
-                return _name.Equals(principal.Identity.Name, StringComparison.CurrentCultureIgnoreCase);
-            }
-            else
-            {
-                throw new NotImplementedException("Principal type not supported: " + _whoType.ToString()); 
-            }
-        }
 
+            return _windowsRoleCache[role];
+        }
         private static bool IsGeneric(AuthorizationRuleWhoType whoType)
         {
             if (whoType == AuthorizationRuleWhoType.GenericAll ||
@@ -179,6 +182,29 @@ namespace FlexWiki.Security
             }
 
         }
+        private bool IsInRole(IPrincipal principal, string role)
+        {
+            // We need to special-case WindowsPrincipal because IsInRole spikes the 
+            // CPU when we call it a lot. We just cache it forever, because roles 
+            // don't change that often. Process will need to be torn down and restarted
+            // in order to flush the cache. 
+            if (principal is WindowsPrincipal)
+            {
+                WindowsPrincipal windowsPrincipal = principal as WindowsPrincipal;
 
+                SecurityIdentifier sid = GetRoleSidFromCache(role);
+
+                if (sid == null)
+                {
+                    return false; 
+                }
+
+                return windowsPrincipal.IsInRole(sid); 
+            }
+            else
+            {
+                return principal.IsInRole(role);
+            }
+        }
     }
 }
