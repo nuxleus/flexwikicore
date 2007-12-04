@@ -526,7 +526,7 @@ namespace FlexWiki.Security
 
             foreach (AuthorizationRule rule in rules)
             {
-                if (rule.Who.IsMatch(Thread.CurrentPrincipal))
+                if (rule.Who.IsMatch(Thread.CurrentPrincipal, Federation.Application.Cache))
                 {
                     if (rule.Polarity == AuthorizationRulePolarity.Allow)
                     {

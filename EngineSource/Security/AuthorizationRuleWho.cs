@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Principal;
+using FlexWiki.Caching;
 
 namespace FlexWiki.Security
 {
@@ -56,6 +57,10 @@ namespace FlexWiki.Security
 
         public bool IsMatch(IPrincipal principal)
         {
+            return IsMatch(principal, null); 
+        }
+        public bool IsMatch(IPrincipal principal, IWikiCache cache)
+        {
             if (_whoType == AuthorizationRuleWhoType.GenericAll)
             {
                 return true;
@@ -70,7 +75,41 @@ namespace FlexWiki.Security
             }
             else if (_whoType == AuthorizationRuleWhoType.Role)
             {
-                return IsInRole(principal, _name);
+                string key = null; 
+                if (cache != null)
+                {
+                    // We cache role authentication because it can get really expensive. 
+                    // Specifically, we noticed that WindowsPrincipal.IsInRole causes
+                    // massive CPU utilization
+                    string principalName;
+
+                    if (principal.Identity.IsAuthenticated)
+                    {
+                        principalName = "user:" + principal.Identity.Name;
+                    }
+                    else
+                    {
+                        principalName = "anonymous";
+                    }
+
+                    key = string.Format("authorization-identity://IsInRole/{0}/{1}",
+                        _name, principalName);
+
+                    object value = cache[key];
+
+                    if (value != null && value is bool)
+                    {
+                        return (bool)value; 
+                    }
+                }
+                bool isInRole = principal.IsInRole(_name);
+
+                if (cache != null)
+                {
+                    cache[key] = isInRole; 
+                }
+
+                return isInRole; 
             }
             else if (_whoType == AuthorizationRuleWhoType.User)
             {
@@ -154,15 +193,6 @@ namespace FlexWiki.Security
             return true;             
         }
 
-        private SecurityIdentifier GetRoleSidFromCache(string role)
-        {
-            if (!_windowsRoleCache.ContainsKey(role))
-            {
-                _windowsRoleCache.Add(role, (SecurityIdentifier)new NTAccount(role).Translate(typeof(SecurityIdentifier)));
-            }
-
-            return _windowsRoleCache[role];
-        }
         private static bool IsGeneric(AuthorizationRuleWhoType whoType)
         {
             if (whoType == AuthorizationRuleWhoType.GenericAll ||
@@ -181,30 +211,6 @@ namespace FlexWiki.Security
                 throw new ArgumentException("Unsupported whoType " + whoType.ToString()); 
             }
 
-        }
-        private bool IsInRole(IPrincipal principal, string role)
-        {
-            // We need to special-case WindowsPrincipal because IsInRole spikes the 
-            // CPU when we call it a lot. We just cache it forever, because roles 
-            // don't change that often. Process will need to be torn down and restarted
-            // in order to flush the cache. 
-            if (principal is WindowsPrincipal)
-            {
-                WindowsPrincipal windowsPrincipal = principal as WindowsPrincipal;
-
-                SecurityIdentifier sid = GetRoleSidFromCache(role);
-
-                if (sid == null)
-                {
-                    return false; 
-                }
-
-                return windowsPrincipal.IsInRole(sid); 
-            }
-            else
-            {
-                return principal.IsInRole(role);
-            }
         }
     }
 }
