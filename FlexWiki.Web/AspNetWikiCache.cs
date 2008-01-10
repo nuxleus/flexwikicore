@@ -22,7 +22,6 @@ namespace FlexWiki.Web
 {
     internal class AspNetWikiCache : IWikiCache
     {
-		
 		public string[] Keys
         {
             get
@@ -38,17 +37,22 @@ namespace FlexWiki.Web
                 return keys.ToArray(); 
             }
         }
-		
 		public object this[string key]
         {
             get
             {
-				if (HttpContext.Current == null) return null;
+                if (HttpContext.Current == null)
+                {
+                    return null;
+                }
                 return HttpContext.Current.Cache[key]; 
             }
             set
             {
-				if (HttpContext.Current == null) return;
+                if (HttpContext.Current == null)
+                {
+                    return;
+                }
 
                 if (value == null)
                 {
@@ -60,7 +64,6 @@ namespace FlexWiki.Web
                 }
             }
         }
-		
 
 		public void Clear()
         {
@@ -72,7 +75,5 @@ namespace FlexWiki.Web
                 HttpContext.Current.Cache.Remove(key);
             }
         }
-		
-
     }
 }

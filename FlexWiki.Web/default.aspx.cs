@@ -20,6 +20,8 @@ using System.Web.UI.HtmlControls;
 using FlexWiki;
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
+using System.Web;
+using System.Threading;
 
 namespace FlexWiki.Web
 {
@@ -67,6 +69,7 @@ namespace FlexWiki.Web
         }
 
         private LogEvent MainEvent;
+
         protected void StartPage()
         {
             if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads) != null)
@@ -76,12 +79,10 @@ namespace FlexWiki.Web
             VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
             LogVisitorEvent(e);
         }
-
         protected void EndPage()
         {
             MainEvent.Record();
         }
-
         protected string GetTitle()
         {
             StringBuilder titlebldr = new StringBuilder();
@@ -92,7 +93,6 @@ namespace FlexWiki.Web
             }
             return HtmlStringWriter.Escape(title);
         }
-
         protected string InitHead()
         {
             StringBuilder initbldr = new StringBuilder();
@@ -105,7 +105,6 @@ namespace FlexWiki.Web
             return initHead;
 
         }
-
         protected string DoHead()
         {
             StringBuilder headbldr = new StringBuilder();
@@ -214,9 +213,30 @@ namespace FlexWiki.Web
 
             return head;
         }
-
-
         protected string DoPage()
+        {
+            return DoPageImplementation(); 
+        }
+
+        private string CreateCacheKey(string id)
+        {
+            return string.Format("{0}-{1}-{2}",
+                HttpContext.Current.Request.Url.ToString(),
+                UserId(),
+                id); 
+        }
+        private string UserId()
+        {
+            if (Thread.CurrentPrincipal.Identity.IsAuthenticated)
+            {
+                return "authenticated:" + Thread.CurrentPrincipal.Identity.Name;
+            }
+            else
+            {
+                return "anonymous"; 
+            }
+        }
+        private string DoPageImplementation()
         {
             QualifiedTopicRevision topic = GetTopicVersionKey();
             NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
@@ -263,9 +283,12 @@ namespace FlexWiki.Web
 
             //////////////////////////
             ///
-
             // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-            string formattedBody = Federation.GetTopicFormattedContent(topic, diffVersion);
+            string formattedBody = WikiApplication.CachedRender(
+                CreateCacheKey("FormattedBody"), 
+                delegate { 
+                    return Federation.GetTopicFormattedContent(topic, diffVersion); 
+                });
 
 
             StringBuilder leftBorder = new StringBuilder();
@@ -278,28 +301,55 @@ namespace FlexWiki.Web
             string temptop;
             string tempbottom;
 
-            templeft = Federation.GetTopicFormattedBorder(topic, Border.Left);
+            templeft = WikiApplication.CachedRender(
+                CreateCacheKey("LeftBorder"),
+                delegate
+                {
+                    return Federation.GetTopicFormattedBorder(topic, Border.Left);
+                }); 
+
             if (!String.IsNullOrEmpty(templeft))
             {
                 leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
                 leftBorder.AppendLine(templeft);
                 leftBorder.AppendLine("</div>");
             }
-            tempright = Federation.GetTopicFormattedBorder(topic, Border.Right);
+
+            tempright = WikiApplication.CachedRender(
+                CreateCacheKey("RightBorder"),
+                delegate
+                {
+                    return Federation.GetTopicFormattedBorder(topic, Border.Right);
+                }); 
+
             if (!String.IsNullOrEmpty(tempright))
             {
                 rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
                 rightBorder.AppendLine(tempright);
                 rightBorder.AppendLine("</div>");
             }
-            temptop = Federation.GetTopicFormattedBorder(topic, Border.Top);
+
+            temptop = WikiApplication.CachedRender(
+                CreateCacheKey("TopBorder"),
+                delegate
+                {
+                    return Federation.GetTopicFormattedBorder(topic, Border.Top);
+                }); 
+
             if (!String.IsNullOrEmpty(temptop))
             {
                 topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
                 topBorder.AppendLine(temptop);
                 topBorder.AppendLine("</div>");
             }
-            tempbottom = Federation.GetTopicFormattedBorder(topic, Border.Bottom);
+
+            tempbottom = WikiApplication.CachedRender(
+                CreateCacheKey("BottomBorder"),
+                delegate
+                {
+                    return Federation.GetTopicFormattedBorder(topic, Border.Bottom);
+                }); 
+
             if (!String.IsNullOrEmpty(tempbottom))
             {
                 bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
@@ -357,7 +407,6 @@ namespace FlexWiki.Web
 
             return page;
         }
-
         private void WriteRecentPane()
         {
             OpenPane(Response.Output, "Recent Topics");

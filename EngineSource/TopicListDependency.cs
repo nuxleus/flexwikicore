@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FlexWiki.Caching;
 
 namespace FlexWiki
 {
@@ -10,5 +11,6 @@ namespace FlexWiki
             : base(ns)
         {
         }
+
     }
 }

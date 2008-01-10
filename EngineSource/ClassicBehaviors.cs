@@ -57,6 +57,12 @@ namespace FlexWiki
         {
             get
             {
+                if (RequestContext.Current != null)
+                {
+                    // We can't cache anything where we rely on the current date. 
+                    RequestContext.Current.SetUncacheable();
+                }
+
                 return DateTime.Now;
             }
         }
@@ -372,6 +378,13 @@ namespace FlexWiki
                     result = "Failed to Transform " + ex.Message;
                 }
             }
+
+            if (RequestContext.Current != null)
+            {
+                // We can't cache here because there may be dependencies on (e.g.) the time. 
+                RequestContext.Current.SetUncacheable();
+            }
+
             return result;
         }
 

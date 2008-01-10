@@ -21,12 +21,15 @@ using log4net;
 using log4net.Config;
 using log4net.Core;
 
-using FlexWiki.Caching; 
+using FlexWiki.Caching;
+using FlexWiki.Collections; 
 
 namespace FlexWiki.Web
 {
     public class FlexWikiWebApplication : IWikiApplication
     {
+        // Constants
+        private const string c_outputCachePrefix = "outputCache://"; 
 
         // Fields 
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
@@ -132,6 +135,26 @@ namespace FlexWiki.Web
         {
             get { return _outputFormat; }
         }
+        public TimeSpan OutputCacheDuration
+        {
+            get
+            {
+                if (!ApplicationConfiguration.OutputCacheDurationSpecified)
+                {
+                    return TimeSpan.Zero;
+                }
+                else
+                {
+                    TimeSpan value;
+                    if (TimeSpan.TryParse(ApplicationConfiguration.OutputCacheDuration, out value))
+                    {
+                        return value; 
+                    }
+
+                    return TimeSpan.Zero;
+                }
+            }
+        }
 		/// <summary>
 		/// Gets or sets the properties available outside of this IWikiApplication. <see cref="IWikiApplication.this[string]"/>
 		/// </summary>
@@ -153,16 +176,39 @@ namespace FlexWiki.Web
         }
 
         // Methods
+        public string CachedRender(string cacheKey, CachedRenderCallback renderCallback)
+        {
+            if (OutputCacheDuration.Equals(TimeSpan.Zero))
+            {
+                return renderCallback(); 
+            }
 
-        //public void AppendToLog(string logfile, string message)
-        //{
-        //    string logpath = Path.Combine(Path.GetDirectoryName(_configPath), logfile);
+            cacheKey = c_outputCachePrefix + cacheKey; 
+            CachedRenderResult cachedRenderResult = Cache[cacheKey] as CachedRenderResult; 
+            if (cachedRenderResult != null)
+            {
+                TimeSpan sinceCached = TimeProvider.Now - cachedRenderResult.WhenRendered; 
+                // This next line would be great to have, but it fails under IIS7 due to not
+                // running in integrated pipeline mode. 
+                //HttpContext.Current.Response.Headers.Add("X-FlexWiki-RenderedFromCacheKey", cacheKey);
+                if (sinceCached < OutputCacheDuration)
+                {
+                    LogDebug("FlexWiki.Web.FlexWikiWebApplication", "Rendering " + cacheKey + " from cache."); 
+                    return FormatCachedContents(cachedRenderResult.Contents, cacheKey);
+                }
+            }
 
-        //    using (StreamWriter streamWriter = File.AppendText(logpath))
-        //    {
-        //        streamWriter.WriteLine(message);
-        //    }
-        //}
+            using (RequestContext.Create())
+            {
+                string contents = renderCallback();
+                DependencyCollection dependencies = RequestContext.Current.Dependencies;
+                if (!RequestContext.Current.IsUncacheable)
+                {
+                    Cache[cacheKey] = new CachedRenderResult(contents, dependencies, TimeProvider.Now);
+                }
+                return contents; 
+            }
+        }
         public void Log(string source, LogLevel level, string message)
         {
             if (level == LogLevel.Debug)
@@ -203,7 +249,20 @@ namespace FlexWiki.Web
         }
         public void NoteModification(Modification modification)
         {
-            // TODO: Implement
+            foreach (string key in Cache.Keys)
+            {
+                if (key.StartsWith(c_outputCachePrefix))
+                {
+                    CachedRenderResult cachedRenderResult = Cache[key] as CachedRenderResult;
+                    if (cachedRenderResult != null)
+                    {
+                        if (cachedRenderResult.Dependencies.IsInvalidatedBy(modification))
+                        {
+                            Cache[key] = null; 
+                        }
+                    }
+                }
+            }
         }
         public string ResolveRelativePath(string path)
         {
@@ -235,6 +294,11 @@ namespace FlexWiki.Web
             }
         }
 
+        private string FormatCachedContents(string contents, string key)
+        {
+            return string.Format("<!-- Begin item ({0}) rendered from cache at {1} -->{2}<!-- End item ({0}) rendered from cache -->",
+                key, TimeProvider.Now, contents); 
+        }
         private static string GetFlexWikiConfigurationPath()
         {
             string configPath = System.Configuration.ConfigurationManager.AppSettings["FlexWikiConfigurationPath"];
@@ -310,10 +374,5 @@ namespace FlexWiki.Web
         //    LogInfo(this.GetType().ToString(), "Wiki configuration file changed. Reloading.");
         //    LoadConfiguration();
         //}
-
-
-
-
-
-   }
+    }
 }

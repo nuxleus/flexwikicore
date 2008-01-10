@@ -16,6 +16,7 @@ using System.Security.Principal;
 using System.Threading;
 
 using FlexWiki.Collections;
+using FlexWiki.Caching;
 
 namespace FlexWiki.Security
 {
@@ -311,12 +312,16 @@ namespace FlexWiki.Security
                 // You need ManageNamespace permission to edit the definition topic
                 AssertNamespacePermission(SecurableAction.ManageNamespace);
                 InvalidateAllCachedPermissions();
+                RecordModification(new NamespacePermissionsModification(Namespace)); 
             }
             else
             {
                 // For all other topics, Edit will do.
                 AssertTopicPermission(topicRevision.AsUnqualifiedTopicName(), TopicPermission.Edit);
                 InvalidateCachedPermissions(topicRevision.AsUnqualifiedTopicName());
+                RecordModification(
+                    new TopicPermissionsModification(
+                        topicRevision.AsUnqualifiedTopicName().ResolveRelativeTo(Namespace))); 
             }
             using (CreateRecursionContext())
             {
@@ -559,6 +564,10 @@ namespace FlexWiki.Security
                 definitionTopicName = new UnqualifiedTopicName(_namespaceManager.DefinitionTopicName.LocalName);
             }
             return unqualifiedTopicName.Equals(definitionTopicName);
+        }
+        private void RecordModification(Modification modification)
+        {
+            Federation.Application.NoteModification(modification); 
         }
         private T RetrieveFromCache<T>(string key) where T : class
         {

@@ -153,6 +153,10 @@ namespace FlexWiki.Web
                 return _userPrefix;
             }
         }
+        protected FlexWikiWebApplication WikiApplication
+        {
+            get { return Federation.Application as FlexWikiWebApplication; }
+        }
 
         public static void Spit(string s)
         {

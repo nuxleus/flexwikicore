@@ -26,7 +26,8 @@ namespace FlexWiki
         [ThreadStatic]
         private static Stack<RequestContext> s_contextChain;
 
-        private DependencyCollection _dependencies = new DependencyCollection(); 
+        private DependencyCollection _dependencies = new DependencyCollection();
+        private bool _isUncacheable; 
         private Dictionary<string, object> _items = new Dictionary<string, object>();
 
         private RequestContext()
@@ -59,6 +60,10 @@ namespace FlexWiki
                 _items.Keys.CopyTo(keys, 0);
                 return keys; 
             }
+        }
+        public bool IsUncacheable
+        {
+            get { return _isUncacheable; }
         }
 
         public object this[string key]
@@ -132,6 +137,11 @@ namespace FlexWiki
             {
                 Current.Dependencies.AddRange(previous.Dependencies); 
             }
+        }
+
+        public void SetUncacheable()
+        {
+            _isUncacheable = true; 
         }
     }
 }

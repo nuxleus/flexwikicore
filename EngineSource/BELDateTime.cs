@@ -193,6 +193,11 @@ namespace FlexWiki
 		{
 			get
 			{
+                if (RequestContext.Current != null)
+                {
+                    // We can't cache anything where we rely on the current date. 
+                    RequestContext.Current.SetUncacheable();
+                }
 				return DateTime.Today;
 			}
 		}
@@ -202,7 +207,12 @@ namespace FlexWiki
 		{
 			get
 			{
-				return DateTime.UtcNow;
+                if (RequestContext.Current != null)
+                {
+                    // We can't cache anything where we rely on the current date. 
+                    RequestContext.Current.SetUncacheable();
+                }
+                return DateTime.UtcNow;
 			}
 		}
 
@@ -211,6 +221,11 @@ namespace FlexWiki
 		{
 			get
 			{
+                if (RequestContext.Current != null)
+                {
+                    // We can't cache anything where we rely on the current date. 
+                    RequestContext.Current.SetUncacheable(); 
+                }
 				return DateTime.Now;
 			}
 		}

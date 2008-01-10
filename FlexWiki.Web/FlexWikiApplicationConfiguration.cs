@@ -46,6 +46,8 @@ namespace FlexWiki.Web
         private string _sendNamespaceCreationRequestsTo;
         private string _sendNamespaceRequestMailFrom;
         private bool _signNamespaceCreationMail;
+        private string _outputCacheDuration;
+        private bool _outputCacheDurationSpecified; 
         
         // Properties
 
@@ -181,6 +183,17 @@ namespace FlexWiki.Web
         {
             get { return _signNamespaceCreationMail; }
             set { _signNamespaceCreationMail = value; }
+        }
+        public string OutputCacheDuration
+        {
+            get { return _outputCacheDuration; }
+            set { _outputCacheDuration = value; }
+        }
+        [XmlIgnore]
+        public bool OutputCacheDurationSpecified
+        {
+            get { return _outputCacheDurationSpecified; }
+            set { _outputCacheDurationSpecified = value; }
         }
 
     }

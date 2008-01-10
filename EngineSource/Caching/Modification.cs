@@ -20,5 +20,6 @@ namespace FlexWiki.Caching
         {
             return base.GetHashCode();
         }
+
     }
 }

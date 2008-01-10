@@ -245,6 +245,8 @@
     <Compile Include="Analysis\Ocean.cs" />
     <Compile Include="AspNetWikiCache.cs" />
     <Compile Include="AttachmentIconConfiguration.cs" />
+    <Compile Include="CachedRenderCallback.cs" />
+    <Compile Include="CachedRenderResult.cs" />
     <Compile Include="CaptchaImage.cs" />
     <Compile Include="CaptchaImageHandler.cs" />
     <Compile Include="CaptchaRequired.cs" />

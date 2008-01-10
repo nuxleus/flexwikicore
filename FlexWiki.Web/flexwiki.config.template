@@ -282,7 +282,14 @@
           newsletters will appear in the body of the email.-->
     <SendAsAttachments>false</SendAsAttachments>
   </NewsletterConfiguration>
-  
+
+  <!-- FlexWiki caches the results of rendering a particular page to make subsequent
+        rendering faster. However, results are only cached for a short amount of time, 
+        to avoid accidentally storing wrong results for too long. This value, if present, 
+        determines how long cached results are held for. If not present, the cache is disabled.
+  -->
+  <!-- <OutputCacheDuration>00:10:00</OutputCacheDuration> -->
+
   <!-- If there are AlternateStylesheet elements, then 
         <LINK rel='alternate stylesheet' type='text/css' title='@Title' > 
         tags will be emitted into the <head> of every page, allowing the admin 
