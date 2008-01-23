@@ -338,6 +338,7 @@ namespace FlexWiki.Web
                     fileStream.Close();
                 }
             }
+            this["DisableEditServiceWrite"] = _applicationConfiguration.DisableEditServiceWrite;
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)

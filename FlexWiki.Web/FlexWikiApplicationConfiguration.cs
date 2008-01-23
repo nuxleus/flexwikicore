@@ -29,6 +29,7 @@ namespace FlexWiki.Web
         private int _captchaLinkThreshold;
         private string _contentUploadPath;
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
+        private bool _disableEditServiceWrite = false;
         private bool _disableRenameFixup;
         private bool _disableXslTransform = false;
         private bool _disableThreadedMessaging = false;
@@ -98,6 +99,11 @@ namespace FlexWiki.Web
         {
             get { return _defaultNamespaceProviderForNamespaceCreation; }
             set { _defaultNamespaceProviderForNamespaceCreation = value; }
+        }
+        public bool DisableEditServiceWrite
+        {
+            get { return _disableEditServiceWrite; }
+            set { _disableEditServiceWrite = value; }
         }
         public bool DisableRenameFixup
         {

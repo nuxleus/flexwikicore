@@ -25,6 +25,7 @@ using System.Web.Services.Protocols;
 using System.Xml;
 
 using FlexWiki;
+using FlexWiki.Web;
 
 namespace FlexWiki.Web.Services
 {
@@ -270,8 +271,16 @@ namespace FlexWiki.Web.Services
         [WebMethod]
         public void SetTextForTopic(WireTypes.AbsoluteTopicName topicName, string postedTopicText, string visitorIdentityString)
         {
-            QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
-            WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
+            if (WriteAllowed())
+            {
+                QualifiedTopicRevision atn = new QualifiedTopicRevision(topicName.Name, topicName.Namespace);
+                WriteNewTopic(atn, postedTopicText, GetVisitorIdentity(visitorIdentityString), null);
+                Federation.Application.LogDebug(this.GetType().ToString(), "Allowed - " + Context.Request.UserHostAddress + ": " + Context.Request.Url);
+            }
+            else
+            {
+                Federation.Application.LogDebug(this.GetType().ToString(), "Denied - " + Context.Request.UserHostAddress + ": " + Context.Request.Url);
+            }
         }
 
         private void EstablishFederation()
@@ -345,12 +354,21 @@ namespace FlexWiki.Web.Services
                 return FlexWiki.Formatting.Formatter.FormattedTopic(topicName, OutputFormat.HTML, null, Federation, TheLinkMaker);
             }
         }
+        private bool WriteAllowed()
+        {
+            if (Context.Request.Url.ToString().Substring(10, 60).Contains("MessagePost.aspx?topic"))
+            {
+                return true;
+            }
 
+            return (!(bool)(Federation.Application["DisableEditServiceWrite"]));
+
+        }
         private void WriteNewTopic(QualifiedTopicRevision theTopic, string postedTopicText, string visitorIdentityString, string version)
         {
-            QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(theTopic.LocalName, theTopic.Namespace);
-            newVersionName.Version = TopicRevision.NewVersionStringForUser(visitorIdentityString, Federation.TimeProvider);
-            Federation.NamespaceManagerForTopic(newVersionName).WriteTopicAndNewVersion(newVersionName.LocalName, postedTopicText, visitorIdentityString);
+                QualifiedTopicRevision newVersionName = new QualifiedTopicRevision(theTopic.LocalName, theTopic.Namespace);
+                newVersionName.Version = TopicRevision.NewVersionStringForUser(visitorIdentityString, Federation.TimeProvider);
+                Federation.NamespaceManagerForTopic(newVersionName).WriteTopicAndNewVersion(newVersionName.LocalName, postedTopicText, visitorIdentityString);
         }
 
 

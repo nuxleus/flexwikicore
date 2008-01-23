@@ -73,6 +73,15 @@
         other than the filesystem provider. The default value is 
         FlexWiki.FileSystemNamespaceProvider. -->
   <!-- <DefaultNamespaceProviderForNamespaceCreation /> -->
+  
+  <!-- When set to true, FlexWiki will not allow remote writes using 
+        EditServiceImplementation.SetTopicToText or
+        EditServiceImplementation.WriteNewTopic. The functionality used by
+        MessagePost.aspx will still work. When set to false there are no restrictions
+        on remote updating. This setting has been added to help keep FlexWiki clean,
+        as some link spammers still modify topics to include link spam despite the
+        nofollow attribute.-->
+  <DisableEditServiceWrite>false</DisableEditServiceWrite>
 
   <!-- When set to true, FlexWiki will not automatically update other topics when a topic
         is renamed. When set to false, FlexWiki will. Automatic update allows users to change
