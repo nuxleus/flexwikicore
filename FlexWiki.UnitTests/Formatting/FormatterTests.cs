@@ -563,9 +563,9 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
  pre
 </pre>
 <ul>
-<li> hello</li>
+<li>hello</li>
 
-<li> goodbye</li>
+<li>goodbye</li>
 
 </ul>
 ");
@@ -577,9 +577,9 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
               @"        1. item 1
         1. item 2",
               @"<ol>
-<li> item 1</li>
+<li>item 1</li>
 
-<li> item 2</li>
+<li>item 2</li>
 
 </ol>
 ");
@@ -591,17 +591,17 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 	* level 1
 	* level 1 (again!)",
               @"<ul>
-<li> level 1</li>
+<li>level 1</li>
 
 <ul>
-<li> level 2</li>
+<li>level 2</li>
 
-<li> level 2</li>
+<li>level 2</li>
 
 </ul>
-<li> level 1</li>
+<li>level 1</li>
 
-<li> level 1 (again!)</li>
+<li>level 1 (again!)</li>
 
 </ul>
 ");

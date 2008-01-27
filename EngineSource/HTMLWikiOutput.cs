@@ -463,7 +463,7 @@ Write("<span style=\"display:none\">.</span>");
 
 		override public void WriteListItem(string each)
 		{
-			WriteLine("<li" + css() + ">" + each + "</li>");
+			WriteLine("<li" + css() + ">" + each.Trim() + "</li>");
 		}
 
 		override public OutputFormat Format 
