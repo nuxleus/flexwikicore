@@ -32,7 +32,7 @@ namespace FlexWiki.UnitTests.Formatting
 
             FormatTest(
               @"||t1||",
-              @"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
+              @"<table class=""TableClass"">
 <tr>
 <td  class=""TableCell"">t1</td>
 </tr>
@@ -53,7 +53,7 @@ namespace FlexWiki.UnitTests.Formatting
               @"||''table''||'''more'''||columns||
 ||1||2||3||
 ",
-              @"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
+              @"<table class=""TableClass"">
 <tr>
 <td  class=""TableCell""><em>table</em></td>
 <td  class=""TableCell""><strong>more</strong></td>
@@ -73,7 +73,7 @@ namespace FlexWiki.UnitTests.Formatting
         {
             FormatTest(
               @"||:-)||",
-              @"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
+              @"<table class=""TableClass"">
 <tr>
 <td  class=""TableCell""><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/></td>
 </tr>
@@ -93,7 +93,7 @@ namespace FlexWiki.UnitTests.Formatting
         {
             FormatTest(
               @"||http://www.yahoo.com/foo.html||",
-              @"<table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
+              @"<table class=""TableClass"">
 <tr>
 <td  class=""TableCell""><a class=""externalLink"" href=""http://www.yahoo.com/foo.html"">http://www.yahoo.com/foo.html</a></td>
 </tr>

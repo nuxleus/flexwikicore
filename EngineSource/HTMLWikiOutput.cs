@@ -262,7 +262,7 @@ Write("<span style=\"display:none\">.</span>");
       {
         cls = "TableWithoutBorderClass";
       }
-			WriteLine("cellpadding=\"2\" cellspacing=\"1\" class=\"" + cls + "\"" + css(styles) + ">");
+			WriteLine("class=\"" + cls + "\"" + css(styles) + ">");
 		}
 
 		override public void WriteCloseTable()

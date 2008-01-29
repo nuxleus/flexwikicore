@@ -81,7 +81,7 @@ namespace FlexWiki.UnitTests.Formatting
                   FormatTest("@@XmlTransform(\"" + xmlPath + "\", \"" + xslPath + "\")@@",
                       @"<p><h1>Weblogs @ ASP.NET</h1>
 
-      <table cellpadding=""2"" cellspacing=""1"" class=""TableClass"">
+      <table class=""TableClass"">
       <tr>
       <td  class=""TableCell""><strong>Published Date</strong></td>
       <td  class=""TableCell""><strong>Title</strong></td>
