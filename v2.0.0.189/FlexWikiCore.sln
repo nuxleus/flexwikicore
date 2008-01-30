@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWikiEngine", "EngineSource\FlexWikiEngine.csproj", "{7362F597-DAB3-437E-8A07-37D8D2FE6E56}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web.UnitTests", "FlexWiki.Web.UnitTests\FlexWiki.Web.UnitTests.csproj", "{A81ED025-B19E-4C36-AE7C-EB514E1D2F0B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.UnitTests", "FlexWiki.UnitTests\FlexWiki.UnitTests.csproj", "{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web", "FlexWiki.Web\FlexWiki.Web.csproj", "{0EE80D53-C65E-4AFE-953A-AB9160521890}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7362F597-DAB3-437E-8A07-37D8D2FE6E56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A81ED025-B19E-4C36-AE7C-EB514E1D2F0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A81ED025-B19E-4C36-AE7C-EB514E1D2F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A81ED025-B19E-4C36-AE7C-EB514E1D2F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A81ED025-B19E-4C36-AE7C-EB514E1D2F0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
