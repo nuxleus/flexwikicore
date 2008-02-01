@@ -1281,7 +1281,10 @@ namespace FlexWiki.Formatting
                 builder.Append(line.Substring(index));
                 line = builder.ToString();
             }
-            line = ConvertEmoticons(line);	// needs to come before textile because of precedence in overlappign formatting rules
+            if (((bool)Federation.Application["DisableWikiEmoticons"] == false) && (NamespaceManager.DisableNamespaceEmoticons == false))
+            {
+                line = ConvertEmoticons(line);	// needs to come before textile because of precedence in overlappign formatting rules
+            }
             line = SentencePairedDelimiters(line);
             line = TextileFormat(line, parameters);
             line = ColorsEtcFormat(line);

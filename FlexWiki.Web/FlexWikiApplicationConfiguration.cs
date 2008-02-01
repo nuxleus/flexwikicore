@@ -31,6 +31,7 @@ namespace FlexWiki.Web
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
         private bool _disableEditServiceWrite = false;
         private bool _disableRenameFixup;
+        private bool _disableWikiEmoticons = false;
         private bool _disableXslTransform = false;
         private bool _disableThreadedMessaging = false;
         private string _threadedMessagingEditPermissions;
@@ -109,6 +110,11 @@ namespace FlexWiki.Web
         {
             get { return _disableRenameFixup; }
             set { _disableRenameFixup = value; }
+        }
+        public bool DisableWikiEmoticons
+        {
+            get { return _disableWikiEmoticons; }
+            set { _disableWikiEmoticons = value; }
         }
         public bool DisableXslTransform
         {

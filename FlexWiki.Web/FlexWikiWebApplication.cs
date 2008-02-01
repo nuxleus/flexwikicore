@@ -339,6 +339,7 @@ namespace FlexWiki.Web
                 }
             }
             this["DisableEditServiceWrite"] = _applicationConfiguration.DisableEditServiceWrite;
+            this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)

@@ -88,6 +88,16 @@
         many topics at once, and as such can lead to abuse of the wiki. -->
   <DisableRenameFixup>false</DisableRenameFixup>
   
+  <!-- When set to true, FlexWiki will not automatically convert emoticon key sequences 
+        to the jpg equivalent. When set to false, FlexWiki will process emoticon sequences
+        and display jpgs instead of the text. There is a related property in the Namespace
+        Definition topic, normally _ContentBaseDefinition, called DisableNamespaceEmoticons,
+        that has local effect on the Namespace and can cause the local Namespace to have 
+        emoticons disabled even though they are enabled for the rest of the wiki, 
+        DisableWikiEmoticons set to false. If DisableWikiEmoticons is set to true, the local
+        Namespace setting has no effect. -->
+  <DisableWikiEmoticons>false</DisableWikiEmoticons>
+  
   <!-- When set to true, FlexWiki will not process XslTransform behavior requests. 
         The error message will be: 
         

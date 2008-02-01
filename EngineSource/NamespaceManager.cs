@@ -127,6 +127,31 @@ namespace FlexWiki
                 return property.LastValue;
             }
         }
+        ///<summary>
+        /// Answer the value for the definition property DisableNamespaceEmoticons (or false if not set to true)
+        /// This value can be overridden by setting DisableWikiEmoticons in flexwiki.config to true
+        /// </summary>
+        public bool DisableNamespaceEmoticons
+        {
+            get
+            {
+                TopicProperty property = GetTopicProperty(DefinitionTopicLocalName,
+                    "DisableNamespaceEmoticons");
+                if (property == null || !property.HasValue)
+                {
+                    return false;
+                }
+                else if (property.LastValue.ToLower().Equals("true"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
 		/// <summary>
 		/// Value is based on the DisplaySpacesInWikiLinks TopicProperty if it is defined and legal in the 
 		/// DefinitionTopic; otherwise, value is based on Federation.Configuration.DisplaySpacesInWikiLinks

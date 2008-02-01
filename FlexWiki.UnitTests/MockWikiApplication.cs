@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -22,7 +23,7 @@ using FlexWiki.Collections;
 
 namespace FlexWiki.UnitTests
 {
-    internal class MockWikiApplication : IWikiApplication
+    internal class MockWikiApplication : IWikiApplication, IMockWikiApplication
     {
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
         private MockCache _cache = new MockCache(); 
@@ -31,7 +32,8 @@ namespace FlexWiki.UnitTests
         private LinkMaker _linkMaker;
         private readonly ModificationCollection _modificationsReported = new ModificationCollection(); 
         private OutputFormat _ouputFormat;
-        private ITimeProvider _timeProvider; 
+        private ITimeProvider _timeProvider;
+        private Dictionary<string, object> _properties = new Dictionary<string, object>();
 
         public MockWikiApplication(FederationConfiguration configuration, LinkMaker linkMaker,
             OutputFormat outputFormat, ITimeProvider timeProvider)
@@ -39,8 +41,9 @@ namespace FlexWiki.UnitTests
             _configuration = configuration;
             _linkMaker = linkMaker;
             _ouputFormat = outputFormat;
-            _timeProvider = timeProvider; 
+            _timeProvider = timeProvider;
 
+            LoadConfiguration();
         }
 
         public MockWikiApplication(LinkMaker linkMaker,
@@ -89,10 +92,12 @@ namespace FlexWiki.UnitTests
             get { return _ouputFormat; }
         }
 
-		public object this[string key]
-		{
-			get { return null; }
-		}
+        public object this[string key]
+        {
+            get { return _properties.ContainsKey(key) ? _properties[key] : null; }
+            internal set { _properties[key] = value; }
+        }
+
 
         public ITimeProvider TimeProvider
         {
@@ -137,6 +142,7 @@ namespace FlexWiki.UnitTests
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(@"
 <configuration>
+  <DisableWikiEmoticons>false</DisableWikiEmoticons>
   <FederationConfiguration>
     <!-- This information is used by the default borders to print a short message 
           in the border of every page on the wiki. It appears as the ""About"" property
@@ -182,6 +188,7 @@ namespace FlexWiki.UnitTests
           When set to false, causes the title of topics to display without spaces. 
           For example, the topic ""ThisIsATopic"" would display as ""ThisIsATopic"".-->
     <DisplaySpacesInWikiLinks>false</DisplaySpacesInWikiLinks>
+
 
     <!-- InterWikis are a convenience function that allows FlexWiki to generate shortcuts
           to topics in other wikis. See http://www.flexwiki.com/default.aspx/FlexWiki/InterWiki.html
@@ -259,7 +266,18 @@ namespace FlexWiki.UnitTests
 
             XmlNodeReader reader = new XmlNodeReader(doc.DocumentElement);
             _applicationConfiguration = (FlexWikiWebApplicationConfiguration)serializer.Deserialize(reader);
+            this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
 
         }
+        /// <summary>
+        /// Allows a normally read-only property to be set in test conditions
+        /// </summary>
+        /// <param name="key">The name of an Application property, eg. DisableWikiEmoticons</param>
+        /// <param name="value">The boolean value the property can take</param>
+        public void SetApplicationProperty(string key, bool value)
+        {
+            this[key] = value;
+        }
+
     }
 }

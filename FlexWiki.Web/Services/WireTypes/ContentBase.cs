@@ -23,6 +23,7 @@ namespace FlexWiki.Web.Services.WireTypes
         private DateTime lastRead;
         private bool secure;
         private string description;
+        private bool disableNamespaceEmoticons;
         private string contact;
         private string imageURL;
         private string homePage;
@@ -45,6 +46,7 @@ namespace FlexWiki.Web.Services.WireTypes
             //CA for backwards compatibility with existing wire format. 
             this.Secure = false;
             this.Description = manager.Description;
+            this.DisableNamespaceEmoticons = manager.DisableNamespaceEmoticons;
             this.Contact = manager.Contact;
             this.ImageURL = manager.ImageURL;
             this.HomePage = manager.HomePage;
@@ -77,7 +79,11 @@ namespace FlexWiki.Web.Services.WireTypes
             get { return description; }
             set { description = value; }
         }
-
+        public bool DisableNamespaceEmoticons
+        {
+            get { return disableNamespaceEmoticons; }
+            set { disableNamespaceEmoticons = value; }
+        }
         public string Contact
         {
             get { return contact; }

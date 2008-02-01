@@ -124,6 +124,7 @@
     <Compile Include="Formatting\NonExistentNamespaceTests.cs" />
     <Compile Include="Formatting\TableFormattingTests.cs" />
     <Compile Include="Formatting\WikiPagePropertyTests.cs" />
+    <Compile Include="IMockWikiApplication.cs" />
     <Compile Include="MockTopicStorePermissions.cs" />
     <Compile Include="ParsingProviderTests.cs" />
     <Compile Include="RequestContextTests.cs" />

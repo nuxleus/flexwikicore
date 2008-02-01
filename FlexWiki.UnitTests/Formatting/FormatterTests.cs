@@ -197,10 +197,82 @@ file://servername/umuff$/folder%20name/file.txt",
         [Test]
         public void EmoticonTest()
         {
+            // Neither DisableWikiEmoticns or DisableNamespaceEmoticons explicitly set. Both use default value of false
             FormatTest(
               @":-) :-(",
               @"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""/></p>
 ");
+            // Set DisableNamespaceEmoticons explicitly to true. DisableWikiEmoticons is default value of false.
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", @"
+Title: Friendly Title
+DisableNamespaceEmoticons: true
+", _user);
+            FormatTest(
+              @":-) :-(",
+              @"<p>:-) :-(</p>
+");
+
+            // Set DisableNamespaceEmoticons explicitly to false. DisableWikiEmoticons is default value of false.
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", @"
+Title: Friendly Title
+DisableNamespaceEmoticons: false
+", _user);
+            FormatTest(
+              @":-) :-(",
+              @"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""/></p>
+");
+
+            // Set DisableNamespaceEmoticons explicitly to false. Set DisableWikiEmoticons explicitly to true.
+            IMockWikiApplication testApp = (IMockWikiApplication)Federation.Application;
+            testApp.SetApplicationProperty("DisableWikiEmoticons", true);
+            FormatTest(
+              @":-) :-(",
+              @"<p>:-) :-(</p>
+");
+
+            // Set DisableNamespaceEmoticons explicitly to true. Set DisableWikiEmoticons explicitly to true.
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", @"
+Title: Friendly Title
+DisableNamespaceEmoticons: true
+", _user);
+            FormatTest(
+              @":-) :-(",
+              @"<p>:-) :-(</p>
+");
+
+            // Set DisableNamespaceEmoticons explicitly to true. Set DisableWikiEmoticons explicitly to false.
+            testApp.SetApplicationProperty("DisableWikiEmoticons", false);
+            FormatTest(
+              @":-) :-(",
+              @"<p>:-) :-(</p>
+");
+
+            // Set DisableNamespaceEmoticons explicitly to false. Set DisableWikiEmoticons explicitly to false.
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", @"
+Title: Friendly Title
+DisableNamespaceEmoticons: false
+", _user);
+            FormatTest(
+              @":-) :-(",
+              @"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""/></p>
+");
+
+            // DisableNamespaceEmoticons is set to default value of false. Set DisableWikiEmoticons explicitly to false.
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "_ContentBaseDefinition", @"
+Title: Friendly Title
+", _user);
+            FormatTest(
+              @":-) :-(",
+              @"<p><img src=""" + _lm.LinkToImage("emoticons/regular_smile.gif") + @"""/> <img src=""" + _lm.LinkToImage("emoticons/sad_smile.gif") + @"""/></p>
+");
+
+            // DisableNamespaceEmoticons is set to default value of false. Set DisableWikiEmoticons explicitly to true.
+            testApp.SetApplicationProperty("DisableWikiEmoticons", true);
+            FormatTest(
+              @":-) :-(",
+              @"<p>:-) :-(</p>
+");
+            
         }
         [Test]
         public void EmphasisInLinkTest()
@@ -1258,6 +1330,7 @@ file://servername/umuff~/folder%20name/file.txt",
             FormatTest(@"wiki://TopicWithColor/#Color", @"<p>Yellow</p>
 ");
         }
+        
 
     }
 }
