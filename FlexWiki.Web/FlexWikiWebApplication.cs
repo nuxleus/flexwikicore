@@ -342,6 +342,7 @@ namespace FlexWiki.Web
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
+            this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)
 			{
 				string[] titles = new string[_applicationConfiguration.AlternateStylesheets.Length+1];

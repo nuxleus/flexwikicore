@@ -143,6 +143,7 @@ namespace FlexWiki.UnitTests
             doc.LoadXml(@"
 <configuration>
   <DisableWikiEmoticons>false</DisableWikiEmoticons>
+  <RemoveListItemWhitespace>false</RemoveListItemWhitespace>
   <FederationConfiguration>
     <!-- This information is used by the default borders to print a short message 
           in the border of every page on the wiki. It appears as the ""About"" property
@@ -267,6 +268,7 @@ namespace FlexWiki.UnitTests
             XmlNodeReader reader = new XmlNodeReader(doc.DocumentElement);
             _applicationConfiguration = (FlexWikiWebApplicationConfiguration)serializer.Deserialize(reader);
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
+            this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
 
         }
         /// <summary>

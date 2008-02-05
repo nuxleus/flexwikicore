@@ -120,7 +120,38 @@
          When set to false, or if the setting is not present, or present and empty, it will
          allow access to the CreateMessage.aspx functionality. -->
   <DisableThreadedMessaging>false</DisableThreadedMessaging>
+
+  <!-- In working with lists the following input when this value is set to false (original pre 2.0.0.188)
   
+          * A List Item
+      
+      produces html as follows
+      
+      <ul>
+      <li> A List Item</li>
+      </ul>
+      
+      while input like
+      
+          *A List Item
+          
+      produces html
+      
+      <ul>
+      <li>A List Item</li>
+      </ul>
+      
+      When this value is set to true both inputs will no produce the same, rather than different html
+      that looks like:
+      <ul>
+      <li>A List Item</li>
+      </ul>
+
+      The default value is false. If the value is not declared in flexwiki.config it uses the default value
+                                                                        -->
+  <RemoveListItemWhitespace>false</RemoveListItemWhitespace>
+
+
   <!-- When this key exists all message related topics will include properties controlling authorization
         as follows:
         

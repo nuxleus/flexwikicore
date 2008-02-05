@@ -1025,14 +1025,28 @@ namespace FlexWiki.Formatting
                             // Could need more or fewer
                             Ensure(typeof(UnorderedListState));
                             ((UnorderedListState) (CurrentState)).SetNesting(thisNest);
-                            _output.WriteListItem(each);
+                            if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
+                            {
+                                _output.WriteListItem(each);
+                            }
+                            else
+                            {
+                                _output.WriteListItem(each.Trim());
+                            }
                         }
                         else if (each.StartsWith("1."))
                         {
                             each = each.Substring(2);
                             Ensure(typeof(OrderedListState));
                             ((OrderedListState) (CurrentState)).SetNesting(thisNest);
-                            _output.WriteListItem(each);
+                            if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
+                            {
+                                _output.WriteListItem(each);
+                            }
+                            else
+                            {
+                                _output.WriteListItem(each.Trim());
+                            }
                         }
                         else
                         {

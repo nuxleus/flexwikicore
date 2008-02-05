@@ -635,16 +635,85 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
  pre
 </pre>
 <ul>
+<li> hello</li>
+
+<li> goodbye</li>
+
+</ul>
+");
+
+            IMockWikiApplication testApp = (IMockWikiApplication)Federation.Application;
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+            FormatTest(
+    @" pre
+	* hello
+	* goodbye",
+    @"<pre>
+ pre
+</pre>
+<ul>
 <li>hello</li>
 
 <li>goodbye</li>
 
 </ul>
 ");
+
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+    @" pre
+	* hello
+	* goodbye",
+    @"<pre>
+ pre
+</pre>
+<ul>
+<li> hello</li>
+
+<li> goodbye</li>
+
+</ul>
+");
+
         }
         [Test]
         public void ListTests()
         {
+            FormatTest(
+              @"        1. item 1
+        1. item 2",
+              @"<ol>
+<li> item 1</li>
+
+<li> item 2</li>
+
+</ol>
+");
+
+            FormatTest(
+              @"	* level 1
+		* level 2
+		* level 2
+	* level 1
+	* level 1 (again!)",
+              @"<ul>
+<li> level 1</li>
+
+<ul>
+<li> level 2</li>
+
+<li> level 2</li>
+
+</ul>
+<li> level 1</li>
+
+<li> level 1 (again!)</li>
+
+</ul>
+");
+
+            IMockWikiApplication testApp = (IMockWikiApplication)Federation.Application;
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"        1. item 1
         1. item 2",
@@ -677,6 +746,41 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 
 </ul>
 ");
+
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+  @"        1. item 1
+        1. item 2",
+  @"<ol>
+<li> item 1</li>
+
+<li> item 2</li>
+
+</ol>
+");
+
+            FormatTest(
+              @"	* level 1
+		* level 2
+		* level 2
+	* level 1
+	* level 1 (again!)",
+              @"<ul>
+<li> level 1</li>
+
+<ul>
+<li> level 2</li>
+
+<li> level 2</li>
+
+</ul>
+<li> level 1</li>
+
+<li> level 1 (again!)</li>
+
+</ul>
+");
+
         }
         [Test]
         public void MailToLink()
