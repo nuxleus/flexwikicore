@@ -7,6 +7,7 @@
 		<meta content="VisualStudio.HTML" name="ProgId">
 		<meta content="Microsoft Visual Studio .NET 7.1" name="Originator">
 		<%= MainStylesheetReference() %>
+		<%= InsertFavicon() %>
 	</HEAD>
 	<body class="Dialog">
 		<% ShowPage(); %>

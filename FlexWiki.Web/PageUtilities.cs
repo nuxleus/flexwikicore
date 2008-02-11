@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Web;
 using System.Web.UI.HtmlControls;
 
@@ -86,6 +87,34 @@ namespace FlexWiki.Web
             }
             return revision;
 
+        }
+        public static string InsertFavicon(FlexWikiWebApplication wikiApplication)
+        {
+            string answer = "\n<link rel=\"shortcut icon\" href=\"{0}{1}\" />";
+            string faviconFilePath = HttpContext.Current.Server.MapPath("favicon.ico");
+            if (!wikiApplication.ApplicationConfiguration.DisableFavicon)
+            {
+                try
+                {
+                    if (File.Exists(faviconFilePath))
+                    {
+        				answer = string.Format(answer, RootUrl, "favicon.ico");
+                        return answer;
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+            else
+            {
+                return "";
+            }
         }
         public static string InsertStylesheetReferences(Federation federation, FlexWikiWebApplication wikiApplication)
         {

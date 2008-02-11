@@ -82,6 +82,12 @@
         as some link spammers still modify topics to include link spam despite the
         nofollow attribute.-->
   <DisableEditServiceWrite>false</DisableEditServiceWrite>
+  
+  <!-- When set to true will not output a favicon for the wiki. When set to false
+        will output a favicon, if it exists. the favicon file must be named
+        'favicon.ico' and placed in the root directory of the wiki. The default 
+        value for this setting is false.-->
+  <DisableFavicon>false</DisableFavicon>
 
   <!-- When set to true, FlexWiki will not automatically update other topics when a topic
         is renamed. When set to false, FlexWiki will. Automatic update allows users to change

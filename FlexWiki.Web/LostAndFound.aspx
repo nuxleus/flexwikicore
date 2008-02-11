@@ -5,6 +5,7 @@
 		<title>Lost And Found</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
 		<%= InsertStylesheetReferences() %>
+		<%= InsertFavicon() %>
 	</head>
 	<body class='Dialog'>
 		<% ShowPage(); %>

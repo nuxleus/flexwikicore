@@ -8,6 +8,7 @@
         <%= GetTitle() %>
     </title>
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
     <style type="text/css">
 			body { background:#FFF; margin:4px; }
     </style>

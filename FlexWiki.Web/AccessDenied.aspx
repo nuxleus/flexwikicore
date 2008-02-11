@@ -5,6 +5,7 @@
 <head>
     <title>Access Denied</title>
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
     <style type="text/css">
 			body { background:#FFF3E1; margin:4px; }
     </style>

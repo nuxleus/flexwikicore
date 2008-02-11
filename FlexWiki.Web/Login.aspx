@@ -6,6 +6,7 @@
     <title>Wiki Logon</title>
     <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
 </head>
 <body class="Dialog">
     <form runat="server">

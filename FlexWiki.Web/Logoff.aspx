@@ -5,6 +5,7 @@
 		<title>Wiki Logoff</title>
 		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
 		<%= InsertStylesheetReferences() %>
+		<%= InsertFavicon() %>
 	</HEAD>
 	<body class='Dialog'>
 		<fieldset>

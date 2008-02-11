@@ -6,6 +6,7 @@
     <title>Request Requires HTTPS</title>
     <meta runat="server" id="MetaRefresh" http-equiv="refresh" content="" />
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
 </head>
 <body>
     <form id="Form1" runat="server" method="post" action="">

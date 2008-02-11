@@ -5,6 +5,7 @@
 		<title>Last Modified</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW">
 		<%= InsertStylesheetReferences() %>
+		<%= InsertFavicon() %>
 <script  type="text/javascript" language="javascript">
 function filter() {
 	var author = AuthorFilter.options[AuthorFilter.selectedIndex].text;

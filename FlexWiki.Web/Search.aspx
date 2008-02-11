@@ -5,6 +5,7 @@
 <head>
     <title id="title">Search</title>
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
 </head>
 <body class='Dialog'>
     <% DoSearch(); %>

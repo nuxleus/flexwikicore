@@ -345,6 +345,10 @@ namespace FlexWiki.Web
             }
             list.Insert(0, e);	// Adding to the front means we're keeping it sorted with latest first    
         }
+        protected string InsertFavicon()
+        {
+            return PageUtilities.InsertFavicon(FlexWikiWebApplication);
+        }
         protected string InsertStylesheetReferences()
         {
             return PageUtilities.InsertStylesheetReferences(Federation, FlexWikiWebApplication);

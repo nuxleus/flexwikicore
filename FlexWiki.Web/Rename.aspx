@@ -8,6 +8,7 @@
     <meta name="CODE_LANGUAGE" content="C#" />
     <meta name="Robots" content="NOINDEX, NOFOLLOW" />
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
 </head>
 <body>
     <table width="100%" height="100%" border="0" cellpadding="7" cellspacing="0">

@@ -8,6 +8,7 @@
 		<meta name="vs_defaultClientScript" content="JavaScript">
 		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
 		<%= InsertStylesheetReferences() %>
+		<%= InsertFavicon() %>
 	</HEAD>
 	<body>
 		<form id="Form1" method="post" runat="server">

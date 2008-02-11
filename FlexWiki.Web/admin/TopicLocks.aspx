@@ -5,6 +5,7 @@
 		<title>Topic Locks</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
 		<%= InsertStylesheetReferences() %>
+		<%= InsertFavicon() %>
 <script  type="text/javascript" language="javascript">
 function ChangeNamespace_Click()
 {

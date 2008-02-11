@@ -58,6 +58,7 @@ namespace FlexWiki.Web.Admin
         {
             Response.Write(PageUtilities.InsertStylesheetReferences(
                 Federation, FlexWikiWebApplication));
+            Response.Write(PageUtilities.InsertFavicon(FlexWikiWebApplication));
         }
         protected virtual void ShowMain()
         {

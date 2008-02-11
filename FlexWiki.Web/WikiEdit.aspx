@@ -8,6 +8,7 @@
         (edit)</title>
 <meta name="Robots" content="NOINDEX, NOFOLLOW" />
 <%= InsertStylesheetReferences() %>
+<%= InsertFavicon() %>
 <% ShowCss(); %>
 </head>
 <% DoPage(); %>

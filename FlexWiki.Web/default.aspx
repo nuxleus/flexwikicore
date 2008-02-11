@@ -8,6 +8,7 @@
         <%= GetTitle() %>
     </title>
     <%= InsertStylesheetReferences() %>
+    <%= InsertFavicon() %>
     <%= DoHead() %>
 </head>
 <body onclick="javascript:BodyClick()" ondblclick="javascript:BodyDblClick()">
