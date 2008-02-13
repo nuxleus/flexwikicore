@@ -340,6 +340,22 @@ namespace FlexWiki.SqlProvider
             _database.ExecuteNonQuery(CommandType.StoredProcedure, "WriteTopic", parameters);
         }
 
+        public void WriteTopicLock(string ns, string topicName)
+        {
+            DatabaseParameter[] parameters = new DatabaseParameter[2];
+            parameters[0] = new DatabaseParameter("namespace", ns);
+            parameters[1] = new DatabaseParameter("topicName", topicName);
+
+            _database.ExecuteNonQuery(CommandType.StoredProcedure, "WriteTopicLock", parameters);
+        }
+        public void WriteTopicUnlock(string ns, string topicName)
+        {
+            DatabaseParameter[] parameters = new DatabaseParameter[2];
+            parameters[0] = new DatabaseParameter("namespace", ns);
+            parameters[1] = new DatabaseParameter("topicName", topicName);
+
+            _database.ExecuteNonQuery(CommandType.StoredProcedure, "WriteTopicUnlock", parameters);
+        }
         private bool BooleanConvert(string input)
         {
             if (input == null)

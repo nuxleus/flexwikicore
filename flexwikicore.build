@@ -437,9 +437,11 @@
       <include name="SqlStoreManagerConsole/bin/${configuration}/*.dll" />
       <include name="SqlStoreManagerConsole/bin/${configuration}/*.pdb" />
       <include name="SqlStoreManagerConsole/bin/${configuration}/*.exe" />
+      <include name="SqlStoreManagerConsole/UpdateScript/*.sql" />
       <include name="SqlStoreManagerGui/bin/${configuration}/*.dll" />
       <include name="SqlStoreManagerGui/bin/${configuration}/*.pdb" />
       <include name="SqlStoreManagerGui/bin/${configuration}/*.exe" />
+      <include name="SqlStoreManagerGui/UpdateScript/*.sql" />
       <exclude name="**/*.vshost.exe" />
     </fileset>
 

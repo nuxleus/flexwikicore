@@ -260,7 +260,8 @@ namespace FlexWiki.SqlProvider
         }
         public override void LockTopic(UnqualifiedTopicName topic)
         {
-            throw new NotImplementedException("Not implemented in this version of FlexWiki. Future releases may support locking topics in SQL stores."); 
+            _sqlHelper.WriteTopicLock(Namespace, MakeTopicName(topic));
+            //throw new NotImplementedException("Not implemented in this version of FlexWiki. Future releases may support locking topics in SQL stores."); 
         }
         /// <summary>
         /// Answer true if a topic exists in this ContentProviderChain
@@ -270,6 +271,10 @@ namespace FlexWiki.SqlProvider
         public override bool TopicExists(UnqualifiedTopicName name)
         {
             return _sqlHelper.TopicExists(Namespace, MakeTopicName(name));
+        }
+        public override bool TopicIsReadOnly(UnqualifiedTopicName topicName)
+        {
+            return (!_sqlHelper.IsExistingTopicWritable(Namespace, MakeTopicName(topicName)));
         }
         /// <summary>
         /// Answer a TextReader for the given topic
@@ -288,7 +293,8 @@ namespace FlexWiki.SqlProvider
         }
         public override void UnlockTopic(UnqualifiedTopicName topic)
         {
-            throw new NotImplementedException("Not implemented in this version of FlexWiki. Future releases may support locking topics in SQL stores."); 
+            _sqlHelper.WriteTopicUnlock(Namespace, MakeTopicName(topic));
+            //throw new NotImplementedException("Not implemented in this version of FlexWiki. Future releases may support locking topics in SQL stores."); 
         }
         /// <summary>
         /// Write new contents to a topic revision (doesn't write a new version).  
