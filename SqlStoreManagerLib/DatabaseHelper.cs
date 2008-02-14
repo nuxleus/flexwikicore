@@ -67,7 +67,6 @@ namespace FlexWiki.SqlStoreManagerLib
     {
       string connectionString = string.Format("server={0};Integrated Security=true", instance);
       SetUpDatabaseInternal(connectionString, instance, database, dataFileDirectory, user);
-
     }
 
     /// <summary>
