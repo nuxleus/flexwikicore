@@ -24,6 +24,30 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexWiki.Web", "FlexWiki.We
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreManagerLib", "SqlStoreManagerLib\SqlStoreManagerLib.csproj", "{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreManagerGui", "SqlStoreManagerGui\SqlStoreManagerGui.csproj", "{2D3D6848-3BCF-4FAB-B73D-859692867616}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13} = {47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStoreManagerConsole", "SqlStoreManagerConsole\SqlStoreManagerConsole.csproj", "{C5AF9776-B696-42C8-876A-692A95AB9FEE}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13} = {47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +70,18 @@ Global
 		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EE80D53-C65E-4AFE-953A-AB9160521890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47F46CF2-B36A-48C7-A26C-6A20A8EC2E13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D3D6848-3BCF-4FAB-B73D-859692867616}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5AF9776-B696-42C8-876A-692A95AB9FEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
