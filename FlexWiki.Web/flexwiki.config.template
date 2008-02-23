@@ -126,7 +126,17 @@
          When set to false, or if the setting is not present, or present and empty, it will
          allow access to the CreateMessage.aspx functionality. -->
   <DisableThreadedMessaging>false</DisableThreadedMessaging>
-
+  
+  <!-- When set to false FlexWiki will not add borders to anyutility pages such as Search, LastModified, etc.
+        This may be refered to as classic behavior, as the original FlexWiki behaved this way. The default
+        value for this setting is false, meaning that each wiki owner must explicitly enable the new behavior.
+        When the value is set to true most utility pages will have borders (based on the borders the HomePage 
+        for that namespace would have). The Edit and Rename page borders are not changed, nor are the Admin pages borders.
+        The Safe Mode page was left as it is. The Blade, Print, Rss and ShowNewsletter pages also do not have any border, 
+        otherwise the utility of those pages would be impaired. This change is created to enable better branding and 
+        user environment.     -->
+  <EnableBordersAllPages>false</EnableBordersAllPages>
+  
   <!-- In working with lists the following input when this value is set to false (original pre 2.0.0.188)
   
           * A List Item

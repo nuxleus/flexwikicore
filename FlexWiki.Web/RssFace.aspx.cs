@@ -59,7 +59,7 @@ namespace FlexWiki.Web
         {
             StringBuilder strbldr = new StringBuilder();
             string ns = Request.QueryString["namespace"];
-            strbldr.AppendLine("<fieldset><legend class=\"DialogTitle\">Subscriptions</legend>");
+            strbldr.AppendLine("<fieldset class=\"Dialog\" width=\"600\"><legend class=\"DialogTitle\">Subscriptions</legend>");
             strbldr.AppendLine("<p>Listed below are the available <b>newsletters</b> and <b>RSS</b> subscriptions.");
             if (ns == null)
             {

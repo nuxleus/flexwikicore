@@ -1,15 +1,17 @@
 <%@ Page language="c#" Codebehind="RequestNamespace.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.RequestNamespace" %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-	<HEAD>
-		<title></title>
-		<meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
-		<meta content="VisualStudio.HTML" name="ProgId">
-		<meta content="Microsoft Visual Studio .NET 7.1" name="Originator">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Request Namesapce</title>
 		<%= MainStylesheetReference() %>
 		<%= InsertFavicon() %>
-	</HEAD>
-	<body class="Dialog">
+		<%InsertScripts(); %>
+	</head>
+	<body>
+	<%InsertLeftTopBorders(); %>
+	    <div class="Dialog">
 		<% ShowPage(); %>
+		</div>
+	<%InsertRightBottomBorders(); %>
 	</body>
-</HTML>
+</html>

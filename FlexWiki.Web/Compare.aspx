@@ -8,7 +8,8 @@
         <%= GetTitle() %>
     </title>
     <%= InsertStylesheetReferences() %>
-    <%= InsertFavicon %>
+    <%= InsertFavicon() %>
+	<%InsertScripts(); %>
     <style type="text/css">
 			body { background:#FFF3E1; margin:4px; }
     </style>
@@ -24,6 +25,7 @@
 
 </head>
 <body onload="focus();">
+	<%InsertLeftTopBorders(); %>
     <div id="content">
         <a name="top" id="contentTop"></a>
         <h1 class="firstHeading">
@@ -32,6 +34,7 @@
             <% DoPage(); %>
         </div>
     </div>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>
 <%

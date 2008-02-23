@@ -1,14 +1,15 @@
 <%@ Page language="c#" CodeBehind="Logoff.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Logoff" %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<HTML>
-	<HEAD>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
 		<title>Wiki Logoff</title>
-		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
 		<%= InsertStylesheetReferences() %>
 		<%= InsertFavicon() %>
-	</HEAD>
-	<body class='Dialog'>
-		<fieldset>
+		<%InsertScripts(); %>
+	</head>
+	<body>
+	<%InsertLeftTopBorders(); %>
+		<fieldset class="Dialog">
 			<legend class='DialogTitle'>
 				Logoff</legend>
 			<form id="LogoffForm" runat="server" method="post">
@@ -26,5 +27,6 @@
 				</table>
 			</form>
 		</fieldset>
+	<%InsertRightBottomBorders(); %>
 	</body>
-</HTML>
+</html>

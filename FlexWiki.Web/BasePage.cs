@@ -16,7 +16,9 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -41,11 +43,27 @@ namespace FlexWiki.Web
         private UIResponse _uiResponse;
         private string _userPrefix;
 
+        protected StringBuilder leftBorder = new StringBuilder();
+        protected StringBuilder rightBorder = new StringBuilder();
+        protected StringBuilder topBorder = new StringBuilder();
+        protected StringBuilder bottomBorder = new StringBuilder();
+        protected string tempbottom;
+        protected string templeft;
+        protected string tempright;
+        protected string temptop;
+
         public BasePage()
         {
             Load += new EventHandler(Page_Load);
         }
 
+        protected string CreateCacheKey(string id)
+        {
+            return string.Format("{0}-{1}-{2}",
+                HttpContext.Current.Request.Url.ToString(),
+                UserId(),
+                id);
+        }
         /// <summary>
         /// Returns the URL suitable for composition with FlexWiki web pages to create
         /// valid FlexWiki links. This method does *not* return the scheme, servername, 
@@ -61,6 +79,15 @@ namespace FlexWiki.Web
                 return PageUtilities.RootUrl;
             }
         }
+
+        protected QualifiedTopicRevision topic
+        {
+            get
+            {
+                return GetTopicVersionKey();
+            }
+        }
+
         /// <summary>
         /// Answer a string to identify the current visitor.  Is authentication is up and the user is authenticated, answer the
         /// authenticated user's name (e.g., a Windows account name).  Otherwise answer the IP address of the visitor (possibly 
@@ -146,6 +173,17 @@ namespace FlexWiki.Web
                 return _uiResponse;
             }
         }
+        private string UserId()
+        {
+            if (Thread.CurrentPrincipal.Identity.IsAuthenticated)
+            {
+                return "authenticated:" + Thread.CurrentPrincipal.Identity.Name;
+            }
+            else
+            {
+                return "anonymous";
+            }
+        }
         protected string UserPrefix
         {
             get
@@ -156,6 +194,125 @@ namespace FlexWiki.Web
         protected FlexWikiWebApplication WikiApplication
         {
             get { return Federation.Application as FlexWikiWebApplication; }
+        }
+
+        protected void InsertScripts()
+        {
+            StringBuilder headbldr = new StringBuilder();
+            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+            Response.Write(headbldr.ToString());
+        }
+        protected void InitBorders(bool doBorders)
+        {
+            if (doBorders)
+            {
+                tempbottom = WikiApplication.CachedRender(
+                    CreateCacheKey("BottomBorder"),
+                    delegate
+                    {
+                        return Federation.GetTopicFormattedBorder(topic, Border.Bottom);
+                    });
+
+                templeft = WikiApplication.CachedRender(
+                    CreateCacheKey("LeftBorder"),
+                    delegate
+                    {
+                        return Federation.GetTopicFormattedBorder(topic, Border.Left);
+                    });
+
+                tempright = WikiApplication.CachedRender(
+                        CreateCacheKey("RightBorder"),
+                        delegate
+                        {
+                            return Federation.GetTopicFormattedBorder(topic, Border.Right);
+                        });
+
+                temptop = WikiApplication.CachedRender(
+                        CreateCacheKey("TopBorder"),
+                        delegate
+                        {
+                            return Federation.GetTopicFormattedBorder(topic, Border.Top);
+                        });
+
+                if (!String.IsNullOrEmpty(templeft))
+                {
+                    leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
+                    leftBorder.AppendLine(templeft);
+                    leftBorder.AppendLine("</div>");
+                }
+
+                if (!String.IsNullOrEmpty(tempright))
+                {
+                    rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
+                    rightBorder.AppendLine(tempright);
+                    rightBorder.AppendLine("</div>");
+                }
+
+                if (!String.IsNullOrEmpty(temptop))
+                {
+                    topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
+                    topBorder.AppendLine(temptop);
+                    topBorder.AppendLine("</div>");
+                }
+
+                if (!String.IsNullOrEmpty(tempbottom))
+                {
+                    bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
+                    bottomBorder.AppendLine(tempbottom);
+                    bottomBorder.AppendLine("</div>");
+                }
+            }
+        }
+        protected void InsertLeftTopBorders()
+        {
+            StringBuilder strbldr = new StringBuilder();
+
+            InitBorders(WikiApplication.ApplicationConfiguration.EnableBordersAllPages);
+
+
+            // Insert the TopBorder if it is required.
+            if (!String.IsNullOrEmpty(temptop))
+            {
+                strbldr.AppendLine(topBorder.ToString());
+            }
+
+            // Insert the LeftBorder if it is required.
+            if (!String.IsNullOrEmpty(templeft))
+            {
+                strbldr.AppendLine(leftBorder.ToString());
+            }
+            if (!String.IsNullOrEmpty(strbldr.ToString()))
+            {
+                strbldr.AppendLine("<div id=\"TopicBody\">");
+                Response.Write(strbldr.ToString());
+            }
+        }
+        protected void InsertRightBottomBorders()
+        {
+            StringBuilder strbldr = new StringBuilder();
+
+            if (!String.IsNullOrEmpty(templeft + temptop))
+            {
+                strbldr.AppendLine("</div>");
+            }
+
+            // Insert the RightBorder if it is required.
+            if (!String.IsNullOrEmpty(tempright))
+            {
+                strbldr.AppendLine(rightBorder.ToString());
+            }
+
+            // Insert the BottomBorder if it is required.
+            if (!String.IsNullOrEmpty(tempbottom))
+            {
+                strbldr.AppendLine(bottomBorder.ToString());
+            }
+            if (!String.IsNullOrEmpty(strbldr.ToString()))
+            {
+                Response.Write(strbldr.ToString());
+            }
         }
 
         public static void Spit(string s)

@@ -1,18 +1,20 @@
 <%@ Page Language="c#" Codebehind="RegisterUser.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.RegisterUser" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<html>
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
     <title>Wiki User Registration</title>
-    <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
+    <%InsertScripts(); %>
 </head>
-<body class="Dialog">
-    <form runat="server">
+<body>
+	<%InsertLeftTopBorders(); %>
+	<div class="Dialog">
+    <form runat="server" action="">
         <asp:CreateUserWizard ID="CreateUserWizard1" runat="server" ActiveStepIndex="0" BackColor="#E3EAEB"
             BorderColor="#E6E2D8" BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana"
-            Font-Size="0.8em" DisableCreatedUser="true" LoginCreatedUser="false">
+            Font-Size="14pt" DisableCreatedUser="true" LoginCreatedUser="false">
             <WizardSteps>
                 <asp:CreateUserWizardStep runat="server">
                 </asp:CreateUserWizardStep>
@@ -53,5 +55,7 @@
             <StepStyle BorderWidth="0px" />
         </asp:CreateUserWizard>
     </form>
+    </div>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

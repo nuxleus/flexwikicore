@@ -10,6 +10,8 @@
     </style>
 </head>
 <body onload="focus();">
+    	<%InsertLeftTopBorders(); %>
     <% DoPage(); %>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

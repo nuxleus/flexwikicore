@@ -21,7 +21,7 @@ using FlexWiki;
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
 using System.Web;
-using System.Threading;
+//using System.Threading;
 
 namespace FlexWiki.Web
 {
@@ -218,27 +218,27 @@ namespace FlexWiki.Web
             return DoPageImplementation(); 
         }
 
-        private string CreateCacheKey(string id)
-        {
-            return string.Format("{0}-{1}-{2}",
-                HttpContext.Current.Request.Url.ToString(),
-                UserId(),
-                id); 
-        }
-        private string UserId()
-        {
-            if (Thread.CurrentPrincipal.Identity.IsAuthenticated)
-            {
-                return "authenticated:" + Thread.CurrentPrincipal.Identity.Name;
-            }
-            else
-            {
-                return "anonymous"; 
-            }
-        }
+        //private string CreateCacheKey(string id)
+        //{
+        //    return string.Format("{0}-{1}-{2}",
+        //        HttpContext.Current.Request.Url.ToString(),
+        //        UserId(),
+        //        id); 
+        //}
+        //private string UserId()
+        //{
+        //    if (Thread.CurrentPrincipal.Identity.IsAuthenticated)
+        //    {
+        //        return "authenticated:" + Thread.CurrentPrincipal.Identity.Name;
+        //    }
+        //    else
+        //    {
+        //        return "anonymous"; 
+        //    }
+        //}
         private string DoPageImplementation()
         {
-            QualifiedTopicRevision topic = GetTopicVersionKey();
+            //QualifiedTopicRevision topic = GetTopicVersionKey();
             NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
             LinkMaker lm = TheLinkMaker;
             bool diffs = Request.QueryString["diff"] == "y";
@@ -290,72 +290,72 @@ namespace FlexWiki.Web
                     return Federation.GetTopicFormattedContent(topic, diffVersion); 
                 });
 
+            InitBorders(true);
+            //StringBuilder leftBorder = new StringBuilder();
+            //StringBuilder rightBorder = new StringBuilder();
+            //StringBuilder topBorder = new StringBuilder();
+            //StringBuilder bottomBorder = new StringBuilder();
 
-            StringBuilder leftBorder = new StringBuilder();
-            StringBuilder rightBorder = new StringBuilder();
-            StringBuilder topBorder = new StringBuilder();
-            StringBuilder bottomBorder = new StringBuilder();
+            //string templeft;
+            //string tempright;
+            //string temptop;
+            //string tempbottom;
 
-            string templeft;
-            string tempright;
-            string temptop;
-            string tempbottom;
+            //templeft = WikiApplication.CachedRender(
+            //    CreateCacheKey("LeftBorder"),
+            //    delegate
+            //    {
+            //        return Federation.GetTopicFormattedBorder(topic, Border.Left);
+            //    }); 
 
-            templeft = WikiApplication.CachedRender(
-                CreateCacheKey("LeftBorder"),
-                delegate
-                {
-                    return Federation.GetTopicFormattedBorder(topic, Border.Left);
-                }); 
+            //if (!String.IsNullOrEmpty(templeft))
+            //{
+            //    leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
+            //    leftBorder.AppendLine(templeft);
+            //    leftBorder.AppendLine("</div>");
+            //}
 
-            if (!String.IsNullOrEmpty(templeft))
-            {
-                leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
-                leftBorder.AppendLine(templeft);
-                leftBorder.AppendLine("</div>");
-            }
+            //tempright = WikiApplication.CachedRender(
+            //    CreateCacheKey("RightBorder"),
+            //    delegate
+            //    {
+            //        return Federation.GetTopicFormattedBorder(topic, Border.Right);
+            //    }); 
 
-            tempright = WikiApplication.CachedRender(
-                CreateCacheKey("RightBorder"),
-                delegate
-                {
-                    return Federation.GetTopicFormattedBorder(topic, Border.Right);
-                }); 
+            //if (!String.IsNullOrEmpty(tempright))
+            //{
+            //    rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
+            //    rightBorder.AppendLine(tempright);
+            //    rightBorder.AppendLine("</div>");
+            //}
 
-            if (!String.IsNullOrEmpty(tempright))
-            {
-                rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
-                rightBorder.AppendLine(tempright);
-                rightBorder.AppendLine("</div>");
-            }
+            //temptop = WikiApplication.CachedRender(
+            //    CreateCacheKey("TopBorder"),
+            //    delegate
+            //    {
+            //        return Federation.GetTopicFormattedBorder(topic, Border.Top);
+            //    }); 
 
-            temptop = WikiApplication.CachedRender(
-                CreateCacheKey("TopBorder"),
-                delegate
-                {
-                    return Federation.GetTopicFormattedBorder(topic, Border.Top);
-                }); 
+            //if (!String.IsNullOrEmpty(temptop))
+            //{
+            //    topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
+            //    topBorder.AppendLine(temptop);
+            //    topBorder.AppendLine("</div>");
+            //}
 
-            if (!String.IsNullOrEmpty(temptop))
-            {
-                topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
-                topBorder.AppendLine(temptop);
-                topBorder.AppendLine("</div>");
-            }
+            //tempbottom = WikiApplication.CachedRender(
+            //    CreateCacheKey("BottomBorder"),
+            //    delegate
+            //    {
+            //        return Federation.GetTopicFormattedBorder(topic, Border.Bottom);
+            //    }); 
 
-            tempbottom = WikiApplication.CachedRender(
-                CreateCacheKey("BottomBorder"),
-                delegate
-                {
-                    return Federation.GetTopicFormattedBorder(topic, Border.Bottom);
-                }); 
-
-            if (!String.IsNullOrEmpty(tempbottom))
-            {
-                bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
-                bottomBorder.AppendLine(tempbottom);
-                bottomBorder.AppendLine("</div>");
-            }
+            //if (!String.IsNullOrEmpty(tempbottom))
+            //{
+            //    bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
+            //    bottomBorder.AppendLine(tempbottom);
+            //    bottomBorder.AppendLine("</div>");
+            //}
 
             // Using a simple 5 box model for Top/Left/Right/BottomBorder and TopicBody.
             // Insert the TopBorder if it is required.

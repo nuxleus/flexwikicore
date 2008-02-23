@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -83,7 +84,6 @@ namespace FlexWiki.Web
             str = Regex.Replace(str, ">", "&gt;");
             return str;
         }
-
         protected string NamespaceFilter()
         {
             string result = "<select onchange='changeNamespace()' class='SearchColumnFilterBox' id='NamespaceFilter'>";

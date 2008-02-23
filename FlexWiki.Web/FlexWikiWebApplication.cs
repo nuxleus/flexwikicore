@@ -343,6 +343,7 @@ namespace FlexWiki.Web
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
+            this["EnableBordersAllPages"] = _applicationConfiguration.EnableBordersAllPages;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)
 			{

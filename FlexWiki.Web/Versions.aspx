@@ -5,6 +5,8 @@
 		<title><%= GetTitle() %></title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
 		<%= InsertStylesheetReferences() %>
+		<%= InsertFavicon() %>
+		<%InsertScripts(); %>
 <script  type="text/javascript" language="javascript">
 /* <![CDATA[ */
 function PageInit() {
@@ -57,7 +59,9 @@ function diffcheck() {
 /* ]]> */
     </script>
 	</head>
-	<body class='Dialog' onload="PageInit();">
+	<body onload="PageInit();">
+	<%InsertLeftTopBorders(); %>
+	<div class="Dialog">
     <div id="StaticTopicBar" class="StaticTopicBar" style="display: block">
         <%= TheTopic.ToString() %>
     </div>
@@ -76,5 +80,7 @@ function diffcheck() {
             <asp:PlaceHolder ID="phResult" runat="server" />
         </ul>
     </form>
+    </div>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

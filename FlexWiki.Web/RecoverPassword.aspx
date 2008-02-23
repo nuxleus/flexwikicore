@@ -1,18 +1,20 @@
 <%@ Page Language="c#" Codebehind="RecoverPassword.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.RecoverPassword" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<html>
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
     <title>Recover Forgotten Password</title>
-    <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
+    <%InsertScripts(); %>
 </head>
-<body class="Dialog">
-    <form runat="server">
+<body>
+	<%InsertLeftTopBorders(); %>
+    <div class="Dialog">
+    <form runat="server" action="">
         <asp:PasswordRecovery ID="PasswordRecovery1" runat="server" BackColor="#E3EAEB" BorderColor="#E6E2D8"
             BorderPadding="4" BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana"
-            Font-Size="0.8em">
+            Font-Size="14pt">
             <SuccessTemplate>
                 Your password has been sent to you. <br />
                 <asp:HyperLink runat="server" ID="LoginLink">Return to login</asp:HyperLink><br />
@@ -26,5 +28,7 @@
                 Font-Names="Verdana" Font-Size="0.8em" ForeColor="#1C5E55" />
         </asp:PasswordRecovery>
     </form>
+    </div>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

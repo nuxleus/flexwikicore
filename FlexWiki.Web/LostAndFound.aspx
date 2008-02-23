@@ -6,8 +6,13 @@
 		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
 		<%= InsertStylesheetReferences() %>
 		<%= InsertFavicon() %>
+		<%InsertScripts(); %>
 	</head>
-	<body class='Dialog'>
+	<body>
+		<%InsertLeftTopBorders(); %>
+        <div class="Dialog">
 		<% ShowPage(); %>
+		</div>
+	<%InsertRightBottomBorders(); %>
 	</body>
 </html>

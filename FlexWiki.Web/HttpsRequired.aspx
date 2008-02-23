@@ -1,14 +1,16 @@
 <%@ Page Language="c#" Codebehind="HttpsRequired.aspx.cs" AutoEventWireup="false"
     Inherits="FlexWiki.Web.HttpsRequired" %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
     <title>Request Requires HTTPS</title>
     <meta runat="server" id="MetaRefresh" http-equiv="refresh" content="" />
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
+    <%InsertScripts(); %>
 </head>
 <body>
+	<%InsertLeftTopBorders(); %>
     <form id="Form1" runat="server" method="post" action="">
         <table>
             <tbody>
@@ -26,5 +28,6 @@
             </tbody>
         </table>
     </form>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

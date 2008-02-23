@@ -6,8 +6,13 @@
     <title id="title">Search</title>
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
+    <%InsertScripts(); %>
 </head>
-<body class='Dialog'>
+<body>
+	<%InsertLeftTopBorders(); %>
+	<div class="Dialog">
     <% DoSearch(); %>
+    </div>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

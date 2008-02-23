@@ -14,11 +14,13 @@
     <title>Create MessagePost</title>
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
+    <%InsertScripts(); %>
     <style type="text/css">
 			body { background:#FFF3E1; margin:4px; }
     </style>
 </head>
 <body class="UserInfo">
+	<%InsertLeftTopBorders(); %>
     <form id="Form1" runat="server">
         <div id="MessagePost" class="MessagePost" style="width: 949px; height: 382px">
             <asp:Panel ID="Panel2" runat="server" Height="36px" Width="840px">
@@ -68,5 +70,6 @@
             </asp:Panel></div>
         </div>
     </form>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>

@@ -1,15 +1,17 @@
 <%@ Page Language="c#" Codebehind="Login.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Login" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<html>
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
     <title>Wiki Logon</title>
-    <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
+    <%InsertScripts(); %>
 </head>
-<body class="Dialog">
-    <form runat="server">
+<body>
+	<%InsertLeftTopBorders(); %>
+	<div class="Dialog">
+    <form runat="server" action="">
         <asp:Login ID="Login1" 
                 runat="server" 
                 BackColor="#E3EAEB" 
@@ -18,7 +20,7 @@
                 BorderStyle="Solid" 
                 BorderWidth="1px" 
                 Font-Names="Verdana" 
-                Font-Size="0.8em"
+                Font-Size="14pt"
                 ForeColor="#333333" 
                 TextLayout="TextOnTop" 
                 OnLoginError="Login1_LoginError" 
@@ -35,5 +37,7 @@
         </asp:Login>
         <asp:HyperLink runat="server" ID="ReturnLink" Visible="false" />
     </form>
+    </div>
+	<%InsertRightBottomBorders(); %>
 </body>
 </html>
