@@ -77,8 +77,14 @@ namespace FlexWiki
 			{
 				ArrayList answer = new ArrayList();
 				IEnumerable events = (IEnumerable)(System.Web.HttpContext.Current.Session["VisitorEvents"]);
-				foreach (VisitorEvent each in events)
-					answer.Add(each);
+                if (events == null)
+                {
+                    return answer;
+                }
+                foreach (VisitorEvent each in events)
+                {
+                    answer.Add(each);
+                }
 				return answer;
 			}
 		}
@@ -90,10 +96,16 @@ namespace FlexWiki
 			{
 				ArrayList answer = new ArrayList();
 				System.Web.HttpContext ctx = System.Web.HttpContext.Current;
-				if (ctx == null)
-					return answer;
+                if (ctx == null)
+                {
+                    return answer;
+                }
 				IEnumerable events = (IEnumerable)(ctx.Session["VisitorEvents"]);
-				Set<QualifiedTopicRevision> seen = new Set<QualifiedTopicRevision>();
+                if (events == null)
+                {
+                    return answer;
+                }
+                Set<QualifiedTopicRevision> seen = new Set<QualifiedTopicRevision>();
 				foreach (VisitorEvent currentEvent in events)
 				{
                     if (seen.Contains(currentEvent.Topic))
