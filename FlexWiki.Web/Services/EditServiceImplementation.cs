@@ -356,7 +356,8 @@ namespace FlexWiki.Web.Services
         }
         private bool WriteAllowed()
         {
-            if (Context.Request.Url.ToString().Substring(10, 60).Contains("MessagePost.aspx?topic"))
+            int urlLength = Context.Request.Url.ToString().Length;
+            if (Context.Request.Url.ToString().Substring(5, urlLength).Contains("MessagePost.aspx?topic"))
             {
                 return true;
             }
