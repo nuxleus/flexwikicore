@@ -356,14 +356,21 @@ namespace FlexWiki.Web.Services
         }
         private bool WriteAllowed()
         {
+            bool editAllowed;
+
+            editAllowed = (!(bool)(Federation.Application["DisableEditServiceWrite"]));
+            // when DisableEditServiceWrite is false, write is always allowed
+            if (editAllowed)
+            {
+                return true;
+            }
+            // when DisableEditServiceWrite is true, write is only allowed when using MessagePost.aspx
             int urlLength = Context.Request.Url.ToString().Length;
             if (Context.Request.Url.ToString().Substring(5, urlLength).Contains("MessagePost.aspx?topic"))
             {
                 return true;
             }
-
-            return (!(bool)(Federation.Application["DisableEditServiceWrite"]));
-
+            return false;
         }
         private void WriteNewTopic(QualifiedTopicRevision theTopic, string postedTopicText, string visitorIdentityString, string version)
         {
