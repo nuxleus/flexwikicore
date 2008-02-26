@@ -48,15 +48,26 @@ namespace FlexWiki
 			}
 		}
 
-		[ExposedMethod(ExposedMethodFlags.Default, "Answer the named parameter from the query string of the request; null if absent")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer the named parameter from the query string and form of the request; null if absent")]
 		public string GetParameterNamed(string parm)
 		{
 			if (HTTPRequest == null)
 				return null;
-			return HTTPRequest.QueryString[parm];
+            if (!String.IsNullOrEmpty(HTTPRequest.QueryString[parm]))
+            {
+                return HTTPRequest.QueryString[parm];
+            }
+            else if (!String.IsNullOrEmpty(HTTPRequest.Form[parm]))
+            {
+                return HTTPRequest.Form[parm];
+            }
+            else
+            {
+                return null;
+            }
 		}
 
-		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array the names of all of the parameters in the query string")]
+		[ExposedMethod(ExposedMethodFlags.Default, "Answer an Array the names of all of the parameters in the query string and form")]
 		public ArrayList ParameterNames
 		{
 			get
@@ -64,8 +75,17 @@ namespace FlexWiki
 				ArrayList answer = new ArrayList();
 				if (HTTPRequest == null)
 					return answer;
-				foreach (string s in HTTPRequest.QueryString.Keys)
-					answer.Add(s);
+                foreach (string s in HTTPRequest.QueryString.Keys)
+                {
+                    answer.Add(s);
+                }
+                foreach (string s in HTTPRequest.Form.Keys)
+                {
+                    if (!answer.Contains(s))
+                    {
+                        answer.Add(s);
+                    }
+                }
 				return answer;
 			}
 		}

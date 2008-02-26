@@ -110,3 +110,13 @@ function showVersion()
 {
 	nav(VersionList.value);
 }
+
+function submitWikiForm(formID, actionUrl)
+{
+    var docForm = document.getElementById(formID);
+    if (docForm.onsubmit())
+    {
+        docForm.action = actionUrl;
+        docForm.submit();
+    }
+}
