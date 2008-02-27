@@ -31,6 +31,8 @@ namespace FlexWiki
 			_Value = val;
 		}
 
+        private static System.Random _random = new Random();
+
 		[ExposedMethod(ExposedMethodFlags.Default, "Determine whether this object is equal to another object")]
 		public override bool Equals(object obj)
 		{
@@ -133,11 +135,17 @@ namespace FlexWiki
 			return Value >= otherValue;
 		}
 
-		[ExposedMethod(ExposedMethodFlags.Default, "Answer true or false depending on whether this number is greater than the supplied integer")]
-		public bool GreaterThan(int otherValue)
-		{
-			return Value > otherValue;
-		}
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer true or false depending on whether this number is greater than the supplied integer")]
+        public bool GreaterThan(int otherValue)
+        {
+            return Value > otherValue;
+        }
+
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a random interger from the first supplied integer to the second supplied integer")]
+        public int Random(int lowerValue, int maxValue)
+        {
+            return _random.Next(lowerValue, maxValue);
+        }
 
 		#region IWikiSequenceProducer Members
 
