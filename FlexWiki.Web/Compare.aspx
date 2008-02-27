@@ -10,9 +10,6 @@
     <%= InsertStylesheetReferences() %>
     <%= InsertFavicon() %>
 	<%InsertScripts(); %>
-    <style type="text/css">
-			body { background:#FFF3E1; margin:4px; }
-    </style>
 
     <script type="text/javascript" src="wikidefault.js"></script>
     <script type="text/javascript" src="wikitopicbar.js"></script>
