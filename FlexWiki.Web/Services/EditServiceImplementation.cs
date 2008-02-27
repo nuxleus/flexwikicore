@@ -366,7 +366,7 @@ namespace FlexWiki.Web.Services
             }
             // when DisableEditServiceWrite is true, write is only allowed when using MessagePost.aspx
             int urlLength = Context.Request.Url.ToString().Length;
-            if (Context.Request.Url.ToString().Substring(5, urlLength).Contains("MessagePost.aspx?topic"))
+            if (Context.Request.Url.ToString().Substring(5, urlLength - 35).Contains("MessagePost.aspx?topic"))
             {
                 return true;
             }
