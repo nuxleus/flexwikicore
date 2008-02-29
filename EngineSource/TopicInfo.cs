@@ -308,12 +308,17 @@ namespace FlexWiki
             }
             return answer;
         }
-        [ExposedMethod(ExposedMethodFlags.Default, "Answer a formatted Table of Contents for the topic. Valid values for style are 'bullet' or 'numeric'")]
-        public string TableOfContents(string style)
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer a formatted Table of Contents for the topic. Valid values for style are 'bullet' or 'numeric'")]
+        public string TableOfContents(ExecutionContext ctx, string style, [ExposedParameter(true)] int maxDepth)
         {
             StringBuilder strbldr = new StringBuilder();
-            string _spaces = "                                                        "; //56 spaces = 7 x 8 spaces
+            string _spaces = "                                                                "; //64 spaces = (7 + 1) x 8 spaces
             string _style;
+            int _maxDepth = 7;
+            if (maxDepth >= 1 && maxDepth <= 7)
+            {
+                _maxDepth = maxDepth - 1;
+            }
 
             string _headers = Federation.GetTopicHeaders(TopicRevision);
             if (style.ToLower().Equals("numeric"))
@@ -332,23 +337,27 @@ namespace FlexWiki
                 string tempIn = hdrLine[x].Trim();
                 int maxWidth = tempIn.Length > 6 ? 7 : tempIn.Length;
                 int y = tempIn.Substring(0,maxWidth).LastIndexOf('!'); //ensure y has max value of 7 and only uses chars at the start of the Header
-                string temp = tempIn.Substring(y + 1, tempIn.Length - y - 1);
-                while (temp.Contains("\"\"")) 
+                if (y <= _maxDepth)
                 {
-                    int z = temp.IndexOf("\"\"");
-                    if (z == 0)
+                    string temp = tempIn.Substring(y + 1, tempIn.Length - y - 1);
+                    while (temp.Contains("\"\""))
                     {
-                        temp = temp.Substring(2);
-                    }
-                    else
-                    {
-                        temp = temp.Substring(0, z) + temp.Substring(z + 2);
-                    }
-                    
-                } 
+                        int z = temp.IndexOf("\"\"");
+                        if (z == 0)
+                        {
+                            temp = temp.Substring(2);
+                        }
+                        else
+                        {
+                            temp = temp.Substring(0, z) + temp.Substring(z + 2);
+                        }
 
-                temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""Default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""",""#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
-                strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
+                    }
+
+
+                    temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""Default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""",""#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
+                    strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
+                }
             }
             return strbldr.ToString();
         }
