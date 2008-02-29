@@ -138,7 +138,18 @@ namespace FlexWiki
 				return answer;
 			}
 		}
-
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the URL of the HttpRequest")]
+        public string Url
+        {
+            get
+            {
+                if (HTTPRequest == null)
+                {
+                    return "";
+                }
+                return (string) (HTTPRequest.Url.ToString());
+            }
+        }
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer a string identifying the visitor (not authenticated)")]
 		public string VisitorIdentityString
 		{
