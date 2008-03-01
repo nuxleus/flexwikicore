@@ -47,7 +47,22 @@ namespace FlexWiki
                 return Thread.CurrentPrincipal;
 			}
 		}
-
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the contents of the named cookie, null if absent")]
+        public string GetCookie(string key)
+        {
+            if (HTTPRequest == null)
+            {
+                return null;
+            }
+            if (!String.IsNullOrEmpty(HTTPRequest.Cookies[key].Value))
+            {
+                return HTTPRequest.Cookies[key].Value;
+            }
+            else
+            {
+                return null;
+            }
+        }
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer the named parameter from the query string and form of the request; null if absent")]
 		public string GetParameterNamed(string parm)
 		{
