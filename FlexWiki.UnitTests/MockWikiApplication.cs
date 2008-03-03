@@ -144,6 +144,7 @@ namespace FlexWiki.UnitTests
 <configuration>
   <DisableWikiEmoticons>false</DisableWikiEmoticons>
   <RemoveListItemWhitespace>false</RemoveListItemWhitespace>
+  <OverrideStylesheet>wiki-override.css</OverrideStylesheet>
   <FederationConfiguration>
     <!-- This information is used by the default borders to print a short message 
           in the border of every page on the wiki. It appears as the ""About"" property
@@ -269,6 +270,7 @@ namespace FlexWiki.UnitTests
             _applicationConfiguration = (FlexWikiWebApplicationConfiguration)serializer.Deserialize(reader);
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
+            this["OverrideStylesheet"] = _applicationConfiguration.OverrideStylesheet;
 
         }
         /// <summary>

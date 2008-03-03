@@ -238,8 +238,10 @@
     <Compile Include="WikiTalk\BelDateTimeWeeksInMontTests.cs" />
     <Compile Include="WikiTalk\BelIntegerArithmeticTests.cs" />
     <Compile Include="WikiTalk\BelIntegerComparisonTests.cs" />
+    <Compile Include="WikiTalk\BelIntegerRandomTests.cs" />
     <Compile Include="WikiTalk\BelIntegerStaticArithmeticTests.cs" />
     <Compile Include="WikiTalk\BelTimeSpanInstanceTests.cs" />
+    <Compile Include="WikiTalk\HomeTests.cs" />
     <Compile Include="WikiTestUtilities.cs">
       <SubType>Code</SubType>
     </Compile>
