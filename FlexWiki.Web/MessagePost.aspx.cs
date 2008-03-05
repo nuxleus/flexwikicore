@@ -196,6 +196,10 @@ namespace FlexWiki.Web
         {
             get
             {
+                if (!String.IsNullOrEmpty(Request.QueryString["newForum"]))
+                {
+                    NewForumCheck.Checked = true;
+                }
                 _newForum = NewForumCheck.Checked;
                 return _newForum;
             }
@@ -597,6 +601,17 @@ namespace FlexWiki.Web
                     {
                         MessageTitleText.Text = Request.QueryString["title"];
                     }
+                    else
+                    {
+                        if ((!String.IsNullOrEmpty(Request.QueryString["newForum"])) && (!String.IsNullOrEmpty(Request.QueryString["topic"])))
+                        {
+                            if (IsNewForum)
+                            {
+                                Panel1.Visible = true;
+                                ShowNewForumDetails();
+                            }
+                        }
+                    }
                 }
                 if (IsPostBack)
                 {
@@ -608,7 +623,12 @@ namespace FlexWiki.Web
             }
 
 		}
-
+        private void ShowNewForumDetails()
+        {
+            ForumNameText.Text = Request.QueryString["topic"].Split(new char[] { '.' }).GetValue(1).ToString() + "Discuss";
+            ForumKeyText.Text = Request.QueryString["topic"].Split(new char[] { '.' }).GetValue(1).ToString() + "Discuss";
+            ForumNamespaceText.Text = Request.QueryString["topic"].Split(new char[] { '.' }).GetValue(0).ToString();
+        }
 
 		#region Web Form Designer generated code
 		override protected void OnInit(EventArgs e)
