@@ -129,11 +129,15 @@ namespace FlexWiki.Web
             {
                 if (counter == _diff)
                 {
-                    newestTopicVersion = new QualifiedTopicRevision(change.DottedName);
+                    string newLocalName = change.DottedName.Substring(change.DottedName.IndexOf(".") + 1);
+                    string newNamespace = change.DottedName.Substring(0, change.DottedName.IndexOf("."));
+                    newestTopicVersion = new QualifiedTopicRevision(newLocalName, newNamespace, change.Version);
                 }
                 else if (counter == _oldid)
                 {
-                    oldTopicVersion = new QualifiedTopicRevision(change.DottedName);
+                    string oldLocalName = change.DottedName.Substring(change.DottedName.IndexOf(".") + 1);
+                    string oldNamespace = change.DottedName.Substring(0, change.DottedName.IndexOf("."));
+                    oldTopicVersion = new QualifiedTopicRevision(oldLocalName, oldNamespace, change.Version);
                     break;
                 }
                 counter++;
