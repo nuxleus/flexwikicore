@@ -35,7 +35,7 @@ namespace FlexWiki.UnitTests.WikiTalk
             Federation federation = new Federation(application);
             MockContentStore store = new MockContentStore();
             NamespaceManager storeManager = federation.RegisterNamespace(store, "MockStore");
-            ExecutionContext ctx = new ExecutionContext();
+            //ExecutionContext ctx = new ExecutionContext();
             bool result = (bool) federation.Application["DisableWikiEmoticons"];
             Assert.AreEqual(false, result, "Checking that DisableWikiEmoticons is false");
             result = (bool) federation.Application["RemoveListItemWhitespace"];
@@ -44,6 +44,21 @@ namespace FlexWiki.UnitTests.WikiTalk
             Assert.AreEqual("wiki-override.css", overrideCss, "Checking that OverrideStylesheet is wiki-override.css");
         }
 
+        [Test]
+        public void HomeTopicFormattedName()
+        {
+            MockWikiApplication application = new MockWikiApplication(
+                new FederationConfiguration(),
+                new LinkMaker("test://federationtests"),
+                OutputFormat.HTML,
+                new MockTimeProvider(TimeSpan.FromSeconds(1)));
 
+            Federation federation = new Federation(application);
+            MockContentStore store = new MockContentStore();
+            NamespaceManager storeManager = federation.RegisterNamespace(store, "MockStore");
+            QualifiedTopicRevision topic = new QualifiedTopicRevision("MockStore.NewTopicForTest");
+            string result = topic.FormattedName;
+            Assert.AreEqual("New Topic For Test", result, "checking that the TopicInfo.FormattedName has correct spaces");
+        }
     }
 }

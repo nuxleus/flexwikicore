@@ -113,6 +113,14 @@ namespace FlexWiki
                 return _exists; 
             }
         }
+        [ExposedMethod("FormattedName", ExposedMethodFlags.Default, "Answer the name of the topic formatted with spaces")]
+        public string ExposedFormattedName
+        {
+            get
+            {
+                return _topicVersionKey.Name.FormattedName;
+            }
+        }
         [ExposedMethod("Fullname", ExposedMethodFlags.Default, "Answer the complete name of the topic (including namespace and version, if present)")]
         public string ExposedFullname
         {
