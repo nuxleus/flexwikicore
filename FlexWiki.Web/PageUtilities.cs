@@ -60,10 +60,19 @@ namespace FlexWiki.Web
 
             // OK, we've got the namespace and the name now
             QualifiedTopicRevision revision;
+
+
             if (topic == null || topic.Length == 0)
             {
-                revision = new QualifiedTopicRevision(DefaultNamespaceManager(federation).HomePage,
-                    DefaultNamespaceManager(federation).Namespace);
+                if ((!String.IsNullOrEmpty(HttpContext.Current.Request.Form["Topic"])) && ((bool)federation.Application["EnableBordersAllPages"]))
+                {
+                    revision = new QualifiedTopicRevision(HttpContext.Current.Request.Form["Topic"]);
+                }
+                else
+                {
+                    revision = new QualifiedTopicRevision(DefaultNamespaceManager(federation).HomePage,
+                        DefaultNamespaceManager(federation).Namespace);
+                }
             }
             else
             {
