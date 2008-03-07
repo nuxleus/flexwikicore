@@ -9,7 +9,8 @@
 		<%InsertScripts(); %>
 <script  type="text/javascript" language="javascript">
 function filter() {
-	var author = AuthorFilter.options[AuthorFilter.selectedIndex].text;
+    var selected = document.getElementById('AuthorFilter');
+	var author = selected.options[selected.selectedIndex].text;
 	var table = document.getElementById('MainTable');
 	for (var i = 0; i < table.rows.length; i++)	{
 		var row = table.rows.item(i);
@@ -33,7 +34,8 @@ function filter() {
 
 function changeNamespace()
 {
-	var ns = NamespaceFilter.options[NamespaceFilter.selectedIndex].text;
+    var filter = document.getElementById('NamespaceFilter');
+	var ns = filter.options[filter.selectedIndex].text;
 	var newURL = 'LastModified.aspx?namespace=' + ns;
 	window.location = newURL;	
 }
