@@ -34,6 +34,8 @@ namespace FlexWiki.Web
     public class LastModified : BasePage
     {
         private string _preferredNamespace = string.Empty;
+        private string _numberRecords = string.Empty;
+        private int _recordLimit = 25;
         private ArrayList _uniqueNamespaces;
 
         private void Page_Load(object sender, System.EventArgs e)
@@ -49,6 +51,18 @@ namespace FlexWiki.Web
             if (_preferredNamespace == null)
             {
                 _preferredNamespace = DefaultNamespace;
+            }
+            _numberRecords = Request.QueryString["records"];
+            if (!String.IsNullOrEmpty(_numberRecords))
+            {
+                try
+                {
+                    _recordLimit = Int32.Parse(_numberRecords);
+                }
+                catch
+                {
+                    _recordLimit = 25;
+                }
             }
         }
 
@@ -95,10 +109,24 @@ namespace FlexWiki.Web
             result += "</select>";
             return result;
         }
+        protected string NumberFilter()
+        {
+            string result = "<select onchange='changeNamespace()' class='SearchColumnFilterBox' id='NumberFilter'>";
+            // fix up selected index for different values
+
+            result += "<option" + (_recordLimit == 25 ? " selected " : "") + " value='25'>25</option>";
+            result += "<option" + (_recordLimit == 50 ? " selected " : "") + " value='50'>50</option>";
+            result += "<option" + (_recordLimit == 100 ? " selected " : "") + " value='100'>100</option>";
+            result += "<option" + (_recordLimit == 500 ? " selected " : "") + " value='500'>500</option>";
+            result += "<option" + (_recordLimit == -1 ? " selected " : "") + " value='-1'>All</option>";
+            result += "</select>";
+            return result;
+        }
 
         protected void DoSearch()
         {
             LinkMaker lm = TheLinkMaker;
+            int counter = 0;
 
             NamespaceManager storeManager = Federation.NamespaceManagerForNamespace(_preferredNamespace);
 
@@ -112,7 +140,22 @@ namespace FlexWiki.Web
             {
                 if (storeManager.HasPermission(new UnqualifiedTopicName(topic.LocalName), TopicPermission.Read))
                 {
-                    permittedTopics.Add(topic);
+                    if (_recordLimit > 0)
+                    {
+                        if (counter < _recordLimit)
+                        {
+                            permittedTopics.Add(topic);
+                            counter++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        permittedTopics.Add(topic);
+                    }
                 }
             }
 

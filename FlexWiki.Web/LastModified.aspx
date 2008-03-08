@@ -35,17 +35,24 @@ function filter() {
 function changeNamespace()
 {
     var filter = document.getElementById('NamespaceFilter');
+    var limit = document.getElementById('NumberFilter');
 	var ns = filter.options[filter.selectedIndex].text;
-	var newURL = 'LastModified.aspx?namespace=' + ns;
+	var num = limit.options[limit.selectedIndex].text;
+	if (num == 'All')
+	{
+	    num = -1;
+	}
+	var newURL = 'LastModified.aspx?namespace=' + ns +'&records=' + num;
 	window.location = newURL;	
 }
+
 </script>
 </head>
 	<body>
 	<%InsertLeftTopBorders(); %>
 	<fieldset class="Dialog">
 	<legend class='DialogTitle'>Recent Changes</legend>
-	<p>Namespace: <%=NamespaceFilter()%></p>
+	<p>Namespace: <%=NamespaceFilter()%>&nbsp;Records: <%=NumberFilter()%></p>
 		<% DoSearch(); %>
 	</fieldset>
 	<%InsertRightBottomBorders(); %>
