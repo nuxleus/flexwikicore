@@ -363,7 +363,7 @@ namespace FlexWiki
                     }
 
 
-                    temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""Default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""","".html#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
+                    temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""","".html#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
                     strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
                 }
             }
