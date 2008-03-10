@@ -39,6 +39,8 @@ namespace FlexWiki
         private readonly ArrayList _deprecatedDefinitions = new ArrayList();
         private bool _enablePerformanceCounters; 
         private bool _displaySpacesInWikiLinks;
+        private string _localDateFormat = "MM/dd/yyyy";
+        private string _localTimeFormat = "h:mm tt";
         private string _interWikisTopic; 
         private readonly ArrayList _namespaceMappings = new ArrayList();
         private bool _noFollowExternalHyperlinks;
@@ -106,6 +108,16 @@ namespace FlexWiki
         {
             get { return _enablePerformanceCounters; }
             set { _enablePerformanceCounters = value; }
+        }
+        public string LocalDateFormat
+        {
+            get { return _localDateFormat; }
+            set { _localDateFormat = value; }
+        }
+        public string LocalTimeFormat
+        {
+            get { return _localTimeFormat; }
+            set { _localTimeFormat = value; }
         }
         public string InterWikisTopic
         {

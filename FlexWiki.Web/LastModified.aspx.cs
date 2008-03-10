@@ -200,13 +200,15 @@ namespace FlexWiki.Web
 
                 Response.Write("<td>");
                 DateTime stamp = storeManager.GetTopicLastModificationTime(topic.LocalName);
+                string timeFormat = WikiApplication.FederationConfiguration.LocalTimeFormat;
+                string dateFormat = WikiApplication.FederationConfiguration.LocalDateFormat;
                 if (stamp.Date == DateTime.Now.Date)
                 {
-                    Response.Write(stamp.ToString("h:mm tt"));
+                    Response.Write(stamp.ToString(timeFormat));
                 }
                 else
                 {
-                    Response.Write(stamp.ToString("MM/dd/yyyy h:mm tt"));
+                    Response.Write(stamp.ToString(dateFormat + " - " + timeFormat));
                 }
                 Response.Write("</td>");
                 Response.Write("<td>");

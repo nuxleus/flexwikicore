@@ -142,6 +142,13 @@ namespace FlexWiki
 			}
 		}
 
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Answer the Local Date/Time Format from flexwiki.config")]
+        public string LocalFormat(ExecutionContext ctx)
+        {
+            string localDate = ctx.CurrentFederation.Configuration.LocalDateFormat;
+            string localTime = ctx.CurrentFederation.Configuration.LocalTimeFormat;
+            return DateTime.ToString(localDate + " - " + localTime);
+        }
 
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer the millisecond component of the time represented by this DateTime")]
 		public int Millisecond

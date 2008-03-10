@@ -149,20 +149,19 @@ namespace FlexWiki.Web
                 else
                 {
                     output.Append("&nbsp;&nbsp;<span class=\"version\"><a href=\"" + TheLinkMaker.LinkToTopic(change.TopicRevision) + "\" title=\"Show this version\" >");
+                    string timeFormat = WikiApplication.FederationConfiguration.LocalTimeFormat;
                     if (change.Created.Date == DateTime.Now.Date)
                     {
-                        output.Append(" Today, " + change.Created.ToString("HH:mm"));
+                        output.Append(" Today, " + change.Created.ToString(timeFormat));
                     }
                     else
                     {
-                        if (change.Created.Date.Year == DateTime.Now.Date.Year)
-                        {
-                            output.Append(change.Created.ToString("MMM dd - HH:mm"));
-                        }
-                        else
-                        {
-                            output.Append(change.Created.ToString("MMM dd yyyy - HH:mm"));
-                        }
+                        string localFormat = WikiApplication.FederationConfiguration.LocalDateFormat + " - " + timeFormat;
+                        //string localFormat = "yyyy-MM-dd - HH:mm";
+                        //System.Globalization.DateTimeFormatInfo dtf = new System.Globalization.CultureInfo("", false).DateTimeFormat;
+                        //dtf.FullDateTimePattern = localFormat;
+                        output.AppendFormat(change.Created.ToString(localFormat));
+                        
                     }
                     output.Append("</a></span>");
                 }
