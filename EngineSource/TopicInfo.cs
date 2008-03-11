@@ -322,6 +322,8 @@ namespace FlexWiki
             StringBuilder strbldr = new StringBuilder();
             string _spaces = "                                                                "; //64 spaces = (7 + 1) x 8 spaces
             string _style;
+            string _topic = ctx.CurrentTopicName.LocalName;
+            
             int _maxDepth = 7;
             if (maxDepth >= 1 && maxDepth <= 7)
             {
@@ -362,8 +364,14 @@ namespace FlexWiki
 
                     }
 
-
-                    temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""","".html#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
+                    if (TopicRevision.LocalName == _topic)
+                    {
+                        temp = @"@@Presentations.Link([""#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString,""" + temp + @""")@@";
+                    }
+                    else
+                    {
+                        temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""","".html#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
+                    }
                     strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
                 }
             }
