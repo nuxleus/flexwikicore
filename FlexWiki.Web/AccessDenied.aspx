@@ -9,7 +9,6 @@
 	<%InsertScripts(); %>
 </head>
 <body>
-	<%InsertLeftTopBorders(); %>
     <form id="Form1" runat="server" method="post" action="">
         <table>
             <tbody>
@@ -31,6 +30,5 @@
             </tbody>
         </table>
     </form>
-    <%InsertRightBottomBorders(); %>
 </body>
 </html>
