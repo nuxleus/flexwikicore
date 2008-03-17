@@ -26,6 +26,49 @@
   <!-- Defines the number of links that must be added to a topic before CAPTCHA will be 
         required when <RequireCaptchaOnEdit> is set to CaptchaLinkThreshold. -->
   <CaptchaLinkThreshold>5</CaptchaLinkThreshold>
+
+  <!-- Defines the foreground and background colors used for the CAPTCHA image. Possible values are:
+        AliceBlue, AntiqueWhite, Aqua, Aquamarine, Azure, Beige, Bisque, Black, 
+        BlanchedAlmond, Blue, BlueViolet, Brown, BurlyWood, DarkKhaki, DarkMagenta,
+        DarkOliveGreen, DarkOrange, DarkOrchid, DarkRed, DarkSalmon, DarkSeaGreen,
+        DarkSlateBlue, DarkSlateGray, DarkTurquoise, DarkViolet, DeepPink, DeepSkyBlue,
+        DimGray, DodgerBlue, Firebrick, FloralWhite, ForestGreen, Fuschia, Gainsboro,
+        GhostWhite, Gold, Goldenrod, Gray, Green, GreenYellow, Honeydew, HotPink,
+        IndianRed, Indigo, Ivory, Khaki, Lavender, LavenderBlush, LawnGreen, LemonChiffon,
+        LightBlue, LightCoral, LightCyan, LightGoldenrodYellow, LightGray, LightGreen, 
+        LightPink, LightSalmon, LightSeaGreen, LightSkyBlue, LightSlateGray, LightSteelBlue,
+        LightYellow, Lime, LimeGreen, Linen, Magenta, Maroon, MediumAquamarine, MediumBlue,
+        MediumOrchid, MediumPurple, MediumSeaGreen, MediumSlateBlue, MediumSpringGreen,
+        MediumTurquoise, MediumVioletRed, MidnightBlue, MintGreen, MistyRose, Moccasin,
+        NavajoWhite, Navy, OldLace, Olive, OliveDrab, Orange, OrangeRed, Orchid, 
+        PaleGoldenrod, PaleGreen, PaleTurquoise, PaleVioletRed, PapayaRed, PeachPuff,
+        Peru, Pink, Plum, PowderBlue, Purple, Red, RosyBrown, RoyalBlue, SaddleBrown, 
+        Salmon, SandyBrown, SeaGreen, SeaShell, Sienna, Silver, SkyBlue, SlateBlue,
+        SlateGray, Snow, SpringGreen, SteelBlue, Tan Teal, Thistle, tomato, Transparent, 
+        Turquoise, Violet, Wheat, White, WhiteSmoke, Yellow, YellowGreen -->
+      <!-- BackgroundColorCAPTCHA is the color of the numbers to be input-->
+  <ForegroundColorCAPTCHA>LightGray</ForegroundColorCAPTCHA>
+  <BackgroundColorCAPTCHA>DarkGray</BackgroundColorCAPTCHA>
+  
+  <!-- Defines the hatch style to use for the obfuscation overlay. Possible Values are:
+         BackwardDiagonal, Cross, DarkDownwardDiagonal, DarkHorizontal, DarkUpwardDiagonal,
+         DarkVertical, DashedDownwardDiagonal, DashedHorizontal, DashedUpwardDiagonal,
+         DashedVertical, DiagonalBrick, DiagonalCross, Divot, DottedDiamond, DottedGrid,
+         ForwardDiagonal, Horizontal, HorizontalBrick, LargeCheckerBoard, LargeConfetti,
+         LargeGrid, LightDownwardDiagonal, LightHorizontal, LightUpwardDiagonal, 
+         LightVertical, Max (SolidDiamond), Min (Horizontal), NarrowHorizontal,
+         NarrowVertical, OutlinedDiamond, Percent05, Percent10, Percent20, Percent25,
+         Percent30, Percent40, Percent50, Percent60, Percent70, Percent75, Percent80,
+         Percent90, Plaid, Shingle, SmallCheckerBoard, SmallConfetti, SmallGrid, 
+         SolidDiamond, Sphere, Trellis, Vertical, Wave, Weave, WideDownwardDiagonal,
+         WideUpwardDiagonal, ZigZag-->
+  <HatchStyleCAPTCHA>LargeConfetti</HatchStyleCAPTCHA>
+  
+  <!-- Defines the warp mode for the CAPTCHA image. achoice of Bilinear or Perspective-->
+  <WarpModeCAPTCHA>Perspective</WarpModeCAPTCHA>
+  
+  <!-- Defines the number of lines obscuring the CAPTCHA. Values are from 2 - 5-->
+  <ObscuringLinesCAPTCHA>5</ObscuringLinesCAPTCHA>
   
   <!-- Identifies the path to a directory tree where uploads to the wiki will be stored. If
         this key does not exist, then the file upload and attachment controls will not be 
@@ -138,15 +181,18 @@
         user environment.     -->
   <EnableBordersAllPages>false</EnableBordersAllPages>
 
-  <!-- <OverrideBorders> point to a file in a directory "/skins" that would provide the skin for all namespaces in the entire website. 
-        The property OverrideBorders: would also be usable in the ContentBaseDefinition file for a namespace. Here if the variable 
-        did not exist in the flexwiki.config file, but did exist in the ContentBaseDefinition file, then the skin would be applied 
-        only for that namespace. at least initially the WikiEdit.aspx page would not be impacted by any skins. If site admins want 
-        the other Utility pages to be skinned they need to set <EnableBordersAllPages> to true, otherwise they will have their default 
-        appearance. If a FlexWiki admin allows users to edit ContentBaseDefinition files (not recommended for security reasons) then 
-        users would be able to create a local skin for a namespace, if a FlexWiki-wide skin had not been declared in flexwiki.config.
+  <!-- <OverrideBordersScope> may have one of the following values: None, Namespace or Federation. The default value is None, which
+        is the value that will be assigned if the key is not present or the contenct of the key are not in the approved set.
+        For a namespace where the borders should be overriden the ContentBaseDefinition file for that namespace will have a  
+        property OverrideBorders: where this property contains a multi-line property value that is the xhtml content for the template.
+        If this property does not exist in the ContentBaseDefinition, or does exist and is empty, then normal border processing will take 
+        place. When the scope is 'Federation' then the ContentBaseDefinition file for the defualt namespace must have the property.
+        At least initially the WikiEdit.aspx page would not be impacted by any skins. If site admins want the other Utility pages to 
+        be skinned they need to set <EnableBordersAllPages> to true, otherwise they will have their default appearance. If a FlexWiki 
+        admin allows users to edit ContentBaseDefinition files (not recommended for security reasons) then 
+        users may be able to override an xhtml skin.
 
-        The file holding the XHTML content for the skin must include a literal placeholder '{{FlexWikiTopicBody}}' (without the single 
+        The property holding the XHTML content for the skin must include a literal placeholder '{{FlexWikiTopicBody}}' (without the single 
         quote marks), which will determine where the output for the FlexWiki topic is inserted in the skin. Additional place holder tags 
         will allow other FlexWiki generated content to be inserted into the skin at the point marked. These will enable certain header 
         information, including metatags, css declarations and javascript references. Also it will be possible to include one or more 
@@ -164,7 +210,7 @@
     * {{FlexWikiRightBorder}}: optional placeholder to allow flexWiki to include a wikiTalk generated TopBorder, as per operation without the skin
     * {{FlexWikiBottomBorder}}: optional placeholder to allow flexWiki to include a wikiTalk generated TopBorder, as per operation without the skin
                                                                                                                               -->
-  <!-- <OverrideBorders>test.html</OverrideBorders>  -->
+  <!--<OverrideBordersScope>None</OverrideBordersScope> -->
   
   <!-- In working with lists the following input when this value is set to false (original pre 2.0.0.188)
   

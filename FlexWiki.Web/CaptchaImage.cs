@@ -31,6 +31,12 @@ namespace FlexWiki.Web
         private string _text;
         private int _width;
 
+        private HatchStyle _hatchStyle;
+        private int _obscuringLines;
+        private Color _foreColor;
+        private Color _backColor;
+        private WarpMode _warpMode;
+
         // ====================================================================
         // Initializes a new instance of the CaptchaImage class using the
         // specified text, width and height.
@@ -51,6 +57,18 @@ namespace FlexWiki.Web
             this._text = s;
             this.SetDimensions(width, height);
             this.SetFamilyName(familyName);
+            this.GenerateImage();
+        }
+        public CaptchaImage(string s, int width, int height, string familyName, string hatchStyle, string foreColor, 
+                    string backColor, string warpMode, string obscuringLines)
+        {
+            this._text = s;
+            this.SetDimensions(width, height);
+            this.SetFamilyName(familyName);
+            this.SetHatchStyle(hatchStyle);
+            this.SetImageColors(foreColor, backColor);
+            this.SetObscuringLines(obscuringLines);
+            this.SetWarpMode(warpMode);
             this.GenerateImage();
         }
 
@@ -150,10 +168,12 @@ namespace FlexWiki.Web
                               };
             Matrix matrix = new Matrix();
             matrix.Translate(0F, 0F);
-            path.Warp(points, rect, matrix, WarpMode.Perspective, 0F);
+            //path.Warp(points, rect, matrix, WarpMode.Perspective, 0F);
+            path.Warp(points, rect, matrix, _warpMode, 0F);
 
             // Draw the text.
-            hatchBrush = new HatchBrush(HatchStyle.LargeConfetti, Color.LightGray, Color.DarkGray);
+            //hatchBrush = new HatchBrush(HatchStyle.LargeConfetti, Color.LightGray, Color.DarkGray);
+            hatchBrush = new HatchBrush(_hatchStyle, _foreColor, _backColor);
             g.FillPath(hatchBrush, path);
 
             // Add some random noise.
@@ -170,7 +190,7 @@ namespace FlexWiki.Web
             // add some lines that cross the characters
             using (Pen pen = new Pen(hatchBrush, 2))
             {
-                for (int i = 0; i < 5; ++i)
+                for (int i = 0; i < _obscuringLines; ++i)
                 {
                     int y1 = this._random.Next(rect.Height);
                     int y2 = this._random.Next(rect.Height);
@@ -224,6 +244,63 @@ namespace FlexWiki.Web
                 this._familyName = System.Drawing.FontFamily.GenericSerif.Name;
             }
         }
-
+        // ====================================================================
+        // Sets the hatch style for the image generation
+        // ====================================================================
+        private void SetHatchStyle(string hatchStyle)
+        {
+            try
+            {
+                this._hatchStyle = (HatchStyle)Enum.Parse(typeof(HatchStyle), hatchStyle);
+            }
+            catch (Exception)
+            {
+                this._hatchStyle = System.Drawing.Drawing2D.HatchStyle.LargeConfetti;
+            }
+        }
+        // ====================================================================
+        // Sets the foreground and background colors for the image generation
+        // ====================================================================
+        private void SetImageColors(string fore, string back)
+        {
+            try
+            {
+                this._backColor = Color.FromName(back);
+                this._foreColor = Color.FromName(fore);
+            }
+            catch (Exception)
+            {
+                this._backColor = Color.DarkGray;
+                this._foreColor = Color.LightGray;
+            }
+        }
+        // ====================================================================
+        // Sets the number of lines obscuring the image generated
+        // ====================================================================
+        private void SetObscuringLines(string lines)
+        {
+            try
+            {
+                Int32.TryParse(lines, out this._obscuringLines);
+            }
+            catch (Exception)
+            {
+                this._obscuringLines = 5;
+            }
+        }
+        // ====================================================================
+        // Sets the warp mode for the image generation
+        // ====================================================================
+        private void SetWarpMode(string warp)
+        {
+            try
+            {
+                this._warpMode = (WarpMode)Enum.Parse(typeof(WarpMode), warp);
+            }
+            catch (Exception)
+            {
+                this._warpMode = WarpMode.Perspective;
+            }
+        }
     }
 }

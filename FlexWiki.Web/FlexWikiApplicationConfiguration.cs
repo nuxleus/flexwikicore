@@ -11,6 +11,8 @@
 #endregion
 
 using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -42,7 +44,8 @@ namespace FlexWiki.Web
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
         private string _log4NetConfigPath; 
-        private NewsletterConfiguration _newsletterConfiguration; 
+        private NewsletterConfiguration _newsletterConfiguration;
+        //private string _overrideBordersScope = "None";
         private string _overrideStylesheet;
         private CaptchaRequired _requireCaptchaOnEdit; 
         private string _sendBanNotificationsToMailAddress;
@@ -52,8 +55,14 @@ namespace FlexWiki.Web
         private string _sendNamespaceRequestMailFrom;
         private bool _signNamespaceCreationMail;
         private string _outputCacheDuration;
-        private bool _outputCacheDurationSpecified; 
-        
+        private bool _outputCacheDurationSpecified;
+
+        private string _foregroundColorCAPTCHA = "LightGray";
+        private string _backgroundColorCAPTCHA = "DarkGray";
+        private string _hatchStyleCAPTCHA = "LargeConfetti";
+        private string _obscuringLinesCAPTCHA = "5";
+        private string _warpModeCAPTCHA = "Perspective";
+
         // Properties
 
         [XmlArrayItem("AlternateStylesheet")]
@@ -174,6 +183,11 @@ namespace FlexWiki.Web
             get { return _newsletterConfiguration; }
             set { _newsletterConfiguration = value; }
         }
+        //public string OverrideBordersScope
+        //{
+        //    get { return _overrideBordersScope; }
+        //    set { _overrideBordersScope = value; }
+        //}
         public string OverrideStylesheet
         {
             get { return _overrideStylesheet; }
@@ -224,6 +238,31 @@ namespace FlexWiki.Web
         {
             get { return _outputCacheDurationSpecified; }
             set { _outputCacheDurationSpecified = value; }
+        }
+        public string ForegroundColorCAPTCHA
+        {
+            get { return _foregroundColorCAPTCHA; }
+            set { _foregroundColorCAPTCHA = value; }
+        }
+        public string BackgroundColorCAPTCHA
+        {
+            get { return _backgroundColorCAPTCHA; }
+            set { _backgroundColorCAPTCHA = value; }
+        }
+        public string HatchStyleCAPTCHA
+        {
+            get { return _hatchStyleCAPTCHA; }
+            set { _hatchStyleCAPTCHA = value; }
+        }
+        public string ObscuringLinesCAPTCHA
+        {
+            get { return _obscuringLinesCAPTCHA; }
+            set { _obscuringLinesCAPTCHA = value; }
+        }
+        public string WarpModeCAPTCHA
+        {
+            get { return _warpModeCAPTCHA; }
+            set { _warpModeCAPTCHA = value; }
         }
 
     }

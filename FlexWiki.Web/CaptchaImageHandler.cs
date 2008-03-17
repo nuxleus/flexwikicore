@@ -39,6 +39,76 @@ namespace FlexWiki.Web
                 return application.ApplicationConfiguration.CaptchaKey; 
             }
         }
+        private string BackgroundColor
+        {
+            get
+            {
+                FlexWikiWebApplication application = FlexWikiWebApplication;
+
+                if (application == null)
+                {
+                    return null;
+                }
+
+                return application.ApplicationConfiguration.BackgroundColorCAPTCHA;
+            }
+        }
+        private string ForegroundColor
+        {
+            get
+            {
+                FlexWikiWebApplication application = FlexWikiWebApplication;
+
+                if (application == null)
+                {
+                    return null;
+                }
+
+                return application.ApplicationConfiguration.ForegroundColorCAPTCHA;
+            }
+        }
+        private string HatchStyle
+        {
+            get
+            {
+                FlexWikiWebApplication application = FlexWikiWebApplication;
+
+                if (application == null)
+                {
+                    return null;
+                }
+
+                return application.ApplicationConfiguration.HatchStyleCAPTCHA;
+            }
+        }
+        private string ObscuringLines
+        {
+            get
+            {
+                FlexWikiWebApplication application = FlexWikiWebApplication;
+
+                if (application == null)
+                {
+                    return null;
+                }
+
+                return application.ApplicationConfiguration.ObscuringLinesCAPTCHA;
+            }
+        }
+        private string WarpMode
+        {
+            get
+            {
+                FlexWikiWebApplication application = FlexWikiWebApplication;
+
+                if (application == null)
+                {
+                    return null;
+                }
+
+                return application.ApplicationConfiguration.WarpModeCAPTCHA;
+            }
+        }
 
         private FlexWikiWebApplication FlexWikiWebApplication
         {
@@ -91,7 +161,9 @@ namespace FlexWiki.Web
                 throw new ApplicationException("Failed to decrypt captcha code", x);
             }
 
-            using (CaptchaImage ci = new CaptchaImage(code, 150, 37, "Lucida Console")) 
+            //using (CaptchaImage ci = new CaptchaImage(code, 150, 37, "Lucida Console")) 
+            using (CaptchaImage ci = new CaptchaImage(code, 150, 37, "Lucida Console", HatchStyle, 
+                                            ForegroundColor, BackgroundColor, WarpMode, ObscuringLines))
             {
                 ctx.Response.ContentType = "image/jpeg";
                 ci.Image.Save(ctx.Response.OutputStream, ImageFormat.Jpeg);

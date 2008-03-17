@@ -344,8 +344,14 @@ namespace FlexWiki.Web
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
             this["EnableBordersAllPages"] = _applicationConfiguration.EnableBordersAllPages;
+            //this["OverrideBordersScope"] = _applicationConfiguration.OverrideBordersScope;
             this["OverrideStylesheet"] = _applicationConfiguration.OverrideStylesheet;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
+            this["ForegroundColorCAPTCHA"] = _applicationConfiguration.ForegroundColorCAPTCHA;
+            this["BackgroundColorCAPTCHA"] = _applicationConfiguration.BackgroundColorCAPTCHA;
+            this["HatchStyleCAPTCHA"] = _applicationConfiguration.HatchStyleCAPTCHA;
+            this["ObscuringLinesCAPTCHA"] = _applicationConfiguration.ObscuringLinesCAPTCHA;
+            this["WarpModeCAPTCHA"] = _applicationConfiguration.WarpModeCAPTCHA;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)
 			{
 				string[] titles = new string[_applicationConfiguration.AlternateStylesheets.Length+1];
