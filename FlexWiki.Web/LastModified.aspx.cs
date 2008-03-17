@@ -153,7 +153,7 @@ namespace FlexWiki.Web
         {
             StringBuilder strBldr = new StringBuilder();
 
-            //strBldr.AppendLine("<div id=\"TopicBody\">");
+            strBldr.AppendLine("<div id=\"TopicBody\">");
             strBldr.AppendLine("<fieldset class=\"Dialog\">");
             strBldr.AppendLine("<legend class=\"DialogTitle\">Recent Changes</legend>");
             strBldr.Append("<p>Namespace: ");
