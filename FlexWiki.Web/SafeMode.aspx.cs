@@ -49,8 +49,8 @@ namespace FlexWiki.Web
         }
         #endregion
 
-        protected string urlForDiffs;
-        protected string urlForNoDiffs;
+        //protected string urlForDiffs;
+        //protected string urlForNoDiffs;
 
         private static bool IsAbsoluteURL(string pattern)
         {
@@ -124,6 +124,7 @@ namespace FlexWiki.Web
 
             urlForDiffs = lm.LinkToTopic(topic, true);
             urlForNoDiffs = lm.LinkToTopic(topic, false);
+            
         }
 
         protected void DoPage()
