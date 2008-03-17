@@ -4,9 +4,6 @@
 	<head>
 		<title>Last Modified</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW"/>
-		<%= InsertStylesheetReferences() %>
-		<%= InsertFavicon() %>
-		<%InsertScripts(); %>
 <script  type="text/javascript" language="javascript">
 function filter() {
     var selected = document.getElementById('AuthorFilter');
@@ -44,17 +41,6 @@ function changeNamespace()
 	}
 	var newURL = 'LastModified.aspx?namespace=' + ns +'&records=' + num;
 	window.location = newURL;	
-}
-
+}2
 </script>
-</head>
-	<body>
-	<%InsertLeftTopBorders(); %>
-	<fieldset class="Dialog">
-	<legend class='DialogTitle'>Recent Changes</legend>
-	<p>Namespace: <%=NamespaceFilter()%>&nbsp;Records: <%=NumberFilter()%></p>
-		<% DoSearch(); %>
-	</fieldset>
-	<%InsertRightBottomBorders(); %>
-	</body>
-</html>
+<%= BuildPage() %>

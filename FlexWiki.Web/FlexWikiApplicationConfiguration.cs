@@ -45,7 +45,7 @@ namespace FlexWiki.Web
         private string _logPath;
         private string _log4NetConfigPath; 
         private NewsletterConfiguration _newsletterConfiguration;
-        //private string _overrideBordersScope = "None";
+        private string _overrideBordersScope = "None";
         private string _overrideStylesheet;
         private CaptchaRequired _requireCaptchaOnEdit; 
         private string _sendBanNotificationsToMailAddress;
@@ -183,11 +183,11 @@ namespace FlexWiki.Web
             get { return _newsletterConfiguration; }
             set { _newsletterConfiguration = value; }
         }
-        //public string OverrideBordersScope
-        //{
-        //    get { return _overrideBordersScope; }
-        //    set { _overrideBordersScope = value; }
-        //}
+        public string OverrideBordersScope
+        {
+            get { return _overrideBordersScope; }
+            set { _overrideBordersScope = value; }
+        }
         public string OverrideStylesheet
         {
             get { return _overrideStylesheet; }

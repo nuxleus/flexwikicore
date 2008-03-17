@@ -43,6 +43,19 @@ namespace FlexWiki.Web
         private UIResponse _uiResponse;
         private string _userPrefix;
 
+        protected bool _metaTags = false;
+        protected bool _javaScript = false;
+        protected bool _incTopBorder = false;
+        protected bool _incLeftBorder = false;
+        protected bool _incRightBorder = false;
+        protected bool _incBottomBorder = false;
+        protected bool isBlacklistedRestore = false;
+        protected string formattedBody;
+
+        protected string urlForDiffs;
+        protected string urlForNoDiffs;
+
+        protected Regex dirInclude = new Regex("{{([a-zA-Z]+)}}");
         protected StringBuilder leftBorder = new StringBuilder();
         protected StringBuilder rightBorder = new StringBuilder();
         protected StringBuilder topBorder = new StringBuilder();
@@ -80,6 +93,10 @@ namespace FlexWiki.Web
             }
         }
 
+        protected NamespaceManager manager
+        {
+            get { return Federation.NamespaceManagerForTopic(topic); }
+        }
         protected QualifiedTopicRevision topic
         {
             get
@@ -196,16 +213,24 @@ namespace FlexWiki.Web
             get { return Federation.Application as FlexWikiWebApplication; }
         }
 
-        protected void InsertScripts()
+
+        protected string InsertScripts()
         {
             StringBuilder headbldr = new StringBuilder();
             headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
             headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
             headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            Response.Write(headbldr.ToString());
+            return headbldr.ToString();
+        }
+        protected void InitBorders()
+        {
+            bool doBorders = WikiApplication.ApplicationConfiguration.EnableBordersAllPages;
+            InitBorders(doBorders);
+
         }
         protected void InitBorders(bool doBorders)
         {
+
             if (doBorders)
             {
                 tempbottom = WikiApplication.CachedRender(
@@ -265,11 +290,9 @@ namespace FlexWiki.Web
                 }
             }
         }
-        protected void InsertLeftTopBorders()
+        protected string InsertLeftTopBorders()
         {
             StringBuilder strbldr = new StringBuilder();
-
-            InitBorders(WikiApplication.ApplicationConfiguration.EnableBordersAllPages);
 
 
             // Insert the TopBorder if it is required.
@@ -283,13 +306,9 @@ namespace FlexWiki.Web
             {
                 strbldr.AppendLine(leftBorder.ToString());
             }
-            if (!String.IsNullOrEmpty(strbldr.ToString()))
-            {
-                strbldr.AppendLine("<div id=\"TopicBody\">");
-                Response.Write(strbldr.ToString());
-            }
+            return strbldr.ToString();
         }
-        protected void InsertRightBottomBorders()
+        protected string InsertRightBottomBorders()
         {
             StringBuilder strbldr = new StringBuilder();
 
@@ -309,10 +328,7 @@ namespace FlexWiki.Web
             {
                 strbldr.AppendLine(bottomBorder.ToString());
             }
-            if (!String.IsNullOrEmpty(strbldr.ToString()))
-            {
-                Response.Write(strbldr.ToString());
-            }
+            return strbldr.ToString();
         }
 
         public static void Spit(string s)
@@ -802,6 +818,54 @@ namespace FlexWiki.Web
             }
 
             System.Web.HttpContext.Current.Items["VisitorIdentityString"] = VisitorIdentityString;
+        }
+        protected void SetBorderFlags(string template)
+        {
+            MatchCollection matches = dirInclude.Matches(template);
+            if (matches.Count > 0)
+            {
+                foreach (Match match in matches)
+                {
+                    switch (match.ToString())
+                    {
+                        case "{{FlexWikiTopBorder}}":
+                            _incTopBorder = true;
+                            break;
+
+                        case "{{FlexWikiHeaderInfo}}":
+                            _javaScript = true;
+                            _metaTags = true;
+                            break;
+
+                        case "{{FlexWikiJavaScript}}":
+                            _javaScript = true;
+                            break;
+
+                        case "{{FlexWikiMetaTags}}":
+                            _metaTags = true;
+                            break;
+
+                        case "{{FlexWikiLeftBorder}}":
+                            _incLeftBorder = true;
+                            break;
+
+                        case "{{FlexWikiRightBorder}}":
+                            _incRightBorder = true;
+                            break;
+
+                        case "{{FlexWikiBottomBorder}}":
+                            _incBottomBorder = true;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (_incTopBorder || _incLeftBorder || _incRightBorder || _incBottomBorder)
+            {
+                InitBorders();
+            }
         }
         private void SetFederation(Federation fed)
         {

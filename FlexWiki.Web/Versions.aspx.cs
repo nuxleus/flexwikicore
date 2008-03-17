@@ -13,8 +13,10 @@
 using System;
 using System.Collections;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using System.Web.Util;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using FlexWiki.Collections;
 
@@ -25,10 +27,14 @@ namespace FlexWiki.Web
     /// </summary>
     public class Versions : BasePage
     {
-        protected System.Web.UI.WebControls.PlaceHolder phResult;
+        protected System.Web.UI.WebControls.PlaceHolder phResult = new PlaceHolder();
 
         private QualifiedTopicRevision _theTopic;
         private TopicChangeCollection _changeList;
+        private bool endProcess = false;
+        private bool templatedPage = false;
+        private string template;
+        private int lineCnt;
 
         #region Web Form Designer generated code
         override protected void OnInit(EventArgs e)
@@ -56,18 +62,6 @@ namespace FlexWiki.Web
             ShowPage();
         }
 
-        protected string GetTitle()
-        {
-            string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
-            if (title == null || title == "")
-            {
-                title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName,
-                    GetTopicVersionKey().Namespace);
-            }
-            return HtmlStringWriter.Escape(title) + " Versions ";
-        }
-
-
         protected QualifiedTopicRevision TheTopic
         {
             get
@@ -90,24 +84,280 @@ namespace FlexWiki.Web
             }
         }
 
-        protected string LinkToCompare()
-        {
-            return TheLinkMaker.LinkToCompare(TheTopic.DottedName, int.MinValue, int.MinValue);
-        }
-
-        protected void ShowPage()
+        protected string BuildPageOne()
         {
 
-            // Now generate the page!
-            string output = string.Empty;
-            if (_changeList != null)
+            StringBuilder strOutput = new StringBuilder();
+
+            string overrideBordersScope = "None";
+            template = "";
+
+            if (!String.IsNullOrEmpty(WikiApplication.ApplicationConfiguration.OverrideBordersScope))
             {
-                output += GenerateList();
+                overrideBordersScope = WikiApplication.ApplicationConfiguration.OverrideBordersScope;
             }
+            if (!String.IsNullOrEmpty(overrideBordersScope))
+            {
+                template = PageUtilities.GetOverrideBordersContent(manager, overrideBordersScope);
+            }
+            if (!String.IsNullOrEmpty(template))  // page built using template
+            {
 
-            phResult.Controls.Add(new LiteralControl(output + "\n"));
+                    SetBorderFlags(template);
+                    templatedPage = true;
+
+                    bool startProcess = false;
+                    foreach (string s in template.Split(new char[] { '\n' }))
+                    {
+                        //lineCnt++;
+                        if (!startProcess)
+                        {
+                            if (s.Contains("</title>")) //ignore input until after tag </title>
+                            {
+                                startProcess = true;
+                            }
+                        }
+                        if (!endProcess)
+                        {
+                            strOutput.Append(DoTemplatedPageOne(s.Trim()));
+                        }
+                    }
+            }
+            else    //page without template
+            {
+                strOutput.Append(DoNonTemplatePageOne());
+            }
+            return strOutput.ToString();
         }
+        protected string BuildPageTwo()
+        {
 
+            StringBuilder strOutput = new StringBuilder();
+
+            if (templatedPage)  // page built using template
+            {
+                if (!String.IsNullOrEmpty(template))
+                {
+                    int count = 0;
+
+                    foreach (string s in template.Split(new char[] { '\n' }))
+                    {
+                        count++;
+                        if (count >= lineCnt)
+                        {
+                            strOutput.Append(DoTemplatedPageTwo(s.Trim()));
+                        }
+                    }
+                }
+            }
+            else    //page without template
+            {
+                strOutput.Append(DoNonTemplatePageTwo());
+            }
+            return strOutput.ToString();
+        }
+        protected string DoNonTemplatePageOne()
+        {
+            StringBuilder strOutput = new StringBuilder();
+            _javaScript = true;
+            _metaTags = true;
+
+            InitBorders();
+            strOutput.AppendLine(InsertStylesheetReferences());
+            strOutput.AppendLine(InsertFavicon());
+            strOutput.AppendLine("</head>");
+            strOutput.AppendLine("<body onload=\"PageInit();\">");
+
+            strOutput.AppendLine(InsertLeftTopBorders());
+            strOutput.AppendLine(DoPageImplementationOne());
+
+            return strOutput.ToString();
+
+        }
+        protected string DoNonTemplatePageTwo()
+        {
+            StringBuilder strOutput = new StringBuilder();
+
+            strOutput.AppendLine(DoPageImplementationTwo());
+            strOutput.AppendLine(InsertRightBottomBorders());
+
+            strOutput.AppendLine("</body>");
+            strOutput.AppendLine("</html>");
+            return strOutput.ToString();
+
+        }
+        protected string DoPageImplementationOne()
+        {
+            StringBuilder strBldr = new StringBuilder();
+
+            //    <body onload="PageInit();">
+
+            strBldr.AppendLine("<div id=\"TopicBody\">");
+            strBldr.AppendLine("<div class=\"Dialog\">");
+            strBldr.AppendLine("<div id=\"StaticTopicBar\" class=\"StaticTopicBar\" style=\"display: block\">");
+            strBldr.AppendLine(TheTopic.ToString());
+            strBldr.AppendLine("</div>");
+            strBldr.AppendLine("<h3>Previous Versions</h3>");
+            strBldr.AppendLine("<p>Select differences: Select the radio boxes of any versions and press \"Enter\" or");
+            strBldr.AppendLine("press the button below or press key [alt-v] to compare these versions.<br />");
+            strBldr.AppendLine("Legend: (Current) = shows difference with current version, (Previous) = shows difference");
+            strBldr.AppendLine("with preceding version</p>");
+            strBldr.AppendLine("<form action=\"" + LinkToCompare() + "\" method=\"get\">");
+            strBldr.AppendLine("<input type=\"hidden\" name=\"topic\" value=\"" + TheTopic.DottedName + "\" />");
+            strBldr.AppendLine("<input type=\"submit\" accesskey=\"v\" class=\"standardsButton\" title=\"Show the differences between two selected versions of this topic. [alt-v]\"");
+            strBldr.AppendLine("value=\"Compare selected versions\" />");
+            strBldr.AppendLine("<ul id=\"topicversions\">");
+            //strBldr.AppendLine("<asp:PlaceHolder ID=\"phResult\" runat=\"server\" />");
+
+            return strBldr.ToString();
+            
+        }
+        protected string DoPageImplementationTwo()
+        {
+            StringBuilder strBldr = new StringBuilder();
+
+            strBldr.AppendLine("</ul>");
+            strBldr.AppendLine("</form>");
+            strBldr.AppendLine("</div>");
+
+            //ShowPage();
+
+            // Close the TopicBody.
+            strBldr.AppendLine("</div>");
+            strBldr.AppendLine("</div>");
+
+
+            return strBldr.ToString();
+        }
+        protected string DoTemplatedPageOne(string s)
+        {
+            StringBuilder strOutput = new StringBuilder();
+
+            MatchCollection lineMatches = dirInclude.Matches(s);
+            string temp = s;
+            lineCnt++;
+            if (lineMatches.Count > 0)
+            {
+                int position;
+                position = temp.IndexOf("{{");
+                if (position > 0)
+                {
+                    strOutput.AppendLine(temp.Substring(0, position));
+                }
+                foreach (Match submatch in lineMatches)
+                {
+                    switch (submatch.ToString())
+                    {
+                        case "{{FlexWikiTopicBody}}":
+                            strOutput.AppendLine(DoPageImplementationOne());
+                            endProcess = true;
+                            return strOutput.ToString();
+
+                        case "{{FlexWikiHeaderInfo}}":
+                            strOutput.AppendLine(InsertStylesheetReferences());
+                            strOutput.AppendLine(InsertFavicon());
+                            break;
+
+                        case "{{FlexWikiMetaTags}}":
+                            break;
+
+                        case "{{FlexWikiJavaScript}}":
+                            break;
+
+                        case "{{FlexWikiCss}}":
+                            strOutput.AppendLine(InsertStylesheetReferences());
+                            break;
+
+                        case "{{FlexWikiFavIcon}}":
+                            strOutput.AppendLine(InsertFavicon());
+                            break;
+
+                        case "{{FlexWikiTopBorder}}":
+                            if (!String.IsNullOrEmpty(temptop))
+                            {
+                                strOutput.AppendLine(temptop.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiLeftBorder}}":
+                            if (!String.IsNullOrEmpty(templeft))
+                            {
+                                strOutput.AppendLine(templeft.ToString());
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                    temp = temp.Substring(s.IndexOf("}}") + 2);
+                }
+                if (!String.IsNullOrEmpty(temp))
+                {
+                    if (!endProcess)
+                    {
+                        strOutput.AppendLine(temp);
+                    }
+                }
+            }
+            else
+            {
+                strOutput.AppendLine(s);
+            }
+            return strOutput.ToString();
+        }
+        protected string DoTemplatedPageTwo(string s)
+        {
+            StringBuilder strOutput = new StringBuilder();
+
+            MatchCollection lineMatches = dirInclude.Matches(s);
+            string temp = s;
+            if (lineMatches.Count > 0)
+            {
+                int position;
+                position = temp.IndexOf("{{");
+                if (position > 0)
+                {
+                    strOutput.AppendLine(temp.Substring(0, position));
+                }
+                foreach (Match submatch in lineMatches)
+                {
+                    switch (submatch.ToString())
+                    {
+                        case "{{FlexWikiTopicBody}}":
+                            strOutput.AppendLine(DoPageImplementationTwo());
+                            break;
+
+                        case "{{FlexWikiRightBorder}}":
+                            if (!String.IsNullOrEmpty(tempright))
+                            {
+                                strOutput.AppendLine(tempright.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiBottomBorder}}":
+                            if (!String.IsNullOrEmpty(tempbottom))
+                            {
+                                strOutput.AppendLine(tempbottom.ToString());
+                            }
+                            break;
+
+
+                        default:
+                            break;
+                    }
+                    temp = temp.Substring(s.IndexOf("}}") + 2);
+                }
+                if (!String.IsNullOrEmpty(temp))
+                {
+                    strOutput.AppendLine(temp);
+                }
+            }
+            else
+            {
+                strOutput.AppendLine(s);
+            }
+            return strOutput.ToString();
+        }
         private string GenerateList()
         {
             bool first = true;
@@ -161,7 +411,7 @@ namespace FlexWiki.Web
                         //System.Globalization.DateTimeFormatInfo dtf = new System.Globalization.CultureInfo("", false).DateTimeFormat;
                         //dtf.FullDateTimePattern = localFormat;
                         output.AppendFormat(change.Created.ToString(localFormat));
-                        
+
                     }
                     output.Append("</a></span>");
                 }
@@ -169,11 +419,42 @@ namespace FlexWiki.Web
 
                 output.Append(" <span class=\"user\">" + change.Author + "</span>");
                 first = false;
-                output.Append("</li>");
+                output.AppendLine("</li>");
                 row++;
             }
             return output.ToString();
         }
+        protected string GetTitle()
+        {
+            string title = Federation.GetTopicPropertyValue(TheTopic, "Title");
+            if (title == null || title == "")
+            {
+                title = string.Format("{0} - {1}", GetTopicVersionKey().FormattedName,
+                    GetTopicVersionKey().Namespace);
+            }
+            return HtmlStringWriter.Escape(title) + " Versions ";
+        }
+
+
+
+        protected string LinkToCompare()
+        {
+            return TheLinkMaker.LinkToCompare(TheTopic.DottedName, int.MinValue, int.MinValue);
+        }
+
+        protected void ShowPage()
+        {
+
+            // Now generate the page!
+            string output = string.Empty;
+            if (_changeList != null)
+            {
+                output += GenerateList();
+            }
+
+            phResult.Controls.Add(new LiteralControl(output + "\n"));
+        }
+
 
 
 

@@ -4,12 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
     <title>Wiki Logon</title>
-    <%= InsertStylesheetReferences() %>
-    <%= InsertFavicon() %>
-    <%InsertScripts(); %>
-</head>
-<body>
-	<%InsertLeftTopBorders(); %>
+<%= BuildPageOne() %>	
+    <div id="TopicBody">
 	<div class="Dialog">
     <form runat="server" action="">
         <asp:Login ID="Login1" 
@@ -38,6 +34,5 @@
         <asp:HyperLink runat="server" ID="ReturnLink" Visible="false" />
     </form>
     </div>
-	<%InsertRightBottomBorders(); %>
-</body>
-</html>
+    </div>
+	<%= BuildPageTwo() %>

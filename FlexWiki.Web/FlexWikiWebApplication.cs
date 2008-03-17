@@ -344,7 +344,7 @@ namespace FlexWiki.Web
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
             this["EnableBordersAllPages"] = _applicationConfiguration.EnableBordersAllPages;
-            //this["OverrideBordersScope"] = _applicationConfiguration.OverrideBordersScope;
+            this["OverrideBordersScope"] = _applicationConfiguration.OverrideBordersScope;
             this["OverrideStylesheet"] = _applicationConfiguration.OverrideStylesheet;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
             this["ForegroundColorCAPTCHA"] = _applicationConfiguration.ForegroundColorCAPTCHA;

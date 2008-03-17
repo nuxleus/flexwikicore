@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -60,8 +61,89 @@ namespace FlexWiki.Web
 
         private static string All = "[All]";
 
-        protected void DoSearch()
+        protected string BuildPage()
         {
+
+            StringBuilder strOutput = new StringBuilder();
+
+            string overrideBordersScope = "None";
+            string template = "";
+
+            if (!String.IsNullOrEmpty(WikiApplication.ApplicationConfiguration.OverrideBordersScope))
+            {
+                overrideBordersScope = WikiApplication.ApplicationConfiguration.OverrideBordersScope;
+            }
+            if (!String.IsNullOrEmpty(overrideBordersScope))
+            {
+                template = PageUtilities.GetOverrideBordersContent(manager, overrideBordersScope);
+            }
+            if (!String.IsNullOrEmpty(template))  // page built using template
+            {
+
+                    SetBorderFlags(template);
+
+                    bool startProcess = false;
+                    foreach (string s in template.Split(new char[] { '\n' }))
+                    {
+                        if (!startProcess)
+                        {
+                            if (s.Contains("</title>")) //ignore input until after tag </title>
+                            {
+                                startProcess = true;
+                            }
+                        }
+                        strOutput.Append(DoTemplatedPage(s.Trim()));
+                    }
+            }
+            else    //page without template
+            {
+                strOutput.Append(DoNonTemplatePage());
+            }
+            return strOutput.ToString();
+        }
+        protected string DoNonTemplatePage()
+        {
+            StringBuilder strOutput = new StringBuilder();
+            _javaScript = true;
+            _metaTags = true;
+
+            InitBorders();
+            strOutput.AppendLine(InsertStylesheetReferences());
+            strOutput.AppendLine(InsertFavicon());
+            strOutput.AppendLine("</head>");
+            strOutput.AppendLine("<body>");
+
+
+            strOutput.AppendLine(InsertLeftTopBorders());
+            strOutput.AppendLine(DoPageImplementation());
+            strOutput.AppendLine(InsertRightBottomBorders());
+
+            strOutput.AppendLine("</body>");
+            strOutput.AppendLine("</html>");
+            return strOutput.ToString();
+
+        }
+        protected string DoPageImplementation()
+        {
+            StringBuilder strBldr = new StringBuilder();
+
+            //strBldr.AppendLine("<div id=\"TopicBody\">");
+            strBldr.AppendLine("<div class=\"Dialog\">");
+
+            strBldr.AppendLine(DoSearch());
+
+            // Close the TopicBody.
+            strBldr.AppendLine("</div>");
+            strBldr.AppendLine("</div>");
+
+
+            string page = strBldr.ToString();
+
+            return page;
+        }
+        protected string DoSearch()
+        {
+            StringBuilder strBldr = new StringBuilder();
             string search = Request.QueryString["search"];
             bool regexSearch = false;
             if (null != Request.QueryString["regex"])
@@ -71,7 +153,8 @@ namespace FlexWiki.Web
                     regexSearch = true;
                 }
             }
-            Response.Write(@"
+            strBldr.AppendLine("<div id=\"TopicBody\">");
+            strBldr.AppendLine(@"
 <div id=""TopicTip"" class=""TopicTip"" ></div>
 <fieldset><legend class=""DialogTitle"">Search</legend>
 <form id=""SearchForm"" action="""">
@@ -93,19 +176,19 @@ namespace FlexWiki.Web
                 preferredNamespace = DefaultNamespace;
             }
 
-            Response.Write("<p>Namespace:<br /><select name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
-            Response.Write("<option value=\"" + All + "\">" + All + "</option>");
+            strBldr.AppendLine("<p>Namespace:<br /><select name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
+            strBldr.AppendLine("<option value=\"" + All + "\">" + All + "</option>");
             foreach (string ns in uniqueNamespaces)
             {
                 string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";
-                Response.Write("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
+                strBldr.AppendLine("<option " + sel + " value=\"" + ns + "\">" + ns + "</option>");
             }
-            Response.Write("</select></p></form>");
+            strBldr.AppendLine("</select></p></form>");
 
             if (search != null)
             {
-                Response.Write("<fieldset><legend>Search Result</legend>");
-                Response.Write("<div class=\"SearchMain\">");
+                strBldr.AppendLine("<fieldset><legend>Search Result</legend>");
+                strBldr.AppendLine("<div class=\"SearchMain\">");
 
                 // Check to see if we've been given a valid regular expression.
                 bool validRegex = true;
@@ -123,7 +206,7 @@ namespace FlexWiki.Web
 
                 if (false == validRegex)
                 {
-                    Response.Write(@"<div class=""ErrorMessage"">
+                    strBldr.AppendLine(@"<div class=""ErrorMessage"">
     <div class=""ErrorMessageTitle"">Regular Expression Error</div>
     <div class=""ErrorMessageBody"">The regular expression that you entered is not valid. Please correct it and try again.</div>
 </div>");
@@ -175,17 +258,17 @@ namespace FlexWiki.Web
                                 if (true == found)
                                 {
                                     if (!header && searchTopics.Count > 1)
-                                        Response.Write("<h1>" + ns + "</h1>");
+                                        strBldr.AppendLine("<h1>" + ns + "</h1>");
                                     header = true;
 
-                                    Response.Write("<div class=\"searchHitHead\">");
-                                    Response.Write("<a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
-                                    Response.Write(topic.LocalName);
-                                    Response.Write("</a>");
-                                    Response.Write("</div>");
+                                    strBldr.AppendLine("<div class=\"searchHitHead\">");
+                                    strBldr.AppendLine("<a title=\"" + topic.DottedName + "\"  href=\"" + lm.LinkToTopic(topic) + "\">");
+                                    strBldr.AppendLine(topic.LocalName);
+                                    strBldr.AppendLine("</a>");
+                                    strBldr.AppendLine("</div>");
 
                                     string[] lines = s.Split(new char[] { '\n' });
-                                    Response.Write("<div class=\"searchHitBody\">");
+                                    strBldr.AppendLine("<div class=\"searchHitBody\">");
                                     foreach (string each in lines)
                                     {
                                         bool foundInLine = false;
@@ -199,17 +282,104 @@ namespace FlexWiki.Web
                                         }
                                         if (true == foundInLine)
                                         {
-                                            Response.Write(Formatter.FormattedString(topic.AsQualifiedTopicRevision(), each, OutputFormat.HTML, storeManager, TheLinkMaker));
+                                            strBldr.AppendLine(Formatter.FormattedString(topic.AsQualifiedTopicRevision(), each, OutputFormat.HTML, storeManager, TheLinkMaker));
                                         }
                                     }
-                                    Response.Write("</div>");
+                                    strBldr.AppendLine("</div>");
                                 }
                             }
                         }
                     }
-                    Response.Write("</div></fieldset></fieldset>");
+                    strBldr.AppendLine("</div></fieldset></fieldset>");
                 }
             }
+            return strBldr.ToString();
+        }
+        protected string DoTemplatedPage(string s)
+        {
+            StringBuilder strOutput = new StringBuilder();
+
+            MatchCollection lineMatches = dirInclude.Matches(s);
+            string temp = s;
+            if (lineMatches.Count > 0)
+            {
+                int position;
+                position = temp.IndexOf("{{");
+                if (position > 0)
+                {
+                    strOutput.AppendLine(temp.Substring(0, position));
+                }
+                foreach (Match submatch in lineMatches)
+                {
+                    switch (submatch.ToString())
+                    {
+                        case "{{FlexWikiTopicBody}}":
+                            strOutput.AppendLine(DoPageImplementation());
+                            break;
+
+                        case "{{FlexWikiHeaderInfo}}":
+                            strOutput.AppendLine(InsertStylesheetReferences());
+                            strOutput.AppendLine(InsertFavicon());
+                            break;
+
+                        case "{{FlexWikiMetaTags}}":
+                            break;
+
+                        case "{{FlexWikiJavaScript}}":
+                            break;
+
+                        case "{{FlexWikiCss}}":
+                            strOutput.AppendLine(InsertStylesheetReferences());
+                            break;
+
+                        case "{{FlexWikiFavIcon}}":
+                            strOutput.AppendLine(InsertFavicon());
+                            break;
+
+                        case "{{FlexWikiTopBorder}}":
+                            if (!String.IsNullOrEmpty(temptop))
+                            {
+                                strOutput.AppendLine(temptop.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiLeftBorder}}":
+                            if (!String.IsNullOrEmpty(templeft))
+                            {
+                                strOutput.AppendLine(templeft.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiRightBorder}}":
+                            if (!String.IsNullOrEmpty(tempright))
+                            {
+                                strOutput.AppendLine(tempright.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiBottomBorder}}":
+                            if (!String.IsNullOrEmpty(tempbottom))
+                            {
+                                strOutput.AppendLine(tempbottom.ToString());
+                            }
+                            break;
+
+
+                        default:
+                            break;
+                    }
+                    temp = temp.Substring(s.IndexOf("}}") + 2);
+                }
+                if (!String.IsNullOrEmpty(temp))
+                {
+                    strOutput.AppendLine(temp);
+                }
+            }
+            else
+            {
+                strOutput.AppendLine(s);
+            }
+            return strOutput.ToString();
         }
     }
 }

@@ -68,6 +68,17 @@ namespace FlexWiki.Web
                 {
                     revision = new QualifiedTopicRevision(HttpContext.Current.Request.Form["Topic"]);
                 }
+                else if ((!String.IsNullOrEmpty(HttpContext.Current.Request.QueryString["namespace"])) && ((bool)federation.Application["EnableBordersAllPages"]))
+                {
+                    NamespaceManager mgr = federation.NamespaceManagerForNamespace(HttpContext.Current.Request.QueryString["namespace"]);
+                    revision = new QualifiedTopicRevision(mgr.HomePage, mgr.Namespace);
+                }
+                else if ((!String.IsNullOrEmpty(HttpContext.Current.Request.QueryString["topic"])) && ((bool)federation.Application["EnableBordersAllPages"]))
+                {
+                    string reqTopic = HttpContext.Current.Request.QueryString["topic"];
+                    //NamespaceManager mgr = federation.NamespaceManagerForNamespace(reqTopic.Substring(0, reqTopic.IndexOf(".") - 1));
+                    revision = new QualifiedTopicRevision(reqTopic.Substring(reqTopic.IndexOf(".") + 1), reqTopic.Substring(0, reqTopic.IndexOf(".")));
+                }
                 else
                 {
                     revision = new QualifiedTopicRevision(DefaultNamespaceManager(federation).HomePage,
@@ -162,7 +173,31 @@ namespace FlexWiki.Web
 			}
             return answer;
         }
+        public static string GetOverrideBordersContent(NamespaceManager manager, string scope)
+        {
+            string temp = "";
 
+            switch (scope.ToLower())
+            {
+                case "none":
+                    temp = "";
+                    break;
+
+                case "namespace":
+                    temp = manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                    break;
+
+                case "federation":
+                    NamespaceManager mgr = DefaultNamespaceManager(manager.Federation);
+                    temp = mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                    break;
+
+                default:
+                    temp = "";
+                    break;
+            }
+            return temp;
+        }
 		public static string GetStylesheetLink(string styleOverride, string title, bool isAlternate)
 		{
 			string answer = "\n<link href=\"{0}{1}\" type=\"text/css\" rel=\"{2}\"{3}/>";

@@ -210,7 +210,7 @@
     * {{FlexWikiRightBorder}}: optional placeholder to allow flexWiki to include a wikiTalk generated TopBorder, as per operation without the skin
     * {{FlexWikiBottomBorder}}: optional placeholder to allow flexWiki to include a wikiTalk generated TopBorder, as per operation without the skin
                                                                                                                               -->
-  <!--<OverrideBordersScope>None</OverrideBordersScope> -->
+  <OverrideBordersScope>None</OverrideBordersScope>
   
   <!-- In working with lists the following input when this value is set to false (original pre 2.0.0.188)
   

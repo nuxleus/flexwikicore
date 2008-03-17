@@ -4,12 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
     <title>Wiki User Registration</title>
-    <%= InsertStylesheetReferences() %>
-    <%= InsertFavicon() %>
-    <%InsertScripts(); %>
-</head>
-<body>
-	<%InsertLeftTopBorders(); %>
+	<%= BuildPageOne() %>
 	<div class="Dialog">
     <form runat="server" action="">
         <asp:CreateUserWizard ID="CreateUserWizard1" runat="server" ActiveStepIndex="0" BackColor="#E3EAEB"
@@ -56,6 +51,4 @@
         </asp:CreateUserWizard>
     </form>
     </div>
-	<%InsertRightBottomBorders(); %>
-</body>
-</html>
+	<%= BuildPageTwo() %>

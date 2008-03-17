@@ -4,9 +4,6 @@
 	<head>
 		<title><%= GetTitle() %></title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
-		<%= InsertStylesheetReferences() %>
-		<%= InsertFavicon() %>
-		<%InsertScripts(); %>
 <script  type="text/javascript" language="javascript">
 /* <![CDATA[ */
 function PageInit() {
@@ -58,29 +55,7 @@ function diffcheck() {
 }
 /* ]]> */
     </script>
-	</head>
-	<body onload="PageInit();">
-	<%InsertLeftTopBorders(); %>
-	<div class="Dialog">
-    <div id="StaticTopicBar" class="StaticTopicBar" style="display: block">
-        <%= TheTopic.ToString() %>
-    </div>
-    <h3>
-        Previous Versions</h3>
-    <p>
-        Select differences: Select the radio boxes of any versions and press "Enter" or
-        press the button below or press key [alt-v] to compare these versions.<br />
-        Legend: (Current) = shows difference with current version, (Previous) = shows difference
-        with preceding version</p>
-    <form action="<%= LinkToCompare() %>" method="get">
-        <input type="hidden" name="topic" value="<%=TheTopic.DottedName%>" />
-        <input type="submit" accesskey="v" class="standardsButton" title="Show the differences between two selected versions of this topics. [alt-v]"
-            value="Compare selected versions" />
-        <ul id="topicversions">
-            <asp:PlaceHolder ID="phResult" runat="server" />
-        </ul>
-    </form>
-    </div>
-	<%InsertRightBottomBorders(); %>
-</body>
-</html>
+    <%= BuildPageOne() %>
+        <asp:PlaceHolder ID="phResult" runat="server" />
+    <%= BuildPageTwo() %>
+

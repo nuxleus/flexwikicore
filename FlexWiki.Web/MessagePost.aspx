@@ -1,25 +1,19 @@
 <%@ Page Language="c#" CodeBehind="MessagePost.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.MessagePost" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<script runat="server">
 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <script runat="server">
     protected void TextBox1_TextChanged(object sender, EventArgs e)
     {
 
     }
-</script>
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <title>Create MessagePost</title>
-    <%= InsertStylesheetReferences() %>
-    <%= InsertFavicon() %>
-    <%InsertScripts(); %>
-</head>
-<body class="UserInfo">
-	<%InsertLeftTopBorders(); %>
+    </script>
+    <head>
+    <title>Create Message</title>
+<%= BuildPageOne() %>
     <form id="Form1" runat="server">
-        <div id="MessagePost" class="MessagePost" style="width: 949px; height: 382px">
+        <div id="MessagePost" class="MessagePost" style="width: 849px; height: 382px">
             <asp:Panel ID="Panel2" runat="server" Height="36px" Width="840px">
                 <asp:Literal ID="MessagingDisabled" runat="server" Text="The use of Forums, Threaded Messages or Talkback capabilities has been prohibited by an Administrator policy"></asp:Literal></asp:Panel>
             <div id="ForumInfo" class="ForumInfo" style="width: 882px; height: 134px">
@@ -65,8 +59,9 @@
             <asp:Panel ID="Panel3" runat="server" Height="84px" Width="494px">
                 &nbsp;<asp:ValidationSummary ID="ValidationSummary1" runat="server" HeaderText="Errors:" />  
             </asp:Panel></div>
+            &nbsp;
         </div>
     </form>
-	<%InsertRightBottomBorders(); %>
-</body>
-</html>
+    </div>
+	<%= BuildPageTwo() %>
+

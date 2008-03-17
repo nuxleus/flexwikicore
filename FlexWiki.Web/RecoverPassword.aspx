@@ -4,12 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
     <title>Recover Forgotten Password</title>
-    <%= InsertStylesheetReferences() %>
-    <%= InsertFavicon() %>
-    <%InsertScripts(); %>
-</head>
-<body>
-	<%InsertLeftTopBorders(); %>
+	<%= BuildPageOne() %>
     <div class="Dialog">
     <form runat="server" action="">
         <asp:PasswordRecovery ID="PasswordRecovery1" runat="server" BackColor="#E3EAEB" BorderColor="#E6E2D8"
@@ -29,6 +24,4 @@
         </asp:PasswordRecovery>
     </form>
     </div>
-	<%InsertRightBottomBorders(); %>
-</body>
-</html>
+	<%= BuildPageTwo() %>

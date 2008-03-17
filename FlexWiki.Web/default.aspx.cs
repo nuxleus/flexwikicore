@@ -30,6 +30,8 @@ namespace FlexWiki.Web
     /// </summary>
     public class Default2 : BasePage
     {
+        private LogEvent MainEvent;
+
         private void Page_Load(object sender, System.EventArgs e)
         {
         }
@@ -54,56 +56,103 @@ namespace FlexWiki.Web
         }
         #endregion
 
-        protected string urlForDiffs;
-        protected string urlForNoDiffs;
-
-        private static bool IsAbsoluteURL(string pattern)
+        private LinkMaker lm
         {
-            if (pattern.StartsWith(System.Uri.UriSchemeHttp + System.Uri.SchemeDelimiter))
-                return true;
-            if (pattern.StartsWith(System.Uri.UriSchemeHttps + System.Uri.SchemeDelimiter))
-                return true;
-            if (pattern.StartsWith(System.Uri.UriSchemeFile + System.Uri.UriSchemeFile))
-                return true;
-            return false;
+            get { return TheLinkMaker; }
         }
-
-        private LogEvent MainEvent;
-
-        protected void StartPage()
+        //private NamespaceManager manager
+        //{
+        //    get { return Federation.NamespaceManagerForTopic(topic); }
+        //}
+        protected string BuildPage()
         {
-            if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads) != null)
-                Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads).Increment();
 
-            MainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicVersionKey().ToString(), LogEventType.ReadTopic);
-            VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
-            LogVisitorEvent(e);
-        }
-        protected void EndPage()
-        {
-            MainEvent.Record();
-        }
-        protected string GetTitle()
-        {
-            StringBuilder titlebldr = new StringBuilder();
-            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
-            if (String.IsNullOrEmpty(title))
+            StringBuilder strOutput = new StringBuilder();
+            bool diffs = Request.QueryString["diff"] == "y";
+            QualifiedTopicRevision diffVersion = null;
+            bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
+
+
+            if (restore == true)
             {
-                title = GetTopicVersionKey().FormattedName;
+                // Prevent restoring a topic with blacklisted content
+                if (Federation.IsBlacklisted(Federation.Read(topic)))
+                {
+                    isBlacklistedRestore = true;
+                }
+                else
+                {
+                    Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
+                    return "";
+                }
             }
-            return HtmlStringWriter.Escape(title);
-        }
-        protected string InitHead()
-        {
-            StringBuilder initbldr = new StringBuilder();
 
-            initbldr.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-            initbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
-            initbldr.AppendLine("<head>");
-            string initHead = initbldr.ToString();
+            // Go edit if we try to view it and it doesn't exist
+            if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
+            {
+                Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
+                return "";
+            }
 
-            return initHead;
+            urlForDiffs = lm.LinkToTopic(topic, true);
+            urlForNoDiffs = lm.LinkToTopic(topic, false);
 
+            if (diffs)
+            {
+                diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
+            }
+
+
+            // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
+            formattedBody = WikiApplication.CachedRender(
+                CreateCacheKey("FormattedBody"),
+                delegate
+                {
+                    return Federation.GetTopicFormattedContent(topic, diffVersion);
+                });
+
+            
+            string overrideBordersScope = "None";
+            string template = "";
+
+            if (!String.IsNullOrEmpty(WikiApplication.ApplicationConfiguration.OverrideBordersScope))
+            {
+                overrideBordersScope = WikiApplication.ApplicationConfiguration.OverrideBordersScope;
+            }
+            if (!String.IsNullOrEmpty(overrideBordersScope))
+            {
+                template = PageUtilities.GetOverrideBordersContent(manager, overrideBordersScope);
+            }
+            if (!String.IsNullOrEmpty(template))  // page built using template
+            {
+
+                    template = Regex.Replace(template, "<body>", "<body onclick=\"javascript:BodyClick()\" ondblclick=\"javascript:BodyDblClick()\">");
+
+                    SetBorderFlags(template);
+
+                    bool startProcess = false;
+                    //string sp;
+
+                    //sp = template.TrimEnd(new char[] { '\n' });
+                    //sp = sp.Replace("\r", "");
+                    //sp = sp.TrimEnd(new char[] { '\n' });
+                    foreach (string s in template.Split(new char[] { '\n' }))
+                    {
+                        if (!startProcess)
+                        {
+                            if (s.Contains("</title>")) //ignore input until after tag </title>
+                            {
+                                startProcess = true;
+                            }
+                        }
+                        strOutput.Append(DoTemplatedPage(s.Trim()));
+                    }
+            }
+            else    //page without template
+            {
+                strOutput.Append(DoNonTemplatePage());
+            }
+            return strOutput.ToString();
         }
         protected string DoHead()
         {
@@ -160,218 +209,96 @@ namespace FlexWiki.Web
 
             headbldr.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />");
 
-            string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
-            if (keywords != "")
+            if (_metaTags)
             {
-                headbldr.AppendLine("<meta name=\"keywords\" content=\"" + keywords + "\" />");
+                string keywords = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Keywords");
+                if (keywords != "")
+                {
+                    headbldr.AppendLine("<meta name=\"keywords\" content=\"" + keywords + "\" />");
+                }
+                string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
+                if (description != "")
+                {
+                    headbldr.AppendLine("<meta name=\"description\" content=\"" + description + "\" />");
+                }
+                headbldr.AppendLine("<meta name=\"author\" content=\"" +
+                    Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) +
+                    "\" />");
+
+                if (GetTopicVersionKey().Version != null)
+                {
+                    // Don't index the versions
+                    headbldr.AppendLine("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\" />");
+                }
             }
-            string description = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Summary");
-            if (description != "")
+
+            if (_javaScript)
             {
-                headbldr.AppendLine("<meta name=\"description\" content=\"" + description + "\" />");
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendLine("<script type=\"text/javascript\">");
+                headbldr.AppendLine("function showChanges()");
+                headbldr.AppendLine("{");
+                headbldr.AppendLine("    nav(\"" + urlForDiffs + "\");");
+                headbldr.AppendLine("}");
+                headbldr.AppendLine();
+                headbldr.AppendLine("function hideChanges()");
+                headbldr.AppendLine("{");
+                headbldr.AppendLine("	nav(\"" + urlForNoDiffs + "\");");
+                headbldr.AppendLine("}");
+                headbldr.AppendLine("function BodyClick()");
+                headbldr.AppendLine("{");
+                headbldr.AppendLine("   SetEditing(false);");
+                headbldr.AppendLine("}");
+                headbldr.AppendLine("function BodyDblClick()");
+                headbldr.AppendLine("{");
+
+                bool editOnDoubleClick = true;
+                editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
+
+                if (editOnDoubleClick)
+                {
+                    headbldr.AppendLine("location.href=\"" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "\";");
+                }
+                headbldr.AppendLine("}");
+                headbldr.AppendLine("</script>");
             }
-            headbldr.AppendLine("<meta name=\"author\" content=\"" +
-                Federation.GetTopicLastModifiedBy(GetTopicVersionKey().AsQualifiedTopicName()) +
-                "\" />");
-
-            if (GetTopicVersionKey().Version != null)
-            {
-                // Don't index the versions
-                headbldr.AppendLine("<meta name=\"Robots\" content=\"NOINDEX, NOFOLLOW\" />");
-            }
-
-            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
-            headbldr.AppendLine("<script type=\"text/javascript\">");
-            headbldr.AppendLine("function showChanges()");
-            headbldr.AppendLine("{");
-            headbldr.AppendLine("    nav(\"" + urlForDiffs + "\");");
-            headbldr.AppendLine("}");
-            headbldr.AppendLine();
-            headbldr.AppendLine("function hideChanges()");
-            headbldr.AppendLine("{");
-            headbldr.AppendLine("	nav(\"" + urlForNoDiffs + "\");");
-            headbldr.AppendLine("}");
-            headbldr.AppendLine("function BodyClick()");
-            headbldr.AppendLine("{");
-            headbldr.AppendLine("   SetEditing(false);");
-            headbldr.AppendLine("}");
-            headbldr.AppendLine("function BodyDblClick()");
-            headbldr.AppendLine("{");
-
-            bool editOnDoubleClick = true;
-            editOnDoubleClick = FlexWikiWebApplication.ApplicationConfiguration.EditOnDoubleClick;
-
-            if (editOnDoubleClick)
-            {
-                headbldr.AppendLine("location.href=\"" + this.TheLinkMaker.LinkToEditTopic(topic.AsQualifiedTopicName()) + "\";");
-            }
-            headbldr.AppendLine("}");
-            headbldr.AppendLine("</script>");
             string head = headbldr.ToString();
 
             return head;
         }
-        protected string DoPage()
+        protected string DoNonTemplatePage()
         {
-            return DoPageImplementation(); 
-        }
-
-        //private string CreateCacheKey(string id)
-        //{
-        //    return string.Format("{0}-{1}-{2}",
-        //        HttpContext.Current.Request.Url.ToString(),
-        //        UserId(),
-        //        id); 
-        //}
-        //private string UserId()
-        //{
-        //    if (Thread.CurrentPrincipal.Identity.IsAuthenticated)
-        //    {
-        //        return "authenticated:" + Thread.CurrentPrincipal.Identity.Name;
-        //    }
-        //    else
-        //    {
-        //        return "anonymous"; 
-        //    }
-        //}
-        private string DoPageImplementation()
-        {
-            //QualifiedTopicRevision topic = GetTopicVersionKey();
-            NamespaceManager manager = Federation.NamespaceManagerForTopic(topic);
-            LinkMaker lm = TheLinkMaker;
-            bool diffs = Request.QueryString["diff"] == "y";
-            QualifiedTopicRevision diffVersion = null;
-            bool restore = (Request.RequestType == "POST" && Request.Form["RestoreTopic"] != null);
-            bool isBlacklistedRestore = false;
-
-
-            if (restore == true)
-            {
-                // Prevent restoring a topic with blacklisted content
-                if (Federation.IsBlacklisted(Federation.Read(topic)))
-                {
-                    isBlacklistedRestore = true;
-                }
-                else
-                {
-                    Response.Redirect(lm.LinkToTopic(this.RestorePreviousVersion(new QualifiedTopicRevision(Request.Form["RestoreTopic"]))));
-                    return "";
-                }
-            }
-
-            // Go edit if we try to view it and it doesn't exist
-            if (!manager.TopicExists(topic.LocalName, ImportPolicy.DoNotIncludeImports))
-            {
-                Response.Redirect(lm.LinkToEditTopic(topic.AsQualifiedTopicName()));
-                return "";
-            }
-
-            StringBuilder strbldr = new StringBuilder();
-
-            urlForDiffs = lm.LinkToTopic(topic, true);
-            urlForNoDiffs = lm.LinkToTopic(topic, false);
-
-            if (diffs)
-            {
-                diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
-            }
-
-
-            strbldr.AppendLine("<span id=\"TopicTip\" class=\"TopicTip\" ></span>");
-
-            //////////////////////////
-            ///
-            // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
-            string formattedBody = WikiApplication.CachedRender(
-                CreateCacheKey("FormattedBody"), 
-                delegate { 
-                    return Federation.GetTopicFormattedContent(topic, diffVersion); 
-                });
+            StringBuilder strOutput = new StringBuilder();
+            _javaScript = true;
+            _metaTags = true;
 
             InitBorders(true);
-            //StringBuilder leftBorder = new StringBuilder();
-            //StringBuilder rightBorder = new StringBuilder();
-            //StringBuilder topBorder = new StringBuilder();
-            //StringBuilder bottomBorder = new StringBuilder();
+            strOutput.AppendLine(InsertStylesheetReferences());
+            strOutput.AppendLine(InsertFavicon());
+            strOutput.AppendLine(DoHead());
+            strOutput.AppendLine("</head>");
+            strOutput.AppendLine("<body onclick=\"javascript:BodyClick()\" ondblclick=\"javascript:BodyDblClick()\">");
 
-            //string templeft;
-            //string tempright;
-            //string temptop;
-            //string tempbottom;
+            strOutput.AppendLine(InsertLeftTopBorders());
+            strOutput.AppendLine(DoPageImplementation(lm));
+            strOutput.AppendLine(InsertRightBottomBorders());
 
-            //templeft = WikiApplication.CachedRender(
-            //    CreateCacheKey("LeftBorder"),
-            //    delegate
-            //    {
-            //        return Federation.GetTopicFormattedBorder(topic, Border.Left);
-            //    }); 
+            strOutput.AppendLine("</body>");
+            strOutput.AppendLine("</html>");
+            return strOutput.ToString();
 
-            //if (!String.IsNullOrEmpty(templeft))
-            //{
-            //    leftBorder.AppendLine("<div class=\"Border\" id=\"LeftBorder\">");
-            //    leftBorder.AppendLine(templeft);
-            //    leftBorder.AppendLine("</div>");
-            //}
+        }
+        protected string DoPageImplementation(LinkMaker lm)
+        {
+            StringBuilder strbldr = new StringBuilder();
 
-            //tempright = WikiApplication.CachedRender(
-            //    CreateCacheKey("RightBorder"),
-            //    delegate
-            //    {
-            //        return Federation.GetTopicFormattedBorder(topic, Border.Right);
-            //    }); 
-
-            //if (!String.IsNullOrEmpty(tempright))
-            //{
-            //    rightBorder.AppendLine("<div class=\"Border\" id=\"RightBorder\">");
-            //    rightBorder.AppendLine(tempright);
-            //    rightBorder.AppendLine("</div>");
-            //}
-
-            //temptop = WikiApplication.CachedRender(
-            //    CreateCacheKey("TopBorder"),
-            //    delegate
-            //    {
-            //        return Federation.GetTopicFormattedBorder(topic, Border.Top);
-            //    }); 
-
-            //if (!String.IsNullOrEmpty(temptop))
-            //{
-            //    topBorder.AppendLine("<div class=\"Border\" id=\"TopBorder\">");
-            //    topBorder.AppendLine(temptop);
-            //    topBorder.AppendLine("</div>");
-            //}
-
-            //tempbottom = WikiApplication.CachedRender(
-            //    CreateCacheKey("BottomBorder"),
-            //    delegate
-            //    {
-            //        return Federation.GetTopicFormattedBorder(topic, Border.Bottom);
-            //    }); 
-
-            //if (!String.IsNullOrEmpty(tempbottom))
-            //{
-            //    bottomBorder.AppendLine("<div class=\"Border\" id=\"BottomBorder\">");
-            //    bottomBorder.AppendLine(tempbottom);
-            //    bottomBorder.AppendLine("</div>");
-            //}
-
-            // Using a simple 5 box model for Top/Left/Right/BottomBorder and TopicBody.
-            // Insert the TopBorder if it is required.
-            if (!String.IsNullOrEmpty(temptop))
-            {
-                strbldr.AppendLine(topBorder.ToString());
-            }
-
-            // Insert the LeftBorder if it is required.
-            if (!String.IsNullOrEmpty(templeft))
-            {
-                strbldr.AppendLine(leftBorder.ToString());
-            }
+            strbldr.AppendLine("<div id=\"TopicBody\">");
+            strbldr.AppendLine("<span id=\"TopicTip\" class=\"TopicTip\" ></span>");
 
             // Insert the TopicBody to hold the topic content
-            strbldr.AppendLine("<div id=\"TopicBody\">");
+            //strbldr.AppendLine("<div id=\"TopicBody\">");
             strbldr.AppendLine("<form method=\"post\" action=\"" + lm.LinkToQuicklink() + "?QuickLinkNamespace=" + topic.Namespace + "\" name=\"QuickLinkForm\">");
             strbldr.AppendLine("<div id=\"TopicBar\" title=\"Click here to quickly jump to or create a topic\" class=\"TopicBar\" onmouseover=\"TopicBarMouseOver()\"  onclick=\"TopicBarClick(event)\"  onmouseout=\"TopicBarMouseOut()\">");
             strbldr.AppendLine("<div  id=\"StaticTopicBar\"  class=\"StaticTopicBar\" style=\"display: block\">" + GetTitle() + "</div>");
@@ -391,22 +318,152 @@ namespace FlexWiki.Web
             // Close the TopicBody.
             strbldr.AppendLine("</div>");
 
-            // Insert the RightBorder if it is required.
-            if (!String.IsNullOrEmpty(tempright))
-            {
-                strbldr.AppendLine(rightBorder.ToString());
-            }
-
-            // Insert the BottomBorder if it is required.
-            if (!String.IsNullOrEmpty(tempbottom))
-            {
-                strbldr.AppendLine(bottomBorder.ToString());
-            }
 
             string page = strbldr.ToString();
 
             return page;
         }
+        protected string DoTemplatedPage(string s)
+        {
+            StringBuilder strOutput = new StringBuilder();
+
+            MatchCollection lineMatches = dirInclude.Matches(s);
+            string temp = s;
+            if (lineMatches.Count > 0)
+            {
+                int position;
+                position = temp.IndexOf("{{");
+                if (position > 0)
+                {
+                    strOutput.AppendLine(temp.Substring(0, position));
+                }
+                foreach (Match submatch in lineMatches)
+                {
+                    switch (submatch.ToString())
+                    {
+                        case "{{FlexWikiTopicBody}}":
+                            strOutput.AppendLine(DoPageImplementation(lm));
+                            break;
+
+                        case "{{FlexWikiHeaderInfo}}":
+                            strOutput.AppendLine(InsertStylesheetReferences());
+                            strOutput.AppendLine(InsertFavicon());
+                            strOutput.AppendLine(DoHead());
+                            break;
+
+                        case "{{FlexWikiMetaTags}}":
+                            strOutput.AppendLine(DoHead());
+                            break;
+
+                        case "{{FlexWikiJavaScript}}":
+                            if (!_metaTags)
+                            {
+                                strOutput.AppendLine(DoHead());
+                            }
+                            break;
+
+                        case "{{FlexWikiCss}}":
+                            strOutput.AppendLine(InsertStylesheetReferences());
+                            break;
+
+                        case "{{FlexWikiFavIcon}}":
+                            strOutput.AppendLine(InsertFavicon());
+                            break;
+
+                        case "{{FlexWikiTopBorder}}":
+                            if (!String.IsNullOrEmpty(temptop))
+                            {
+                                strOutput.AppendLine(temptop.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiLeftBorder}}":
+                            if (!String.IsNullOrEmpty(templeft))
+                            {
+                                strOutput.AppendLine(templeft.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiRightBorder}}":
+                            if (!String.IsNullOrEmpty(tempright))
+                            {
+                                strOutput.AppendLine(tempright.ToString());
+                            }
+                            break;
+
+                        case "{{FlexWikiBottomBorder}}":
+                            if (!String.IsNullOrEmpty(tempbottom))
+                            {
+                                strOutput.AppendLine(tempbottom.ToString());
+                            }
+                            break;
+
+
+                        default:
+                            break;
+                    }
+                    temp = temp.Substring(s.IndexOf("}}") + 2);
+                }
+                if (!String.IsNullOrEmpty(temp))
+                {
+                    strOutput.AppendLine(temp);
+                }
+            }
+            else
+            {
+                strOutput.AppendLine(s);
+            }
+            return strOutput.ToString();
+        }
+        protected void EndPage()
+        {
+            MainEvent.Record();
+        }
+        protected string GetTitle()
+        {
+            StringBuilder titlebldr = new StringBuilder();
+            string title = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "Title");
+            if (String.IsNullOrEmpty(title))
+            {
+                title = GetTopicVersionKey().FormattedName;
+            }
+            return HtmlStringWriter.Escape(title);
+        }
+        protected string InitHead()
+        {
+            StringBuilder initbldr = new StringBuilder();
+
+            initbldr.AppendLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+            initbldr.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
+            initbldr.AppendLine("<head>");
+            string initHead = initbldr.ToString();
+
+            return initHead;
+
+        }
+        private static bool IsAbsoluteURL(string pattern)
+        {
+            if (pattern.StartsWith(System.Uri.UriSchemeHttp + System.Uri.SchemeDelimiter))
+                return true;
+            if (pattern.StartsWith(System.Uri.UriSchemeHttps + System.Uri.SchemeDelimiter))
+                return true;
+            if (pattern.StartsWith(System.Uri.UriSchemeFile + System.Uri.UriSchemeFile))
+                return true;
+            return false;
+        }
+
+
+        protected void StartPage()
+        {
+            if (Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads) != null)
+                Federation.GetPerformanceCounter(PerformanceCounterNames.TopicReads).Increment();
+
+            MainEvent = Federation.LogEventFactory.CreateAndStartEvent(Request.UserHostAddress, VisitorIdentityString, GetTopicVersionKey().ToString(), LogEventType.ReadTopic);
+            VisitorEvent e = new VisitorEvent(GetTopicVersionKey(), VisitorEvent.Read, DateTime.Now);
+            LogVisitorEvent(e);
+        }
+        
+
         private void WriteRecentPane()
         {
             OpenPane(Response.Output, "Recent Topics");
