@@ -109,17 +109,20 @@ namespace FlexWiki.Web
                     bool startProcess = false;
                     foreach (string s in template.Split(new char[] { '\n' }))
                     {
-                        //lineCnt++;
                         if (!startProcess)
                         {
+                            lineCnt++;
                             if (s.Contains("</title>")) //ignore input until after tag </title>
                             {
                                 startProcess = true;
                             }
                         }
-                        if (!endProcess)
+                        else
                         {
-                            strOutput.Append(DoTemplatedPageOne(s.Trim()));
+                            if (!endProcess)
+                            {
+                                strOutput.Append(DoTemplatedPageOne(s.Trim()));
+                            }
                         }
                     }
             }

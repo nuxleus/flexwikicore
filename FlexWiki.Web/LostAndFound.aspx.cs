@@ -170,7 +170,10 @@ namespace FlexWiki.Web
                             startProcess = true;
                         }
                     }
-                    strOutput.Append(DoTemplatedPage(s.Trim()));
+                    else
+                    {
+                        strOutput.Append(DoTemplatedPage(s.Trim()));
+                    }
                 }
             }
             else    //page without template
