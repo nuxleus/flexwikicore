@@ -311,7 +311,7 @@ namespace FlexWiki.Web
                     {
                         TopicRevision homePage = new QualifiedTopicRevision(storeManager.Namespace + "." + storeManager.HomePage);	// we won't be able to go back here because we're deleting it!
                         returnTo = null;
-                        Federation.DeleteTopic(TheTopic);
+                        Federation.DeleteTopic(TheTopic, false);
                         Response.Redirect(TheLinkMaker.LinkToTopic(homePage.ToString()));                      
                     }
 
