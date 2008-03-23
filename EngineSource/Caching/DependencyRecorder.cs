@@ -45,9 +45,9 @@ namespace FlexWiki.Caching
         {
             Next.DeleteAllTopicsAndHistory(); 
         }
-        public override void DeleteTopic(UnqualifiedTopicName topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
-            Next.DeleteTopic(topic); 
+            Next.DeleteTopic(topic, removeHistory); 
         }
         public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
         {

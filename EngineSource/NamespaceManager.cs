@@ -678,13 +678,13 @@ namespace FlexWiki
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        public void DeleteTopic(string topic)
+        public void DeleteTopic(string topic, bool removeHistory)
         {
-            DeleteTopic(new UnqualifiedTopicName(topic)); 
+            DeleteTopic(new UnqualifiedTopicName(topic), removeHistory); 
         }
-        public void DeleteTopic(UnqualifiedTopicName topic)
+        public void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
-            ContentProviderChain.DeleteTopic(topic);
+            ContentProviderChain.DeleteTopic(topic, removeHistory);
         }
         /// <summary>
         /// Answer the contact info for the ContentProviderChain (or null)

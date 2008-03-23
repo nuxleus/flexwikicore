@@ -59,7 +59,7 @@ namespace FlexWiki.UnitTests
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();
         }
-        public override void DeleteTopic(UnqualifiedTopicName topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             RegisterCall(MethodInfo.GetCurrentMethod());
             throw new NotImplementedException();

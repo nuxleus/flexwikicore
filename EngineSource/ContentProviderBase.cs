@@ -106,9 +106,9 @@ namespace FlexWiki
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        public virtual void DeleteTopic(UnqualifiedTopicName topic)
+        public virtual void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
-            _next.DeleteTopic(topic);
+            _next.DeleteTopic(topic, removeHistory);
         }
         /// <summary>
         /// Returns the parsed representation of the specified topic. 

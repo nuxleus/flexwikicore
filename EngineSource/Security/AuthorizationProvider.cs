@@ -131,12 +131,12 @@ namespace FlexWiki.Security
                 InvalidateAllCachedPermissions();
             }
         }
-        public void DeleteTopic(UnqualifiedTopicName topic)
+        public void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             AssertTopicPermission(topic, TopicPermission.Edit);
             using (CreateRecursionContext())
             {
-                _next.DeleteTopic(topic);
+                _next.DeleteTopic(topic, removeHistory);
                 if (IsDefinitionTopic(topic))
                 {
                     InvalidateAllCachedPermissions();

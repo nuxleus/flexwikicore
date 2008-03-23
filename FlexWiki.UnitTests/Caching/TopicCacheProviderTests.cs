@@ -124,7 +124,7 @@ namespace FlexWiki.UnitTests.Caching
                 Assert.IsTrue(parameters.Store.AllTopicsCalled,
                     "Checking that a retrieval after a write of a new topic does not come from cache.");
 
-                parameters.Manager.DeleteTopic("NewTopic");
+                parameters.Manager.DeleteTopic("NewTopic", false);
 
                 parameters.Store.AllTopicsCalled = false;
                 QualifiedTopicNameCollection fourthRetrieval = parameters.Provider.AllTopics();
@@ -171,7 +171,7 @@ namespace FlexWiki.UnitTests.Caching
                 AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval);
                 AssertCacheContainsParsedTopic(parameters.Cache, secondRetrieval);
                 parameters.Provider.DeleteTopic(
-                    topicOneRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName());
+                    topicOneRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(), false);
                 AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval);
                 AssertCacheContainsParsedTopic(parameters.Cache, secondRetrieval);
             }
@@ -192,7 +192,7 @@ namespace FlexWiki.UnitTests.Caching
                 AssertCacheContainsParsedTopic(parameters.Cache, firstRetrieval);
                 AssertCacheContainsParsedTopic(parameters.Cache, secondRetrieval);
                 parameters.Provider.DeleteTopic(
-                    definitionTopicRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName());
+                    definitionTopicRevision.AsUnqualifiedTopicRevision().AsUnqualifiedTopicName(), false);
                 AssertCacheDoesNotContainsParsedTopic(parameters.Cache, firstRetrieval);
                 AssertCacheDoesNotContainsParsedTopic(parameters.Cache, secondRetrieval);
             }
@@ -250,10 +250,10 @@ namespace FlexWiki.UnitTests.Caching
                 parameters.Provider.WriteTopic(new UnqualifiedTopicRevision("_ContentBaseDefinition"), "New content");
                 AssertHasNamespacePermission(parameters, "After WriteTopic (definition topic)");
 
-                parameters.Provider.DeleteTopic(topicName);
+                parameters.Provider.DeleteTopic(topicName, false);
                 AssertHasNamespacePermissionFromCache(parameters, "After DeleteTopic (normal topic)");
 
-                parameters.Provider.DeleteTopic(new UnqualifiedTopicName("_ContentBaseDefinition"));
+                parameters.Provider.DeleteTopic(new UnqualifiedTopicName("_ContentBaseDefinition"), false);
                 AssertHasNamespacePermission(parameters, "After DeleteTopic (normal topic)");
 
                 parameters.Provider.DeleteAllTopicsAndHistory();
@@ -279,7 +279,7 @@ namespace FlexWiki.UnitTests.Caching
                 parameters.Provider.WriteTopic(new UnqualifiedTopicRevision(topicName), "New content");
                 AssertHasPermission(parameters, topicName, "After WriteTopic");
 
-                parameters.Provider.DeleteTopic(topicName);
+                parameters.Provider.DeleteTopic(topicName, false);
                 AssertHasPermission(parameters, topicName, "After DeleteTopic");
 
                 parameters.Provider.DeleteAllTopicsAndHistory();
@@ -329,7 +329,7 @@ namespace FlexWiki.UnitTests.Caching
                 Assert.IsTrue(parameters.Store.TextReaderForTopicCalled,
                     "Checking that a retrieval after a write of a new topic does not come from cache.");
 
-                parameters.Manager.DeleteTopic(revision.AsUnqualifiedTopicName());
+                parameters.Manager.DeleteTopic(revision.AsUnqualifiedTopicName(), false);
 
                 parameters.Store.TextReaderForTopicCalled = false;
                 TextReader fourthRetrieval = parameters.Provider.TextReaderForTopic(revision);
@@ -376,7 +376,7 @@ namespace FlexWiki.UnitTests.Caching
                 Assert.IsFalse(parameters.Store.TopicExistsCalled,
                     "Checking that fourth retrieval did came from cache.");
 
-                parameters.Manager.DeleteTopic(topicName);
+                parameters.Manager.DeleteTopic(topicName, false);
 
                 parameters.Store.TopicExistsCalled = false;
                 bool fifthRetrieval = parameters.Provider.TopicExists(topicName);

@@ -67,10 +67,11 @@ namespace FlexWiki
         /// </summary>
         void DeleteAllTopicsAndHistory();
         /// <summary>
-        /// Delete a topic
+        /// Delete a topic. Leave the history if removeHistory is false, otherwise remove all revision files as well.
         /// </summary>
         /// <param name="topic"></param>
-        void DeleteTopic(UnqualifiedTopicName topic);
+        /// <param name="removeHistory"></param>
+        void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory);
         /// <summary>
         /// Returns the parsed representation of the specified topic. 
         /// </summary>

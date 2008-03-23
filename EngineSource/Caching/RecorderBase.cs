@@ -48,7 +48,7 @@ namespace FlexWiki.Caching
         public abstract TopicChangeCollection AllChangesForTopicSince(UnqualifiedTopicName topic, DateTime stamp);
         public abstract QualifiedTopicNameCollection AllTopics(); 
         public abstract void DeleteAllTopicsAndHistory();
-        public abstract void DeleteTopic(UnqualifiedTopicName topic);
+        public abstract void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory);
         public abstract ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision);
         public abstract bool HasNamespacePermission(NamespacePermission permission);
         public abstract bool HasPermission(UnqualifiedTopicName topic, TopicPermission permission);

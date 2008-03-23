@@ -100,7 +100,7 @@ namespace FlexWiki.UnitTests.Security
         {
             TestAllPossibleConfigurations(delegate(TestParameters parameters)
             {
-                parameters.Provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"));
+                parameters.Provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"), false);
             }
             );
         }

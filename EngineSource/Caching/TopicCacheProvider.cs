@@ -182,11 +182,11 @@ namespace FlexWiki.Caching
                 }
             }
         }
-        public override void DeleteTopic(UnqualifiedTopicName topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             try
             {
-                Next.DeleteTopic(topic);
+                Next.DeleteTopic(topic, removeHistory);
             }
             finally
             {

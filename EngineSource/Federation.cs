@@ -413,14 +413,14 @@ namespace FlexWiki
         {
             PerformanceCounterCategory.Delete(s_performanceCounterCategoryName);
         }
-        public void DeleteTopic(QualifiedTopicRevision topic)
+        public void DeleteTopic(QualifiedTopicRevision topic, bool removeHistory)
         {
             NamespaceManager namespaceManager = NamespaceManagerForTopic(topic);
             if (namespaceManager == null)
             {
                 return;
             }
-            namespaceManager.DeleteTopic(topic.LocalName);
+            namespaceManager.DeleteTopic(topic.LocalName, removeHistory);
         }
         /// <summary>
         /// Answer the DynamicNamespace for the given namespace (or null if it's an absent namespace)

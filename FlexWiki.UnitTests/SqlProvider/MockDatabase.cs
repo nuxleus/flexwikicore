@@ -249,11 +249,10 @@ namespace FlexWiki.UnitTests.SqlProvider
             TopicTable.Rows.Remove(row);
             TopicTable.AcceptChanges(); 
         }
-        private IDataReader SprocGetSqlTopicArchiveInfosSince(DatabaseParameter[] parameters)
+        private IDataReader SprocGetSqlTopicArchiveInfos(DatabaseParameter[] parameters)
         {
-            string name = (string) GetParameterValue(parameters, "topicName");
-            DateTime stamp = (DateTime) GetParameterValue(parameters, "stamp");
-            int namespaceId = GetNamespaceId((string) GetParameterValue(parameters, "namespace")); 
+            string name = (string)GetParameterValue(parameters, "topicName");
+            int namespaceId = GetNamespaceId((string)GetParameterValue(parameters, "namespace"));
 
             DataTable results = new DataTable();
             results.Columns.Add("Name", typeof(string));
@@ -261,21 +260,20 @@ namespace FlexWiki.UnitTests.SqlProvider
 
             // Unfortunately DataTable only allows for wildcards at the beginning or end
             // of the pattern, so we have to cheat. 
-            string nameLikeClause = BuildLikeClause("Name", name); 
+            string nameLikeClause = BuildLikeClause("Name", name);
 
-            string filter = string.Format("Archive = 1 AND {0} AND LastWriteTime >= '{1}' AND NamespaceId = {2}", 
-                nameLikeClause, stamp, namespaceId);
-            string sort = "LastWriteTime DESC";
+            string filter = string.Format("Archive = 1 AND {0} AND NamespaceId = {1}",
+                nameLikeClause, namespaceId);
 
-            DataRow[] rows; 
+            DataRow[] rows;
             try
             {
-                rows = TopicTable.Select(filter, sort);
+                rows = TopicTable.Select(filter);
             }
             catch (Exception x)
             {
-                System.Diagnostics.Debugger.Log(0, string.Empty, x.ToString()); 
-                throw; 
+                System.Diagnostics.Debugger.Log(0, string.Empty, x.ToString());
+                throw;
             }
 
             foreach (DataRow row in rows)
@@ -283,8 +281,45 @@ namespace FlexWiki.UnitTests.SqlProvider
                 results.ImportRow(row);
             }
 
-            return new MockDataReader(results); 
-            
+            return new MockDataReader(results);
+
+        }
+        private IDataReader SprocGetSqlTopicArchiveInfosSince(DatabaseParameter[] parameters)
+        {
+            string name = (string)GetParameterValue(parameters, "topicName");
+            DateTime stamp = (DateTime)GetParameterValue(parameters, "stamp");
+            int namespaceId = GetNamespaceId((string)GetParameterValue(parameters, "namespace"));
+
+            DataTable results = new DataTable();
+            results.Columns.Add("Name", typeof(string));
+            results.Columns.Add("LastWriteTime", typeof(DateTime));
+
+            // Unfortunately DataTable only allows for wildcards at the beginning or end
+            // of the pattern, so we have to cheat. 
+            string nameLikeClause = BuildLikeClause("Name", name);
+
+            string filter = string.Format("Archive = 1 AND {0} AND LastWriteTime >= '{1}' AND NamespaceId = {2}",
+                nameLikeClause, stamp, namespaceId);
+            string sort = "LastWriteTime DESC";
+
+            DataRow[] rows;
+            try
+            {
+                rows = TopicTable.Select(filter, sort);
+            }
+            catch (Exception x)
+            {
+                System.Diagnostics.Debugger.Log(0, string.Empty, x.ToString());
+                throw;
+            }
+
+            foreach (DataRow row in rows)
+            {
+                results.ImportRow(row);
+            }
+
+            return new MockDataReader(results);
+
         }
         private IDataReader SprocGetSqlTopicInfoForNonArchiveTopics(DatabaseParameter[] parameters)
         {

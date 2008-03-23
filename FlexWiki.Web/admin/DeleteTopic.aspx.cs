@@ -29,9 +29,9 @@ using FlexWiki.Collections;
 namespace FlexWiki.Web.Admin
 {
     /// <summary>
-    /// Summary description for TopicLocks.
+    /// Summary description for DeleteTopic.
     /// </summary>
-    public class TopicLocks : AdminPage
+    public class DeleteTopic : AdminPage
     {
         private string _preferredNamespace = string.Empty;
         private ArrayList _uniqueNamespaces;
@@ -65,7 +65,7 @@ namespace FlexWiki.Web.Admin
                 }
                 else
                 {
-                    Response.Redirect("TopicLocks.aspx?namespace=" + _preferredNamespace);
+                    Response.Redirect("DeleteTopic.aspx?namespace=" + _preferredNamespace);
                 }
             }
 
@@ -212,6 +212,10 @@ namespace FlexWiki.Web.Admin
                         strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Unlock')\" />");
                     }
                     strbldr.AppendLine("</td>");
+                    strbldr.AppendLine("<td>");
+                    strbldr.AppendLine("<input type=\"button\" value=\"Delete Topic\" id=\"" + topic.LocalName + "_Btn\" ");
+                    strbldr.AppendLine("onclick=\"javascript:FileAction_Click('" + topic.DottedName + "','Delete')\" />");
+                    strbldr.AppendLine("</td>");
                 }
                 strbldr.AppendLine("<td>");
                 strbldr.AppendLine(Escape((string)(authorMap[topic])));
@@ -241,6 +245,10 @@ namespace FlexWiki.Web.Admin
                 else if (_action == "Unlock")
                 {
                     _namespacemgr.UnlockTopic(unqualifiedtopic);
+                }
+                else if (_action == "Delete")
+                {
+                    _namespacemgr.DeleteTopic(unqualifiedtopic, true);
                 }
             }
         }

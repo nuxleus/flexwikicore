@@ -176,7 +176,7 @@ namespace FlexWiki.UnitTests.Security
             {
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
                     "Checking that the right number of topics were returned before deletion");
-                provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"));
+                provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"), false);
                 Assert.AreEqual(3, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
                     "Checking that the right number of topics were returned after deletion");
             }
@@ -203,7 +203,7 @@ namespace FlexWiki.UnitTests.Security
             {
                 Assert.AreEqual(4, manager.AllTopics(ImportPolicy.DoNotIncludeImports).Count,
                     "Checking that the right number of topics were returned before deletion");
-                provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"));
+                provider.DeleteTopic(new UnqualifiedTopicName("TopicOne"), false);
                 Assert.Fail("A security exception should have been thrown");
             }
         }

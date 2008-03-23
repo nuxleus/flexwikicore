@@ -553,7 +553,7 @@ namespace FlexWiki.UnitTests
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
             string topic = "TopicOne";
-            manager.DeleteTopic(topic);
+            manager.DeleteTopic(topic, false);
 
             // The topic should be gone, and its history should be invisible. Only 
             // default topics should remain. 

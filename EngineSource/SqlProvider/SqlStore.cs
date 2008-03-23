@@ -197,7 +197,7 @@ namespace FlexWiki.SqlProvider
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        public override void DeleteTopic(UnqualifiedTopicName topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             if (!_sqlHelper.TopicExists(Namespace, topic.LocalName))
             {
@@ -205,6 +205,17 @@ namespace FlexWiki.SqlProvider
             }
 
             _sqlHelper.DeleteTopic(Namespace, topic.LocalName);
+
+            if (removeHistory)
+            {
+                QualifiedTopicNameCollection results = new QualifiedTopicNameCollection();
+                SqlInfoForTopic[] topicInfos = _sqlHelper.GetSqlTopicInfosForTopic(Namespace, topic.LocalName);
+
+                foreach (SqlInfoForTopic topicInfo in topicInfos)
+                {
+                    _sqlHelper.DeleteTopic(Namespace, topicInfo.Name);
+                }
+            }
         }
         public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
         {

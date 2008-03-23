@@ -44,10 +44,10 @@ namespace FlexWiki.Caching
             RecordModification(new NamespaceContentsDeletedModification(Namespace)); 
             Next.DeleteAllTopicsAndHistory(); 
         }
-        public override void DeleteTopic(UnqualifiedTopicName topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             RecordModification(new TopicDeletedModification(topic.ResolveRelativeTo(Namespace))); 
-            Next.DeleteTopic(topic); 
+            Next.DeleteTopic(topic, removeHistory); 
         }
         public override ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)
         {

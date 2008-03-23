@@ -160,7 +160,7 @@ namespace FlexWiki
         /// Delete a topic
         /// </summary>
         /// <param name="topic"></param>
-        public override void DeleteTopic(UnqualifiedTopicName topic)
+        public override void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             string path = TopicPath(topic, null);
             if (!FileSystem.FileExists(path))
@@ -169,6 +169,13 @@ namespace FlexWiki
             }
 
             FileSystem.DeleteFile(path);
+            if (removeHistory)
+            {
+                foreach (IFileInformation each in FileSystem.GetFiles(Root, topic.LocalName + "(*.awiki"))
+                {
+                    FileSystem.DeleteFile(each.FullName);
+                }
+            }
 
             // Fire the event
             //OnFederationUpdated(new FederationUpdateEventArgs(update));

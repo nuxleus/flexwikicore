@@ -1,8 +1,8 @@
-<%@ Page language="c#" Codebehind="TopicLocks.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Admin.TopicLocks" %>
+<%@ Page language="c#" Codebehind="DeleteTopics.aspx.cs" AutoEventWireup="false" Inherits="FlexWiki.Web.Admin.DeleteTopic" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-		<title>Topic Locks</title>
+		<title>Delete Topic and History</title>
 		<meta name="Robots" content="NOINDEX, NOFOLLOW" />
         <% ShowHead(); %>
 <script  type="text/javascript" language="javascript">
@@ -50,7 +50,7 @@ function changeNamespace()
 </head>
 <body>
     <div class="Border" id="TopBorder">
-    <% ShowTitle("Topic Locks"); %>
+    <% ShowTitle("Delete Topic and History"); %>
     </div>
     <div class="Border" id="LeftBorder">
     <% ShowMenu(); %>
@@ -59,7 +59,7 @@ function changeNamespace()
 	<div class="Dialog">
     <form method="post" action="" id="Form1">	
     <fieldset>
-	<legend class="DialogTitle">Recent Changes and Topic Locks</legend>
+	<legend class="DialogTitle">Recent Changes, Topic Locks, Delete Topic and History</legend>
 	<p>Namespace: <%=NamespaceFilter()%></p>
 		<% DoSearch(); %>
 	</fieldset>

@@ -53,7 +53,7 @@ namespace FlexWiki.UnitTests.Caching
 
             DoTest(delegate(TestParameters<DependencyRecorder> parameters)
             {
-                parameters.Provider.DeleteTopic(new UnqualifiedTopicName(topicName.LocalName));
+                parameters.Provider.DeleteTopic(new UnqualifiedTopicName(topicName.LocalName), false);
                 Assert.AreEqual(0, RequestContext.Current.Dependencies.Count,
                     "Making sure that topic deletion results in no dependencies.");
             });

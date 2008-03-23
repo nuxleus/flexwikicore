@@ -95,11 +95,11 @@ namespace FlexWiki.Security
                 _next.DeleteAllTopicsAndHistory();
             }
         }
-        public void DeleteTopic(UnqualifiedTopicName topic)
+        public void DeleteTopic(UnqualifiedTopicName topic, bool removeHistory)
         {
             using (CreateRecursionContext())
             {
-                _next.DeleteTopic(topic);
+                _next.DeleteTopic(topic, removeHistory);
             }
         }
         public ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision)

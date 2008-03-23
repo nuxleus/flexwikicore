@@ -124,7 +124,7 @@ namespace FlexWiki.UnitTests.SqlProvider
         {
             QualifiedTopicNameCollection topics = _provider.AllTopics();
 
-            Assert.AreEqual(5, topics.Count, "Checking that the right number of topics was returned.");
+            Assert.AreEqual(6, topics.Count, "Checking that the right number of topics was returned.");
 
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.HomePage")),
                 "Checking that HomePage is present.");
@@ -134,6 +134,8 @@ namespace FlexWiki.UnitTests.SqlProvider
                 "Checking that TopicTwo is present.");
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.CodeImprovementIdeas")),
                 "Checking that CodeImprovementIdeas is present.");
+            Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.TestHistoryDelete")),
+                "Checking that TestHistoryDelete is present.");
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.ReadOnlyTopic")),
                 "Checking that ReadOnlyTopic is present.");
         }
@@ -155,7 +157,7 @@ namespace FlexWiki.UnitTests.SqlProvider
         [Test]
         public void DeleteTopic()
         {
-            _provider.DeleteTopic(new UnqualifiedTopicName("HomePage"));
+            _provider.DeleteTopic(new UnqualifiedTopicName("HomePage"), false);
 
             Assert.IsFalse(RowExists("HomePage"),
                 "Checking that tip row was deleted.");
@@ -164,9 +166,26 @@ namespace FlexWiki.UnitTests.SqlProvider
         }
 
         [Test]
+        public void DeleteTopicAndHistory()
+        {
+            _provider.DeleteTopic(new UnqualifiedTopicName("TestHistoryDelete"), true);
+
+            Assert.IsFalse(RowExists("TestHistoryDelete"),
+                "Checking that tip row was deleted.");
+            Assert.IsFalse(RowExists("TestHistoryDelete(2003-11-23-14-34-03-127.0.0.1)"),
+                "Checking that archive row was deleted.");
+            Assert.IsFalse(RowExists("TestHistoryDelete(2003-11-23-14-34-06.1-127.0.0.1)"),
+                "Checking that archive row was deleted.");
+            Assert.IsFalse(RowExists("TestHistoryDelete(2003-11-23-14-34-07-Name)"),
+                "Checking that archive row was deleted.");
+            Assert.IsFalse(RowExists("TestHistoryDelete(2003-11-23-14-34-08.123-Name)"),
+                "Checking that archive row was deleted.");
+        }
+
+        [Test]
         public void DeleteTopicNonexistentTopic()
         {
-            _provider.DeleteTopic(new UnqualifiedTopicName("NoSuchTopic"));
+            _provider.DeleteTopic(new UnqualifiedTopicName("NoSuchTopic"), false);
 
             // Just need to check that no exception is thrown
         }

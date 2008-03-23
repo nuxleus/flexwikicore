@@ -42,7 +42,7 @@ namespace FlexWiki.UnitTests.Caching
             QualifiedTopicName topicName = new QualifiedTopicName("TopicOne", "NamespaceOne"); 
             TestForModifications(delegate(ModificationRecorder provider)
             {
-                provider.DeleteTopic(new UnqualifiedTopicName(topicName.LocalName));
+                provider.DeleteTopic(new UnqualifiedTopicName(topicName.LocalName), false);
             }, 
             new TopicDeletedModification(topicName));
         }

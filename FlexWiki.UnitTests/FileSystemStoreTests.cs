@@ -72,6 +72,20 @@ namespace FlexWiki.UnitTests
                                 new MockFile(@"CodeImprovementIdeas(2003-11-23-14-34-08.123-Name).awiki",
                                     new DateTime(2004, 11, 04), @"Oldest"),
 
+                                new MockFile(@"TestDeleteHistory.wiki", new DateTime(2004, 11, 10), @"Latest"),
+                                new MockFile(@"TestDeleteHistory(2003-11-23-14-34-03-127.0.0.1).awiki",
+                                    new DateTime(2004, 11, 09), @"Latest"),
+                                new MockFile(@"TestDeleteHistory(2003-11-23-14-34-04.8890-127.0.0.1).awiki",
+                                    new DateTime(2004, 11, 08), @"Older"),
+                                new MockFile(@"TestDeleteHistory(2003-11-23-14-34-05.1000-127.0.0.1).awiki",
+                                    new DateTime(2004, 11, 07), @"Still older"),
+                                new MockFile(@"TestDeleteHistory(2003-11-23-14-34-06.1-127.0.0.1).awiki",
+                                    new DateTime(2004, 11, 06), @"Even older"),
+                                new MockFile(@"TestDeleteHistory(2003-11-23-14-34-07-Name).awiki",
+                                    new DateTime(2004, 11, 05), @"Really old"),
+                                new MockFile(@"TestDeleteHistory(2003-11-23-14-34-08.123-Name).awiki",
+                                    new DateTime(2004, 11, 04), @"Oldest"),
+
                                 new MockFile(@"ReadOnlyTopic.wiki",
                                     new DateTime(2004, 11, 05), @"", MockTopicStorePermissions.ReadOnly),
                                 new MockFile(@"ReadOnlyTopic(2004-11-05-00-00-00-Name).awiki",
@@ -182,7 +196,7 @@ namespace FlexWiki.UnitTests
         {
             QualifiedTopicNameCollection topics = _provider.AllTopics();
 
-            Assert.AreEqual(7, topics.Count, "Checking that the right number of topics was returned.");
+            Assert.AreEqual(8, topics.Count, "Checking that the right number of topics was returned.");
 
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.HomePage")),
                 "Checking that HomePage is present.");
@@ -191,6 +205,8 @@ namespace FlexWiki.UnitTests
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.TopicTwo")),
                 "Checking that TopicTwo is present.");
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.CodeImprovementIdeas")),
+                "Checking that CodeImprovementIdeas is present.");
+            Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.TestDeleteHistory")),
                 "Checking that CodeImprovementIdeas is present.");
             Assert.IsTrue(topics.Contains(new QualifiedTopicName("NamespaceOne.ReadOnlyTopic")),
                 "Checking that ReadOnlyTopic is present.");
@@ -229,7 +245,7 @@ namespace FlexWiki.UnitTests
         [Test]
         public void DeleteTopic()
         {
-            _provider.DeleteTopic(new UnqualifiedTopicName("HomePage"));
+            _provider.DeleteTopic(new UnqualifiedTopicName("HomePage"), false);
 
             Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "HomePage.wiki")),
                 "Checking that tip file was deleted.");
@@ -238,9 +254,30 @@ namespace FlexWiki.UnitTests
         }
 
         [Test]
+        public void DeleteTopicAndHistory()
+        {
+            _provider.DeleteTopic(new UnqualifiedTopicName("TestHistoryDelete"), true);
+
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete.wiki")),
+                "Checking that tip file was deleted.");
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete(2003-11-23-14-34-03-127.0.0.1).awiki")),
+                "Checking that revision file was deleted.");
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete(2003-11-23-14-34-04.8890-127.0.0.1).awiki")),
+                "Checking that revision file was deleted.");
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete(2003-11-23-14-34-05.1000-127.0.0.1).awiki")),
+                "Checking that revision file was deleted.");
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete(2003-11-23-14-34-06.1-127.0.0.1).awiki")),
+                "Checking that revision file was deleted.");
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete(2003-11-23-14-34-07-Name).awiki")),
+                "Checking that revision file was deleted.");
+            Assert.IsFalse(_fileSystem.FileExists(Path.Combine(Root, "TestHistoryDelete(2003-11-23-14-34-08.123-Name).awiki")),
+                "Checking that revision file was deleted.");
+        }
+
+        [Test]
         public void DeleteTopicNonexistentTopic()
         {
-            _provider.DeleteTopic(new UnqualifiedTopicName("NoSuchTopic"));
+            _provider.DeleteTopic(new UnqualifiedTopicName("NoSuchTopic"), false);
 
             // Just need to check that no exception is thrown
         }

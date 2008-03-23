@@ -151,7 +151,7 @@ namespace FlexWiki.UnitTests
         {
             _topics.Clear();
         }
-        public override void DeleteTopic(UnqualifiedTopicName topicName)
+        public override void DeleteTopic(UnqualifiedTopicName topicName, bool removeHistory)
         {
             MockTopic topic = GetTopic(topicName, ExistencePolicy.All);
 
