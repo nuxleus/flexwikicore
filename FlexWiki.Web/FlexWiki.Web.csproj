@@ -111,6 +111,9 @@
     <Content Include="admin\Config.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="admin\DeleteTopic.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="admin\EditConfiguration.aspx" />
     <Content Include="admin\ResetConfiguration.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -120,6 +123,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\default.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\EditLinksBlacklist.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -127,10 +131,8 @@
     <Content Include="admin\EditProvider.aspx">
     </Content>
     <Content Include="admin\Newsletter.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\Providers.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\ShowCache.aspx">
     </Content>
@@ -138,6 +140,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\TopicLocks.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\UpgradeConfigFile.aspx">
     </Content>
@@ -150,8 +153,8 @@
     <Content Include="Compare.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="forest.css" />
     <Content Include="HttpsRequired.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="MessagePost.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -216,6 +219,9 @@
       <DependentUpon>AccessDenied.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="admin\DeleteTopic.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="admin\EditConfiguration.aspx.cs">
       <DependentUpon>EditConfiguration.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -251,6 +257,7 @@
     <Compile Include="CaptchaImageHandler.cs" />
     <Compile Include="CaptchaRequired.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="FlexWikiWebMembership.cs" />
     <Compile Include="HttpsRequired.aspx.cs">
       <DependentUpon>HttpsRequired.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -279,12 +286,11 @@
     <Content Include="images\tile-title.gif" />
     <Content Include="images\versions.gif" />
     <Content Include="LastModified.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Login.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Logoff.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="LostAndFound.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -293,15 +299,14 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Print.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="QuickLink.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Rename.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RequestNamespace.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Rss.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -321,7 +326,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="UpgradeConfigurationFile.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Versions.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -330,7 +334,6 @@
     <Content Include="wiki.css" />
     <Content Include="WikiDefault.js" />
     <Content Include="WikiEdit.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="WikiEdit.js" />
     <Content Include="WikiMenu.js" />
