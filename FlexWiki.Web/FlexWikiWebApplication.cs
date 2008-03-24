@@ -37,6 +37,7 @@ namespace FlexWiki.Web
         private readonly object _configFileLock = new object();
         private readonly string _configPath;
         private readonly LinkMaker _linkMaker;
+        private readonly IMembership _membership = new FlexWikiWebMembership();
         private readonly OutputFormat _outputFormat;
         private readonly ITimeProvider _timeProvider = new DefaultTimeProvider();
 		private Dictionary<string, object> _properties = new Dictionary<string,object>();
@@ -130,6 +131,10 @@ namespace FlexWiki.Web
         public LinkMaker LinkMaker
         {
             get { return _linkMaker; }
+        }
+        public IMembership Membership
+        {
+            get { return _membership; }
         }
         public OutputFormat OutputFormat
         {

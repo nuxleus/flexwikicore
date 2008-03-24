@@ -30,7 +30,8 @@ namespace FlexWiki.UnitTests
         private FederationConfiguration _configuration;
         private bool _isTransportSecure; 
         private LinkMaker _linkMaker;
-        private readonly ModificationCollection _modificationsReported = new ModificationCollection(); 
+        private readonly ModificationCollection _modificationsReported = new ModificationCollection();
+        private IMembership _membership = new FlexWikiWebMembership();
         private OutputFormat _ouputFormat;
         private ITimeProvider _timeProvider;
         private Dictionary<string, object> _properties = new Dictionary<string, object>();
@@ -86,7 +87,10 @@ namespace FlexWiki.UnitTests
         {
             get { return _modificationsReported; }
         }
-
+        public IMembership Membership
+        {
+            get { return _membership; }
+        }
         public OutputFormat OutputFormat
         {
             get { return _ouputFormat; }

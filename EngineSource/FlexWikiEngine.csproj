@@ -660,6 +660,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dependency.cs" />
+    <Compile Include="IMembership.cs" />
     <Compile Include="NamespacePermission.cs" />
     <Compile Include="NamespaceDependency.cs" />
     <Compile Include="NamespaceExistenceDependency.cs" />

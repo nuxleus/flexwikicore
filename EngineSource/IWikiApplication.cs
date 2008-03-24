@@ -24,6 +24,7 @@ namespace FlexWiki
         LinkMaker LinkMaker { get; }
         OutputFormat OutputFormat { get; }
         ITimeProvider TimeProvider { get; }
+        IMembership Membership { get; }
 
         //void AppendToLog(string logfile, string message);
         void Log(string source, LogLevel level, string message);

@@ -28,6 +28,7 @@ namespace FlexWiki.Web.UnitTests
         private FlexWikiWebApplicationConfiguration _applicationConfiguration;
         private bool _isTransportSecure;
         private LinkMaker _linkMaker;
+        private IMembership _membership = new FlexWikiWebMembership(); 
         private OutputFormat _ouputFormat;
         private ITimeProvider _timeProvider;
 
@@ -76,6 +77,10 @@ namespace FlexWiki.Web.UnitTests
         public LinkMaker LinkMaker
         {
             get { return _linkMaker; }
+        }
+        public IMembership Membership
+        {
+            get { return _membership; }
         }
 
         public OutputFormat OutputFormat

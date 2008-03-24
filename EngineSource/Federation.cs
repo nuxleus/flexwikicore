@@ -498,6 +498,7 @@ namespace FlexWiki
 		{
 			return _application[key];
 		}
+
         public static PerformanceCounter GetPerformanceCounter(string name)
         {
             if (!s_performanceCounterMap.ContainsKey(name))
@@ -923,6 +924,16 @@ namespace FlexWiki
             }
 
             throw FlexWikiException.QualifiedTopicNameExpected(topic); 
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the number of registered users for this Federation")]
+        public int RegisteredNumberOfUsers()
+        {
+            return _application.Membership.RegisteredUsers;
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the number of registered users online for this Federation")]
+        public int RegisteredNumberOfUsersOnline()
+        {
+            return _application.Membership.RegisteredUsersOnline;
         }
         /// <summary>
         /// Register the given content store in the federation.
