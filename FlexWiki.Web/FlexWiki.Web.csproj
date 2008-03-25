@@ -149,6 +149,9 @@
     <Content Include="Blade.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="ChangePassword.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="classic.css" />
     <Content Include="Compare.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -256,6 +259,9 @@
     <Compile Include="CaptchaImage.cs" />
     <Compile Include="CaptchaImageHandler.cs" />
     <Compile Include="CaptchaRequired.cs" />
+    <Compile Include="ChangePassword.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="FlexWikiWebMembership.cs" />
     <Compile Include="HttpsRequired.aspx.cs">
@@ -289,6 +295,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Login.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Logoff.aspx">
     </Content>

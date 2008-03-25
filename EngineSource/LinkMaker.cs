@@ -93,6 +93,14 @@ namespace FlexWiki
             builder.Append("&amp;Mode=1");
             return builder.ToString();
         }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that allows a user to change their password")]
+        public string LinkToChangePassword(string topic)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL);
+            builder.Append("ChangePassword.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
+            return builder.ToString();
+        }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to compare two versions for the given topic")]
         public string LinkToCompare(string fullTopicName, int diff, int oldid)
         {
@@ -158,6 +166,22 @@ namespace FlexWiki
         public string LinkToRecentChanges(string ns)
         {
             return SimpleLinkTo("LastModified.aspx" + (ns != null ? "?namespace=" + ns : ""));
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that allows a user to reset or recover a password")]
+        public string LinkToRecoverPassword(string topic)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL);
+            builder.Append("RecoverPassword.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
+            return builder.ToString();
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that allows a user to create a registration")]
+        public string LinkToRegisterUser(string topic)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(SiteURL);
+            builder.Append("RegisterUser.aspx?ReturnURL=" + HttpUtility.UrlEncode(TopicLink(topic, false, null)));
+            return builder.ToString();
         }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer a link to the page that allows the given topic to be renamed")]
         public string LinkToRename(string fullyQualifiedTopicName)

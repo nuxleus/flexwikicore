@@ -25,5 +25,13 @@ namespace FlexWiki.Web
         {
             get { return Membership.GetNumberOfUsersOnline(); }
         }
+        public bool PasswordRetrievalEnabled
+        {
+            get { return Membership.EnablePasswordRetrieval; }
+        }
+        public bool PasswordResetEnabled
+        {
+            get { return Membership.EnablePasswordReset; }
+        }
     }
 }

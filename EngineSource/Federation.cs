@@ -384,6 +384,16 @@ namespace FlexWiki
 
             return names; 
         }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the ability for a registered user of this Federation to reset their own password")]
+        public bool CanResetPassword()
+        {
+            return _application.Membership.PasswordResetEnabled;
+        }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the ability for a registered user of this Federation to retrieve their own password")]
+        public bool CanRetrievePassword()
+        {
+            return _application.Membership.PasswordRetrievalEnabled;
+        }
         public static bool CreatePerformanceCounters()
         {
             if (!PerformanceCounterCategoryExists)

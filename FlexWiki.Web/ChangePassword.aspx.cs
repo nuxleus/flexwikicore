@@ -18,7 +18,7 @@ using System.Data;
 using System.Drawing;
 using System.Web;
 using System.Web.Caching;
-using System.Web.Configuration; 
+using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.Security;
 using System.Web.UI;
@@ -30,30 +30,26 @@ using FlexWiki.Formatting;
 
 namespace FlexWiki.Web
 {
-	/// <summary>
-	/// Summary description for WebForm1.
-	/// </summary>
-	public partial class RegisterUser : BasePage
-	{
-        protected System.Web.UI.WebControls.CreateUserWizard CreateUserWizard1;
+    public class ChangePassword : BasePage
+    {
+        protected System.Web.UI.WebControls.ChangePassword ChangePassword1;
 
         private bool endProcess = false;
         private bool templatedPage = false;
         private string template;
         private int lineCnt;
-        
+
         private void Page_Load(object sender, System.EventArgs e)
-		{
-            HyperLink returnLink = CreateUserWizard1.CompleteStep.ContentTemplateContainer.FindControl("ReturnLink") as HyperLink;
+        {
             if (!String.IsNullOrEmpty(Request.QueryString["ReturnURL"]))
             {
-                CreateUserWizard1.CancelDestinationPageUrl = Request.QueryString["ReturnURL"];
-                returnLink.NavigateUrl = Request.QueryString["ReturnURL"];
+                ChangePassword1.SuccessPageUrl = Request.QueryString["ReturnURL"];
+                ChangePassword1.CancelDestinationPageUrl = Request.QueryString["ReturnURL"];
             }
             else
             {
-                CreateUserWizard1.CancelDestinationPageUrl = "~/default.aspx";
-                returnLink.NavigateUrl = "~/default.aspx";
+                ChangePassword1.CancelDestinationPageUrl = "~/default.aspx";
+                ChangePassword1.SuccessPageUrl = "~/default.aspx";
             }
         }
         protected string BuildPageOne()
@@ -290,25 +286,25 @@ namespace FlexWiki.Web
             return strOutput.ToString();
         }
 
-		#region Web Form Designer generated code
-		override protected void OnInit(EventArgs e)
-		{
-			//
-			// CODEGEN: This call is required by the ASP.NET Web Form Designer.
-			//
-			InitializeComponent();
-			base.OnInit(e);
-		}
-		
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{    
-			this.Load += new System.EventHandler(this.Page_Load);
-		}
-		#endregion
+        #region Web Form Designer generated code
+        override protected void OnInit(EventArgs e)
+        {
+            //
+            // CODEGEN: This call is required by the ASP.NET Web Form Designer.
+            //
+            InitializeComponent();
+            base.OnInit(e);
+        }
 
-	}
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.Load += new System.EventHandler(this.Page_Load);
+        }
+        #endregion
+
+    }
 }

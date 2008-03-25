@@ -19,5 +19,7 @@ namespace FlexWiki
 
         int RegisteredUsers { get; }
         int RegisteredUsersOnline { get; }
+        bool PasswordRetrievalEnabled { get; }
+        bool PasswordResetEnabled { get; }
     }
 }
