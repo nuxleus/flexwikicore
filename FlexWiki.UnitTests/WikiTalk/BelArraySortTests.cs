@@ -27,8 +27,8 @@ namespace FlexWiki.UnitTests.WikiTalk
             ArrayList arrayList = new ArrayList();
             arrayList.Add(new BELInteger(1));
             arrayList.Add(new BELInteger(2));
-            arrayList.Add(new BELInteger(3)); 
-            arrayList.Add(new BELInteger(0)); 
+            arrayList.Add(new BELInteger(3));
+            arrayList.Add(new BELInteger(0));
 
             BELArray unsorted = new BELArray(arrayList);
 
@@ -52,15 +52,15 @@ namespace FlexWiki.UnitTests.WikiTalk
             arrayList.Add(new BELInteger(3));
             arrayList.Add(new BELInteger(0));
 
-            BELArray unsorted = new BELArray(arrayList); 
+            BELArray unsorted = new BELArray(arrayList);
 
             // Create a simple arithmetic mapping for the sort
             BehaviorParser parser = new BehaviorParser("");
             ExposableParseTreeNode block = parser.Parse("4.Subtract(e)");
 
             ArrayList parameters = new ArrayList();
-            BlockParameter parameter = new BlockParameter(null, "e"); 
-            parameters.Add(parameter); 
+            BlockParameter parameter = new BlockParameter(null, "e");
+            parameters.Add(parameter);
 
             BELArray sorted = unsorted.SortBy(new ExecutionContext(), new Block(block, parameters, null));
 
@@ -75,19 +75,89 @@ namespace FlexWiki.UnitTests.WikiTalk
         [Test]
         public void SortByEmpty()
         {
-            BELArray unsorted = new BELArray(); 
+            BELArray unsorted = new BELArray();
 
-                        // Create a simple arithmetic mapping for the sort
+            // Create a simple arithmetic mapping for the sort
             BehaviorParser parser = new BehaviorParser("");
             ExposableParseTreeNode block = parser.Parse("4.Subtract(e)");
 
             ArrayList parameters = new ArrayList();
-            BlockParameter parameter = new BlockParameter(null, "e"); 
-            parameters.Add(parameter); 
+            BlockParameter parameter = new BlockParameter(null, "e");
+            parameters.Add(parameter);
 
             BELArray sorted = unsorted.SortBy(new ExecutionContext(), new Block(block, parameters, null));
 
-            Assert.IsNotNull(sorted, "Checking that result was returned for an empty array."); 
+            Assert.IsNotNull(sorted, "Checking that result was returned for an empty array.");
+            Assert.AreEqual(0, sorted.Count, "Checking that the result array was empty.");
+        }
+
+        [Test]
+        public void ReverseSort()
+        {
+            ArrayList arrayList = new ArrayList();
+            arrayList.Add(new BELInteger(1));
+            arrayList.Add(new BELInteger(2));
+            arrayList.Add(new BELInteger(3));
+            arrayList.Add(new BELInteger(0));
+
+            BELArray unsorted = new BELArray(arrayList);
+
+            BELArray sorted = unsorted.ReverseSort();
+
+            Assert.AreEqual(4, sorted.Count, "Checking that the length was preserved.");
+
+            for (int i = 0; i < 4; ++i)
+            {
+                Assert.AreEqual(3 - i, ((BELInteger)sorted.Item(i)).Value, "Checking that sort order was correct.");
+            }
+        }
+
+
+        [Test]
+        public void ReverseSortBy()
+        {
+            ArrayList arrayList = new ArrayList();
+            arrayList.Add(new BELInteger(1));
+            arrayList.Add(new BELInteger(2));
+            arrayList.Add(new BELInteger(3));
+            arrayList.Add(new BELInteger(0));
+
+            BELArray unsorted = new BELArray(arrayList);
+
+            // Create a simple arithmetic mapping for the sort
+            BehaviorParser parser = new BehaviorParser("");
+            ExposableParseTreeNode block = parser.Parse("4.Subtract(e)");
+
+            ArrayList parameters = new ArrayList();
+            BlockParameter parameter = new BlockParameter(null, "e");
+            parameters.Add(parameter);
+
+            BELArray sorted = unsorted.ReverseSortBy(new ExecutionContext(), new Block(block, parameters, null));
+
+            Assert.AreEqual(4, sorted.Count, "Checking that the length was preserved.");
+
+            for (int i = 0; i < 4; ++i)
+            {
+                Assert.AreEqual(i, ((BELInteger)sorted.Item(i)).Value, "Checking that sort order was correct.");
+            }
+        }
+
+        [Test]
+        public void ReverseSortByEmpty()
+        {
+            BELArray unsorted = new BELArray();
+
+            // Create a simple arithmetic mapping for the sort
+            BehaviorParser parser = new BehaviorParser("");
+            ExposableParseTreeNode block = parser.Parse("4.Subtract(e)");
+
+            ArrayList parameters = new ArrayList();
+            BlockParameter parameter = new BlockParameter(null, "e");
+            parameters.Add(parameter);
+
+            BELArray sorted = unsorted.ReverseSortBy(new ExecutionContext(), new Block(block, parameters, null));
+
+            Assert.IsNotNull(sorted, "Checking that result was returned for an empty array.");
             Assert.AreEqual(0, sorted.Count, "Checking that the result array was empty.");
         }
 

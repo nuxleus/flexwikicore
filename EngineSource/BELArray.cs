@@ -105,6 +105,81 @@ namespace FlexWiki
             return (IBELObject)(Array[index]);
         }
 
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer a new array that is in reverse order of the original array")]
+        public BELArray Reverse()
+        {
+            ArrayList answer = new ArrayList(Array);
+            try
+            {
+                answer.Reverse();
+            }
+            catch (InvalidOperationException e)
+            {
+                throw e.InnerException;
+            }
+            return new BELArray(answer);
+        }
+
+        [ExposedMethod(ExposedMethodFlags.Default, "Sort the array; answer a new array (that is sorted)")]
+        public BELArray ReverseSort()
+        {
+            ArrayList answer = new ArrayList(Array);
+            try
+            {
+                answer.Sort();
+                answer.Reverse();
+            }
+            catch (InvalidOperationException e)
+            {
+                throw e.InnerException;
+            }
+
+            return new BELArray(answer);
+        }
+
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Sort the array; evaluate the block for each object in the array to determine the object used to order that item in the sort")]
+        public BELArray ReverseSortBy(ExecutionContext ctx, Block block)
+        {
+            // This code formerly sorted the list by having the IComparer do the comparison. 
+            // This was resulting in lots of superficial comparisons, as the block was being
+            // evaluated lots of extra times - for the left and the right item on every comparison.
+            // Instead, I changed it to rip through the array, evaluate the block exaclty once
+            // for each item, and then do the sort on just the values. 
+            List<BelArrayEntry> entries = new List<BelArrayEntry>();
+
+            try
+            {
+                foreach (IBELObject entry in Array)
+                {
+                    ArrayList a1 = new ArrayList();
+                    a1.Add(entry);
+                    IBELObject value = block.Value(ctx, a1);
+
+                    IComparable comparable = value as IComparable;
+                    if (comparable == null)
+                    {
+                        throw new ExecutionException(null, "Can not compare objects of type " + BELType.ExternalTypeNameForType(value.GetType()));
+                    }
+
+                    entries.Add(new BelArrayEntry(entry, comparable));
+                }
+
+                entries.Sort(new BelArrayEntry.Comparer());
+                entries.Reverse();
+
+            }
+            catch (InvalidOperationException e)
+            {
+                throw e.InnerException;
+            }
+
+            BELArray results = new BELArray();
+            foreach (BelArrayEntry entry in entries)
+            {
+                results.Add(entry.Entry);
+            }
+            return results;
+        }
         [ExposedMethod(ExposedMethodFlags.NeedContext, "Evaluate the block for each item in the array; answer a new Array that includes on those objects for which the block evaluated to true.")]
         public BELArray Select(ExecutionContext ctx, Block block)
         {

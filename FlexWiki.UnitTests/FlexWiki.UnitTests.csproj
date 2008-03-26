@@ -232,6 +232,7 @@
     <Compile Include="TraceContentStore.cs" />
     <Compile Include="UnqualifiedTopicRevisionTests.cs" />
     <Compile Include="WikiTalk\BelArraySortTests.cs" />
+    <Compile Include="WikiTalk\BelArrayTests.cs" />
     <Compile Include="WikiTalk\BelArrayUniqueTests.cs" />
     <Compile Include="WikiTalk\BelDateTimeDaysInMonthTests.cs" />
     <Compile Include="WikiTalk\BelDateTimeInstanceTests.cs" />
