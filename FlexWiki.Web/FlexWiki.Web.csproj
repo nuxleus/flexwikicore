@@ -150,7 +150,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="ChangePassword.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="classic.css" />
     <Content Include="Compare.aspx">
@@ -162,11 +161,11 @@
     <Content Include="MessagePost.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="MessagePost.js" />
     <Content Include="RegisterUser.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RecoverPassword.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="default.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -344,6 +343,7 @@
     </Content>
     <Content Include="WikiEdit.js" />
     <Content Include="WikiMenu.js" />
+    <Content Include="WikiThreads.js" />
     <Content Include="WikiTopicBar.js" />
     <Content Include="xslt\rssToWikiList.xslt" />
     <Compile Include="..\SharedAssemblyInfo.cs">

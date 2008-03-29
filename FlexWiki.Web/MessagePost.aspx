@@ -52,7 +52,6 @@
                 <asp:Label ID="UserLbl" runat="server" Text="User:" Width="66px"></asp:Label>
                 <asp:TextBox ID="UserText" runat="server" OnTextChanged="TextBox1_TextChanged" Width="337px"></asp:TextBox></div>
             <div id="Div1" class="MessageButtons" style="width: 241px; height: 28px; position: static;">
-                <asp:Button ID="PreviewBtn" Text="Preview" CommandName="Preview" runat="server" Visible="False" Enabled="False" />&nbsp;
                 <asp:Button ID="CancelBtn" runat="server" Text="Cancel" />
                 <asp:Button ID="SaveBtn" Text="Save" CommandName="Save" runat="server" /></div>
             <div class="MessageValidation" style="width: 100px; height: 100px">

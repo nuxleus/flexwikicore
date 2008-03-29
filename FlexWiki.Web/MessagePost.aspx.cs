@@ -29,7 +29,6 @@ namespace FlexWiki.Web
 	public class MessagePost : BasePage
 	{
         protected Button CancelBtn;
-        protected Button PreviewBtn;
         protected Button SaveBtn;
 
         protected CheckBox NewForumCheck;
@@ -450,13 +449,6 @@ namespace FlexWiki.Web
         {
             Response.Redirect(TheLinkMaker.LinkToTopic(TheTopic.ToString()));
         }
-        protected void PreviewBtn_Click(Object sender, System.EventArgs e)
-        {
-            if (Page.IsValid)
-            {
-                DoPreview();
-            }
-        }
         protected void SaveBtn_Click(Object sender, System.EventArgs e)
         {
             if (String.IsNullOrEmpty(ForumKey))
@@ -472,9 +464,6 @@ namespace FlexWiki.Web
             }
         }
 
-        private void DoPreview()
-        {
-        }
         private void DoSave()
         {
             string _topicText;
@@ -513,34 +502,38 @@ namespace FlexWiki.Web
         {
             StringBuilder strbldr = new StringBuilder();
 
+            strbldr.AppendLine(@"@@DoInfoBoxForum()@@");
             strbldr.AppendLine(":Keywords: " + ForumKey);
-            strbldr.AppendLine(":Title: " + MessageTitle);
+            strbldr.AppendLine(":Title: " + MessagePostFix(MessageTitle));
             if (!String.IsNullOrEmpty(FlexWikiWebApplication.ApplicationConfiguration.ThreadedMessagingEditPermissions))
             {
                 strbldr.AppendLine(":DenyEdit: all");
                 strbldr.AppendFormat(":AllowEdit: {0}", FlexWikiWebApplication.ApplicationConfiguration.ThreadedMessagingEditPermissions);
                 strbldr.AppendLine("");
             }
-            strbldr.Append(Message);
+            strbldr.Append(MessagePostFix(Message));
             strbldr.AppendLine("");
+            strbldr.AppendLine("@@[Presentations.Link(\"javascript:Collapse()\", \"Collapse Sub Threads\"), \"&nbsp;&nbsp;&nbsp;\", Presentations.Link(\"javascript:OpenAll()\", \"Open All Threads\")]@@");
+
             strbldr.AppendLine("&nbsp;");
+            strbldr.AppendLine(":With: WikiTalkLibrary.ForumLibrary");
             strbldr.AppendLine(@"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo(""MessagePost.aspx?topic=" + TheTopic + @"&forumKey=" + ForumKey + @"&parentThread=""),""Start New Thread"")@@");
             strbldr.AppendLine("----");
-            strbldr.AppendLine("@@GetNodes().Collect { each |ShowEntry(each)}@@");
-            strbldr.AppendLine(":GetNodes:{namespace.Topics.Select{ each |");
-            strbldr.AppendLine(@"        each.Keywords.Contains(""" + ForumKey + @""")}.Select{each | each.HasProperty(""ParentThread"")}.SortBy{each | each.GetProperty(""ParentThread"")}");
-            strbldr.AppendLine("}");
-            strbldr.AppendLine("&nbsp;");
-            strbldr.AppendLine(":ShowEntry:{entry |");
-            strbldr.AppendLine(@"[[""@@Presentations.ContainerStart(\""div\"","", ""\"""", entry.Name, ""\"","", ""\"""",");
-            strbldr.AppendLine(@"    [""Depth0"",""Depth1"",""Depth2"",""Depth3"",""Depth4""].Item(entry.GetProperty(""Depth"").AsInteger), ""\"")@@""].ToOneString, Newline,");
-            strbldr.AppendLine(@"""!!!!"", entry.GetProperty(""Title""), Newline,");
-            strbldr.AppendLine(@"    entry.LastModifiedBy, "" "", entry.LastModified.ToLongDateString(), entry.LastModified.ToLongTimeString(), Newline, entry.GetProperty(""_Body""), Newline,");
-            strbldr.AppendLine(@"[""@@Presentations.Link(federation.LinkMaker.SimpleLinkTo(\""MessagePost.aspx?topic=" + TheTopic + @"&forumKey=" + ForumKey + @"&parentThread=""");
-            strbldr.AppendLine(@",entry.GetProperty(""ParentThread"")," + @"""&title=""" + @",entry.GetProperty(""Title"")," + @"""\""),\""Reply To This\"")@@""].ToOneString, Newline,");
-            strbldr.AppendLine(@"[""@@Presentations.ContainerEnd(\""div\"")@@""], Newline,");
-            strbldr.AppendLine(@"""----"", Newline]");
-            strbldr.AppendLine("}");
+            strbldr.AppendLine("@@GetNodes(topic.Keywords).Collect { each |ShowEntry(each)}@@");
+            //strbldr.AppendLine(":GetNodes:{namespace.Topics.Select{ each |");
+            //strbldr.AppendLine(@"        each.Keywords.Contains(""" + ForumKey + @""")}.Select{each | each.HasProperty(""ParentThread"")}.SortBy{each | each.GetProperty(""ParentThread"")}");
+            //strbldr.AppendLine("}");
+            //strbldr.AppendLine("&nbsp;");
+            //strbldr.AppendLine(":ShowEntry:{entry |");
+            //strbldr.AppendLine(@"[[""@@Presentations.ContainerStart(\""div\"","", ""\"""", entry.Name, ""\"","", ""\"""",");
+            //strbldr.AppendLine(@"    [""Depth0"",""Depth1"",""Depth2"",""Depth3"",""Depth4""].Item(entry.GetProperty(""Depth"").AsInteger), ""\"")@@""].ToOneString, Newline,");
+            //strbldr.AppendLine(@"""!!!!"", entry.GetProperty(""Title""), Newline,");
+            //strbldr.AppendLine(@"    entry.LastModifiedBy, "" "", entry.LastModified.ToLongDateString(), entry.LastModified.ToLongTimeString(), Newline, entry.GetProperty(""_Body""), Newline,");
+            //strbldr.AppendLine(@"[""@@Presentations.Link(federation.LinkMaker.SimpleLinkTo(\""MessagePost.aspx?topic=" + TheTopic + @"&forumKey=" + ForumKey + @"&parentThread=""");
+            //strbldr.AppendLine(@",entry.GetProperty(""ParentThread"")," + @"""&title=""" + @",entry.GetProperty(""Title"")," + @"""\""),\""Reply To This\"")@@""].ToOneString, Newline,");
+            //strbldr.AppendLine(@"[""@@Presentations.ContainerEnd(\""div\"")@@""], Newline,");
+            //strbldr.AppendLine(@"""----"", Newline]");
+            //strbldr.AppendLine("}");
 
             return strbldr.ToString();
 
@@ -551,7 +544,7 @@ namespace FlexWiki.Web
             StringBuilder strbldr = new StringBuilder();
 
             strbldr.AppendLine(":Keywords: " + ForumKey);
-            strbldr.AppendLine(":Title: " + MessageTitle);
+            strbldr.AppendLine(":Title: " + MessagePostFix(MessageTitle));
             strbldr.AppendLine(":Depth: " + Depth);
             strbldr.AppendLine(":ParentThread: " + ParentThread);
             if (!String.IsNullOrEmpty(FlexWikiWebApplication.ApplicationConfiguration.ThreadedMessagingEditPermissions))
@@ -560,7 +553,7 @@ namespace FlexWiki.Web
                 strbldr.AppendFormat(":AllowEdit: {0}", FlexWikiWebApplication.ApplicationConfiguration.ThreadedMessagingEditPermissions);
                 strbldr.AppendLine("");
             }
-            strbldr.Append(Message);
+            strbldr.Append(MessagePostFix(Message));
 
             return strbldr.ToString();
         }
@@ -578,7 +571,6 @@ namespace FlexWiki.Web
                 new ServerValidateEventHandler(this.MsgTitleValidator);
 
             CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
-            PreviewBtn.Click += new System.EventHandler(this.PreviewBtn_Click);
             SaveBtn.Click += new System.EventHandler(this.SaveBtn_Click);
             if (FlexWikiWebApplication.ApplicationConfiguration.DisableThreadedMessaging)
             {
@@ -587,7 +579,6 @@ namespace FlexWiki.Web
                 MessageTitleText.Visible = false;
                 MessageText.Visible = false;
                 UserText.Visible = false;
-                PreviewBtn.Visible = false;
                 SaveBtn.Visible = false;
                 MessageTitleLbl.Visible = false;
                 UserLbl.Visible = false;
@@ -604,6 +595,7 @@ namespace FlexWiki.Web
                 }
                 if (!IsPostBack)
                 {
+                    NewForumCheck.Checked = false;
                     if (!String.IsNullOrEmpty(Request.QueryString["title"]))
                     {
                         MessageTitleText.Text = Request.QueryString["title"];
@@ -640,6 +632,7 @@ namespace FlexWiki.Web
         {
 
             StringBuilder strOutput = new StringBuilder();
+            strOutput.AppendLine("<script type=\"text/javascript\" language=\"javascript\" src=\"" + RootUrl + "MessagePost.js\"></script>");
 
             string overrideBordersScope = "None";
             template = "";
@@ -690,6 +683,7 @@ namespace FlexWiki.Web
 
             StringBuilder strOutput = new StringBuilder();
 
+            strOutput.AppendLine(BuildPreview());
             if (templatedPage)  // page built using template
             {
                 if (!String.IsNullOrEmpty(template))
@@ -711,6 +705,31 @@ namespace FlexWiki.Web
             }
             return strOutput.ToString();
         }
+
+        protected string BuildPreview()
+        {
+            StringBuilder strbldr = new StringBuilder();
+
+            string ns = ForumNamespace;
+            if (String.IsNullOrEmpty(ns))
+            {
+                ns = DefaultNamespace;
+            }
+            strbldr.AppendLine("<div style=\"display: none\">");
+            strbldr.AppendLine("<form id=\"Form2\" method=\"post\" target=\"previewWindow\" action=\"Preview.aspx\">");
+            strbldr.AppendLine("<textarea id=\"body\" name=\"body\" rows=\"20\" cols=\"60\"></textarea>");
+            strbldr.AppendFormat("<input  type=\"text\" id=\"Text1\" name=\"defaultNamespace\" value =\"{0}\" />", ns);
+            strbldr.AppendFormat("<input  type=\"text\" id=\"Text2\" name=\"topic\" value =\"{0}\" />", "PreviewPost");
+
+            strbldr.AppendLine("</form>");
+            strbldr.AppendLine("</div>");
+            strbldr.AppendFormat("<div id=\"previewBtn\" style=\"display: block;\">");
+            strbldr.AppendLine("<button onclick=\"javascript:previewPost()\" id=\"button1\">Preview Post</button>");
+            strbldr.AppendLine("</div>");
+
+            return strbldr.ToString();
+
+        }
         protected string DoNonTemplatePageOne()
         {
             StringBuilder strOutput = new StringBuilder();
@@ -731,7 +750,6 @@ namespace FlexWiki.Web
         protected string DoNonTemplatePageTwo()
         {
             StringBuilder strOutput = new StringBuilder();
-
             strOutput.AppendLine(InsertRightBottomBorders());
 
             strOutput.AppendLine("</body>");

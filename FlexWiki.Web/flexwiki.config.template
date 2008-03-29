@@ -350,7 +350,14 @@
           <Parameter Name="Root" Value="Namespaces\SampleNamespaceTwo" />
         </Parameters>
       </Provider>
-    
+      
+      <!-- This provider holds a number of libraries of wikitalk code that are useful to provide additional functionality and dynamic capabilities -->
+      <Provider Id="c4277bf3-4ab0-4bed-9a63-44d1cb1705ee" Type="FlexWiki.FileSystemNamespaceProvider" AssemblyName="FlexWiki, Version=2.0.0.233, Culture=neutral, PublicKeyToken=null">
+        <Parameters>
+          <Parameter Name="Namespace" Value="WikiTalkLibrary" />
+          <Parameter Name="Root" Value="Namespaces\WikiTalkLibrary" />
+        </Parameters>
+      </Provider>
     </NamespaceProviders>
     
    

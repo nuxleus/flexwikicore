@@ -240,6 +240,7 @@ namespace FlexWiki.Web
                 headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiDefault.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
                 headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
                 headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiThreads.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
                 headbldr.AppendLine("<script type=\"text/javascript\">");
                 headbldr.AppendLine("function showChanges()");
                 headbldr.AppendLine("{");

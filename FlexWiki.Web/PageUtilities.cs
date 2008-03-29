@@ -64,9 +64,10 @@ namespace FlexWiki.Web
 
             if (topic == null || topic.Length == 0)
             {
-                if ((!String.IsNullOrEmpty(HttpContext.Current.Request.Form["Topic"])) && ((bool)federation.Application["EnableBordersAllPages"]))
+                if ((!String.IsNullOrEmpty(HttpContext.Current.Request.Form["Topic"])) && ((bool)federation.Application["EnableBordersAllPages"]) 
+                            && (!String.IsNullOrEmpty(HttpContext.Current.Request.Form["Namespace"])))
                 {
-                    revision = new QualifiedTopicRevision(HttpContext.Current.Request.Form["Topic"]);
+                    revision = new QualifiedTopicRevision(HttpContext.Current.Request.Form["Topic"], HttpContext.Current.Request.Form["Namespace"]);
                 }
                 else if ((!String.IsNullOrEmpty(HttpContext.Current.Request.QueryString["namespace"])) && ((bool)federation.Application["EnableBordersAllPages"]))
                 {

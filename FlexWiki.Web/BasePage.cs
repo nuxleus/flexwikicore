@@ -538,6 +538,24 @@ namespace FlexWiki.Web
         //{
         //    PageUtilities.MainStylesheetReference(head);
         //}
+        protected string MessagePostFix(string body)
+        {
+            string wikiTalkMultiline = @"(?<text>(?<!"")@@\[.*\]@@(?!""))";
+            string wikiTalkString = @"(?<text>(?<!"")@@[a-zA-Z]+[a-zA-Z0-9,\(\)\s]*@@(?!""))";
+            string includeFile = @"(?<text>(?<!""){{[A-Z]+[a-zA-Z0-9\._]*}}(?!""))";
+            string wikiTalkEscape = "\"\"${text}\"\"";
+
+            Regex wikiTalkGetter = new Regex(wikiTalkString, RegexOptions.Singleline|RegexOptions.CultureInvariant);
+            //Regex wikiTalkReplace = new Regex(wikiTalkEscape);
+            //MatchCollection matches = wikiTalkGetter.Matches(body);
+            string result = wikiTalkGetter.Replace(body,wikiTalkEscape);
+            wikiTalkGetter = new Regex(wikiTalkMultiline, RegexOptions.Singleline|RegexOptions.CultureInvariant);
+            result = wikiTalkGetter.Replace(result, wikiTalkEscape);
+            wikiTalkGetter = new Regex(includeFile, RegexOptions.Singleline|RegexOptions.CultureInvariant);
+            result = wikiTalkGetter.Replace(result, wikiTalkEscape);
+
+            return result;
+        }
         protected virtual void MinimalPageLoad()
         {
             _response = Response;

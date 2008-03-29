@@ -15,6 +15,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -63,11 +64,17 @@ namespace FlexWiki.Web
             string tn = Request.Form["topic"];
 
             QualifiedTopicRevision topicName = new QualifiedTopicRevision(tn, ns);
+            string sender = Request.UrlReferrer.LocalPath;
+            if (sender.Contains("MessagePost"))
+            {
+                body = MessagePostFix(body);
+            }
 
             Response.Write("<div class='PreviewMain'>");
             Response.Write(Formatter.FormattedString(topicName, body, OutputFormat.HTML, Federation.NamespaceManagerForNamespace(ns), TheLinkMaker));
             Response.Write("</div>");
             Response.Write(@"<div id='TopicTip' class='TopicTip' ></div>");
         }
+
     }
 }
