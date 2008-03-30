@@ -67,7 +67,7 @@ namespace FlexWiki.Web
             Response.Write("</div>");
 
             Response.Write("<div style='font-size: 8pt'>");
-            Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName));
+            Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName) + " - " + storeManager.GetTopicLastModificationTime(topic.LocalName));
             Response.Write("</div>");
 
             Response.Write("<hr noshade size='2' />");
