@@ -67,7 +67,17 @@ namespace FlexWiki.Web
             Response.Write("</div>");
 
             Response.Write("<div style='font-size: 8pt'>");
-            Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName) + " - " + storeManager.GetTopicLastModificationTime(topic.LocalName));
+            if ((!String.IsNullOrEmpty(Federation.Configuration.LocalDateFormat)) && (!String.IsNullOrEmpty(Federation.Configuration.LocalTimeFormat)))
+            {
+                string localDate = Federation.Configuration.LocalDateFormat;
+                string localTime = Federation.Configuration.LocalTimeFormat;
+                string lastModification = storeManager.GetTopicLastModificationTime(topic.LocalName).ToString(localDate + " - " + localTime);
+                Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName) + " - " + lastModification);
+            }
+            else
+            {
+                Response.Write("Last changed: " + storeManager.GetTopicLastAuthor(topic.LocalName) + " - " + storeManager.GetTopicLastModificationTime(topic.LocalName));
+            }
             Response.Write("</div>");
 
             Response.Write("<hr noshade size='2' />");
