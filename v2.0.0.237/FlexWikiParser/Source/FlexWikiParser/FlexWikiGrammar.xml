@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<wps:Grammar Name="FlexWiki" Version="1.0" xmlns:wps="urn:flexwiki-com:wom/2006/03">
+  <wps:DefineSet Name="AZ" As="{Lu}" />
+  <wps:DefineSet Name="az09" As="{Ll} + {Lt} + {Lo} + {Nd}" />
+  <wps:DefineSet Name="Az09" As="{Lu} + {Ll} + {Lt} + {Lo} + {Nd}" />
+  <wps:DefineSet Name="WordChar" As="['_', 'a'..'z', 'A'..'Z', '0'..'9']"/>
+  <wps:DefineSet Name="NewLine" As="['\n', '\r']"/>
+  <wps:DefineSet Name="LineChar" As="[_] - {NewLine}"/>
+
+  <wps:StartTemplate>
+    <wps:Choice>
+      <wps:MatchTemplate Name="MultilineProperty"/>
+      <wps:MatchTemplate Name="MultilineBehaviorProperty="/>
+      <wps:MatchTemplate Name="Pre"/>
+      <wps:MatchTemplate Name="HorizontalRule"/>
+      <wps:MatchTemplate Name="PreLine"/>
+      <wps:MatchTemplate Name="BulletList"/>
+      <wps:MatchTemplate Name="Table"/>
+      <wps:MatchTemplate Name="H7"/>
+      <wps:MatchTemplate Name="H6"/>
+      <wps:MatchTemplate Name="H5"/>
+      <wps:MatchTemplate Name="H4"/>
+      <wps:MatchTemplate Name="H3"/>
+      <wps:MatchTemplate Name="H2"/>
+      <wps:MatchTemplate Name="H1"/>
+      <wps:MatchTemplate Name="Property"/>
+      <wps:MatchTemplate Name="Paragraph"/>
+    </wps:Choice>
+  </wps:StartTemplate>
+
+  <wps:Template Name="NamespaceName" Match="{AZ} {Az09}+" />
+  <wps:Template Name="StartsWithMulticaps" Match="{AZ}[2,] {az09}+ {Az09}*" />
+  <wps:Template Name="StartsWithOneCap" Match="{AZ} {az09}+ {Az09}*" />
+  <wps:Template Name="UnbracketedWikiName" Match="'_'? StartsWithMulticaps | StartsWithOneCap" />
+  <wps:Template Name="BracketedWikiName" Match="'[' ({Az09} | ' ')+ ']'" />
+  <wps:Template Name="UnqualifiedWikiName" Match="UnbracketedWikiName | BracketedWikiName" />
+  <wps:Template Name="QualifiedWikiName" Match="(NamespaceName '.' )* UnqualifiedWikiName" />
+  <wps:Template Name="WikiName" Match="QualifiedWikiName | UnqualifiedWikiName | ForcedLocalWikiName" />
+  <wps:Template Name="Identifier" Match="('A'..'Z'|'_') {WordChar}+"></wps:Template>
+
+  <wps:Template Name="MultilineProperty" Match="^ leader=':'? Name=Identifier ':' '[' val=PropertyContent ']'"></wps:Template>
+  <wps:Template Name="MultilineBehaviorProperty" Match="^ leader=':'? Name=Identifier ':' '{' val=Behavior '}'"></wps:Template>
+  <wps:Template Name="Pre" Match="
+    ^ '{@' preBlockKey={LineChar}* $ 
+       content=_*? 
+    ^ '}@' postBlockKey={LineChar}* $ 
+    @Same(preBlockKey, LineChar)">
+    <pre>
+      <wps:ValueOf Select="content"/>
+    </pre>
+  </wps:Template>
+  <wps:Template Name="HorizontalRule" Match="^ '----'">
+    <hr/>
+  </wps:Template>
+  <wps:Template Name="IncludeTopic" Match="^ ['\t']* '{{' Name=WikiName '}}' {Space}* $"></wps:Template>
+  <wps:Template Name="PreLine" Match="^ [' ','\t']+"></wps:Template>
+  <wps:Template Name="BulletList" Match="^ indent=TAB+ '*' LineContent* $"></wps:Template>
+  <wps:Template Name="BulletList" Match="^ indent=TAB+ '1.' LineContent* $"></wps:Template>
+  <wps:Template Name="Table" Match="^ '||' (CellContent '||')+ $"></wps:Template>
+  <wps:Template Name="H7" Match="^ '!!!!!!!' LineContent* $"></wps:Template>
+  <wps:Template Name="H6" Match="^ '!!!!!!' LineContent* $"></wps:Template>
+  <wps:Template Name="H5" Match="^ '!!!!!' LineContent* $"></wps:Template>
+  <wps:Template Name="H4" Match="^ '!!!!' LineContent* $"></wps:Template>
+  <wps:Template Name="H3" Match="^ '!!!' LineContent* $"></wps:Template>
+  <wps:Template Name="H2" Match="^ '!!' LineContent* $"></wps:Template>
+  <wps:Template Name="H1" Match="^ '!' LineContent* $"></wps:Template>
+  <wps:Template Name="Property" Match="^ leader=':'? Name=Identifier ':' LineContent* $"></wps:Template>
+
+  <wps:Template Name="Paragraph">
+    <wps:LineStart/>
+    <p>
+      <wps:MatchTemplate Name="LineContent" Min="0" Max="unbounded"/>
+    </p>
+    <wps:LineEnd/>
+  </wps:Template>
+
+  <wps:Template Name="LineContent" Match="Behavior | Emoticon 
+    | Deemphasis 
+    | Textile('\'\'\'', 'strong') 
+    | Textile('\'\'', 'em') 
+    | Textile('_', 'em') 
+    | Textile('*', 'strong') 
+    | Textile('??', 'cite') 
+    | Textile('-', 'del') 
+    | Textile('+', 'ins')
+    | Textile('^', 'sup') 
+    | Textile('~', 'sub') 
+    | Textile('@', 'code') 
+    | Color 
+    | HttpImage 
+    | FileImage 
+    | _"></wps:Template>
+
+  <wps:Template Name="Behavior" Match="'@@' Behavior '@@'"></wps:Template>
+  <wps:Template Name="Emoticon" Match="':)'">
+    <img src="smile.gif"/>
+  </wps:Template>
+  <wps:Template Name="Deemphasis" Match="'`' c=LineContent+? '`'">
+    <span class="Deemphasis">
+      <wps:ValueOf Select="c"/>
+    </span>
+  </wps:Template>
+
+  <wps:Template Name="Textile">
+    <wps:Param Name="delimiter" />
+    <wps:Param Name="tag" />
+    <wps:Match Text="$delimiter"/>
+    <wps:Element Name="$tag">
+      <wps:MatchTemplate Name="LineContent" Min="0" Max="unbounded" Lazy="yes"/>
+    </wps:Element>
+    <wps:Match Text="$delimiter"/>
+  </wps:Template>
+
+  <wps:Template Name="Color" Match="'%' color or size '%' c=LineContent+? '%%'?">
+    <wps:Call Name="Color">
+      <wps:ValueOf Select="c"/>
+    </wps:Call>
+  </wps:Template>
+  <wps:Template Name="HttpImage" Match="url=('http' 's'? '://' {NotSpace}* ('.jpg'|'.gif'|'.png'|'.jpeg'))">
+    <img>
+      <wps:Attribute Name="src">
+        <wps:ValueOf Select="url"/>
+      </wps:Attribute>
+    </img>
+  </wps:Template>
+  <wps:Template Name="FileImage" Match="url=('file://' {NotSpace}* ('.jpg'|'.gif'|'.png'|'.jpeg'|'.doc'|'.xls'|'.ppt'|'.txt'))">
+    <img>
+      <wps:Attribute Name="src">
+        <wps:ValueOf Select="url"/>
+      </wps:Attribute>
+    </img>
+  </wps:Template>
+</wps:Grammar>
