@@ -89,6 +89,7 @@ min-height:99.5%;
 padding:4px;
 overflow:auto;
 width:59.9%;
+color: Black;
 }
 /* Topic Bar */
 .TopicBar, .TopicBarHover {
@@ -123,8 +124,17 @@ font-weight:bold;
 width:100%;
 }
 /* End of Topic Bar */
+/*
 .Rule{
 border-top:1px solid #4E3818;
+}   */
+hr 
+{
+	border-top:1px solid #4E3818;
+	height: .1em;
+	margin-top: .1em;
+	margin-bottom: .1em;
+	padding: 0em;
 }
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
@@ -226,7 +236,7 @@ color:#6A4E22;
 text-decoration:none;
 }
 .Anchor {
-color:#CC6600;
+
 }
 .Anchor:hover {
 }

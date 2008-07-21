@@ -298,7 +298,7 @@ namespace FlexWiki
                         string topicSummary = ctx.CurrentFederation.GetTopicPropertyValue(topic, "Summary");
                         if (!string.IsNullOrEmpty(topicSummary))
                         {
-                            result += "\t\t*" + topicSummary + Environment.NewLine;
+                            result += "\t\t*" + ParserEngine.escape(topicSummary) + Environment.NewLine;
                         }
                     }
                     else

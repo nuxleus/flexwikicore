@@ -66,7 +66,10 @@ namespace FlexWiki.UnitTests
         {
             get { return _cache; }
         }
-
+        public ExecutionEnvironment ExecutionEnvironment
+        {
+            get { return ExecutionEnvironment.Testing; }
+        }
         public FederationConfiguration FederationConfiguration
         {
             get { return _configuration; }

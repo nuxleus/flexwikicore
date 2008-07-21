@@ -48,7 +48,7 @@ namespace FlexWiki.Web
             : this(GetFlexWikiConfigurationPath(), linkMaker)
         {
         }
-
+       
         // This one is only used by the BuildVerificationTests and should go away
         // at some point. Don't use it. 
         public FlexWikiWebApplication(string configPath, LinkMaker linkMaker)
@@ -91,6 +91,10 @@ namespace FlexWiki.Web
         public IWikiCache Cache
         {
             get { return _cache; }
+        }
+        public ExecutionEnvironment ExecutionEnvironment
+        {
+            get { return ExecutionEnvironment.Production; }
         }
         public FederationConfiguration FederationConfiguration
         {
@@ -349,6 +353,7 @@ namespace FlexWiki.Web
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
             this["EnableBordersAllPages"] = _applicationConfiguration.EnableBordersAllPages;
+            this["EnableNewParser"] = _applicationConfiguration.EnableNewParser;
             this["OverrideBordersScope"] = _applicationConfiguration.OverrideBordersScope;
             this["OverrideStylesheet"] = _applicationConfiguration.OverrideStylesheet;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;

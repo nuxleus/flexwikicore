@@ -976,6 +976,39 @@ namespace FlexWiki
                 return new TopicProperty(propertyName);
             }
         }
+        public void SetProcessTextSize(UnqualifiedTopicRevision revision, int size)
+        {
+            if (!HasPermission(new UnqualifiedTopicName(revision.LocalName), TopicPermission.Read))
+            {
+                return;
+            }
+            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(revision);
+
+            if (parsedTopic == null)
+            {
+                return;
+            }
+            TopicPropertyValue topicPropertyValue = new TopicPropertyValue(size.ToString());
+            parsedTopic.Properties["_ProcessTextSize"].Values.Clear();
+            parsedTopic.Properties["_ProcessTextSize"].Values.Add(topicPropertyValue);
+
+        }
+        public void SetWomCache(UnqualifiedTopicRevision revision, string wom)
+        {
+            if (!HasPermission(new UnqualifiedTopicName(revision.LocalName), TopicPermission.Read))
+            {
+                return;
+            }
+            ParsedTopic parsedTopic = ContentProviderChain.GetParsedTopic(revision);
+
+            if (parsedTopic == null)
+            {
+                return;
+            }
+            TopicPropertyValue topicPropertyValue = new TopicPropertyValue(wom);
+            parsedTopic.Properties["_Wom"].Values.Clear();
+            parsedTopic.Properties["_Wom"].Values.Add(topicPropertyValue);
+        }
         public bool HasNamespacePermission(NamespacePermission permission)
         {
             return ContentProviderChain.HasNamespacePermission(permission); 

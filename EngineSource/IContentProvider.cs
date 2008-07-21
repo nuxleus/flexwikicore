@@ -78,6 +78,7 @@ namespace FlexWiki
         /// <param name="topic">The topic for which to return the parsed representation.</param>
         /// <returns>A <see cref="ParsedTopic"/> object containing the parsed representation of the topic.</returns>
         ParsedTopic GetParsedTopic(UnqualifiedTopicRevision topicRevision);
+
         /// <summary>
         /// Answers whether the current user has the given permission for this namespace. 
         /// </summary>

@@ -1241,7 +1241,7 @@ namespace FlexWiki.UnitTests
             TopicPropertyCollection properties = manager.GetTopicProperties(topic);
 
             // Nine, because the three we added plus the six built-in ones. 
-            Assert.AreEqual(9, properties.Count, "Checking that the correct number of properties were returned.");
+            Assert.AreEqual(11, properties.Count, "Checking that the correct number of properties were returned.");
             WikiTestUtilities.AssertTopicPropertyCorrect(properties[0], "PropertyOne", "Value one");
             WikiTestUtilities.AssertTopicPropertyCorrect(properties[1], "PropertyTwo", "Value two");
             WikiTestUtilities.AssertTopicPropertyCorrect(properties[2], "OtherProperty", "Some value", "Some other value");

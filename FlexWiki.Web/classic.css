@@ -74,6 +74,11 @@ font-weight:bold;
 .Rule{
 border-top:1px solid gray;
 }
+hr
+{
+	height: .5em;
+	border: 1px solid gray;
+}
 /* Headings */
 h1, h2 {
 border:none;	

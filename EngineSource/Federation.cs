@@ -79,6 +79,7 @@ namespace FlexWiki
         /// </summary>
         private readonly NamespaceManagerMap _namespaceToNamespaceManagerMap = new NamespaceManagerMap();
         private bool _noFollowExternalHyperlinks = false;
+        private ParserEngine _parser;
         private ITimeProvider _timeProvider = new DefaultTimeProvider();
         private FederationUpdateGenerator _updateGenerator = null;
         private int _wikiTalkVersion;
@@ -236,6 +237,14 @@ namespace FlexWiki
                 _noFollowExternalHyperlinks = value;
                 RecordFederationPropertiesChanged();
             }
+        }
+        // a fresh version of the parser should be retrieved from the cache and set here before any use
+        // it should be reset for each border and each topic being processed
+        // TODO: check for bugs with IncludeTopic - a better(?) way may be a reset context method
+        public ParserEngine Parser
+        {
+            get { return _parser; }
+            set { _parser = value; }
         }
         /// <summary>
         /// Gets a value indicating if the FlexWiki performance counters are configured
@@ -553,17 +562,41 @@ namespace FlexWiki
         {
             string answer = null;
             // OK, we need to figure it out.  
-            IEnumerable borderText = BorderText(name, border);
-            WikiOutput output = new HTMLWikiOutput(null);
-            foreach (IBELObject borderComponent in borderText)
+            if ((bool)Application["EnableNewParser"] == false)
             {
-                IOutputSequence seq = borderComponent.ToOutputSequence();
-                // output sequence -> pure presentation tree
-                IWikiToPresentation presenter = Formatter.WikiToPresentation(name, output, NamespaceManagerForTopic(name), LinkMaker, null, 0);
-                IPresentation pres = seq.ToPresentation(presenter);
-                pres.OutputTo(output);
+                IEnumerable borderText = BorderText(name, border);
+                WikiOutput output = new HTMLWikiOutput(null);
+                foreach (IBELObject borderComponent in borderText)
+                {
+                    IOutputSequence seq = borderComponent.ToOutputSequence();
+                    // output sequence -> pure presentation tree
+                    IWikiToPresentation presenter = Formatter.WikiToPresentation(name, output, NamespaceManagerForTopic(name), LinkMaker, null, 0);
+                    IPresentation pres = seq.ToPresentation(presenter);
+                    pres.OutputTo(output);
+                }
+                answer = output.ToString();
             }
-            answer = output.ToString();
+            else
+            {     //use new parser - some convolution due to less than straightforward processing method in original processes
+                IEnumerable borderText = BorderText(name, border);
+                WikiOutput output = new WomDocument(null);
+                foreach (IBELObject borderComponent in borderText)
+                {
+                    IOutputSequence seq = borderComponent.ToOutputSequence();
+                    // output sequence -> pure presentation tree
+                    
+                    IWikiToPresentation presenter = _parser.WikiToPresentation(name, output, NamespaceManagerForTopic(name), LinkMaker, null, 0, true);
+                    IPresentation pres = seq.ToPresentation(presenter);
+                    pres.OutputTo(output);
+                }
+                answer = "";
+                WomDocument doc = (WomDocument) output;
+                if (!String.IsNullOrEmpty(doc.ParsedDocument))
+                {
+                    WomDocument xmldoc = _parser.ProcessText(doc.ParsedDocument, name, NamespaceManagerForTopic(name), true, 1200);
+                    answer = _parser.WikiToPresentation(xmldoc.XmlDoc);
+                }
+            }
             return answer;
         }
         public string GetTopicFormattedBorder(TopicName name, Border border)
@@ -577,12 +610,28 @@ namespace FlexWiki
             // If the content is blacklisted and this is a historical version, answer dummy content
             if (name.Version != null && IsBlacklisted(Read(name)))
             {
-                answer = Formatter.FormattedString(name, @"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.",
-                  Format, this.NamespaceManagerForTopic(name), LinkMaker);
+                if ((bool)Application["EnableNewParser"] == false)
+                {
+                    answer = Formatter.FormattedString(name, @"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.",
+                      Format, this.NamespaceManagerForTopic(name), LinkMaker);
+                }
+                else
+                {
+                    WomDocument xmldoc = _parser.ProcessText(@"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.", 
+                        name, NamespaceManagerForTopic(name), false, 200);
+                    answer = _parser.WikiToPresentation(xmldoc.XmlDoc);
+                }
             }
             else
             {
-                answer = Formatter.FormattedTopic(name, Format, withDiffsToThisTopic, this, LinkMaker);
+                if ((bool)Application["EnableNewParser"] == false)
+                {
+                    answer = Formatter.FormattedTopic(name, Format, withDiffsToThisTopic, this, LinkMaker);
+                }
+                else
+                { // use new parser
+                    answer = _parser.FormattedTopic(name, Format, withDiffsToThisTopic, LinkMaker);
+                }
             }
             return answer;
         }
@@ -1279,6 +1328,7 @@ namespace FlexWiki
             InitializePerformanceCounters();
 
             LoadFromConfiguration();
+            //_parser = new ParserEngine(this);
 
         }
         private void InitializePerformanceCounter(string name)

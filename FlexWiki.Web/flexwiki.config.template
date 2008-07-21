@@ -171,7 +171,7 @@
          allow access to the CreateMessage.aspx functionality. -->
   <DisableThreadedMessaging>false</DisableThreadedMessaging>
   
-  <!-- When set to false FlexWiki will not add borders to anyutility pages such as Search, LastModified, etc.
+  <!-- When set to false FlexWiki will not add borders to any utility pages such as Search, LastModified, etc.
         This may be refered to as classic behavior, as the original FlexWiki behaved this way. The default
         value for this setting is false, meaning that each wiki owner must explicitly enable the new behavior.
         When the value is set to true most utility pages will have borders (based on the borders the HomePage 
@@ -180,6 +180,12 @@
         otherwise the utility of those pages would be impaired. This change is created to enable better branding and 
         user environment.     -->
   <EnableBordersAllPages>false</EnableBordersAllPages>
+
+  
+  <!-- When set to false FlexWiki will use the original process driven parser to create output. When set to true
+        FlexWiki will use the new Regular Expression rule based parser with xsl transform for actual final output-->
+  <EnableNewParser>false</EnableNewParser>
+  
 
   <!-- <OverrideBordersScope> may have one of the following values: None, Namespace or Federation. The default value is None, which
         is the value that will be assigned if the key is not present or the contenct of the key are not in the approved set.

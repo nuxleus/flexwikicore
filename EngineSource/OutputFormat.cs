@@ -21,6 +21,7 @@ namespace FlexWiki
     XAML,
     Wiki, // ?????
     */
+    WikiObjectModel, 
     HTML,
     Testing
   }

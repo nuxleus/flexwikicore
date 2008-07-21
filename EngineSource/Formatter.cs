@@ -2261,11 +2261,11 @@ namespace FlexWiki.Formatting
             return false;
         }
 
-        /// <summary>
-        /// Escape the given string for < > " and & HTML characters.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns>The new string</returns>
+        ///<summary>
+        ///Escape the given string for < > " and & HTML characters.
+        ///</summary>
+        ///<param name="input"></param>
+        ///<returns>The new string</returns>
         static public string EscapeHTML(string input)
         {
             return escape(input);

@@ -59,7 +59,9 @@ namespace FlexWiki
                 latest == null ? DateTime.MinValue.ToString() : latest.Created.ToString());
             AddBuiltInProperty(parsedTopic, "_ModificationTime", 
                 latest == null ? DateTime.MinValue.ToString() : latest.Modified.ToString());
-            AddBuiltInProperty(parsedTopic, "_Body", contents); 
+            AddBuiltInProperty(parsedTopic, "_Body", contents);
+            AddBuiltInProperty(parsedTopic, "_ProcessTextSize", "0");
+            AddBuiltInProperty(parsedTopic, "_Wom", "");
 
             return parsedTopic;
         }
@@ -83,6 +85,5 @@ namespace FlexWiki
             TopicPropertyValue topicPropertyValue = new TopicPropertyValue(value); 
             property.Values.Add(topicPropertyValue); 
         }
-
     }
 }

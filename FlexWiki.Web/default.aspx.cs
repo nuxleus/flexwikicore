@@ -102,7 +102,7 @@ namespace FlexWiki.Web
                 diffVersion = manager.VersionPreviousTo(topic.LocalName, topic.Version);
             }
 
-
+            Federation.Parser = Parser;
             // Get the core data (the formatted topic and the list of changes) from the cache.  If it's not there, generate it!
             formattedBody = WikiApplication.CachedRender(
                 CreateCacheKey("FormattedBody"),

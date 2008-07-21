@@ -148,6 +148,10 @@ namespace FlexWiki.Web
                 return (Federation)(Application[Constants.FederationCacheKey]);
             }
         }
+        protected ParserEngine Parser
+        {
+            get { return (ParserEngine)(Application[Constants.EngineCacheKey]); }
+        }
         protected FlexWikiWebApplication FlexWikiWebApplication
         {
             get
@@ -233,6 +237,7 @@ namespace FlexWiki.Web
 
             if (doBorders)
             {
+                Federation.Parser = Parser;
                 tempbottom = WikiApplication.CachedRender(
                     CreateCacheKey("BottomBorder"),
                     delegate
@@ -240,6 +245,7 @@ namespace FlexWiki.Web
                         return Federation.GetTopicFormattedBorder(topic, Border.Bottom);
                     });
 
+                Federation.Parser = Parser;
                 templeft = WikiApplication.CachedRender(
                     CreateCacheKey("LeftBorder"),
                     delegate
@@ -247,6 +253,7 @@ namespace FlexWiki.Web
                         return Federation.GetTopicFormattedBorder(topic, Border.Left);
                     });
 
+                Federation.Parser = Parser;
                 tempright = WikiApplication.CachedRender(
                         CreateCacheKey("RightBorder"),
                         delegate
@@ -254,6 +261,7 @@ namespace FlexWiki.Web
                             return Federation.GetTopicFormattedBorder(topic, Border.Right);
                         });
 
+                Federation.Parser = Parser;
                 temptop = WikiApplication.CachedRender(
                         CreateCacheKey("TopBorder"),
                         delegate
@@ -314,7 +322,7 @@ namespace FlexWiki.Web
 
             if (!String.IsNullOrEmpty(templeft + temptop))
             {
-                strbldr.AppendLine("</div>");
+                //strbldr.AppendLine("</div>");
             }
 
             // Insert the RightBorder if it is required.
@@ -402,6 +410,8 @@ namespace FlexWiki.Web
             // Setup the federation -- either find the existing one or create a new one
             _linkMaker = new LinkMaker(RootUrl);
             EstablishFederation();
+            EstablishParser();
+            
 
             MinimalPageLoad();
             PageLoad();
@@ -431,6 +441,15 @@ namespace FlexWiki.Web
             str = Regex.Replace(str, "<", "&lt;");
             str = Regex.Replace(str, ">", "&gt;");
             return str;
+        }
+        protected void EstablishParser()
+        {
+            if (Parser != null)
+            {
+                return;
+            }
+            ParserEngine parser = new ParserEngine(Federation);
+            SetParserEngine(parser);
         }
         //protected FederationConfiguration FederationConfigurationFromFile
         //{
@@ -888,6 +907,10 @@ namespace FlexWiki.Web
         private void SetFederation(Federation fed)
         {
             Application[Constants.FederationCacheKey] = fed;
+        }
+        private void SetParserEngine(ParserEngine parser)
+        {
+            Application[Constants.EngineCacheKey] = parser;
         }
         private void SetupUpdateMonitoring()
         {

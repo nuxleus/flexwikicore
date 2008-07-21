@@ -87,7 +87,7 @@ namespace FlexWiki.Web
                 {
                     LogManager.GetLogger("FlexWiki.Web").Warn("Access was denied " + ex.ToString());
                     Context.Items["LastError"] = ex.InnerException;
-                    Server.Transfer("AccessDenied.aspx");
+                    Server.Transfer("..//AccessDenied.aspx");
                 }
                 finally
                 {

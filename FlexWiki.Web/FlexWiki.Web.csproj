@@ -115,6 +115,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="admin\EditConfiguration.aspx" />
+    <Content Include="admin\FlexWikiWeb.xslt" />
     <Content Include="admin\ResetConfiguration.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -146,6 +147,14 @@
     </Content>
     <Content Include="admin\Users.aspx" />
     <Content Include="admin\WikiAdmin.js" />
+    <Content Include="admin\womCell.xml" />
+    <Content Include="admin\womContext.xml" />
+    <Content Include="admin\womIncludeTopic.xml" />
+    <Content Include="admin\womMultiLine.xml" />
+    <Content Include="admin\womStyledCode.xml" />
+    <Content Include="admin\womStyledText.xml" />
+    <Content Include="admin\womTableStyle.xml" />
+    <Content Include="admin\womText.xml" />
     <Content Include="Blade.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>

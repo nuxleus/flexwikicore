@@ -341,15 +341,26 @@ namespace FlexWiki
             }
 
             string[] hdrLine = _headers.Split(new char[] { '\n' });
+            int first = 0;
 
             for (int x = 0; x < hdrLine.Length - 1; x++)
             {
                 string tempIn = hdrLine[x].Trim();
                 int maxWidth = tempIn.Length > 6 ? 7 : tempIn.Length;
                 int y = tempIn.Substring(0,maxWidth).LastIndexOf('!'); //ensure y has max value of 7 and only uses chars at the start of the Header
+                int a = y;
+                if (first == 0)
+                {
+                    first = y - 1;
+                    y = y - first;
+                }
+                else
+                {
+                    y = y - first;
+                }
                 if (y <= _maxDepth)
                 {
-                    string temp = tempIn.Substring(y + 1, tempIn.Length - y - 1);
+                    string temp = tempIn.Substring(a + 1, tempIn.Length - a - 1);
                     while (temp.Contains("\"\""))
                     {
                         int z = temp.IndexOf("\"\"");
@@ -372,7 +383,7 @@ namespace FlexWiki
                     {
                         temp = @"@@Presentations.Link(federation.LinkMaker.SimpleLinkTo([""default.aspx/"",""" + TopicRevision.Namespace + @""",""/"",""" + TopicRevision.LocalName + @""","".html#"",""" + HttpUtility.HtmlEncode(temp) + @"""].ToOneString),""" + temp + @""")@@";
                     }
-                    strbldr.AppendLine(_spaces.Substring(1, (y + 1) * 8) + _style + temp);
+                    strbldr.AppendLine(_spaces.Substring(1, (y * 8)) + _style + temp);
                 }
             }
             return strbldr.ToString();

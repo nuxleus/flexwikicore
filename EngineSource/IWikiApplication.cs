@@ -12,7 +12,7 @@
 
 using System;
 
-using FlexWiki.Caching; 
+using FlexWiki.Caching;
 
 namespace FlexWiki
 {
@@ -25,6 +25,8 @@ namespace FlexWiki
         OutputFormat OutputFormat { get; }
         ITimeProvider TimeProvider { get; }
         IMembership Membership { get; }
+        ExecutionEnvironment ExecutionEnvironment { get; }
+        
 
         //void AppendToLog(string logfile, string message);
         void Log(string source, LogLevel level, string message);

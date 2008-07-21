@@ -17,5 +17,6 @@ namespace FlexWiki.Web
     internal static class Constants
     {
         internal static string FederationCacheKey = "---FEDERATION---";
+        internal static string EngineCacheKey = "---ENGINE---";
     }
 }

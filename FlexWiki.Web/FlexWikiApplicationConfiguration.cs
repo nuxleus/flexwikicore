@@ -38,6 +38,7 @@ namespace FlexWiki.Web
         private bool _disableXslTransform = false;
         private bool _disableThreadedMessaging = false;
         private bool _enableBordersAllPages = false;
+        private bool _enableNewParser = false;
         private bool _removeListItemWhitespace = false;
         private string _threadedMessagingEditPermissions;
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
@@ -147,6 +148,11 @@ namespace FlexWiki.Web
         {
             get { return _enableBordersAllPages; }
             set { _enableBordersAllPages = value; }
+        }
+        public bool EnableNewParser
+        {
+            get { return _enableNewParser; }
+            set { _enableNewParser = value; }
         }
         public bool RemoveListItemWhitespace
         {

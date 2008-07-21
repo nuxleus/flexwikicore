@@ -404,6 +404,10 @@ namespace FlexWiki.Caching
         {
             return new TopicCacheKey(topicRevision.ResolveRelativeTo(Namespace), "ParsedTopic").ToString(); 
         }
+        private string GetKeyForProcessTextSize(UnqualifiedTopicRevision topicRevision)
+        {
+            return new TopicCacheKey(topicRevision.ResolveRelativeTo(Namespace), "ProcessTextSize").ToString();
+        }
         private string GetKeyForTopicChanges(UnqualifiedTopicName topic)
         {
             return new TopicCacheKey(

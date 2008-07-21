@@ -54,7 +54,7 @@ namespace FlexWiki.Formatting
 			_Parent = parent;
 		}
 
-		public void Write(string s)
+		public virtual void Write(string s)
 		{
 			TextWriter().Write(s);
 		}
@@ -78,6 +78,9 @@ namespace FlexWiki.Formatting
 
         case OutputFormat.Testing:
           return new TestWikiOutput(parent);
+
+        case OutputFormat.WikiObjectModel:
+            return new WomDocument(parent);
 
         default:
           throw new Exception("Unsupported output type requested: " + aFormat.ToString());
