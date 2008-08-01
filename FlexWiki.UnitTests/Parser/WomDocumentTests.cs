@@ -1893,7 +1893,7 @@ this is some text</womMultilineCode>
         {
             string test = @"This is some text.
 
-This line has a thumbs up at the end (y)
+This line has a thumbs up at the end (Y)
 This line has (N) a thumbs down in it
 This line has a :-S confused smile
 
@@ -1977,8 +1977,8 @@ Here is some more text.
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
 <Table><TableRow><womCellText>
-<womCell> <Emoticon>emoticons/thumbs_up.gif</Emoticon></womCell></womCellText><womCellText>
-<womCell> <Emoticon>emoticons/thumbs_down.gif</Emoticon></womCell></womCellText><womCellText>
+<womCell> <Emoticon>emoticons/y.gif</Emoticon></womCell></womCellText><womCellText>
+<womCell> <Emoticon>emoticons/n.gif</Emoticon></womCell></womCellText><womCellText>
 <womCell> <Emoticon>emoticons/beer_yum.gif</Emoticon></womCell></womCellText><womCellText>
 <womCell> <Emoticon>emoticons/martini_shaken.gif</Emoticon></womCell></womCellText><womCellText>
 <womCell> <Emoticon>emoticons/girl_handsacrossamerica.gif</Emoticon></womCell></womCellText><womCellText>
@@ -2144,9 +2144,9 @@ Here is some more text.
 <Para><paraText>:P</paraText></Para>
 <Para><paraText><Emoticon>emoticons/tounge_smile.gif</Emoticon></paraText></Para>
 <Para><paraText>(`) (1) (2) (3) (4) (5) <Emoticon>emoticons/devil_smile.gif</Emoticon> (7) <Emoticon>emoticons/musical_note.gif</Emoticon> (9) (0) (-) (=)</paraText></Para>
-<Para><paraText>(q) <Emoticon>emoticons/wilted_rose.gif</Emoticon> <Emoticon>emoticons/envelope.gif</Emoticon> (r) <Emoticon>emoticons/phone.gif</Emoticon> <Emoticon>emoticons/thumbs_up.gif</Emoticon> <Emoticon>emoticons/broken_heart.gif</Emoticon> <Emoticon>emoticons/lightbulb.gif</Emoticon> <Emoticon>emoticons/clock.gif</Emoticon> <Emoticon>emoticons/camera.gif</Emoticon> ([) (]) (\)</paraText></Para>
+<Para><paraText>(q) <Emoticon>emoticons/wilted_rose.gif</Emoticon> <Emoticon>emoticons/envelope.gif</Emoticon> (r) <Emoticon>emoticons/phone.gif</Emoticon> <Emoticon>emoticons/y.gif</Emoticon> <Emoticon>emoticons/broken_heart.gif</Emoticon> <Emoticon>emoticons/lightbulb.gif</Emoticon> <Emoticon>emoticons/clock.gif</Emoticon> <Emoticon>emoticons/camera.gif</Emoticon> ([) (]) (\)</paraText></Para>
 <Para><paraText><Emoticon>emoticons/angel_smile.gif</Emoticon> (s) <Emoticon>emoticons/martini_shaken.gif</Emoticon> <Emoticon>emoticons/rose.gif</Emoticon> <Emoticon>emoticons/present.gif</Emoticon> <Emoticon>emoticons/shades_smile.gif</Emoticon> (j) <Emoticon>emoticons/kiss.gif</Emoticon> <Emoticon>emoticons/heart.gif</Emoticon> (<Emoticon>emoticons/wink_smile.gif</Emoticon> (')</paraText></Para>
-<Para><paraText><Emoticon>emoticons/guy_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/girl_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/coffee.gif</Emoticon> (v) <Emoticon>emoticons/beer_yum.gif</Emoticon> <Emoticon>emoticons/thumbs_down.gif</Emoticon> <Emoticon>emoticons/messenger.gif</Emoticon> (,) (.) (/)</paraText></Para>
+<Para><paraText><Emoticon>emoticons/guy_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/girl_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/coffee.gif</Emoticon> (v) <Emoticon>emoticons/beer_yum.gif</Emoticon> <Emoticon>emoticons/n.gif</Emoticon> <Emoticon>emoticons/messenger.gif</Emoticon> (,) (.) (/)</paraText></Para>
 
 <PreformattedSingleLine> </PreformattedSingleLine>
 <Para><paraText>() () () () () () () () () () () () () </paraText></Para>

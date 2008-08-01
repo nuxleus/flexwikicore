@@ -100,11 +100,13 @@ namespace FlexWiki.Formatting
 		abstract public void WriteOpenProperty(string name);
 		abstract public void WriteCloseProperty();
 		abstract public void WriteOpenAnchor(string name);
+        abstract public void WriteComment(string comment) ;
 		abstract public void WriteCloseAnchor();
 		abstract public void WriteCloseUnorderedList();
 		abstract public void WriteOpenUnorderedList();
 		abstract public void WriteCloseOrderedList();
 		abstract public void WriteOpenOrderedList();
+        abstract public void WriteOpenOrderedList(int start);
 		abstract public void WriteOpenPreformatted();
 		abstract public void WriteRule();
 		abstract public void WriteClosePreformatted();

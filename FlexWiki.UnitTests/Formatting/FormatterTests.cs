@@ -725,6 +725,7 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 </ol>
 ");
 
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);            
             FormatTest(
               @"	* level 1
 		* level 2
@@ -732,17 +733,17 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 	* level 1
 	* level 1 (again!)",
               @"<ul>
-<li>level 1</li>
+<li> level 1</li>
 
 <ul>
-<li>level 2</li>
+<li> level 2</li>
 
-<li>level 2</li>
+<li> level 2</li>
 
 </ul>
-<li>level 1</li>
+<li> level 1</li>
 
-<li>level 1 (again!)</li>
+<li> level 1 (again!)</li>
 
 </ul>
 ");
@@ -781,6 +782,644 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 </ul>
 ");
 
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+            FormatTest(
+              @"	1. Original Format Item 1
+	1. Original Format Item 2
+		1. Original Format 2nd Level Item 1
+			1. Original Format 3rd Level Item 1
+	1. Original Format Item 3
+		1. Original Format 2nd Level Item 1
+			1. Original Format 3rd Level Item 1
+	1. Original Format Item 4",
+              @"<ol>
+<li>Original Format Item 1</li>
+
+<li>Original Format Item 2</li>
+
+<ol>
+<li>Original Format 2nd Level Item 1</li>
+
+<ol>
+<li>Original Format 3rd Level Item 1</li>
+
+</ol>
+</ol>
+<li>Original Format Item 3</li>
+
+<ol>
+<li>Original Format 2nd Level Item 1</li>
+
+<ol>
+<li>Original Format 3rd Level Item 1</li>
+
+</ol>
+</ol>
+<li>Original Format Item 4</li>
+
+</ol>
+");
+
+            // Alternate Format Similar Test
+           testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+           FormatTest(
+              @"	# New Format Item 1
+	# New Format Item 2
+		# New Format 2nd Level Item 1
+			# New Format 3rd Level Item 1
+	# New Format Item 3
+		# New Format 2nd Level Item 1
+			# New Format 3rd Level Item 1
+	# New Format Item 4",
+              @"<ol>
+<li>New Format Item 1</li>
+
+<li>New Format Item 2</li>
+
+<ol>
+<li>New Format 2nd Level Item 1</li>
+
+<ol>
+<li>New Format 3rd Level Item 1</li>
+
+</ol>
+</ol>
+<li>New Format Item 3</li>
+
+<ol>
+<li>New Format 2nd Level Item 1</li>
+
+<ol>
+<li>New Format 3rd Level Item 1</li>
+
+</ol>
+</ol>
+<li>New Format Item 4</li>
+
+</ol>
+");		
+
+            // Mixed List Test
+            // for bugs 1039227 and 2026301
+           testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+           FormatTest(
+	              @"	# New Format Item 1
+			* 2nd Level Bullet #1
+		# New Format Item 2
+			# New Format 2nd Level Item 1
+			# New Format 2nd Level Item 2
+				* 3rd Level Bullet #1
+		# New Format Item 3
+			* 2nd Level Bullet #1
+				# New Format 3rd Level Item 1
+		# New Format Item 4",
+              @"<ol>
+<li>New Format Item 1</li>
+
+<ul>
+<ul>
+<li>2nd Level Bullet #1</li>
+
+</ul>
+</ul>
+<ol start='1' >
+<li>New Format Item 2</li>
+
+<ol>
+<li>New Format 2nd Level Item 1</li>
+
+<li>New Format 2nd Level Item 2</li>
+
+<ul>
+<li>3rd Level Bullet #1</li>
+
+</ul>
+</ol>
+<li>New Format Item 3</li>
+
+<ul>
+<li>2nd Level Bullet #1</li>
+
+<ol start='1' >
+<li>New Format 3rd Level Item 1</li>
+
+</ol>
+</ul>
+<li>New Format Item 4</li>
+
+</ol>
+</ol>
+") ;
+
+            // Original Format Standard List Breaking
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+            FormatTest(
+              @"	1. New Format Item 1
+	1. New Format Item 2
+	1. New Format Item 3
+A line with text on it
+	1. New Format Item 1",
+              @"<ol>
+<li>New Format Item 1</li>
+
+<li>New Format Item 2</li>
+
+<li>New Format Item 3</li>
+
+</ol>
+<p>A line with text on it</p>
+<ol>
+<li>New Format Item 1</li>
+
+</ol>
+");
+
+            // New Format Standard List Breaking
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+            FormatTest(
+              @"	# New Format Item 1
+	# New Format Item 2
+	# New Format Item 3
+A line with text on it
+	# New Format Item 1",
+              @"<ol>
+<li>New Format Item 1</li>
+
+<li>New Format Item 2</li>
+
+<li>New Format Item 3</li>
+
+</ol>
+<p>A line with text on it</p>
+<ol>
+<li>New Format Item 1</li>
+
+</ol>
+");
+            // New Format Level 1 List Continuation
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+            FormatTest(
+              @"	# New Format Item 1
+	# New Format Item 2
+	# New Format Item 3
+A line with text on it
+	#^ New Format Item 4
+	# New Format Item 5",
+              @"<ol>
+<li>New Format Item 1</li>
+
+<li>New Format Item 2</li>
+
+<li>New Format Item 3</li>
+
+</ol>
+<p>A line with text on it</p>
+<ol start='4' >
+<li>New Format Item 4</li>
+
+<li>New Format Item 5</li>
+
+</ol>
+");
+
+            // New Format 2nd Level List Continuation
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
+            FormatTest(
+              @"	# New Format Item 1
+	# New Format Item 2
+	# New Format Item 3
+		# New Format Level 2 Item 1
+A line with text on it
+		#^ New Format Level 2 Item 2
+	# New Format Item 4",
+              @"<ol>
+<li>New Format Item 1</li>
+
+<li>New Format Item 2</li>
+
+<li>New Format Item 3</li>
+
+<ol>
+<li>New Format Level 2 Item 1</li>
+
+</ol>
+</ol>
+<p>A line with text on it</p>
+<ol start='4' >
+<ol start='2' >
+<li>New Format Level 2 Item 2</li>
+
+</ol>
+<li>New Format Item 4</li>
+
+</ol>
+");   
+            
+            // New Format 2nd Level List Continuation
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+              @"! Original
+	1. First Item
+	1. Second Item
+		1. 2nd First Item
+		1. 2nd Second Item
+			1. 3rd First Item
+			1. 3rd Second Item
+		1. 2nd Third Item
+		1. 2nd Fourth Item
+	1. Third Item",
+              @"<h1><a name="" Original"" class=""Anchor""></a> Original</h1>
+
+<ol>
+<li> First Item</li>
+
+<li> Second Item</li>
+
+<ol>
+<li> 2nd First Item</li>
+
+<li> 2nd Second Item</li>
+
+<ol>
+<li> 3rd First Item</li>
+
+<li> 3rd Second Item</li>
+
+</ol>
+<li> 2nd Third Item</li>
+
+<li> 2nd Fourth Item</li>
+
+</ol>
+<li> Third Item</li>
+
+</ol>
+");   
+
+            // New Format 2nd Level List Continuation
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+              @"! Alternate Syntax Test
+	# First Item
+	# Second Item
+		# 2nd First Item
+		# 2nd Second Item
+			# 3rd First Item
+			# 3rd Second Item
+		# 2nd Third Item
+		# 2nd Fourth Item
+	# Third Item",
+              @"<h1><a name="" Alternate Syntax Test"" class=""Anchor""></a> Alternate Syntax Test</h1>
+
+<ol>
+<li> First Item</li>
+
+<li> Second Item</li>
+
+<ol>
+<li> 2nd First Item</li>
+
+<li> 2nd Second Item</li>
+
+<ol>
+<li> 3rd First Item</li>
+
+<li> 3rd Second Item</li>
+
+</ol>
+<li> 2nd Third Item</li>
+
+<li> 2nd Fourth Item</li>
+
+</ol>
+<li> Third Item</li>
+
+</ol>
+");
+
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+              @"! Continuation Test
+	# First Item
+	# Second Item
+An intermediate line
+	#^ Third Item
+		# 2nd Level First Item
+		# 2nd Level Second Item
+Another line
+		#^ 2nd Level Third Item
+	# Fourth Item
+----
+||Test Tables||Test #||
+||First||1||
+||Second||2||",
+              @"<h1><a name="" Continuation Test"" class=""Anchor""></a> Continuation Test</h1>
+
+<ol>
+<li> First Item</li>
+
+<li> Second Item</li>
+
+</ol>
+<p>An intermediate line</p>
+<ol start='3' >
+<li> Third Item</li>
+
+<ol>
+<li> 2nd Level First Item</li>
+
+<li> 2nd Level Second Item</li>
+
+</ol>
+</ol>
+<p>Another line</p>
+<ol start='4' >
+<ol start='3' >
+<li> 2nd Level Third Item</li>
+
+</ol>
+<li> Fourth Item</li>
+
+</ol>
+<div class=""Rule""></div>
+<table class=""TableClass"">
+<tr>
+<td  class=""TableCell"">Test Tables</td>
+<td  class=""TableCell"">Test #</td>
+</tr>
+<tr>
+<td  class=""TableCell"">First</td>
+<td  class=""TableCell"">1</td>
+</tr>
+<tr>
+<td  class=""TableCell"">Second</td>
+<td  class=""TableCell"">2</td>
+</tr>
+</table>
+");
+
+            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+              @"! Trailing Test
+	# First Item
+
+	# First Item
+	# Second Item
+		* 2nd Level First 
+			* 3rd Level First",
+              @"<h1><a name="" Trailing Test"" class=""Anchor""></a> Trailing Test</h1>
+
+<ol>
+<li> First Item</li>
+
+</ol>
+
+
+<ol>
+<li> First Item</li>
+
+<li> Second Item</li>
+
+<ul>
+<li> 2nd Level First </li>
+
+<ul>
+<li> 3rd Level First</li>
+
+</ul>
+</ul>
+</ol>
+");
+            
+           testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+            FormatTest(
+              @"	1. item 1
+	1. item 2 @@[""
+|| a || b ||
+|| c || d ||
+""]@@
+	1. item 3
+	l. Codes that are available in the Shopping Basket  for the requisitioners and buyers@@[""
+*On the search page, select the SB radio button and one should see any code that maps to that view
+""]@@
+
+Test - this should be at the left margin",
+              @"<ol>
+<li> item 1</li>
+
+<li> item 2 
+
+<table class=""TableClass"">
+<tr>
+<td  class=""TableCell""> a </td>
+<td  class=""TableCell""> b </td>
+</tr>
+<tr>
+<td  class=""TableCell""> c </td>
+<td  class=""TableCell""> d </td>
+</tr>
+</table></li>
+
+<li> item 3</li>
+
+</ol>
+<pre>
+        l. Codes that are available in the Shopping Basket  for the requisitioners and buyers@@[""
+*On the search page, select the SB radio button and one should see any code that maps to that view
+""]@@
+</pre>
+
+
+<p>Test - this should be at the left margin</p>
+");  
+
+           testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+           FormatTest(
+              @"	# New Format Item 1
+		* a Bullet
+	# New Format Item 2
+	# New Format Item 3
+		# New Format Level 2 Item 1
+A line with text on it
+		#^ New Format Level 2 Item 2
+	# New Format Item 4",
+              @"<ol>
+<li> New Format Item 1</li>
+
+<ul>
+<li> a Bullet</li>
+
+</ul>
+<li> New Format Item 2</li>
+
+<li> New Format Item 3</li>
+
+<ol>
+<li> New Format Level 2 Item 1</li>
+
+</ol>
+</ol>
+<p>A line with text on it</p>
+<ol start='4' >
+<ol start='2' >
+<li> New Format Level 2 Item 2</li>
+
+</ol>
+<li> New Format Item 4</li>
+
+</ol>
+");
+
+           testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
+           FormatTest(
+              @"! Initial Non-Mixed
+	# First
+	# Second 
+A line between
+	#^ Third
+
+! Second Level Non-Mixed 
+	# First
+	# Second
+		# Second First
+		# Second Second
+A line between
+	#^ Third
+
+! Second Level Non-Mixed 2
+	# First
+	# Second
+		# Second First
+		# Second Second
+A line between
+		#^ Second Third
+	# Third
+
+! Initial Mixed
+	# First
+	# Second
+		* Second First
+		* Second Second
+A line between
+	#^ Third
+
+! Second Level Mixed
+	# First
+	# Second
+		* Second First
+		* Second Second
+A line between
+		* Second Third
+	#^ Third",
+              @"<h1><a name="" Initial Non-Mixed"" class=""Anchor""></a> Initial Non-Mixed</h1>
+
+<ol>
+<li> First</li>
+
+<li> Second </li>
+
+</ol>
+<p>A line between</p>
+<ol start='3' >
+<li> Third</li>
+
+</ol>
+
+
+<h1><a name="" Second Level Non-Mixed "" class=""Anchor""></a> Second Level Non-Mixed </h1>
+
+<ol>
+<li> First</li>
+
+<li> Second</li>
+
+<ol>
+<li> Second First</li>
+
+<li> Second Second</li>
+
+</ol>
+</ol>
+<p>A line between</p>
+<ol start='3' >
+<li> Third</li>
+
+</ol>
+
+
+<h1><a name="" Second Level Non-Mixed 2"" class=""Anchor""></a> Second Level Non-Mixed 2</h1>
+
+<ol>
+<li> First</li>
+
+<li> Second</li>
+
+<ol>
+<li> Second First</li>
+
+<li> Second Second</li>
+
+</ol>
+</ol>
+<p>A line between</p>
+<ol start='3' >
+<ol start='3' >
+<li> Second Third</li>
+
+</ol>
+<li> Third</li>
+
+</ol>
+
+
+<h1><a name="" Initial Mixed"" class=""Anchor""></a> Initial Mixed</h1>
+
+<ol>
+<li> First</li>
+
+<li> Second</li>
+
+<ul>
+<li> Second First</li>
+
+<li> Second Second</li>
+
+</ul>
+</ol>
+<p>A line between</p>
+<ol start='3' >
+<li> Third</li>
+
+</ol>
+
+
+<h1><a name="" Second Level Mixed"" class=""Anchor""></a> Second Level Mixed</h1>
+
+<ol>
+<li> First</li>
+
+<li> Second</li>
+
+<ul>
+<li> Second First</li>
+
+<li> Second Second</li>
+
+</ul>
+</ol>
+<p>A line between</p>
+<ul>
+<ul>
+<li> Second Third</li>
+
+</ul>
+</ul>
+<ol start='3' >
+<li> Third</li>
+
+</ol>
+");
+           
         }
         [Test]
         public void MailToLink()

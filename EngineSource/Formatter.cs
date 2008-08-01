@@ -33,7 +33,7 @@ namespace FlexWiki.Formatting
     /// A Formatter is quite stateful and a new instance is used for each translation of some input to output.  Instance are not reused.
     /// </remarks>
     public class Formatter : IWikiToPresentation
-    {
+    {   	
         /// <summary>
         /// string pattern for what comes before a wiki name
         /// </summary>
@@ -89,6 +89,8 @@ namespace FlexWiki.Formatting
 
         private static string emailAddressString = @"([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)";
         private static Regex emailAddress = new Regex(emailAddressString);
+    	private static int[] indiceCount = new int[35] ;
+        
         /// <summary>
         /// Format a string of wiki content in a given OutputFormat with references all being relative to a given namespace
         /// </summary>
@@ -194,6 +196,7 @@ namespace FlexWiki.Formatting
             return output.ToString();
         }
 
+        private Stack stateStack = new Stack() ;
         /// <summary>
         /// The source data for formatting: a list of StyledLines 
         /// </summary>
@@ -293,7 +296,7 @@ namespace FlexWiki.Formatting
 
         /// <summary>
         /// Format a given input string to the given output
-        /// </summary>
+        /// </summary>pre
         /// <param name="source">Input wiki content as a list of StyledLines</param>
         /// <param name="output">Output object to which output is sent</param>
         /// <param name="namespaceManager">The ContentProviderChain that contains the wiki string text</param>
@@ -523,30 +526,6 @@ namespace FlexWiki.Formatting
         }
         #endregion
 
-        #region CloseLists
-        /// <summary>
-        /// Close out any open lists and decrement associated counters
-        /// </summary>
-        /// <param name="listNest"></param>
-        /// <param name="olistNest"></param>
-        private void CloseLists(ref int listNest, ref int olistNest)
-        {
-            int jj;
-            // if we're in a list, close all the <ul>s
-            for (jj = 0; jj < listNest; jj++)
-            {
-                _output.WriteCloseUnorderedList();
-                listNest--;
-            }
-            for (jj = 0; jj < olistNest; jj++)
-            {
-                _output.WriteCloseOrderedList();
-                olistNest--;
-            }
-        }
-        #endregion
-
-
         #region private state classes
         #region class State
         /// <summary>
@@ -561,14 +540,26 @@ namespace FlexWiki.Formatting
                 _Formatter = f;
             }
 
-            virtual public void Exit()
+            virtual public void WriteOutdent()
             {
             }
 
+            virtual public void WriteIndent()
+            {
+            }
+
+            virtual public void WriteIndent(int start)
+            {
+            }
+            
             virtual public void Enter()
             {
             }
 
+            virtual public void Exit()
+            {
+            }
+            
             protected WikiOutput Output
             {
                 get
@@ -625,33 +616,11 @@ namespace FlexWiki.Formatting
         #region class ListState
         abstract class ListState : State
         {
-            protected int listNest = 0;
-
-            abstract public void WriteIndent();
-            abstract public void WriteOutdent();
-
             public ListState(Formatter f)
                 : base(f)
             {
             }
-
-            public void SetNesting(int thisNest)
-            {
-                if (listNest < thisNest)
-                {
-                    while (listNest < thisNest)
-                    {
-                        WriteIndent();
-                    }
-                }
-                else if (listNest > thisNest)
-                {
-                    while (listNest > thisNest)
-                    {
-                        WriteOutdent();
-                    }
-                }
-            }
+        
         }
         #endregion
 
@@ -663,60 +632,45 @@ namespace FlexWiki.Formatting
             {
             }
 
+            override public void WriteIndent(int start)
+            {
+                 Output.WriteOpenUnorderedList();
+            }
+            
             override public void WriteIndent()
             {
                 Output.WriteOpenUnorderedList();
-                listNest++;
             }
 
             override public void WriteOutdent()
             {
                 Output.WriteCloseUnorderedList();
-                listNest--;
-            }
-
-            override public void Exit()
-            {
-                SetNesting(0);
-            }
-
-            override public void Enter()
-            {
-                SetNesting(1);
             }
         }
         #endregion
 
         #region class OrderedListState
         class OrderedListState : ListState
-        {
+        {       	
             public OrderedListState(Formatter f)
                 : base(f)
             {
             }
-
+            
             override public void WriteIndent()
             {
                 Output.WriteOpenOrderedList();
-                listNest++;
             }
 
+            override public void WriteIndent(int start)
+            {
+            	Output.WriteOpenOrderedList(start) ;
+            }
+            
             override public void WriteOutdent()
             {
                 Output.WriteCloseOrderedList();
-                listNest--;
             }
-
-            override public void Exit()
-            {
-                SetNesting(0);
-            }
-
-            override public void Enter()
-            {
-                SetNesting(1);
-            }
-
         }
         #endregion
 
@@ -747,7 +701,7 @@ namespace FlexWiki.Formatting
             set
             {
                 if (_CurrentState != null)
-                    _CurrentState.Exit();
+                    _CurrentState.Exit();            		
                 _CurrentState = value;
                 if (_CurrentState != null)
                     _CurrentState.Enter();
@@ -760,11 +714,83 @@ namespace FlexWiki.Formatting
         /// Make sure we're in a particular state and if we aren't create that state and enter it
         /// </summary>
         /// <param name="aType"></param>
-        private void Ensure(Type aType)
+        private void Ensure(Type aType,int level,bool resetCount)
         {
-            if (CurrentState != null && CurrentState.GetType() == aType)
-                return;	// already what's requested
-            CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));
+        	bool suppressIndent ;
+        	Type  lastType = null ;
+
+        	suppressIndent = false ;
+        	if(stateStack.Count > level)
+        	{
+        		while(stateStack.Count > level)
+        		{
+        			// Pop the last state type and drop a level
+       			    lastType = (Type) stateStack.Pop() ;
+        			State tempState = (State)(Activator.CreateInstance(lastType, new object[] { this})) ;
+       		    	tempState.WriteOutdent() ;
+        		}
+        		// if(level > 0)
+         		//    indiceCount[level-1] = indiceCount[level-1] + 1 ;       			
+        	}
+        	if(stateStack.Count == level)
+        	{
+        		if(stateStack.Count > 0) 
+        		{
+        			lastType = (Type) stateStack.Peek() ;
+        			if(lastType == aType)
+        			   suppressIndent = true ;
+        		}
+        		if(CurrentState.GetType() == aType)
+        		{
+        		   return ;
+        		}
+        		else if(stateStack.Count > 0)
+        		{
+        			// Pop the last state type and drop a level
+        			lastType = (Type) stateStack.Pop() ;
+        			State tempState = (State)(Activator.CreateInstance(lastType, new object[] { this})) ;
+       		    	if(! suppressIndent)
+        			   tempState.WriteOutdent() ;
+       		    	// if(level > 0)
+       		    	//    indiceCount[level-1] = indiceCount[level-1] + 1 ; 		
+        		}
+                CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));  
+                // Now indent and push the new type on the stack
+        		if(level > 0) 
+        		{
+         		   stateStack.Push(aType) ;
+         		   if(resetCount)
+        		      for(int i=level-1;i<35;i++)
+        		          indiceCount[i] = 1 ;        		    	
+         		   if(! suppressIndent )
+                   {
+                	  if(resetCount)
+                	     CurrentState.WriteIndent() ;
+                	  else
+                		 CurrentState.WriteIndent(indiceCount[level-1]) ;
+                   }
+       			
+        		}
+        		return ;
+        	}
+        	else if(stateStack.Count < level)
+        	{
+        		for(int j=stateStack.Count;j<level;j++)
+        		{
+        		    // Now indent and push the new type on the stack
+                    CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));        				
+        	        if(resetCount)
+        	        {
+        	           for(int i=level-1;i<35;i++)
+        	               indiceCount[i] = 1 ;        		    	
+                       CurrentState.WriteIndent() ;
+        		    }
+                    else
+                       CurrentState.WriteIndent(indiceCount[j]) ;
+        		    stateStack.Push(aType) ;
+        		}
+        	}
+            return ;        	
         }
         #endregion
 
@@ -808,7 +834,7 @@ namespace FlexWiki.Formatting
                 Federation.GetPerformanceCounter(PerformanceCounterNames.TopicFormat).Increment();
             }
 
-
+        	for(int i=0;i<35;i++) indiceCount[i] = 1 ;            
             CurrentState = new NeutralState(this);
             _currentLineIndex = 0;
             bool inMultilineProperty = false;
@@ -817,6 +843,9 @@ namespace FlexWiki.Formatting
             bool inPreBlock = false;
             bool inExtendedPreBlock = false;
             string preBlockKey = null;
+            bool resetCount=false ;
+            int thisNest = 0 ;
+
 
             _output.Begin();
 
@@ -832,7 +861,7 @@ namespace FlexWiki.Formatting
                 {
                     if ((each.StartsWith("}+") || each.StartsWith("}@")) && each.Substring(2).Trim() == preBlockKey)
                     {
-                        Ensure(typeof(NeutralState));
+                        Ensure(typeof(NeutralState),0,false);
                         inPreBlock = false;
                         inExtendedPreBlock = false;
                         preBlockKey = null;
@@ -841,9 +870,11 @@ namespace FlexWiki.Formatting
                     {
                         if (false == currentMultilinePropertyIsHidden)
                         {
-                            each = each.Replace("\t", "		");
+                            // each = each.Replace("\t", " 	");
+                            each = each.Replace("\t","        ");
                             if (inExtendedPreBlock)
                             {
+                            	// Ensure(CurrentState.GetType(),0,false);
                                 each = ProcessLineElements(each);
                             }
                             _output.Write(each);
@@ -855,7 +886,7 @@ namespace FlexWiki.Formatting
                 }
                 else if (!inMultilineProperty && (each.StartsWith("{+") || each.StartsWith("{@")))
                 {
-                    Ensure(typeof(PreState));
+                    Ensure(typeof(PreState),0,false);
                     inPreBlock = true;
                     inExtendedPreBlock = each.StartsWith("{+");
                     preBlockKey = each.Substring(2).Trim();
@@ -885,6 +916,7 @@ namespace FlexWiki.Formatting
                     }
                     else
                     {
+                    	// Ensure(CurrentState.GetType(),0,false);
                         // Don't bother showing out hidden page properties
                         val = val.Trim();
 
@@ -919,7 +951,7 @@ namespace FlexWiki.Formatting
                                 _output.Write(multiLinePropertyDelim);
                             }
                             // Make sure we close off things like tables before we close the propertyName.
-                            Ensure(typeof(NeutralState));
+                            Ensure(typeof(NeutralState),0,false);
                             _output.WriteCloseAnchor();
                             _output.WriteCloseProperty();
                         }
@@ -947,12 +979,12 @@ namespace FlexWiki.Formatting
                 if (each.Trim().Length == 0)
                 {
                     if (!(CurrentState is PreState) || (CurrentState is PreState && !IsNextLinePre()))
-                        Ensure(typeof(NeutralState));
+                        Ensure(typeof(NeutralState),0,false);
                     _output.WriteEndLine();
                 }
                 else if ((each.StartsWith("----")) && (false == currentMultilinePropertyIsHidden))
                 {
-                    Ensure(typeof(NeutralState));
+                    Ensure(typeof(NeutralState),0,false);
                     _output.WriteRule();
                 }
                 // insert topic -- {{IncludeSomeTopic}} ?
@@ -972,7 +1004,7 @@ namespace FlexWiki.Formatting
                         tabber = tabber.Substring(1);
                     }
 
-                    Ensure(typeof(NeutralState));
+                    Ensure(typeof(NeutralState),0,false);
                     if (NamespaceManager.TopicExists(topicRevision, ImportPolicy.IncludeImports))
                     {
                         if ((!IsBeyondSafeNestingDepth) && (false == currentMultilinePropertyIsHidden))
@@ -988,10 +1020,10 @@ namespace FlexWiki.Formatting
                     }
                 }
                 // line begins with a space, it's PRE time!
-                else if ((each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1]")) &&
+                else if ((each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1#]")) &&
                     (false == currentMultilinePropertyIsHidden))
                 {
-                    Ensure(typeof(PreState));
+                    Ensure(typeof(PreState),0,false);
                     _output.Write(Regex.Replace(each, "\t", "        "));
                 }
 
@@ -1009,9 +1041,10 @@ namespace FlexWiki.Formatting
                     if (each.StartsWith("\t"))
                     {
                         each = ProcessLineElements(each);
+						// Save the last nesting level
                         // Starts with a tab - might be a list (we'll see)
                         // Count the tabs
-                        int thisNest = 0;
+                        thisNest = 0;
                         while (each.Length > 0 && (each.StartsWith("\t")))
                         {
                             thisNest++;
@@ -1023,8 +1056,11 @@ namespace FlexWiki.Formatting
                             each = each.Substring(1);
                             // We're in a list - make sure we've got the right <ul> nesting setup
                             // Could need more or fewer
-                            Ensure(typeof(UnorderedListState));
-                            ((UnorderedListState) (CurrentState)).SetNesting(thisNest);
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()))
+                            	resetCount = false ;
+                            else
+                            	resetCount = true ;
+                            Ensure(typeof(UnorderedListState),thisNest,resetCount);
                             if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             {
                                 _output.WriteListItem(each);
@@ -1033,12 +1069,16 @@ namespace FlexWiki.Formatting
                             {
                                 _output.WriteListItem(each.Trim());
                             }
+                            indiceCount[stateStack.Count-1] = indiceCount[stateStack.Count-1] + 1 ;
                         }
                         else if (each.StartsWith("1."))
                         {
-                            each = each.Substring(2);
-                            Ensure(typeof(OrderedListState));
-                            ((OrderedListState) (CurrentState)).SetNesting(thisNest);
+                         	each = each.Substring(2);
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()))
+                            	resetCount = false ;
+                            else
+                            	resetCount = true ;
+                         	Ensure(typeof(OrderedListState),thisNest,resetCount);
                             if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             {
                                 _output.WriteListItem(each);
@@ -1047,7 +1087,40 @@ namespace FlexWiki.Formatting
                             {
                                 _output.WriteListItem(each.Trim());
                             }
+                            indiceCount[stateStack.Count-1] = indiceCount[stateStack.Count-1] + 1 ;                            
                         }
+                        else if (each.StartsWith("#^"))
+                        {
+                        	each = each.Substring(2);
+                        	Ensure(typeof(OrderedListState),thisNest,false);
+                            if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
+                            {
+                                _output.WriteListItem(each);
+                            }
+                            else
+                            {
+                                _output.WriteListItem(each.Trim());
+                            }                          
+                            indiceCount[stateStack.Count-1] = indiceCount[stateStack.Count-1] + 1 ;                            
+                        }                                                                        
+                        else if (each.StartsWith("#"))
+                        {
+                        	each = each.Substring(1);
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()))
+                            	resetCount = false ;
+                            else
+                            	resetCount = true ;
+                        	Ensure(typeof(OrderedListState),thisNest,resetCount);
+                            if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
+                            {
+                                _output.WriteListItem(each);
+                            }
+                            else
+                            {
+                                _output.WriteListItem(each.Trim());
+                            }
+                            indiceCount[stateStack.Count-1] = indiceCount[stateStack.Count-1] + 1 ;                            
+                        }  
                         else
                         {
                             // False alarm (just some tabs)
@@ -1057,7 +1130,7 @@ namespace FlexWiki.Formatting
                     else if (each.StartsWith("||") && each.EndsWith("||") && each.Length >= 4)
                     {
                         bool firstRow = !(CurrentState is TableState);
-                        Ensure(typeof(TableState));
+                        Ensure(typeof(TableState),0,false);
                         TableState ts = (TableState) CurrentState;
 
                         string endless = each.Substring(2, each.Length - 4);
@@ -1097,7 +1170,7 @@ namespace FlexWiki.Formatting
                     }
                     else
                     {
-                        Ensure(typeof(NeutralState));
+                        Ensure(typeof(NeutralState),0,false);
 
                         // See if we've got a heading prefix
                         int heading = -1;
@@ -1176,7 +1249,7 @@ namespace FlexWiki.Formatting
                 }
                 _currentLineIndex++;
             }
-
+            Ensure(typeof(NeutralState),0,false);
             _output.End();
 
             CurrentState = null;	// Make sure to do this so the last state gets Exit()
@@ -1464,9 +1537,11 @@ namespace FlexWiki.Formatting
             if (str.IndexOf("(") > -1)
             {
                 str = Emote(str, "(Y)", "emoticons/thumbs_up.gif");
-                str = Emote(str, "(y)", "emoticons/thumbs_up.gif");
+                str = Emote(str, "(y)", "emoticons/y.gif");
+                str = Emote(str, "(By)", "emoticons/tick.gif");
                 str = Emote(str, "(N)", "emoticons/thumbs_down.gif");
-                str = Emote(str, "(n)", "emoticons/thumbs_down.gif");
+                str = Emote(str, "(n)", "emoticons/n.gif");
+                str = Emote(str, "(Bn)", "emoticons/cross.gif");
                 str = Emote(str, "(B)", "emoticons/beer_yum.gif");
                 str = Emote(str, "(b)", "emoticons/beer_yum.gif");
                 str = Emote(str, "(D)", "emoticons/martini_shaken.gif");
@@ -1542,6 +1617,10 @@ namespace FlexWiki.Formatting
             {
                 str = Emote(str, ";-)", "emoticons/wink_smile.gif");
                 str = Emote(str, ";)", "emoticons/wink_smile.gif");
+            }
+            if (str.IndexOf("%") > -1)
+            {
+            	str = Emote(str, "%%-", "emoticons/good_luck.gif");
             }
             return str;
         }
@@ -2261,11 +2340,11 @@ namespace FlexWiki.Formatting
             return false;
         }
 
-        ///<summary>
-        ///Escape the given string for < > " and & HTML characters.
-        ///</summary>
-        ///<param name="input"></param>
-        ///<returns>The new string</returns>
+        /// <summary>
+        /// Escape the given string for < > " and & HTML characters.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>The new string</returns>
         static public string EscapeHTML(string input)
         {
             return escape(input);

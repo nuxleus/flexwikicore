@@ -29,6 +29,9 @@ namespace FlexWiki.Formatting
         private Random _rn;
         private string _defaultns;
 
+        private static string womElementStart = @"(?<StartElement>(<Para>|<SinglelineProperty>|<MultilineProperty>|<WikiTalkMethod>|<WikiForm>|<PreformattedSingleLine>|<AltPreformattedSinglelineProperty>|<ExtendedCode>|<PreformattedMultiline>|<PreformattedMultilineKeyed>|<list |<womCell>|<womMultilineCell>|<Header ))";
+        private static Regex womElementStartRegex = new Regex(womElementStart, RegexOptions.Compiled);
+
         private static string textileRegexString = @"('''[^']+''')|(''[^']+'')|(\?\?[^\?]+(?<! )\?\?)|( @[^@]+(?<! )@ )|((?<= )-(?! )[^-]+(?<! )-)|((?<= )_(?! )[^_]+(?<! )_(?= ))|(``(?! )[^`]+(?<! )``)|((?<= )\+(?! )[^\+]+(?<! )\+)|((?<= )~(?! )[^~]+(?<! )~)|((?<= )\^(?! )[^\^]+(?<! )\^)|(\*(?! )[^\*\r\n]+\*)";
         private static Regex textileRegex = new Regex(textileRegexString, RegexOptions.Compiled);
 
@@ -38,7 +41,7 @@ namespace FlexWiki.Formatting
 
         private static Regex attributeRegex = new Regex(@"(?<AttributeName>[^ \r\n=]+)=['""]{1}(?<AttributeValue>[^'""]+)['""]{1}", RegexOptions.Compiled);
 
-        private string[,] emoticons = new string[42,2];
+        private string[,] emoticons = new string[47,2];
         public static string[] anchors;
 
         private static string badControlCharString = @"("""")?(&#1;|&#2;|&#3;|&#4;|&#5;|&#6;|&#7;|&#8;|&#11;|&#12;|&#14;|&#15;|&#16;|&#17;|&#18;|&#19;|&#20;|&#21;|&#22;|&#23;|&#24;|&#25;|&#26;|&#27;|&#28;|&#29;|&#30;|&#31;|&#32;|&#x1;|&#x2;|&#x3;|&#x4;|&#x5;|&#x6;|&#x7;|&#x8;|&#xB;|&#xC;|&#xE;|&#xF;|&#x01;|&#x02;|&#x03;|&#x04;|&#x05;|&#x06;|&#x07;|&#x08;|&#x0B;|&#x0C;|&#x0E;|&#x0F;|&#x11;|&#x12;|&#x13;|&#x14;|&#x15;|&#x16;|&#x17;|&#x18;|&#x19;|&#x1A;|&#x1B;|&#x1C;|&#x1D;|&#x1E;|&#x1F;)("""")?";
@@ -54,6 +57,7 @@ namespace FlexWiki.Formatting
 
         private bool _fragmentOnly;
         private string _unclosedTableElements;
+        private LineStyle _currentStyle;
 
         public WomDocument(WikiOutput parent): base(parent)
         {
@@ -136,7 +140,7 @@ namespace FlexWiki.Formatting
                 emoticons[10, 1] = @"emoticons/heart.gif";
                 emoticons[11, 0] = @"(\(M\)|\(m\))";
                 emoticons[11, 1] = @"emoticons/messenger.gif";
-                emoticons[12, 0] = @"(\(N\)|\(n\))";
+                emoticons[12, 0] = @"(\(N\))";
                 emoticons[12, 1] = @"emoticons/thumbs_down.gif";
                 emoticons[13, 0] = @"(\(O\)|\(o\))";
                 emoticons[13, 1] = @"emoticons/clock.gif";
@@ -152,7 +156,7 @@ namespace FlexWiki.Formatting
                 emoticons[18, 1] = @"emoticons/wilted_rose.gif";
                 emoticons[19, 0] = @"(\(X\)|\(x\))";
                 emoticons[19, 1] = @"emoticons/girl_handsacrossamerica.gif";
-                emoticons[20, 0] = @"(\(Y\)|\(y\))";
+                emoticons[20, 0] = @"(\(Y\))";
                 emoticons[20, 1] = @"emoticons/thumbs_up.gif";
                 emoticons[21, 0] = @"(\(Z\)|\(z\))";
                 emoticons[21, 1] = @"emoticons/guy_handsacrossamerica.gif";
@@ -196,6 +200,17 @@ namespace FlexWiki.Formatting
                 emoticons[40, 1] = @"emoticons/angry_smile.gif";
                 emoticons[41, 0] = @"(;-\)|;\))";
                 emoticons[41, 1] = @"emoticons/wink_smile.gif";
+                emoticons[42, 0] = @"(\(n\))";
+                emoticons[42, 1] = @"emoticons/n.gif";
+                emoticons[43, 0] = @"(\(y\))";
+                emoticons[43, 1] = @"emoticons/y.gif";
+                emoticons[44, 0] = @"(\(Bn\))";
+                emoticons[44, 1] = @"emoticons/cross.gif";
+                emoticons[45, 0] = @"(\(By\))";
+                emoticons[45, 1] = @"emoticons/tick.gif";
+                emoticons[46, 0] = @"(%%-)";
+                emoticons[46, 1] = @"emoticons/good_luck.gif";
+               
             }
             string siteUrl = _fed.ExposedLinkMaker.SiteURL;
             if (_fragmentOnly == false)
@@ -215,6 +230,48 @@ namespace FlexWiki.Formatting
         public static void ResetTableOfContents()
         {
             tableofcontents = 1;
+        }
+        public void AddDiff(string text, LineStyle style)
+        {
+            string outText = "";
+            _currentStyle = LineStyle.Unchanged;
+            switch (style)
+            {
+                case LineStyle.Unchanged:
+                    outText = text;
+                    break;
+                case LineStyle.Add:
+                    _currentStyle = LineStyle.Add;
+                    outText = womElementStartRegex.Replace(text, new MatchEvaluator(womElementStartMatch));
+                    break;
+                case LineStyle.Delete:
+                    _currentStyle = LineStyle.Delete;
+                    outText = womElementStartRegex.Replace(text, new MatchEvaluator(womElementStartMatch));
+                    break;
+            }
+            WriteWom(outText);
+        }
+        private string womElementStartMatch(Match match)
+        {
+            string replacement = match.ToString();
+            string _style = "";
+            if (_currentStyle == LineStyle.Add)
+            {
+                _style = "Add";
+            }
+            else if (_currentStyle == LineStyle.Delete)
+            {
+                _style = "Delete";
+            }
+            if (replacement.EndsWith(">"))
+            {
+                replacement = replacement.Substring(0, replacement.LastIndexOf(">")) + @" lineStyle=""" + _style + @""">";
+            }
+            else
+            {
+                replacement = replacement + @" lineStyle=""" + _style + @""" ";
+            }
+            return replacement;
         }
         public void SimpleAdd(string text, string womElement, string jump, ParserRule rule)
         {
@@ -1831,6 +1888,10 @@ namespace FlexWiki.Formatting
         {
             throw new Exception("The method or operation is not implemented.");
         }
+        public override void WriteOpenOrderedList(int level)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
         public override void WriteCloseOrderedList()
         {
             throw new Exception("The method or operation is not implemented.");
@@ -1840,6 +1901,10 @@ namespace FlexWiki.Formatting
             throw new Exception("The method or operation is not implemented.");
         }
         public override void WriteClosePara()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        public override void WriteComment(string comment)
         {
             throw new Exception("The method or operation is not implemented.");
         }

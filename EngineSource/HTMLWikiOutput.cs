@@ -199,6 +199,10 @@ Write("<span style=\"display:none\">.</span>");
 	// not sure why we need the extra span, but we get display bugs on some pages
 		}
 
+		public override void WriteComment(string comment)
+		{
+			Write("<!-- "+comment+" -->\n");
+		}
 		public override void WriteRule()
 		{
 			Write("<div class=\"Rule\"></div>");
@@ -412,6 +416,7 @@ Write("<span style=\"display:none\">.</span>");
 			WriteLine(css() + ">" + s + "</td>");
 		}
 
+		
 
 		override public void WriteOpenUnorderedList()
 		{
@@ -433,6 +438,11 @@ Write("<span style=\"display:none\">.</span>");
 			WriteLine("<ol" + css() + ">");
 		}
 
+		override public void WriteOpenOrderedList(int start)
+		{
+			WriteLine("<ol start='" + start.ToString() + "' " + css() + ">");
+		}
+		
 		override public void WriteOpenPreformatted()
 		{
 			WriteLine("<pre" + css() + ">");

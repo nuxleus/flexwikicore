@@ -3,6 +3,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Collections;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
@@ -36,13 +37,13 @@ namespace FlexWiki.Formatting
 
         private static string emailAddressString = @"([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)";
         private static Regex emailAddress = new Regex(emailAddressString, RegexOptions.Compiled);
-        private static Regex externalWikiRef = new Regex(@"(\s)*(?<param>[\w\d\.]+)@(?<behavior>[\w\d]+([\w\d]{1,})+)([\w\d\.])*(\s)*",RegexOptions.Compiled);
+        private static Regex externalWikiRef = new Regex(@"(\s)*(?<param>[\w\d\.]+)@(?<behavior>[\w\d]+([\w\d]{1,})+([\w\d\.])*)(\s)*",RegexOptions.Compiled);
 
         //private static string multilinePreString = @"(?:\r\n)(?<PreBody>{@(?<KeyValue>[A-Z][a-zA-Z0-9]+)(?<PreText>.*?)\r\n}@(\k<KeyValue>+?))(?:\r\n)";
         private static string multilinePreString = @"(?<PreBody>\r\n{@(?<KeyValue>[A-Z][a-zA-Z0-9]+)(?<PreText>.*?)\r\n}@(\k<KeyValue>+?))(?:\r\n)";
         private static Regex multilinePre = new Regex(multilinePreString, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
 
-        private static string findEmoticonString = @"(\(A\)|\(a\))|(\(B\)|\(b\))|(\(C\)|\(c\))|(\(D\)|\(d\))|(\(E\)|\(e\))|(\(F\)|\(f\))|(\(G\)|\(g\))|(\(H\)|\(h\))|(\(I\)|\(i\))|(\(K\)|\(k\))|(\(L\)|\(l\))|(\(M\)|\(m\))|(\(N\)|\(n\))|(\(O\)|\(o\))|(\(P\)|\(p\))|(\(S\))|(\(T\)|\(t\))|(\(U\)|\(u\))|(\(W\)|\(w\))|(\(X\)|\(x\))|(\(Y\)|\(y\))|(\(Z\)|\(z\))|(\(6\))|(\(8\))|(\({\))|(\(}\))|(\(~\))|(\(@\))|(\(\*\))|(\(\^\))|(:-\[)|(:-\)|:\))|(:-D)|(:-O)|(:-P)|(:-\(|:\()|(:-S)|(:-\||:\|)|(:'\()|(:$|:-$)|(:-@|:@)|(;-\)|;\))";
+        private static string findEmoticonString = @"(\(A\)|\(a\))|(\(B\)|\(b\))|(\(C\)|\(c\))|(\(D\)|\(d\))|(\(E\)|\(e\))|(\(F\)|\(f\))|(\(G\)|\(g\))|(\(H\)|\(h\))|(\(I\)|\(i\))|(\(K\)|\(k\))|(\(L\)|\(l\))|(\(M\)|\(m\))|(\(N\))|(\(O\)|\(o\))|(\(P\)|\(p\))|(\(S\))|(\(T\)|\(t\))|(\(U\)|\(u\))|(\(W\)|\(w\))|(\(X\)|\(x\))|(\(Y\))|(\(Z\)|\(z\))|(\(6\))|(\(8\))|(\({\))|(\(}\))|(\(~\))|(\(@\))|(\(\*\))|(\(\^\))|(:-\[)|(:-\)|:\))|(:-D)|(:-O)|(:-P)|(:-\(|:\()|(:-S)|(:-\||:\|)|(:'\()|(:$|:-$)|(:-@|:@)|(;-\)|;\))|(\(n\))|(\(y\))|(\(Bn\))|(\(By\))|(%%-)";
         private static Regex findEmoticon = new Regex(findEmoticonString, RegexOptions.Compiled);
 
         private static string findIncludedTopicsString = @"(?<LineStart>\<Para\>\<IncludedTopic\>)\{\{(?<IncludedTopic>[^\}\r\n]+)\}\}(?<LineEnd>\</IncludedTopic\>\</Para\>)";
@@ -198,7 +199,57 @@ namespace FlexWiki.Formatting
         {
             return _xsltDoc = new XsltDocument(path);
         }
-        public string FormattedTopic(QualifiedTopicRevision topic, OutputFormat fmt, QualifiedTopicRevision diff, LinkMaker linkmaker)
+        public string FormattedTopic(QualifiedTopicRevision topic, OutputFormat fmt, QualifiedTopicRevision diff)
+        {
+            string wikitext = "";
+            //OutputFormat is not really used at this point but is retained as it would be the selector for the xslt file to be used
+            if (diff == null)
+            {
+                WomDocument topicDoc = new WomDocument(null);
+                topicDoc.ParsedDocument = FormattedTopic(topic, fmt);
+                wikitext = WikiToPresentation(topicDoc.XmlDoc);
+            }
+            else
+            {
+                ArrayList styledLines = new ArrayList();
+                IList leftLines;
+                IList rightLines;
+                string leftString = FormattedTopic(topic, fmt);
+                string rightString = FormattedTopic(diff, fmt);
+                leftLines = leftString.Replace("\r", "").Split('\n');
+                rightLines = rightString.Replace("\r", "").Split('\n');
+                IEnumerable diffs = Diff.Compare(leftLines, rightLines);
+                WomDocument diffDoc = new WomDocument(null);
+                foreach (LineData ld in diffs)
+                {
+                    LineStyle style = LineStyle.Unchanged;
+                    switch (ld.Type)
+                    {
+                        case LineType.Common:
+                            style = LineStyle.Unchanged;
+                            break;
+
+                        case LineType.LeftOnly:
+                            style = LineStyle.Add;
+                            break;
+
+                        case LineType.RightOnly:
+                            style = LineStyle.Delete;
+                            break;
+                    }
+                    if (ld.Text != "</WomDocument>")
+                    {
+                        diffDoc.AddDiff(ld.Text + "\r\n", style);
+                    }
+                }
+                diffDoc.AddDiff("</WomDocument>", LineStyle.Unchanged);
+                wikitext = WikiToPresentation(diffDoc.XmlDoc);
+                //Format(topic, styledLines, output, relativeToBase, linker, relativeToBase.ExternalReferences, 0);
+            }
+            return wikitext;
+
+        }
+        public string FormattedTopic(QualifiedTopicRevision topic, OutputFormat fmt)
         {
             //initial version does not handle diffs
             string wikitext = "";
@@ -225,7 +276,7 @@ namespace FlexWiki.Formatting
                     xmldoc.ParsedDocument = included;
                 }
 
-                interpreted = WikiToPresentation(xmldoc.XmlDoc);
+                interpreted = xmldoc.ParsedDocument;
             }
             else
             {
@@ -234,15 +285,6 @@ namespace FlexWiki.Formatting
                     wikitext = sr.ReadToEnd() + "\r\n";
                 }
                 wikitext = escape(wikitext);
-                //_behaviorTopic = topic;
-                //interpreted = findWikiBehavior.Replace(wikitext, new MatchEvaluator(wikiBehaviorMatch));
-                //wikitext = interpreted.Replace("        ", "\t");
-                //interpreted = findWikiBehavior.Replace(wikitext, new MatchEvaluator(wikiBehaviorMatch));
-                //wikitext = interpreted.Replace("        ", "\t");
-                //interpreted = escAmpersand.Replace(wikitext, "&amp;"); //full escape causes some pages to fail
-                ////interpreted = escLeftAngle.Replace(interpreted, "&lt;");
-                ////wikitext = escape(wikitext);
-                //wikitext = "";
                 int size = 0;
                 while (String.IsNullOrEmpty(interpreted))
                 {
@@ -269,7 +311,7 @@ namespace FlexWiki.Formatting
                             xmldoc.ParsedDocument = included;
                         }
 
-                        interpreted = WikiToPresentation(xmldoc.XmlDoc);
+                        interpreted = xmldoc.ParsedDocument;
                     }
                     catch (XmlException ex)
                     {

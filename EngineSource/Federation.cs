@@ -630,7 +630,7 @@ namespace FlexWiki
                 }
                 else
                 { // use new parser
-                    answer = _parser.FormattedTopic(name, Format, withDiffsToThisTopic, LinkMaker);
+                    answer = _parser.FormattedTopic(name, Format, withDiffsToThisTopic);
                 }
             }
             return answer;
