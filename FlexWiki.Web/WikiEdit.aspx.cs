@@ -224,7 +224,11 @@ namespace FlexWiki.Web
                 string uploadDirectory = FlexWikiWebApplication.ApplicationConfiguration.ContentUploadPath;
                 string directory = Server.MapPath("") + "\\" + ReturnDirectoryToWriteTo("");
                 DirectoryInfo directoryInfo = new DirectoryInfo(directory) ;
-                                        
+
+                if (FlexWikiWebApplication.ApplicationConfiguration.ContainerUploadType == "None")
+                {
+                    return false;
+                }
                 if (FlexWikiWebApplication.ApplicationConfiguration.ContainerUploadType == "Central" &&
                     uploadDirectory != null)
                 {

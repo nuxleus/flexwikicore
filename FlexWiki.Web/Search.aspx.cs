@@ -172,15 +172,23 @@ namespace FlexWiki.Web
                 uniqueNamespaces.Add(ns);
             }
             uniqueNamespaces.Sort();
+            uniqueNamespaces.Add(All);
 
             string preferredNamespace = Request.QueryString["namespace"];
             if (preferredNamespace == null)
             {
-                preferredNamespace = DefaultNamespace;
+                if ((string)Federation.Application["DefaultNamespaceSearchScope"] == "All")
+                {
+                    preferredNamespace = "[All]";
+                }
+                else
+                {
+                    preferredNamespace = DefaultNamespace;
+                }
             }
 
             strBldr.AppendLine("<p>Namespace:<br /><select name=\"namespace\" class=\"SearchColumnFilterBox\" id=\"NamespaceFilter\">");
-            strBldr.AppendLine("<option value=\"" + All + "\">" + All + "</option>");
+            //strBldr.AppendLine("<option value=\"" + All + "\">" + All + "</option>");
             foreach (string ns in uniqueNamespaces)
             {
                 string sel = (ns == preferredNamespace) ? " selected=\"selected\" " : "";

@@ -29,10 +29,11 @@ namespace FlexWiki.Web
         private AttachmentIconConfiguration[] _attachmentIcons;
         private string _captchaKey;
         private int _captchaLinkThreshold;
-		private string _containerUploadType;
+        private string _containerUploadType = "None";
         private string _contentUploadPath;
 		private bool _autoCreateUploadDirectories = false;
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
+        private string _defaultNamespaceSearchScope = "Current";
         private bool _disableEditServiceWrite = false;
         private bool _disableFavicon = false;
         private bool _disableRenameFixup;
@@ -128,6 +129,11 @@ namespace FlexWiki.Web
         {
             get { return _defaultNamespaceProviderForNamespaceCreation; }
             set { _defaultNamespaceProviderForNamespaceCreation = value; }
+        }
+        public string DefaultNamespaceSearchScope
+        {
+            get { return _defaultNamespaceSearchScope; }
+            set { _defaultNamespaceSearchScope = value; }
         }
         public bool DisableEditServiceWrite
         {

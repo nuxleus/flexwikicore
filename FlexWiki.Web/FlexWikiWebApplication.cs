@@ -349,6 +349,7 @@ namespace FlexWiki.Web
             }
             this["ContainerUploadType"] = _applicationConfiguration.ContainerUploadType;
             this["ContentUploadPath"]   = _applicationConfiguration.ContentUploadPath;
+            this["DefaultNamespaceSearchScope"] = _applicationConfiguration.DefaultNamespaceSearchScope;
 			this["DisableEditServiceWrite"] = _applicationConfiguration.DisableEditServiceWrite;
             this["DisableFavicon"] = _applicationConfiguration.DisableFavicon;
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;

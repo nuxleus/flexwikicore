@@ -239,6 +239,27 @@ namespace FlexWiki
                 return _propertyNames; 
             }
         }
+        [ExposedMethod(ExposedMethodFlags.Default, "Answer the Namespace Name to be searched or All depending upon value of DefaultNamespaceSearchScope")]
+        public string SearchNamespace
+        {
+            get
+            {
+                if ((string)_federation.Application["DefaultNamespaceSearchScope"] == "All")
+                    return "[All]";
+                else
+                {
+                    if (_namespaceManager != null)
+                    {
+                        return _namespaceManager.Namespace;
+                    }
+                    else
+                    {
+                        _namespaceManager = Federation.NamespaceManagerForTopic(TopicRevision);
+                        return _namespaceManager.Namespace;
+                    }
+                }
+            }
+        }
         [ExposedMethod(ExposedMethodFlags.Default, "Answer the Summary property's value")]
         public string Summary
         {

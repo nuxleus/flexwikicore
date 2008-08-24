@@ -72,6 +72,7 @@
 
   <!-- Identifies the type of Container Upload Path
        Choices are:
+          None      = Uploads are disabled (default)
           Central   = A Central (Common) Upload Path for all Namespaces is used
           Namespace = Uploads are loaded to a Content Upload Path within each 
                       individual Namespace. i.e. the RootUrl is the Namespace Directory
@@ -135,6 +136,12 @@
         other than the filesystem provider. The default value is 
         FlexWiki.FileSystemNamespaceProvider. -->
   <!-- <DefaultNamespaceProviderForNamespaceCreation /> -->
+  
+  <!-- Identifies the scope of a default search of the wiki. The choices are
+         Current or All, where Current is the default if no value is specified and only searches 
+         the cureent namespace (original behavior), or when set to All will search all 
+         namespaces in thew wiki-->
+  <DefaultNamspaceSearchScope>Current</DefaultNamspaceSearchScope>
   
   <!-- When set to true, FlexWiki will not allow remote writes using 
         EditServiceImplementation.SetTopicToText or
