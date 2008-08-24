@@ -1,0 +1,27 @@
+ShowClassMembers: {aTopic | aTopic.Members.SortBy {each | each.Name}.Collect { each | ["||{!}", LinkedSignatureForMember(each), "||", Newline, "||``", each.Description, "``||", Newline].ToOneString }.ToOneString}
+
+WikiTalkTypesList: {allTypes.SortBy { each | each.Name}.Collect{ each |	["	*", "\"", each.Name, "\":", each.Name, "Type",  Newline]}.ToOneString}
+
+WikiTalkTypes: {allTypes.SortBy { each | each.Name}.Collect{ each |	["	*", "\"", each.Name, "\":", each.Name, "Type",  Newline]}}
+
+LinkToType: {type| ["\"", type.Name, "\":", type.Name, "Type"].ToOneString}
+  
+TypeInformation: {type| [type.Name, " ", type.BaseType.IfNull{"does not inherit from any other type"}Else{["inherits from ", LinkToType(type.BaseType)]}, Newline,"!!Members", Newline, "!!!Instance Members", Newline, ShowClassMembers(type), "!!!Type Members", Newline, ShowClassMembers(type.Type)]}
+
+LinkedSignatureForMember: {aMember| [LinkedReturnTypeForMember(aMember), LinkedMemberName(aMember), "\"\"\"\"", ParameterListForMember(aMember)]}
+
+LinkedMemberName: {aMember| [aMember.Name].ToOneString}
+
+LinkedReturnTypeForMember: {aMember| aMember.ReturnType.IfNull {""} Else {[LinkToType(aMember.ReturnType), " "]}}
+
+ParameterListForMember: {aMember| ["\"\"", aMember.ArgumentsSignature, "\"\""]}
+
+
+
+
+!In Use
+:Keywords: Developer, Examples
+
+These topics import this code using the ''With:'' property.
+
+@@namespace.AllTopicsWith("With", topic.Name).Collect{e|["	* [", e.Name, "]", Newline]}@@
