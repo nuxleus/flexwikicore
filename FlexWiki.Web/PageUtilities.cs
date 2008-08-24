@@ -71,8 +71,17 @@ namespace FlexWiki.Web
                 }
                 else if ((!String.IsNullOrEmpty(HttpContext.Current.Request.QueryString["namespace"])) && ((bool)federation.Application["EnableBordersAllPages"]))
                 {
-                    NamespaceManager mgr = federation.NamespaceManagerForNamespace(HttpContext.Current.Request.QueryString["namespace"]);
-                    revision = new QualifiedTopicRevision(mgr.HomePage, mgr.Namespace);
+                    if (HttpContext.Current.Request.QueryString["namespace"] != "[All]") //search All namespaces
+                    {
+                        NamespaceManager mgr = federation.NamespaceManagerForNamespace(HttpContext.Current.Request.QueryString["namespace"]);
+                        revision = new QualifiedTopicRevision(mgr.HomePage, mgr.Namespace);
+                    }
+                    else
+                    {
+                        revision = new QualifiedTopicRevision(DefaultNamespaceManager(federation).HomePage,
+                            DefaultNamespaceManager(federation).Namespace);
+                    }
+
                 }
                 else if ((!String.IsNullOrEmpty(HttpContext.Current.Request.QueryString["topic"])) && ((bool)federation.Application["EnableBordersAllPages"]))
                 {
