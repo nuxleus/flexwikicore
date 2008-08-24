@@ -185,12 +185,19 @@ namespace FlexWiki.Web
                     break;
 
                 case "namespace":
-                    temp = manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                    temp = "";
+                    if (manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue != null)
+                    {
+                        temp = manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                    }
                     break;
 
                 case "federation":
                     NamespaceManager mgr = DefaultNamespaceManager(manager.Federation);
-                    temp = mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                    if (mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue != null)
+                    {
+                        temp = mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                    }
                     break;
 
                 default:
