@@ -322,7 +322,58 @@ Write("<span style=\"display:none\">.</span>");
 				Write("</a>");
 			}
 		}
+		
+		public override void WriteThumbnail(string title, string titleColour, string URL, string imageURL, int size, string borderColour,
+		                                    string borderWidth, string borderStyle, bool clickable)
+		{
+            // <form id="form1" runat="server">
+            // <table cellpadding="5" border="0" cellspacing="0" width="144">
+            // <tr>
+            // <td>
+            // <img src="Thumbnailer.ashx?img=im/blackhawk.jpg&size=144" alt="BlackHawk"/>
+            // </td>
+            // <tr>
+            // <td align="center">Blackhawk
+            // </td>
+            // </tr>
+            // </table>
+            // </form>
+            // http://localhost/flexwiki/Thumbnailer.ashx?img=Namespaces/SampleNamespaceTwo/images/blackhawk-01.jpg&size=144
+            
+            // If no title then just display the image
+            if(title.Equals(""))
+            {
+            	if(clickable)
+            		WriteLine("<a class=\"externalLink\" href='"+imageURL+"' target=\"_blank\" >") ;
+            	WriteLine("<img src=\"/flexwiki/Thumbnailer.ashx?img="+URL+"&amp;size="+size+"\" ") ;
+            	WriteLine("style=\"border-color:"+borderColour+";border-width:"+borderWidth+";border-style:"+borderStyle+";\"") ;
+            	WriteLine(" alt=\""+title+"\" />") ;
+            	if(clickable)
+            		WriteLine("</a>") ;
+            }
+            else
+            {
+               // try to align the title below centered on the image
+			   WriteLine("<form id=\"form1\" runat=\"server\">") ;
+			   WriteLine("<table width=\""+(size+10)+"\"  border=\"0\" cellspacing=\"0\" cellpadding=\"5\">") ;
+			   WriteLine("<tr><td>") ;
+			   WriteLine("<td>") ;
+               if(clickable)
+            	  WriteLine("<a class=\"externalLink\" href='"+imageURL+"' target=\"_blank\" >") ;			   
+			   WriteLine("<img src=\"/flexwiki/Thumbnailer.ashx?img="+URL+"&amp;size="+size+"\" ") ;
+               WriteLine("style=\"border-color:"+borderColour+";border-width:"+borderWidth+";border-style:"+borderStyle+";\"") ;
+               WriteLine(" alt=\""+title+"\" />") ;
+               if(clickable)
+                  WriteLine("</a>") ;               
+			   WriteLine("</td></tr>") ;
+			   WriteLine("<tr><td>") ;
+			   WriteLine("<td align=\"center\"><font color=\""+titleColour+"\">"+title+"</font>") ;
+			   WriteLine("</td></tr>") ;
+			   WriteLine("</table></form>") ;
+            }
+		}
 
+		
 		public override void NonBreakingSpace()
 		{
 			Write("&nbsp;");

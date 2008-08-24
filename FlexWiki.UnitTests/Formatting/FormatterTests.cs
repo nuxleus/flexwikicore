@@ -712,20 +712,17 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 </ul>
 ");
 
-            IMockWikiApplication testApp = (IMockWikiApplication)Federation.Application;
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"        1. item 1
         1. item 2",
               @"<ol>
-<li>item 1</li>
+<li> item 1</li>
 
-<li>item 2</li>
+<li> item 2</li>
 
 </ol>
 ");
 
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);            
             FormatTest(
               @"	* level 1
 		* level 2
@@ -748,7 +745,6 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 </ul>
 ");
 
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
             FormatTest(
   @"        1. item 1
         1. item 2",
@@ -782,7 +778,6 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 </ul>
 ");
 
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"	1. Original Format Item 1
 	1. Original Format Item 2
@@ -793,35 +788,34 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 			1. Original Format 3rd Level Item 1
 	1. Original Format Item 4",
               @"<ol>
-<li>Original Format Item 1</li>
+<li> Original Format Item 1</li>
 
-<li>Original Format Item 2</li>
-
-<ol>
-<li>Original Format 2nd Level Item 1</li>
+<li> Original Format Item 2</li>
 
 <ol>
-<li>Original Format 3rd Level Item 1</li>
+<li> Original Format 2nd Level Item 1</li>
+
+<ol>
+<li> Original Format 3rd Level Item 1</li>
 
 </ol>
 </ol>
-<li>Original Format Item 3</li>
+<li> Original Format Item 3</li>
 
 <ol>
-<li>Original Format 2nd Level Item 1</li>
+<li> Original Format 2nd Level Item 1</li>
 
 <ol>
-<li>Original Format 3rd Level Item 1</li>
+<li> Original Format 3rd Level Item 1</li>
 
 </ol>
 </ol>
-<li>Original Format Item 4</li>
+<li> Original Format Item 4</li>
 
 </ol>
 ");
 
             // Alternate Format Similar Test
-           testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
            FormatTest(
               @"	# New Format Item 1
 	# New Format Item 2
@@ -832,36 +826,35 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 			# New Format 3rd Level Item 1
 	# New Format Item 4",
               @"<ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
-<li>New Format Item 2</li>
-
-<ol>
-<li>New Format 2nd Level Item 1</li>
+<li> New Format Item 2</li>
 
 <ol>
-<li>New Format 3rd Level Item 1</li>
+<li> New Format 2nd Level Item 1</li>
+
+<ol>
+<li> New Format 3rd Level Item 1</li>
 
 </ol>
 </ol>
-<li>New Format Item 3</li>
+<li> New Format Item 3</li>
 
 <ol>
-<li>New Format 2nd Level Item 1</li>
+<li> New Format 2nd Level Item 1</li>
 
 <ol>
-<li>New Format 3rd Level Item 1</li>
+<li> New Format 3rd Level Item 1</li>
 
 </ol>
 </ol>
-<li>New Format Item 4</li>
+<li> New Format Item 4</li>
 
 </ol>
 ");		
 
             // Mixed List Test
             // for bugs 1039227 and 2026301
-           testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
            FormatTest(
 	              @"	# New Format Item 1
 			* 2nd Level Bullet #1
@@ -874,45 +867,44 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 				# New Format 3rd Level Item 1
 		# New Format Item 4",
               @"<ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
 <ul>
 <ul>
-<li>2nd Level Bullet #1</li>
+<li> 2nd Level Bullet #1</li>
 
 </ul>
 </ul>
 <ol start='1' >
-<li>New Format Item 2</li>
+<li> New Format Item 2</li>
 
 <ol>
-<li>New Format 2nd Level Item 1</li>
+<li> New Format 2nd Level Item 1</li>
 
-<li>New Format 2nd Level Item 2</li>
+<li> New Format 2nd Level Item 2</li>
 
 <ul>
-<li>3rd Level Bullet #1</li>
+<li> 3rd Level Bullet #1</li>
 
 </ul>
 </ol>
-<li>New Format Item 3</li>
+<li> New Format Item 3</li>
 
 <ul>
-<li>2nd Level Bullet #1</li>
+<li> 2nd Level Bullet #1</li>
 
-<ol start='1' >
-<li>New Format 3rd Level Item 1</li>
+<ol>
+<li> New Format 3rd Level Item 1</li>
 
 </ol>
 </ul>
-<li>New Format Item 4</li>
+<li> New Format Item 4</li>
 
 </ol>
 </ol>
 ") ;
 
             // Original Format Standard List Breaking
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"	1. New Format Item 1
 	1. New Format Item 2
@@ -920,22 +912,21 @@ Test for case-insensitivity, such as CAPS@BAF, or some such nonsense.",
 A line with text on it
 	1. New Format Item 1",
               @"<ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
-<li>New Format Item 2</li>
+<li> New Format Item 2</li>
 
-<li>New Format Item 3</li>
+<li> New Format Item 3</li>
 
 </ol>
 <p>A line with text on it</p>
 <ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
 </ol>
 ");
 
             // New Format Standard List Breaking
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"	# New Format Item 1
 	# New Format Item 2
@@ -943,21 +934,20 @@ A line with text on it
 A line with text on it
 	# New Format Item 1",
               @"<ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
-<li>New Format Item 2</li>
+<li> New Format Item 2</li>
 
-<li>New Format Item 3</li>
+<li> New Format Item 3</li>
 
 </ol>
 <p>A line with text on it</p>
 <ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
 </ol>
 ");
             // New Format Level 1 List Continuation
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"	# New Format Item 1
 	# New Format Item 2
@@ -966,24 +956,23 @@ A line with text on it
 	#^ New Format Item 4
 	# New Format Item 5",
               @"<ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
-<li>New Format Item 2</li>
+<li> New Format Item 2</li>
 
-<li>New Format Item 3</li>
+<li> New Format Item 3</li>
 
 </ol>
 <p>A line with text on it</p>
 <ol start='4' >
-<li>New Format Item 4</li>
+<li> New Format Item 4</li>
 
-<li>New Format Item 5</li>
+<li> New Format Item 5</li>
 
 </ol>
 ");
 
             // New Format 2nd Level List Continuation
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", true);
             FormatTest(
               @"	# New Format Item 1
 	# New Format Item 2
@@ -993,31 +982,30 @@ A line with text on it
 		#^ New Format Level 2 Item 2
 	# New Format Item 4",
               @"<ol>
-<li>New Format Item 1</li>
+<li> New Format Item 1</li>
 
-<li>New Format Item 2</li>
+<li> New Format Item 2</li>
 
-<li>New Format Item 3</li>
+<li> New Format Item 3</li>
 
 <ol>
-<li>New Format Level 2 Item 1</li>
+<li> New Format Level 2 Item 1</li>
 
 </ol>
 </ol>
 <p>A line with text on it</p>
 <ol start='4' >
 <ol start='2' >
-<li>New Format Level 2 Item 2</li>
+<li> New Format Level 2 Item 2</li>
 
 </ol>
-<li>New Format Item 4</li>
+<li> New Format Item 4</li>
 
 </ol>
 ");   
             
             // New Format 2nd Level List Continuation
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
-            FormatTest(
+           FormatTest(
               @"! Original
 	1. First Item
 	1. Second Item
@@ -1057,7 +1045,6 @@ A line with text on it
 ");   
 
             // New Format 2nd Level List Continuation
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
             FormatTest(
               @"! Alternate Syntax Test
 	# First Item
@@ -1097,7 +1084,6 @@ A line with text on it
 </ol>
 ");
 
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
             FormatTest(
               @"! Continuation Test
 	# First Item
@@ -1158,7 +1144,6 @@ Another line
 </table>
 ");
 
-            testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
             FormatTest(
               @"! Trailing Test
 	# First Item
@@ -1191,7 +1176,6 @@ Another line
 </ol>
 ");
             
-           testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
             FormatTest(
               @"	1. item 1
 	1. item 2 @@[""
@@ -1233,7 +1217,6 @@ Test - this should be at the left margin",
 <p>Test - this should be at the left margin</p>
 ");  
 
-           testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
            FormatTest(
               @"	# New Format Item 1
 		* a Bullet
@@ -1270,7 +1253,6 @@ A line with text on it
 </ol>
 ");
 
-           testApp.SetApplicationProperty("RemoveListItemWhitespace", false);
            FormatTest(
               @"! Initial Non-Mixed
 	# First
@@ -1419,7 +1401,31 @@ A line between
 
 </ol>
 ");
-           
+
+            FormatTest(
+              @"! List Termination Test
+
+	# First
+	# Second
+	#! Third
+	# First Again",
+              @"<h1><a name="" List Termination Test"" class=""Anchor""></a> List Termination Test</h1>
+
+
+
+<ol>
+<li> First</li>
+
+<li> Second</li>
+
+<li> Third</li>
+</ol>
+
+<ol>
+<li> First Again</li>
+
+</ol>
+");           
         }
         [Test]
         public void MailToLink()

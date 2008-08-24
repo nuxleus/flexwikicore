@@ -124,6 +124,7 @@ namespace FlexWiki.Formatting
 		abstract public void WriteTableCell(string s,  bool isHighlighted, AlignOption alignment, int colSpan, int RowSpan, bool hasBorder, bool allowBreaks, int Width, string bgcolor);
 		abstract public OutputFormat Format { get; }
 		abstract public void WriteImage(string title, string URL, string linkToURL, string height, string width, string attributes);
+		abstract public void WriteThumbnail(string title, string titleColour, string URL, string imageURL, int size, string borderColour, string borderWidth, string borderStyle, bool clickable)	;	
 		abstract public void WriteLink(string URL, string tip, string content, string attributes);
 		abstract public void WriteLabel(string forId, string text, string attributes);
 		abstract public void FormStart(string method, string URI, string attributes);

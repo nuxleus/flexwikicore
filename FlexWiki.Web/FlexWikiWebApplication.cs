@@ -347,7 +347,9 @@ namespace FlexWiki.Web
                     fileStream.Close();
                 }
             }
-            this["DisableEditServiceWrite"] = _applicationConfiguration.DisableEditServiceWrite;
+            this["ContainerUploadType"] = _applicationConfiguration.ContainerUploadType;
+            this["ContentUploadPath"]   = _applicationConfiguration.ContentUploadPath;
+			this["DisableEditServiceWrite"] = _applicationConfiguration.DisableEditServiceWrite;
             this["DisableFavicon"] = _applicationConfiguration.DisableFavicon;
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;

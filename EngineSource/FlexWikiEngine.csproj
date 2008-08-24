@@ -681,6 +681,7 @@
     <Compile Include="Parser\XsltDocument.cs" />
     <Compile Include="RequestContext.cs" />
     <Compile Include="RequestContextOptions.cs" />
+    <Compile Include="ThumbnailPresentation.cs" />
     <Compile Include="TopicContentsDependency.cs" />
     <Compile Include="TopicDependency.cs" />
     <Compile Include="TopicExistenceDependency.cs" />

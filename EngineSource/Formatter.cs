@@ -714,11 +714,14 @@ namespace FlexWiki.Formatting
         /// Make sure we're in a particular state and if we aren't create that state and enter it
         /// </summary>
         /// <param name="aType"></param>
-        private void Ensure(Type aType,int level,bool resetCount)
+        private void Ensure(Type aType,int level,bool resetCount,bool continueList)
         {
         	bool suppressIndent ;
         	Type  lastType = null ;
 
+        	// Output.WriteComment("aType = "+aType+" level = "+level+" resetCount = "+resetCount) ;
+        	// for(int i=0;i<3;i++)
+        	// 	Output.WriteComment("indiceCount["+i+"]="+indiceCount[i]) ;
         	suppressIndent = false ;
         	if(stateStack.Count > level)
         	{
@@ -734,42 +737,61 @@ namespace FlexWiki.Formatting
         	}
         	if(stateStack.Count == level)
         	{
-        		if(stateStack.Count > 0) 
+        		// special exception if handling #!
+        		if((aType == typeof(OrderedListState)) && resetCount)
         		{
-        			lastType = (Type) stateStack.Peek() ;
-        			if(lastType == aType)
-        			   suppressIndent = true ;
-        		}
-        		if(CurrentState.GetType() == aType)
-        		{
-        		   return ;
-        		}
-        		else if(stateStack.Count > 0)
-        		{
-        			// Pop the last state type and drop a level
-        			lastType = (Type) stateStack.Pop() ;
-        			State tempState = (State)(Activator.CreateInstance(lastType, new object[] { this})) ;
-       		    	if(! suppressIndent)
+          		   if(stateStack.Count > 0) 
+        		   {
+        		  	   // Pop the last state type and drop a level
+        			   lastType = (Type) stateStack.Pop() ;
+        			   State tempState = (State)(Activator.CreateInstance(lastType, new object[] { this})) ;
         			   tempState.WriteOutdent() ;
-       		    	// if(level > 0)
-       		    	//    indiceCount[level-1] = indiceCount[level-1] + 1 ; 		
+                       CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));  
+         		       stateStack.Push(aType) ;
+         		       if(resetCount)
+        		          for(int i=level-1;i<35;i++)
+        		             indiceCount[i] = 1 ;        		    	
+             	   	   CurrentState.WriteIndent(indiceCount[level-1]) ;
+        		   }
         		}
-                CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));  
-                // Now indent and push the new type on the stack
-        		if(level > 0) 
+        		else
         		{
-         		   stateStack.Push(aType) ;
-         		   if(resetCount)
-        		      for(int i=level-1;i<35;i++)
-        		          indiceCount[i] = 1 ;        		    	
-         		   if(! suppressIndent )
-                   {
-                	  if(resetCount)
-                	     CurrentState.WriteIndent() ;
-                	  else
-                		 CurrentState.WriteIndent(indiceCount[level-1]) ;
-                   }
-       			
+         		   if(stateStack.Count > 0) 
+        		   {
+        		   	   lastType = (Type) stateStack.Peek() ;
+        			   if(lastType == aType)
+        			       suppressIndent = true ;
+        		   }
+        		   if(CurrentState.GetType() == aType)
+        		   {
+        		      return ;
+        		   }
+         		   else if(stateStack.Count > 0)
+        		   {
+        		  	   // Pop the last state type and drop a level
+        			   lastType = (Type) stateStack.Pop() ;
+        			   State tempState = (State)(Activator.CreateInstance(lastType, new object[] { this})) ;
+       		    	   if(! suppressIndent)
+        			      tempState.WriteOutdent() ;
+       		    	   // if(level > 0)
+       		    	   //    indiceCount[level-1] = indiceCount[level-1] + 1 ; 		
+        		   }
+                   CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));  
+                   // Now indent and push the new type on the stack
+        		   if(level > 0) 
+        		   {
+         		      stateStack.Push(aType) ;
+         		      if(resetCount)
+        		         for(int i=level-1;i<35;i++)
+        		             indiceCount[i] = 1 ;        		    	
+         		      if(! suppressIndent )
+                      {
+                	     if(resetCount)
+                	        CurrentState.WriteIndent() ;
+                	     else
+                	   	    CurrentState.WriteIndent(indiceCount[level-1]) ;
+                      }       			
+        		   }      			
         		}
         		return ;
         	}
@@ -779,14 +801,17 @@ namespace FlexWiki.Formatting
         		{
         		    // Now indent and push the new type on the stack
                     CurrentState = (State) (Activator.CreateInstance(aType, new object[] { this }));        				
+                    if(!continueList)
+                       resetCount = true ;
         	        if(resetCount)
         	        {
         	           for(int i=level-1;i<35;i++)
-        	               indiceCount[i] = 1 ;        		    	
-                       CurrentState.WriteIndent() ;
-        		    }
-                    else
+        	               indiceCount[i] = 1 ; 
+        	        }
+        	        if(continueList)
                        CurrentState.WriteIndent(indiceCount[j]) ;
+        	        else        	        	
+                       CurrentState.WriteIndent() ;
         		    stateStack.Push(aType) ;
         		}
         	}
@@ -844,6 +869,7 @@ namespace FlexWiki.Formatting
             bool inExtendedPreBlock = false;
             string preBlockKey = null;
             bool resetCount=false ;
+            bool resetNextCount=false ;
             int thisNest = 0 ;
 
 
@@ -861,7 +887,7 @@ namespace FlexWiki.Formatting
                 {
                     if ((each.StartsWith("}+") || each.StartsWith("}@")) && each.Substring(2).Trim() == preBlockKey)
                     {
-                        Ensure(typeof(NeutralState),0,false);
+                        Ensure(typeof(NeutralState),0,false,false);
                         inPreBlock = false;
                         inExtendedPreBlock = false;
                         preBlockKey = null;
@@ -886,7 +912,7 @@ namespace FlexWiki.Formatting
                 }
                 else if (!inMultilineProperty && (each.StartsWith("{+") || each.StartsWith("{@")))
                 {
-                    Ensure(typeof(PreState),0,false);
+                    Ensure(typeof(PreState),0,false,false);
                     inPreBlock = true;
                     inExtendedPreBlock = each.StartsWith("{+");
                     preBlockKey = each.Substring(2).Trim();
@@ -951,7 +977,7 @@ namespace FlexWiki.Formatting
                                 _output.Write(multiLinePropertyDelim);
                             }
                             // Make sure we close off things like tables before we close the propertyName.
-                            Ensure(typeof(NeutralState),0,false);
+                            Ensure(typeof(NeutralState),0,false,false);
                             _output.WriteCloseAnchor();
                             _output.WriteCloseProperty();
                         }
@@ -979,12 +1005,12 @@ namespace FlexWiki.Formatting
                 if (each.Trim().Length == 0)
                 {
                     if (!(CurrentState is PreState) || (CurrentState is PreState && !IsNextLinePre()))
-                        Ensure(typeof(NeutralState),0,false);
+                        Ensure(typeof(NeutralState),0,false,false);
                     _output.WriteEndLine();
                 }
                 else if ((each.StartsWith("----")) && (false == currentMultilinePropertyIsHidden))
                 {
-                    Ensure(typeof(NeutralState),0,false);
+                    Ensure(typeof(NeutralState),0,false,false);
                     _output.WriteRule();
                 }
                 // insert topic -- {{IncludeSomeTopic}} ?
@@ -1004,7 +1030,7 @@ namespace FlexWiki.Formatting
                         tabber = tabber.Substring(1);
                     }
 
-                    Ensure(typeof(NeutralState),0,false);
+                    Ensure(typeof(NeutralState),0,false,false);
                     if (NamespaceManager.TopicExists(topicRevision, ImportPolicy.IncludeImports))
                     {
                         if ((!IsBeyondSafeNestingDepth) && (false == currentMultilinePropertyIsHidden))
@@ -1023,7 +1049,7 @@ namespace FlexWiki.Formatting
                 else if ((each.StartsWith(" ") || Regex.IsMatch(each, "^[ \t]+[^ \t*1#]")) &&
                     (false == currentMultilinePropertyIsHidden))
                 {
-                    Ensure(typeof(PreState),0,false);
+                    Ensure(typeof(PreState),0,false,false);
                     _output.Write(Regex.Replace(each, "\t", "        "));
                 }
 
@@ -1056,11 +1082,17 @@ namespace FlexWiki.Formatting
                             each = each.Substring(1);
                             // We're in a list - make sure we've got the right <ul> nesting setup
                             // Could need more or fewer
-                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()))
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()) ||
+                               CurrentState.GetType().ToString().Equals(typeof(OrderedListState).ToString()))
                             	resetCount = false ;
                             else
                             	resetCount = true ;
-                            Ensure(typeof(UnorderedListState),thisNest,resetCount);
+                            if(resetNextCount)
+                            {
+                               resetCount = true ;
+                               resetNextCount = false ;
+                            }
+                            Ensure(typeof(UnorderedListState),thisNest,resetCount,false);
                             if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             {
                                 _output.WriteListItem(each);
@@ -1074,11 +1106,17 @@ namespace FlexWiki.Formatting
                         else if (each.StartsWith("1."))
                         {
                          	each = each.Substring(2);
-                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()))
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()) ||
+                               CurrentState.GetType().ToString().Equals(typeof(OrderedListState).ToString()))
                             	resetCount = false ;
                             else
                             	resetCount = true ;
-                         	Ensure(typeof(OrderedListState),thisNest,resetCount);
+                            if(resetNextCount)
+                            {
+                               resetCount = true ;
+                               resetNextCount = false ;
+                            }
+                         	Ensure(typeof(OrderedListState),thisNest,resetCount,false);                            if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             {
                                 _output.WriteListItem(each);
@@ -1092,7 +1130,7 @@ namespace FlexWiki.Formatting
                         else if (each.StartsWith("#^"))
                         {
                         	each = each.Substring(2);
-                        	Ensure(typeof(OrderedListState),thisNest,false);
+                        	Ensure(typeof(OrderedListState),thisNest,false,true);
                             if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             {
                                 _output.WriteListItem(each);
@@ -1102,15 +1140,44 @@ namespace FlexWiki.Formatting
                                 _output.WriteListItem(each.Trim());
                             }                          
                             indiceCount[stateStack.Count-1] = indiceCount[stateStack.Count-1] + 1 ;                            
-                        }                                                                        
-                        else if (each.StartsWith("#"))
+                        }   
+                        else if (each.StartsWith("#!"))
                         {
-                        	each = each.Substring(1);
-                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()))
+                        	each = each.Substring(2);
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()) ||
+                               CurrentState.GetType().ToString().Equals(typeof(OrderedListState).ToString()))
                             	resetCount = false ;
                             else
                             	resetCount = true ;
-                        	Ensure(typeof(OrderedListState),thisNest,resetCount);
+                        	Ensure(typeof(OrderedListState),thisNest,resetCount,false);
+                            if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
+                            {
+                                _output.WriteListItem(each);
+                            }
+                            else
+                            {
+                                _output.WriteListItem(each.Trim());
+                            }       
+                            // Reset the list all levels
+        		            for(int i=0;i<35;i++)
+        		                indiceCount[i] = 1 ;        		    	
+                            resetNextCount = true ;                            
+                            Ensure(typeof(OrderedListState),0,false,false);
+                        }                                                                                                
+                        else if (each.StartsWith("#"))
+                        {
+                        	each = each.Substring(1);
+                            if(CurrentState.GetType().ToString().Equals(typeof(UnorderedListState).ToString()) ||
+                               CurrentState.GetType().ToString().Equals(typeof(OrderedListState).ToString()))
+                            	resetCount = false ;
+                            else
+                            	resetCount = true ;
+                            if(resetNextCount)
+                            {
+                               resetCount = true ;
+                               resetNextCount = false ;
+                            }
+                        	Ensure(typeof(OrderedListState),thisNest,resetCount,false);
                             if ((bool)Federation.Application["RemoveListItemWhitespace"] == false)
                             {
                                 _output.WriteListItem(each);
@@ -1130,7 +1197,7 @@ namespace FlexWiki.Formatting
                     else if (each.StartsWith("||") && each.EndsWith("||") && each.Length >= 4)
                     {
                         bool firstRow = !(CurrentState is TableState);
-                        Ensure(typeof(TableState),0,false);
+                        Ensure(typeof(TableState),0,false,false);
                         TableState ts = (TableState) CurrentState;
 
                         string endless = each.Substring(2, each.Length - 4);
@@ -1170,7 +1237,7 @@ namespace FlexWiki.Formatting
                     }
                     else
                     {
-                        Ensure(typeof(NeutralState),0,false);
+                        Ensure(typeof(NeutralState),0,false,false);
 
                         // See if we've got a heading prefix
                         int heading = -1;
@@ -1249,8 +1316,7 @@ namespace FlexWiki.Formatting
                 }
                 _currentLineIndex++;
             }
-            Ensure(typeof(NeutralState),0,false);
-            _output.End();
+            Ensure(typeof(NeutralState),0,false,false);            _output.End();
 
             CurrentState = null;	// Make sure to do this so the last state gets Exit()
         }

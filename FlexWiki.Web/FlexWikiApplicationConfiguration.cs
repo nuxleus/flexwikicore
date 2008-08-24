@@ -29,7 +29,9 @@ namespace FlexWiki.Web
         private AttachmentIconConfiguration[] _attachmentIcons;
         private string _captchaKey;
         private int _captchaLinkThreshold;
+		private string _containerUploadType;
         private string _contentUploadPath;
+		private bool _autoCreateUploadDirectories = false;
         private string _defaultNamespaceProviderForNamespaceCreation = typeof(FileSystemNamespaceProvider).FullName;
         private bool _disableEditServiceWrite = false;
         private bool _disableFavicon = false;
@@ -104,10 +106,23 @@ namespace FlexWiki.Web
             get { return _captchaLinkThreshold; }
             set { _captchaLinkThreshold = value; }
         }
+        public string ContainerUploadType
+        {
+            get { return _containerUploadType; }
+            set 
+            { 
+            	_containerUploadType = value; 
+            }
+        }        
         public string ContentUploadPath
         {
             get { return _contentUploadPath; }
             set { _contentUploadPath = value; }
+        }
+        public bool AutoCreateUploadDirectories
+        {
+        	get { return _autoCreateUploadDirectories; }
+        	set { _autoCreateUploadDirectories = value; }
         }
         public string DefaultNamespaceProviderForNamespaceCreation
         {

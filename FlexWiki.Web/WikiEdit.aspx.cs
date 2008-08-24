@@ -25,7 +25,8 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-
+using System.Security.Principal;
+using System.Security.AccessControl;
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
 
@@ -218,17 +219,129 @@ namespace FlexWiki.Web
         {
             get
             {
+            	System.Security.Principal.WindowsIdentity currentUser = (System.Security.Principal.WindowsIdentity)System.Security.Principal.WindowsIdentity.GetCurrent();
+            	
                 string uploadDirectory = FlexWikiWebApplication.ApplicationConfiguration.ContentUploadPath;
-                if (uploadDirectory != null)
+                string directory = Server.MapPath("") + "\\" + ReturnDirectoryToWriteTo("");
+                DirectoryInfo directoryInfo = new DirectoryInfo(directory) ;
+                                        
+                if (FlexWikiWebApplication.ApplicationConfiguration.ContainerUploadType == "Central" &&
+                    uploadDirectory != null)
                 {
-                    return true;
+                	if(Directory.Exists(directory) &&
+                	   Directory.Exists(Path.Combine(directory,"images")) &&
+                	   Directory.Exists(Path.Combine(directory,"html")) &&
+                	   Directory.Exists(Path.Combine(directory,"doc")))
+                	{
+                		if(CheckWriteAccess(currentUser,directoryInfo) &&
+                		   CheckWriteAccess(currentUser,new DirectoryInfo(Path.Combine(directory,"images"))) &&
+                		   CheckWriteAccess(currentUser,new DirectoryInfo(Path.Combine(directory,"html"))) &&
+                		   CheckWriteAccess(currentUser,new DirectoryInfo(Path.Combine(directory,"doc"))))
+                			return true ;
+                		return false ;
+                	}
+                	if(FlexWikiWebApplication.ApplicationConfiguration.AutoCreateUploadDirectories)
+                	{
+                		try
+                		{
+                			Directory.CreateDirectory(directory) ;
+                			// Create all 3 directories
+                			Directory.CreateDirectory(Path.Combine(directory, "images"));
+                			Directory.CreateDirectory(Path.Combine(directory, "html"));
+                			Directory.CreateDirectory(Path.Combine(directory, "doc"));
+                	        if(Directory.Exists(directory) &&
+                	           Directory.Exists(Path.Combine(directory,"images")) &&
+                	           Directory.Exists(Path.Combine(directory,"html")) &&
+                	           Directory.Exists(Path.Combine(directory,"doc")))
+                         	{
+                			   return true ;
+                			}
+                			return false ;                			   
+                		}
+                		catch (System.AccessViolationException)
+                		{
+                			return false ;
+                		}
+                	}
                 }
-                else
+                else if (FlexWikiWebApplication.ApplicationConfiguration.ContainerUploadType != "Central")
                 {
-                    return false;
+                	if(Directory.Exists(directory))
+                	{
+                		if(CheckWriteAccess(currentUser,directoryInfo))
+                		   return true ;
+                   		return false ;
+                	}
+                	if(FlexWikiWebApplication.ApplicationConfiguration.AutoCreateUploadDirectories)
+                	{
+                		try
+                		{
+                			Directory.CreateDirectory(directory) ;
+                			Directory.CreateDirectory(Path.Combine(directory, "images"));
+                			Directory.CreateDirectory(Path.Combine(directory, "html"));
+                			Directory.CreateDirectory(Path.Combine(directory, "doc"));
+                	        if(Directory.Exists(directory) &&
+                	           Directory.Exists(Path.Combine(directory,"images")) &&
+                	           Directory.Exists(Path.Combine(directory,"html")) &&
+                	           Directory.Exists(Path.Combine(directory,"doc")))
+                         	{
+                			   return true ;
+                			}
+                			return false ;                			   
+                		}
+                		catch (System.AccessViolationException)
+                		{
+                			return false ;
+                		}
+                	}                	
                 }
+                return false ;
             }
         }
+      
+		private bool CheckWriteAccess(System.Security.Principal.WindowsIdentity user, 
+                                      DirectoryInfo directory)
+		{
+			// Get the collection of authorization rules that apply to the current directory
+			AuthorizationRuleCollection acl =
+						directory.GetAccessControl().GetAccessRules(true, true,
+								  typeof(System.Security.Principal.SecurityIdentifier));
+
+			// These are set to true if either the allow read or deny read access rights are set
+			bool allowWrite = false;
+			bool denyWrite = false;
+			System.Security.Principal.WindowsPrincipal winPrincipal = new WindowsPrincipal(user) ;
+
+			for (int x = 0; x < acl.Count; x++)
+			{
+				FileSystemAccessRule currentRule = (FileSystemAccessRule)acl[x];
+				// If the current rule applies to the current user
+				if (user.User.Equals(currentRule.IdentityReference) ||
+				    winPrincipal.IsInRole((SecurityIdentifier)currentRule.IdentityReference))
+				{
+					if (currentRule.AccessControlType.Equals(AccessControlType.Deny))
+					{
+						if ((currentRule.FileSystemRights & FileSystemRights.Write) == FileSystemRights.Write)
+						{
+							denyWrite = true;
+						}
+					}
+					else if (currentRule.AccessControlType.Equals(AccessControlType.Allow))
+					{
+						if ((currentRule.FileSystemRights & FileSystemRights.Write) == FileSystemRights.Write)
+						{
+							allowWrite = true;
+						}
+					}
+				}
+			}
+			FlexWikiWebApplication.LogDebug(this.GetType().ToString(), "For Directory "+directory.FullName+" DenyWrite = "+denyWrite+" AllowWrite = "+allowWrite) ;
+			if (allowWrite & !denyWrite)
+				return true;
+			else
+				return false;
+		}
+
         public bool IsWritable
         {
             get
@@ -392,7 +505,9 @@ namespace FlexWiki.Web
             strbldr.AppendLine("</tr>");
             strbldr.AppendLine("<tr class=\"SidebarTileBody\" style=\"font-size: 1.1em;\"><td>");
 
-            strbldr.AppendLine("<p><input id=\"Radio1\" type=\"radio\" name=\"attachFormat\" value=\"Normal\"  onfocus=\"showNormal_OnFocus()\" />Normal Attachment</p>");
+            strbldr.AppendLine("<p><input id=\"Radio4\" type=\"radio\" name=\"attachFormat\" value=\"Image\"  onfocus=\"showNormal_OnFocus()\" />Image Attachment</p>");
+            strbldr.AppendLine("<p><input id=\"Radio5\" type=\"radio\" name=\"attachFormat\" value=\"Thumbnail\"  onfocus=\"showNormal_OnFocus()\" />Thumbnail Attachment</p>");
+            strbldr.AppendLine("<p><input id=\"Radio1\" type=\"radio\" name=\"attachFormat\" value=\"Normal\"  onfocus=\"showNormal_OnFocus()\" />Link Attachment</p>");            
             strbldr.AppendLine("<p><input id=\"Radio2\" type=\"radio\" name=\"attachFormat\" value=\"Folder\"  onfocus=\"showFolder_OnFocus()\" />File Folder Attachment</p>");
             strbldr.AppendLine("<p><input id=\"Radio3\" type=\"radio\" name=\"attachFormat\"  value=\"DocMan\" onfocus=\"showDocMan_OnFocus()\" />Document Management Attachment</p>");
             strbldr.AppendLine("</td></tr><tr><td><div id=\"CommonFields\" style=\"display:none\" ><p>");
@@ -509,8 +624,7 @@ namespace FlexWiki.Web
                         // Set URL of the the object to        point to the file we've        just saved
                         if (IsImageFile(writeToFile))
                         {
-
-                            _fileUrl = RootUrl + directoryToWriteTo.Replace(@"\", @"/") + "/" + Path.GetFileName(writeToFile);
+                            _fileUrl = directoryToWriteTo.Replace(@"\",@"/")+"/"+Path.GetFileName(writeToFile) ;
 
                             // show the images and text
                             // fix for height and width to ensure edit text remains visible for large files.
@@ -653,7 +767,23 @@ namespace FlexWiki.Web
         {
             // get the root        directory for uploaded files
 
-            string rootUploadDir = FlexWikiWebApplication.ApplicationConfiguration.ContentUploadPath;
+            string rootUploadDir = "" ;
+            if (FlexWikiWebApplication.ApplicationConfiguration.ContainerUploadType.Equals("Namespace"))          
+            {            	
+               rootUploadDir = Path.Combine("Namespaces",TheTopic.Namespace);
+            }
+            else if(FlexWikiWebApplication.ApplicationConfiguration.ContainerUploadType.Equals("Topic"))
+            {
+            	rootUploadDir = Path.Combine("Namespaces",TheTopic.Namespace);
+            	rootUploadDir = Path.Combine(rootUploadDir, TheTopic.LocalName ) ;            	                             
+            }
+            else
+               rootUploadDir = FlexWikiWebApplication.ApplicationConfiguration.ContentUploadPath;  
+            if(fileName == "")
+            {
+            	return rootUploadDir ;
+            }
+
             string returnDirectory = "";
             fileName = fileName.ToLower();
             string extensionName = Path.GetExtension(fileName);

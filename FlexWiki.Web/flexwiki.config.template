@@ -69,13 +69,31 @@
   
   <!-- Defines the number of lines obscuring the CAPTCHA. Values are from 2 - 5-->
   <ObscuringLinesCAPTCHA>5</ObscuringLinesCAPTCHA>
-  
-  <!-- Identifies the path to a directory tree where uploads to the wiki will be stored. If
-        this key does not exist, then the file upload and attachment controls will not be 
-        accessible in WikiEdit.aspx. The directory tree is placed in the virtual directory at
-        the root of the wiki and all directories must be precreated. In addition to the 
-        directories in the key, there are 3 other idrectories that must be created as subdirectories:
-        images, html or doc. Using the key below as a sample the directory tree would be:
+
+  <!-- Identifies the type of Container Upload Path
+       Choices are:
+          Central   = A Central (Common) Upload Path for all Namespaces is used
+          Namespace = Uploads are loaded to a Content Upload Path within each 
+                      individual Namespace. i.e. the RootUrl is the Namespace Directory
+          Topic     = Uploads are loaded to a Content Upload Path for each Topic.
+                                                                          -->  
+  <ContainerUploadType>Namespace</ContainerUploadType> 
+
+  <!-- When set to true will auto create the upload directories if they are missing 
+       The default for this setting is false -->
+  <AutoCreateUploadDirectories>true</AutoCreateUploadDirectories>
+                       
+  <!-- Identifies the path to a directory tree where uploads to the wiki will be stored. 
+       This path is used only if the ContainerUploadType is "Central", and ignored if the
+       ContainerUploadType is Namespace or Topic. If this key does not exist, then the file 
+       upload and attachment controls will not be accessible in WikiEdit.aspx. If the directories
+       do not exist and "AutoCreateUploadDirectories" is false then you will not be able to upload
+       content.
+       
+       The directory tree is placed in the virtual directory at the root of the wiki and all 
+       directories must be precreated. In addition to the directories in the key, there are 
+       3 other directories that must be created as subdirectories:
+       images, html or doc. Using the key below as a sample the directory tree would be:
              RootUrl
                content
                     upload

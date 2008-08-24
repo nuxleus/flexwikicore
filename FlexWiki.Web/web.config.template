@@ -147,5 +147,8 @@
       on the local Web server. This setting is recommended for security purposes, so 
       that you do not display application detail information to remote clients.-->
     <customErrors mode="RemoteOnly" />
+    <httpHandlers>
+         <add verb="*" path="Thumbnailer.ashx" type="FlexWiki.Web.Thumbnailer, FlexWiki.Web"/>
+    </httpHandlers>
   </system.web>
 </configuration>

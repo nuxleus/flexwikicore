@@ -1974,6 +1974,10 @@ namespace FlexWiki.Formatting
         {
             throw new Exception("The method or operation is not implemented.");
         }
+		public override void WriteThumbnail(string title, string titleColour, string URL, string imageURL, int size, string borderColour, string borderWidth, string borderStyle, bool clickable) 
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }        
         private void WriteWom(string womData)
         {
             if (_initem)

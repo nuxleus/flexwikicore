@@ -66,7 +66,36 @@ namespace FlexWiki.UnitTests.Formatting
         public void ImageBehaviorTwoPerLineTest()
         {
             FormatTest("@@Image(\"http://server/image.jpg\", \"alt\")@@ and @@Image(\"http://server/image2.jpg\", \"alt2\")@@",
-              "<img src=\"http://server/image.jpg\" alt=\"alt\"/> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"/>\n");
+        	           "<img src=\"http://server/image.jpg\" alt=\"alt\"/> and <img src=\"http://server/image2.jpg\" alt=\"alt2\"/>\n");
+
+        	// Test a clickable medium thumbnail with colours
+            FormatTest("@@Presentations.Thumbnail(\"Namespaces/SampleNamespaceTwo/Playground2/images/cat-01.jpg\",federation.LinkMaker.LinkToImage(\"Namespaces/SampleNamespaceTwo/Playground2/images/cat-01.jpg\"),\"A Cat\",\"green\",\"medium\",\"red\",\"3px\",\"dashed\",\"true\")@@",
+        	           "<form id=\"form1\" runat=\"server\">\n"+
+                       "<table width=\"154\"  border=\"0\" cellspacing=\"0\" cellpadding=\"5\">\n"+
+                       "<tr><td>\n<td>\n"+
+                       "<a class=\"externalLink\" href='/formattingtestswiki/Namespaces/SampleNamespaceTwo/Playground2/images/cat-01.jpg' target=\"_blank\" >\n"+
+                       "<img src=\"/flexwiki/Thumbnailer.ashx?img=Namespaces/SampleNamespaceTwo/Playground2/images/cat-01.jpg&amp;size=144\" \n"+
+                       "style=\"border-color:red;border-width:3px;border-style:dashed;\"\n"+
+                       " alt=\"A Cat\" />\n"+
+                       "</a>\n</td></tr>\n<tr><td>\n"+
+                       "<td align=\"center\"><font color=\"green\">A Cat</font>\n</td></tr>\n</table></form>\n\n") ;
+			
+        	// Test a non-clickable large thumbnail with colours
+            FormatTest("@@Presentations.Thumbnail(\"Namespaces/SampleNamespaceTwo/Playground2/images/missile.jpg\",federation.LinkMaker.LinkToImage(\"Namespaces/SampleNamespaceTwo/Playground2/images/missile.jpg\"),\"A Missile\",\"red\",\"large\",\"blue\",\"6px\",\"inset\",\"false\")@@",
+					   "<form id=\"form1\" runat=\"server\">\n"+
+					   "<table width=\"298\"  border=\"0\" cellspacing=\"0\" cellpadding=\"5\">\n"+
+					   "<tr><td>\n<td>\n"+
+					   "<img src=\"/flexwiki/Thumbnailer.ashx?img=Namespaces/SampleNamespaceTwo/Playground2/images/missile.jpg&amp;size=288\" \n"+ 
+					   "style=\"border-color:blue;border-width:6px;border-style:inset;\"\n"+
+                       " alt=\"A Missile\" />\n"+
+                       "</td></tr>\n<tr><td>\n"+
+         	           "<td align=\"center\"><font color=\"red\">A Missile</font>\n</td></tr>\n</table></form>\n\n") ;        
+        	// Test a non-clickable small thumbnail with no title and colours
+            FormatTest("@@Presentations.Thumbnail(\"Namespaces/SampleNamespaceTwo/Playground2/images/missile.jpg\",federation.LinkMaker.LinkToImage(\"Namespaces/SampleNamespaceTwo/Playground2/images/missile.jpg\"),\"\",\"blue\",\"small\",\"blue\",\"3px\",\"outset\",\"false\")@@",
+					   "<img src=\"/flexwiki/Thumbnailer.ashx?img=Namespaces/SampleNamespaceTwo/Playground2/images/missile.jpg&amp;size=72\" \n"+
+					   "style=\"border-color:blue;border-width:3px;border-style:outset;\"\n"+
+					   " alt=\"\" />\n\n") ;        
+    
         }
 
         [Ignore("This test needs to be rewritten once the NamespaceManager rearchitecture firms up")]

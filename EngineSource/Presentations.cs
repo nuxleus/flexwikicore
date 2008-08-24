@@ -31,6 +31,12 @@ namespace FlexWiki
 			return new ImagePresentation(title, URL, linkToURL, height, width, attributes);
 		}
 
+		[ExposedMethod(ExposedMethodFlags.NeedContext, "Present a thumbnail")]
+		public static ThumbnailPresentation Thumbnail(ExecutionContext ctx,  [ExposedParameter(true)] string URL, [ExposedParameter(true)] string imageURL, [ExposedParameter(true)] string title, [ExposedParameter(true)] string titleColour,[ExposedParameter(true)] string size, [ExposedParameter(true)] string borderColour,[ExposedParameter(true)] string borderWidth, [ExposedParameter(true)] string borderStyle, [ExposedParameter(true)] string clickable)
+		{			
+			return new ThumbnailPresentation(title, titleColour, URL, imageURL, size, borderColour, borderWidth, borderStyle, clickable);
+		}	
+		
 		[ExposedMethod(ExposedMethodFlags.NeedContext, "Present a hyperlink")]
 		public static LinkPresentation Link(ExecutionContext ctx, string URL, string content, [ExposedParameter(true)] string tip, [ExposedParameter(true)] string attributes)
 		{
