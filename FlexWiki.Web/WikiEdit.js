@@ -28,7 +28,11 @@ function attachFile_OnClick()
     var attachFormatString = getCheckedValue(document.forms["Form3"].attachFormat);
     var statusDate = document.getElementById("Form3StatusDate").value;
     var templateCombo = document.getElementById("Form3Status");
-	if ((templateCombo) && (templateCombo.selectedIndex > -1))
+    if (docTitle == "")
+    {
+       docTitle=urlString;
+    }
+    if ((templateCombo) && (templateCombo.selectedIndex > -1))
 	{
         var statusString = templateCombo.options[templateCombo.selectedIndex].value;
     }
@@ -50,6 +54,14 @@ function attachFile_OnClick()
         insertText3 = fileNo + ' || ' + authorName + ' || ' + statusString + ' || ' + statusDate + ' || ';
         insertText4 = versionNo +  ' || @@Presentations.Checkbox("checkOut_' + statusString + '_' + versionNo + '", "strUrl", false)@@ ||' + commentText + ' ||';
     }
+    if (attachFormatString == "Image")
+    {
+           insertText1 = '@@Presentations.Image(federation.LinkMaker.LinkToImage("' + urlString + '"))@@ ';
+    }
+    if (attachFormatString == "Thumbnail")
+    {
+           insertText1 = '@@Presentations.Thumbnail("'+urlString+'",federation.LinkMaker.LinkToImage("' + urlString + '"), "' + docTitle + '","green","medium","red","3px","dashed","true")@@'
+    }   
     textArea.value += "\n\r" + insertText1 + insertText2 + insertText3 + insertText4;
     textArea.focus();
     document.forms["Form3"].PostBox.value = textArea.value;
