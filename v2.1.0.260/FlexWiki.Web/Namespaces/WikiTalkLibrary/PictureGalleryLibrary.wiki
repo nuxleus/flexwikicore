@@ -1,0 +1,52 @@
+Summary: a library for picture gallery suport functions
+:Keywords: Library, Developer, Examples
+
+This library only works with images uploaded to FlexWiki using the Upload and Attachment feature. The images must be located in the directory 'content/upload/images'. Create a topic with a call to the function *""PictureGallery(picFileList)""*, as shown below:
+ @@PictureGallery(["delete_namespace_dir.PNG","reload_done.PNG",
+       "reload_init.PNG","default_admin.png","Derek L - Simpsons.jpg"])@@
+
+PictureGallery:{ fileArray | [
+	"||{T^T-C2^}", PrevMenu(request.GetParameterNamed("index")), 
+			"||{^}", NumericMenu(fileArray.Count), 
+			"||{^}", NextMenu(fileArray.Count, request.GetParameterNamed("index")), "||", Newline, "&nbsp;",
+	ShowPicture(fileArray), Newline
+	]
+}
+
+ShowPicture:{pictures |
+	request.GetParameterNamed("index").IfNull{
+		["@@Presentations.Image(federation.LinkMaker.LinkToImage(",["\"content/upload/images/", pictures.Item(0),"\""].ToOneString, "))@@"].ToOneString
+	}
+	Else {
+		["@@Presentations.Image(federation.LinkMaker.LinkToImage(",["\"content/upload/images/", 
+				pictures.Item(request.GetParameterNamed("index").AsInteger.Subtract(1)), "\""].ToOneString, "))@@"].ToOneString
+	}
+}
+
+PrevMenu:{ index |
+	index.IfNull{ "" }
+	Else { 
+		index.AsInteger.GreaterThan(1).IfTrueIfFalse ({
+			[Presentations.Link([federation.LinkMaker.LinkToTopic(topic.Fullname), "?index=", index.AsInteger.Subtract(1)].ToOneString, "< Prev")]},
+		{""})
+	}
+}
+The maximum number of pictures in a single gallery is currently limited to 30, as shown in the function *""NumericMenu""* below. It is possible to extend this by adding more numeric items to the array that currently runs from '1' to '30'.
+
+NumericMenu:{ numitems |
+	["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17",
+		"18","19","20","21","22","23","24","25","26","27","28","29","30"].Snip(numitems).Collect{ 
+		each | 
+			[Presentations.Link([federation.LinkMaker.LinkToTopic(topic.Fullname), "?index=", each].ToOneString, each), " | "]
+	}
+}
+
+NextMenu:{ numitems, index |
+	index.IfNull{ [Presentations.Link([federation.LinkMaker.LinkToTopic(topic.Fullname), "?index=2"].ToOneString, "Next >")] }
+	Else { 
+		index.AsInteger.LessThan(numitems).IfTrueIfFalse({ 
+			[Presentations.Link([federation.LinkMaker.LinkToTopic(topic.Fullname), "?index=", index.AsInteger.Add(1)].ToOneString, "Next >")]},
+			{""})
+	}
+}
+

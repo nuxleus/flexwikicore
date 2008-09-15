@@ -1,0 +1,79 @@
+Summary: this is a library of WikiTalk functions to support blogging with FlexWiki
+:Keywords: Developer, Examples
+
+!!!How To Blog
+
+An author creates blog entries by creating a wiki topic, as a separate page. That topic must include the the property 'Keywords:', with a value of 'Blog' and the name used to identify the author. For example, this page has the 'Keyword:' entry
+ :KeywordsX: JohnDavidson, Blog
+
+There must also be a main Blog topic for each author. The topic JohnDavidsonBlog is constructed as:
+{@
+:Summary: a sample blog for JohnDavidson
+:KeywordsX: JohnDavidson
+
+@@SelectBlogBody("JohnDavidson", 1)@@
+@@SelectAuthorBlogLinks("JohnDavidson", 15)@@ 
+
+:With: BlogSupportLibrary
+}@
+
+The function *""SelectBlogBody""(author, displayEntries)* is used to select the blog author and the number of blog topics for that author to be displayed on the blog page. Reasonable values for *displayEntries* would range from 1 to 5, depending upon the length of the topics referenced. The ':KeywordsX:' entry above should really be ':Keywords:', but if that is entered then the WikiTalk fails to process correctly.
+
+
+SelectBlogBody:{author, entries | namespace.Topics.Select{ each | each.Keywords.Contains("Blog")}
+	.Select{each | each.Keywords.Contains(author)}.SortBy{each |
+	DateTime.Now.SpanBetween(each.LastModified)}.Snip(entries).Collect{ each |
+	[
+	"!!!", each.Name, Newline,
+	each.LastModified.ToLongDateString(), " - ", each.LastModified.ToShortTimeString(), Newline,
+	each.GetProperty("_Body"),
+	Newline,
+	]}
+}
+
+The function *""SelectAuthorBlogLinks""(author, displayLinks)* is used to display the links to previous blog topics for that author. The links will be to the most recent showing the number of links specified.
+
+SelectAuthorBlogLinks:{linkAuthor, linkEntries | 
+	[
+	"!!!!Archived Blog Entry Links", Newline,
+	namespace.Topics.Select{ each | each.Keywords.Contains("Blog")}
+	.Select{each | each.Keywords.Contains(linkAuthor)}.SortBy{each |
+	DateTime.Now.SpanBetween(each.LastModified)}.Snip(linkEntries).Collect{ each |
+	[
+	"        1. ", each.Name, " :", each.LastModified.ToLongDateString(), " - ", each.LastModified.ToShortTimeString(), Newline,
+	]}
+]
+}
+
+The function *""SelectAllBlogLinks""(displayLinks)* is used when there is a blog farm and the individual author wants to display links to the most recent blog entries, whether by that author, or any other author in the blog farm.
+
+SelectAllBlogLinks:{allEntries | 
+	[
+	"!!!!Archived Blog Entry Links for All Authors", Newline,
+	namespace.Topics.Select{ each | each.Keywords.Contains("Blog")}
+	.SortBy{each |
+	DateTime.Now.SpanBetween(each.LastModified)}.Snip(allEntries).Collect{ each |
+	[
+	"        1. ", each.Name, " :", each.LastModified.ToLongDateString(), " - ", each.LastModified.ToShortTimeString(), Newline,
+	]}
+]
+}
+
+!!!!Permalinks and Talkback
+
+The function *""ShowBlogLinks("<page>")""* should be placed on each topic page that will be included in an individuals blog. This is done by placing 
+ @@ShowBlogLinks("BlogSupportLibrary")@@
+at the foot of the blog entry on that topic page. <page> should be the actual literal of the topic name rather than 'topic.Name'
+
+ShowBlogLinks:{ page | [ ["\"Permalink\":", page].ToOneString, ",", Space, ShowTalkBack(page),Newline,]
+}
+
+ShowTalkBack:{page | ProductVersion.Substring(0,1).AsInteger.GreaterThanOrEqualTo(2).
+	IfTrueIfFalse({namespace.GetTopicInfo([page,"Tback"].ToOneString).Exists.
+	IfTrueIfFalse({["\"Talkback\":",page,"Tback"].ToOneString}, {Presentations.Link(federation.LinkMaker
+		.SimpleLinkTo(["MessagePost.aspx?topic=",namespace.Name,".",page,"&blog=true","\""].ToOneString),
+		"Create Talkback Topic")})}, { "" })
+}
+
+
+Inspiration for this solution for implementing a blog in FlexWiki came from reading "ZDNet Blogs":http://blogs.zdnet.com/ on my smartphone, which gave a layout almost identical to the one created here.
