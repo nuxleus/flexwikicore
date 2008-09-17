@@ -352,6 +352,7 @@ namespace FlexWiki.Web
             this["DefaultNamespaceSearchScope"] = _applicationConfiguration.DefaultNamespaceSearchScope;
 			this["DisableEditServiceWrite"] = _applicationConfiguration.DisableEditServiceWrite;
             this["DisableFavicon"] = _applicationConfiguration.DisableFavicon;
+            this["DisableNewParser"] = _applicationConfiguration.DisableNewParser;
             this["DisableWikiEmoticons"] = _applicationConfiguration.DisableWikiEmoticons;
             this["DisableXslTransform"] = _applicationConfiguration.DisableXslTransform;
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;

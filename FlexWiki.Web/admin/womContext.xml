@@ -22,6 +22,8 @@
       <!--     processing to accomplish this is the most complex of all optimizations covering about 20 lines of code-->
       <Rule Name="UnorderedList" Pattern="^\t{7}\*|^\t{6}\*|^\t{5}\*|^\t{4}\*|^\t{3}\*|^\t{2}\*|^\t\*|\r\n\t{7}\*|\r\n\t{6}\*|\r\n\t{5}\*|\r\n\t{4}\*|\r\n\t{3}\*|\r\n\t{2}\*|\r\n\t\*" End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements=""/>
       <Rule Name="OrderedList" Pattern="^\t{7}1\.|^\t{6}1\.|^\t{5}1\.|^\t{4}1\.|^\t{3}1\.|^\t{2}1\.|^\t1\.|\r\n\t{7}1\.|\r\n\t{6}1\.|\r\n\t{5}1\.|\r\n\t{4}1\.|\r\n\t{3}1\.|\r\n\t{2}1\.|\r\n\t1\." End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements="" />
+      <Rule Name="OrderedListForContinuation" Pattern="^\t{7}\#|^\t{6}\#|^\t{5}\#|^\t{4}\#|^\t{3}\#|^\t{2}\#|^\t\#|\r\n\t{7}\#|\r\n\t{6}\#|\r\n\t{5}\#|\r\n\t{4}\#|\r\n\t{3}\#|\r\n\t{2}\#|\r\n\t\#" End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements=""/>
+      <Rule Name="OrderedListContinued" Pattern="^\t{7}\#\^|^\t{6}\#\^|^\t{5}\#\^|^\t{4}\#\^|^\t{3}\#\^|^\t{2}\#\^|^\t\#\^|\r\n\t{7}\#\^|\r\n\t{6}\#\^|\r\n\t{5}\#\^|\r\n\t{4}\#\^|\r\n\t{3}\#\^|\r\n\t{2}\#\^|\r\n\t\#\^" End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements=""/>
 
       <!-- Header optimized to drop the exclamation (!) remarks from the output and to just identify the level in an attribute -->
       <Rule Name="Header" Pattern="^!{7}|^!{6}|^!{5}|^!{4}|^!{3}|^!{2}|^!(?!\r\n)|\r\n!{7}|\r\n!{6}|\r\n!{5}|\r\n!{4}|\r\n!{3}|\r\n!{2}|\r\n!" End="(?:\r\n)" Jump="womHeaderText"  Optimization="" Elements=""/>

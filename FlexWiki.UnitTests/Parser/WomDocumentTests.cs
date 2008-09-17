@@ -109,6 +109,9 @@ namespace FlexWiki.UnitTests
 
             _provider = (FileSystemStore)manager.GetProvider(typeof(FileSystemStore));
 
+            IMockWikiApplication setApp = (IMockWikiApplication)Federation.Application;
+            setApp.SetApplicationProperty("DisableNewParser", false);
+            setApp.SetApplicationProperty("EnableNewParser", true);
             parser = new ParserEngine(federation);
             //Necessary to init WikiInputDocument for all WomDocument tests
             //inputDoc = parser.InitWikiDocument(Path.Combine(mockapp.WebPath, @"InputDocs/AstralisLux.wiki"));

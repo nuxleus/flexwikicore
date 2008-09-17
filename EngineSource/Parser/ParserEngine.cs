@@ -112,22 +112,29 @@ namespace FlexWiki.Formatting
         public ParserEngine(Federation fed)
         {
             Initialize();
-            if (fed.Application.ExecutionEnvironment == ExecutionEnvironment.Production)
+            if ((bool)fed.Application["DisableNewParser"])
             {
-                _appPath = fed.Application.ResolveRelativePath("admin");
+                _engine = this;
             }
             else
             {
-                _appPath = System.Environment.CurrentDirectory;
-                _appPath = System.IO.Path.Combine(_appPath, @"..\..\..\FlexWiki.Web\admin");
+                if (fed.Application.ExecutionEnvironment == ExecutionEnvironment.Production)
+                {
+                    _appPath = fed.Application.ResolveRelativePath("admin");
+                }
+                else
+                {
+                    _appPath = System.Environment.CurrentDirectory;
+                    _appPath = System.IO.Path.Combine(_appPath, @"..\..\..\FlexWiki.Web\admin");
+                }
+                _fed = fed;
+                Regex.CacheSize = 250;
+                _context = new ParserContext("WikiText", this, false);
+                //_xslt = new XslCompiledTransform(true); //debug enabled for stylesheet during development
+                _xslt = new XslCompiledTransform();
+                _xslt.Load(XsltPath);
+                _processBehaviorToText = false;
             }
-            _fed = fed;
-            Regex.CacheSize = 250;
-            _context = new ParserContext("WikiText", this, false);
-            //_xslt = new XslCompiledTransform(true); //debug enabled for stylesheet during development
-            _xslt = new XslCompiledTransform();
-            _xslt.Load(XsltPath);
-            _processBehaviorToText = false;
            
         }
 
@@ -261,7 +268,9 @@ namespace FlexWiki.Formatting
             _processBehaviorToText = true;
             _behaviorTopic = topic;
 
-            string wom = _mgr.GetTopicProperty(topic.AsUnqualifiedTopicRevision(), "_Wom").LastValue;
+            //Normally get data from the cache, but when debugging Womdocument need to avoid using cached data
+            //string wom = _mgr.GetTopicProperty(topic.AsUnqualifiedTopicRevision(), "_Wom").LastValue;
+            string wom = "";
 
             if (!String.IsNullOrEmpty(wom))
             {
@@ -277,6 +286,7 @@ namespace FlexWiki.Formatting
                 }
 
                 interpreted = xmldoc.ParsedDocument;
+                xmldoc = null;
             }
             else
             {
@@ -312,6 +322,7 @@ namespace FlexWiki.Formatting
                         }
 
                         interpreted = xmldoc.ParsedDocument;
+                        xmldoc = null;
                     }
                     catch (XmlException ex)
                     {
@@ -528,6 +539,8 @@ namespace FlexWiki.Formatting
                         }
                     }
                 }
+                source = null;
+                temp = null;
             }
             _womDocument.End();
             if (((bool)_fed.Application["DisableWikiEmoticons"] == false)) //&& (_mgr.DisableNamespaceEmoticons == false))
@@ -543,6 +556,7 @@ namespace FlexWiki.Formatting
             {
                 _mgr.SetProcessTextSize(topic.AsUnqualifiedTopicRevision(), chunk * chunkcnt);
             }
+            
             return _womDocument;
         }
 

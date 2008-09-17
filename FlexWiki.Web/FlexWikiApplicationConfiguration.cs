@@ -36,6 +36,7 @@ namespace FlexWiki.Web
         private string _defaultNamespaceSearchScope = "Current";
         private bool _disableEditServiceWrite = false;
         private bool _disableFavicon = false;
+        private bool _disableNewParser = false;
         private bool _disableRenameFixup;
         private bool _disableWikiEmoticons = false;
         private bool _disableXslTransform = false;
@@ -144,6 +145,11 @@ namespace FlexWiki.Web
         {
             get { return _disableFavicon; }
             set { _disableFavicon = value; }
+        }
+        public bool DisableNewParser
+        {
+            get { return _disableNewParser; }
+            set { _disableNewParser = value; }
         }
         public bool DisableRenameFixup
         {

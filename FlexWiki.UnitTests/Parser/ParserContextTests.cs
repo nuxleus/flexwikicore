@@ -13,14 +13,20 @@ namespace FlexWiki.UnitTests
         //private IParserApplication application;
         private Federation federation;
         private ParserEngine parser;
+        IMockWikiApplication testApp;
+
 
         [SetUp]
         public void SetUp()
         {
             federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
               TestContentSets.SingleEmptyNamespace);
+            testApp = (IMockWikiApplication)federation.Application;
+
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
+            testApp.SetApplicationProperty("DisableNewParser", false);
+            testApp.SetApplicationProperty("EnableNewParser", true);
             parser = new ParserEngine(federation);
         }
 
@@ -34,7 +40,7 @@ namespace FlexWiki.UnitTests
         public void ParserContextCountMainRules()
         {
             ParserContext context = parser.EngineContext;
-            Assert.AreEqual(35, context.RuleList.Count);
+            Assert.AreEqual(37, context.RuleList.Count);
         }
         [Test]
         public void ParserContextAddRule()

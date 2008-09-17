@@ -314,6 +314,8 @@ namespace FlexWiki.Web
             {
                 strbldr.AppendLine(leftBorder.ToString());
             }
+            topBorder = null;
+            leftBorder = null;
             return strbldr.ToString();
         }
         protected string InsertRightBottomBorders()
@@ -336,6 +338,8 @@ namespace FlexWiki.Web
             {
                 strbldr.AppendLine(bottomBorder.ToString());
             }
+            rightBorder = null;
+            bottomBorder = null;
             return strbldr.ToString();
         }
 

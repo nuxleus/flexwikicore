@@ -560,9 +560,21 @@ namespace FlexWiki
         }
         public string GetTopicFormattedBorder(QualifiedTopicRevision name, Border border)
         {
+            bool useNewParser = false;
+            if (!(bool)Application["DisableNewParser"])
+            {
+                if ((bool)Application["EnableNewParser"])
+                {
+                    useNewParser = true;
+                }
+                else if (GetTopicPropertyValue(name, "DisplayUsingNewParser").ToLower().Contains("true"))
+                {
+                    useNewParser = true;
+                }
+            }
             string answer = null;
             // OK, we need to figure it out.  
-            if ((bool)Application["EnableNewParser"] == false)
+            if (useNewParser == false)
             {
                 IEnumerable borderText = BorderText(name, border);
                 WikiOutput output = new HTMLWikiOutput(null);
@@ -595,6 +607,8 @@ namespace FlexWiki
                 {
                     WomDocument xmldoc = _parser.ProcessText(doc.ParsedDocument, name, NamespaceManagerForTopic(name), true, 1200);
                     answer = _parser.WikiToPresentation(xmldoc.XmlDoc);
+                    xmldoc = null;
+                    doc = null;
                 }
             }
             return answer;
@@ -605,12 +619,24 @@ namespace FlexWiki
         }
         public string GetTopicFormattedContent(QualifiedTopicRevision name, QualifiedTopicRevision withDiffsToThisTopic)
         {
+            bool useNewParser = false;
+            if (!(bool)Application["DisableNewParser"])
+            {
+                if ((bool)Application["EnableNewParser"])
+                {
+                    useNewParser = true;
+                }
+                else if (GetTopicPropertyValue(name, "DisplayUsingNewParser").ToLower().Contains("true"))
+                {
+                    useNewParser = true;
+                }
+            }
             string answer = null;
 
             // If the content is blacklisted and this is a historical version, answer dummy content
             if (name.Version != null && IsBlacklisted(Read(name)))
             {
-                if ((bool)Application["EnableNewParser"] == false)
+                if (useNewParser == false)
                 {
                     answer = Formatter.FormattedString(name, @"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.",
                       Format, this.NamespaceManagerForTopic(name), LinkMaker);
@@ -620,11 +646,12 @@ namespace FlexWiki
                     WomDocument xmldoc = _parser.ProcessText(@"%red big%This historical version of this topic contains content that has been banned by policy from appearing on this site.", 
                         name, NamespaceManagerForTopic(name), false, 200);
                     answer = _parser.WikiToPresentation(xmldoc.XmlDoc);
+                    xmldoc = null;
                 }
             }
             else
             {
-                if ((bool)Application["EnableNewParser"] == false)
+                if (useNewParser == false)
                 {
                     answer = Formatter.FormattedTopic(name, Format, withDiffsToThisTopic, this, LinkMaker);
                 }

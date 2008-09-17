@@ -19,14 +19,19 @@ namespace FlexWiki.UnitTests
         private Federation federation;
         private ParserEngine parser;
         private XslCompiledTransform _trans;
+        IMockWikiApplication testApp;
 
         [SetUp]
         public void SetUp()
         {
             federation = WikiTestUtilities.SetupFederation("test://NamespaceManagerTests",
               TestContentSets.SingleEmptyNamespace);
+            testApp = (IMockWikiApplication)federation.Application;
+
             NamespaceManager manager = federation.NamespaceManagerForNamespace("NamespaceOne");
 
+            testApp.SetApplicationProperty("DisableNewParser", false);
+            testApp.SetApplicationProperty("EnableNewParser", true);
             parser = new ParserEngine(federation);
             _trans = new XslCompiledTransform();
             _trans.Load(parser.XsltPath);

@@ -470,6 +470,41 @@ namespace FlexWiki.Formatting
                         _lastitemlevel = _currentitemlevel;
                         _initem = true;
                         break;
+                    case "OrderedListForContinuation":
+                        if (text.StartsWith("\r\n"))
+                        {
+                            _currentitemlevel = text.Length - 3;
+                        }
+                        else
+                        {
+                            _currentitemlevel = text.Length - 1;
+                        }
+                        if (_lastitemlevel < _currentitemlevel)
+                        {
+                            if (_lastitemlevel > 0)
+                            {
+                                _templist.Remove(_templist.Length - 9, 9);
+                            }
+                            _templist.AppendLine("<list type=\"ordered\"><item>");
+                        }
+                        else if (_lastitemlevel > _currentitemlevel)
+                        {
+                            //_templist.Remove(_templist.Length - 9, 9);
+                            for (int x = _lastitemlevel; x > _currentitemlevel; x--)
+                            {
+                                _templist.AppendLine("</list></item>");
+                            }
+                            //_currentitemlevel--;
+                            //_lastitemlevel = _currentitemlevel;
+                            _templist.AppendLine("<item>");
+                        }
+                        else  // (_lastitemlevel == text.Length - 1)
+                        {
+                            _templist.AppendLine("<item>");
+                        }
+                        _lastitemlevel = _currentitemlevel;
+                        _initem = true;
+                        break;
                     case "IncludeTopic":
                         _intermediate.AppendFormat("<{0}><Level>{1}</Level>\r\n", womElement, text.Length - 2);
                         break;
@@ -1294,6 +1329,12 @@ namespace FlexWiki.Formatting
                 }
                 _lastitemlevel = 0;
                 _intermediate.Append(_templist.ToString());
+                _templist = null;
+            }
+            if (_templist != null)
+            {
+                _intermediate.Append(_templist.ToString());
+                _templist = null;
             }
             if (_lastWom == "WikiText")
             {

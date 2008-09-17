@@ -208,9 +208,14 @@
         user environment.     -->
   <EnableBordersAllPages>false</EnableBordersAllPages>
 
+  <!-- When set to true FlexWiki will not load any elements of the new parser into memory. The default value is false, allowing the 
+        parsing of topics using the new parser. -->
+  <DisableNewParser>false</DisableNewParser>
   
   <!-- When set to false FlexWiki will use the original process driven parser to create output. When set to true
-        FlexWiki will use the new Regular Expression rule based parser with xsl transform for actual final output-->
+        FlexWiki will use the new Regular Expression rule based parser with xsl transform for actual final output. 
+        Alternatively, the new parser can be selected by the topic having a property of DisplayUsingNewParser set to true, 
+        which will work when EnableNewParser is false and DisableNewParser is false -->
   <EnableNewParser>false</EnableNewParser>
   
 
