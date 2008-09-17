@@ -43,5 +43,9 @@ namespace FlexWiki.Caching
         public void Clear()
         {
         }
+        
+        public void ClearTopic(string topic)
+        {        	
+        }
     }
 }

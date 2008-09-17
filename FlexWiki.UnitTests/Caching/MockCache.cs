@@ -20,10 +20,10 @@ namespace FlexWiki.UnitTests.Caching
     internal class MockCache : IWikiCache
     {
         
-		private readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
+	private readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
 
 
-		public string[] Keys
+	public string[] Keys
         {
             get
             {
@@ -38,7 +38,7 @@ namespace FlexWiki.UnitTests.Caching
             }
         }
 		
-		public object this[string key]
+	public object this[string key]
         {
             get
             {
@@ -58,12 +58,17 @@ namespace FlexWiki.UnitTests.Caching
         }
 		
 
-		public void Clear()
+	public void Clear()
         {
             _cache.Clear();
         }
+
+	public void ClearTopic(string topic)
+        {
+            _cache.Remove(topic);
+        }
 		
-		internal Dictionary<string, object> GetCacheContents()
+	internal Dictionary<string, object> GetCacheContents()
         {
             return _cache;
         }

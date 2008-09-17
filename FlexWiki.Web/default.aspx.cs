@@ -17,6 +17,9 @@ using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 
+using log4net;
+using log4net.Config;
+using log4net.Core;
 using FlexWiki;
 using FlexWiki.Collections;
 using FlexWiki.Formatting;
@@ -67,6 +70,14 @@ namespace FlexWiki.Web
         protected string BuildPage()
         {
 
+            // Consider clearing the cache for this topic 
+            string cache = Federation.GetTopicPropertyValue(GetTopicVersionKey(), "_ClearCache") ;
+            // LogDebug(this.GetType().ToString(),"_ClearCache = "+cache);    
+            if (cache != "" && cache.ToUpper().Equals("TRUE"))
+            {
+            	FlexWikiWebApplication.Cache.ClearTopic(topic.ToString()) ;
+            }                
+        	
             StringBuilder strOutput = new StringBuilder();
             bool diffs = Request.QueryString["diff"] == "y";
             QualifiedTopicRevision diffVersion = null;
@@ -474,5 +485,21 @@ namespace FlexWiki.Web
             Response.Write("    ");
             ClosePane(Response.Output);
         }
+        public void LogDebug(string source, string message)
+        {
+            LogManager.GetLogger(source).Debug(message);
+        }
+        public void LogError(string source, string message)
+        {
+            LogManager.GetLogger(source).Error(message);
+        }
+        public void LogInfo(string source, string message)
+        {
+            LogManager.GetLogger(source).Info(message);
+        }
+        public void LogWarning(string source, string message)
+        {
+            LogManager.GetLogger(source).Warn(message);
+        }		        
     }
 }

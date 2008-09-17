@@ -16,6 +16,10 @@ using System.Collections.Generic;
 using System.Web; 
 using System.Web.Caching;
 
+using log4net;
+using log4net.Config;
+using log4net.Core;
+
 using FlexWiki.Caching; 
 
 namespace FlexWiki.Web
@@ -75,5 +79,40 @@ namespace FlexWiki.Web
                 HttpContext.Current.Cache.Remove(key);
             }
         }
+		public void ClearTopic(string name)
+        {
+			if (HttpContext.Current == null) return;
+			string cacheKey = "cache://"+name.Replace(".","/") ;
+
+            LogDebug(this.GetType().ToString(),
+                     "Clearing Cache for Topic = "+cacheKey);            	
+			
+			string[] keys = Keys;
+            foreach (string key in keys)
+            {
+            	if(key.Contains(cacheKey))
+            	{
+                    // LogDebug(this.GetType().ToString(),
+                    //     "Removing Topic key = "+key);                  		
+                    HttpContext.Current.Cache.Remove(key);          		
+            	}
+             }
+        }	
+        public void LogDebug(string source, string message)
+        {
+            LogManager.GetLogger(source).Debug(message);
+        }
+        public void LogError(string source, string message)
+        {
+            LogManager.GetLogger(source).Error(message);
+        }
+        public void LogInfo(string source, string message)
+        {
+            LogManager.GetLogger(source).Info(message);
+        }
+        public void LogWarning(string source, string message)
+        {
+            LogManager.GetLogger(source).Warn(message);
+        }		
     }
 }

@@ -57,10 +57,14 @@ namespace FlexWiki.Web.UnitTests.Caching
             }
         }
 
-
         public void Clear()
         {
             _cache.Clear();
+        }
+
+        public void ClearTopic(string topic)
+        { 
+            _cache.Remove(topic);       	
         }
 
         internal Dictionary<string, object> GetCacheContents()

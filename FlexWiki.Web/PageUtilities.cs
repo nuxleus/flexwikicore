@@ -190,28 +190,30 @@ namespace FlexWiki.Web
             switch (scope.ToLower())
             {
                 case "none":
-                    temp = "";
-                    break;
+                   temp = "";
+                   break;
 
                 case "namespace":
-                    temp = "";
-                    if (manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue != null)
-                    {
-                        temp = manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
-                    }
-                    break;
+                   temp = "";
+                   if (manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders") != null)
+                      if (manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue != null)
+                      {
+                          temp = manager.GetTopicProperty(manager.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                      }
+                   break;
 
                 case "federation":
-                    NamespaceManager mgr = DefaultNamespaceManager(manager.Federation);
-                    if (mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue != null)
-                    {
-                        temp = mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
-                    }
-                    break;
+                   NamespaceManager mgr = DefaultNamespaceManager(manager.Federation);
+                   if (mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders") != null)
+                      if (mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue != null)
+                      {
+                          temp = mgr.GetTopicProperty(mgr.DefinitionTopicName.LocalName, "OverrideBorders").LastValue;
+                      }
+                   break;
 
                 default:
-                    temp = "";
-                    break;
+                   temp = "";
+                   break;
             }
             return temp;
         }

@@ -22,6 +22,7 @@ namespace FlexWiki.Caching
         // collection can't be iterated over and modified at the same time, which 
         // is a common situation when enumerating the cache keys. 
         void Clear();
+        void ClearTopic(string topic);
         string[] Keys { get; }
     }
 }
