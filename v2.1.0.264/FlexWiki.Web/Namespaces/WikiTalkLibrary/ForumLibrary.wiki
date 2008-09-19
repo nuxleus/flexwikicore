@@ -1,0 +1,226 @@
+
+Summary: a library of functions for displaying a Forum
+:Version:2.0.0.236.a
+:GetNodes:{keys | namespace.Topics.Select{ each |
+        each.Keywords.Contains(keys)}.Select{each | each.HasProperty("ParentThread")}.IfNotNullElse({namespace.Topics.Select{each | each.Keywords.Contains(keys)}
+	.Select{each | each.HasProperty("ParentThread")}.SortBy{each | each.GetProperty("ParentThread")}},{""})
+}
+
+:GetTopNodes:{keys | namespace.Topics.Select { each |
+	each.Keywords.Contains(keys)}.Select {each | each.GetProperty("Depth").Equals("0")}
+}
+&nbsp;
+
+:GetTopLevelNumber:{ keys | namespace.Topics.Select { each |
+	each.Keywords.Contains(keys)}.Select { each | each.GetProperty("Depth").Equals("0")}
+		.Count
+}
+:GetTotalNumberThreads:{keys | namespace.Topics.Select{ each |
+	each.Keywords.Contains(keys)}.Select { each | each.HasProperty("Depth")}.Count
+}
+:OriginalThreadDate:{keys | namespace.TopicsWith("Keywords", keys).Count
+	.GreaterThan(1).IfTrueIfFalse({namespace.TopicsWith("Keywords", keys).Select
+	{each | each.GetProperty("Depth").Equals("0")}.SortBy { each | each.Name }.Item(0).Created.LocalFormat},{""})
+}
+:LatestThreadDate:{keys | namespace.TopicsWith("Keywords", keys).Count
+	.GreaterThan(1).IfTrueIfFalse({namespace.TopicsWith("Keywords", keys).Select
+	{each | each.HasProperty("Depth")}.SortBy { each | DateTime.Now.SpanBetween(each.Created)}.Item(0).Created.LocalFormat}, {""})
+}
+
+:DoInfoBoxForum:{
+      [ Presentations.ContainerStart("div", "InfoBoxProgrammer"), 
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Top Level Threads: ", Presentations.ContainerEnd("span"), "&nbsp;",
+	Presentations.ContainerStart("span", "InfoBoxValue"), GetTopLevelNumber(topic.Keywords), Presentations.ContainerEnd("span"), Newline,
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Total Threads: ", Presentations.ContainerEnd("span"), "&nbsp;", 
+	Presentations.ContainerStart("span", "InfoBoxList"), GetTotalNumberThreads(topic.Keywords), Presentations.ContainerEnd("span"), Newline,
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Original Thread Created: ", Presentations.ContainerEnd("span"), Newline, 
+	Presentations.ContainerStart("span", "InfoBoxList"), OriginalThreadDate(topic.Keywords), Presentations.ContainerEnd("span"), Newline,
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Latest Thread Created: ", Presentations.ContainerEnd("span"), Newline, 
+	Presentations.ContainerStart("span", "InfoBoxValue"), LatestThreadDate(topic.Keywords), Presentations.ContainerEnd("span"),
+	Presentations.ContainerEnd("div"), Newline,
+    ]
+}
+
+:ShowEntry:{entry |
+[["@@Presentations.ContainerStart(\"div\",", "\"", entry.Name, "\",", "\"",
+    ["Depth0","Depth1","Depth2","Depth3","Depth4","Depth5", "Depth6","Depth7"].Item(entry.GetProperty("Depth").AsInteger), "\")@@"].ToOneString, Newline,
+"!!!!", entry.GetProperty("Title"), Newline, ControlView(entry.GetProperty("ParentThread")), "&nbsp;", "&nbsp;", "&nbsp;",
+    entry.LastModifiedBy, " (", entry.LastModified.LocalFormat, ")", Newline, 
+["@@Presentations.ContainerStart(\"div\",", "\"Thread_", entry.GetProperty("ParentThread"), "\")@@"].ToOneString, Newline, 
+entry.GetProperty("_Body"), Newline,
+["@@Presentations.Link(federation.LinkMaker.SimpleLinkTo(\"MessagePost.aspx?topic=", namespace.Name, ".", 
+			entry.GetProperty("Keywords"), "&forumKey=", entry.GetProperty("Keywords"), "&parentThread="
+,entry.GetProperty("ParentThread"),"&title=",entry.GetProperty("Title"),"\"),\"Reply To This\")@@"].ToOneString, Newline,
+["@@Presentations.ContainerEnd(\"div\")@@"], ["@@Presentations.ContainerEnd(\"div\")@@"], Newline,
+"----", Newline]
+}
+
+:ShowTopEntries:{entry |
+ [ "||", entry.GetProperty("Title"), "||", CountReplies(entry.GetProperty("ParentThread")), "||", 
+                                entry.LastModifiedBy, "||",  GetLatestEntryInThreadInfo(entry.GetProperty("ParentThread")), "||", Newline
+ ]
+}
+
+:ControlView:{id |
+ [["@@Presentations.Link(\"javascript:ToggleDisplay('", id, "')\",", "\"Hide Thread\",", "\"Toggle Thread View\",", "\"id=\\\"Link_", id, "\\\"\")@@",].ToOneString,]
+}
+
+:CountReplies:{parentThread | 
+    namespace.TopicsWith("ParentThread", parentThread).Count.Subtract(1)
+}
+
+:GetLatestEntryInThreadInfo:{ parentThread | namespace.TopicsWith("ParentThread", parentThread).Sort.Snip(1).Collect{ each |
+ [ each.LastModified.LocalFormat, " by ", each.LastModifiedBy ].ToOneString}
+}
+ 
+:ShowFormatSelection:{ selected |
+    selected.IfNull{ FormatSelectionHelper("Linear")}
+    Else{ FormatSelectionHelper(selected)}
+}
+:FormatSelectionHelper:{ selected |
+    [Presentations.FormStart(federation.LinkMaker.LinkToTopic(topic.Fullname), "get"), "Forum view: ",
+     Presentations.ComboSelectField("format", ["Threaded", "Linear", "Single", "Branch"], selected), " ",
+     Presentations.ImageButton("submit", federation.LinkMaker.LinkToImage("images/go-dark.gif"), "Change Format"),
+     Presentations.FormEnd()]
+}
+
+:ShowFormat:{ selected |
+	selected.IfNull{ShowLinear}Else{
+	selected.Equals("Linear").IfTrueIfFalse({ShowLinear},
+	{selected.Equals("Threaded").IfTrueIfFalse({ShowThreaded},
+	{selected.Equals("Single").IfTrueIfFalse({ShowSingle},
+	{selected.Equals("Branch").IfTrueIfFalse({ShowBranch},
+	{selected.Equals("Top Level").IfTrueIfFalse({ShowTopLevel},
+	{ ShowLinear })})})})})}
+}
+
+:ShowLinear:{
+ GetTotalNumberThreads(topic.Keywords).GreaterThan(10).IfTrueIfFalse({ShowLinearPaged("Linear", request.GetParameterNamed("page"))},
+  {ShowLinearUnpaged("Linear")})
+}
+:ShowThreaded:{
+    [Presentations.ContainerStart("div", "entryTitleList"),
+  GetNodes(topic.Keywords).Collect{ each | 
+	ShowThreadedTitle(each)}, Presentations.ContainerEnd("div"), ShowLinearUnpaged("Threaded")]
+}
+:ShowSingle:{
+    [Presentations.ContainerStart("div", "entryTitleList"),
+  GetNodes(topic.Keywords).Collect{ each | 
+	ShowSingleTitle("Single", each)}, Presentations.ContainerEnd("div"), 
+	request.GetParameterNamed("entry").IfNotNull{ShowSinglePost(request.GetParameterNamed("entry"))}Else{""}]
+}
+:ShowBranch:{
+    [Presentations.ContainerStart("div", "entryTitleList"),
+  GetNodes(topic.Keywords).Collect{ each | 
+	ShowSingleTitle("Branch", each)}, Presentations.ContainerEnd("div"), 
+	request.GetParameterNamed("entry").IfNotNull{ShowBranchPosts(request.GetParameterNamed("entry"))}Else{""}]
+}
+
+:ShowLinearUnpaged:{ format | 
+    [Presentations.ContainerStart("div", "entryList"), Presentations.ContainerStart("div", "entryHdr"),
+     Presentations.ContainerStart("div", "entryCol1Hdr"), "Author", Presentations.ContainerEnd("div"),
+     Presentations.ContainerStart("div", "entryCol2Hdr"), "Message Post", Presentations.ContainerEnd("div"),
+     Presentations.ContainerEnd("div"), Newline,
+  GetNodes(topic.Keywords).Collect{ each |
+  ShowNode(each)}, Presentations.ContainerEnd("div")]
+}
+:ShowLinearPaged:{ format, page | 
+    [Presentations.ContainerStart("div", "entryList"), Presentations.ContainerStart("div", "entryHdr"),
+     Presentations.ContainerStart("div", "entryCol1Hdr"), "Author", Presentations.ContainerEnd("div"),
+     Presentations.ContainerStart("div", "entryCol2Hdr"), "Message Post", Presentations.ContainerEnd("div"),
+     Presentations.ContainerEnd("div"), Newline,
+     page.IfNotNull{GetPagedNodes(format, page.AsInteger, topic.Keywords)}Else {GetPagedNodes(format, 0, topic.Keywords)},
+     Presentations.ContainerEnd("div")]
+}
+
+:GetPagedNodes:{ format, page, key |
+    GetNodes(key).Count.GreaterThanOrEqualTo(page.Multiply(10).Add(10)).
+      IfFalseIfTrue({[GetNodes(key).Snip(GetNodes(key).Count.Subtract(page.Multiply(10))).Collect{ each |
+       ShowNode(each)}, ShowLastPageLinks(format)]},{[[GetNodes(key).Item(page.Multiply(10)),
+	GetNodes(key).Item(page.Multiply(10).Add(1)), GetNodes(key).Item(page.Multiply(10).Add(2)), 
+        GetNodes(key).Item(page.Multiply(10).Add(3)), GetNodes(key).Item(page.Multiply(10).Add(4)), 
+        GetNodes(key).Item(page.Multiply(10).Add(5)), GetNodes(key).Item(page.Multiply(10).Add(6)),
+        GetNodes(key).Item(page.Multiply(10).Add(7)), GetNodes(key).Item(page.Multiply(10).Add(8)), 
+        GetNodes(key).Item(page.Multiply(10).Add(9))].Collect{each | ShowNode(each)}, page.Equals(0)
+     .IfTrueIfFalse({ShowFirstPageLinks(format)},{ShowPageLinks(format, page)}),]})
+}
+:ShowBranchPosts:{entry |
+     [Newline, "&nbsp;", Newline, namespace.TopicsWith("ParentThread").Select{each | each.GetProperty("ParentThread").Contains(entry)}
+	.Collect{each | ShowNode(each)}]
+}
+
+:ShowSinglePost:{ entry |
+	[Newline, "&nbsp;", Newline, ShowNode(namespace.TopicsWith("ParentThread", entry).Item(0))]
+}
+
+:ShowNode:{ entry |
+ [Presentations.ContainerStart("div", "entryDetail"), Presentations.ContainerStart("div", "entryCol1"),
+   entry.LastModifiedBy, Newline, "Total Posts: ",  CountPosts(entry.LastModifiedBy, topic.Keywords), Newline, 
+  Presentations.ContainerEnd("div"), Presentations.ContainerStart("div", "entryCol2"),
+  Presentations.ContainerStart("span", "postDateTime"), entry.LastModified.LocalFormat, Presentations.ContainerEnd("span"),
+   Presentations.ContainerStart("div", "replyLink"), 
+ ["@@Presentations.Link(federation.LinkMaker.SimpleLinkTo(\"MessagePost.aspx?topic=", namespace.Name, ".", 
+    entry.GetProperty("Keywords"), "&forumKey=", entry.GetProperty("Keywords"), "&parentThread=",entry.GetProperty("ParentThread"), 
+    "&title=",entry.GetProperty("Title"),"\"),\"Reply To This\")@@"].ToOneString,
+   Presentations.ContainerEnd("div"),
+   Presentations.ContainerStart("div", "messageDetail"), Presentations.ContainerStart("div", "messageTitle"),
+   Newline, "!!!!", entry.GetProperty("Title"), Newline,
+   Presentations.ContainerEnd("div"), Newline,
+   entry.GetProperty("_Body"),
+   Presentations.ContainerEnd("div"), Newline,
+   Presentations.ContainerStart("div", "printerLink"),
+   Presentations.Link(federation.LinkMaker.LinkToPrintView(entry.Fullname), "Print Message", "Print Message"),
+   Presentations.ContainerEnd("div"), Presentations.ContainerEnd("div"),Presentations.ContainerEnd("div"), Newline, ]
+}
+
+:ShowThreadedTitle:{entry |
+ [["@@Presentations.ContainerStart(\"div\",", "\"", entry.Name, "\",", "\"",
+    ["Depth0","Depth1","Depth2","Depth3","Depth4","Depth5", "Depth6","Depth7"].Item(entry.GetProperty("Depth").AsInteger), "\")@@"].ToOneString, Newline, Presentations.Link(["#", entry.GetProperty("Title")].ToOneString, entry.GetProperty("Title")), " - ",
+    entry.LastModifiedBy, " (", entry.LastModified.LocalFormat, ")", Newline, 
+ Presentations.ContainerEnd("div"), ]
+}
+:ShowSingleTitle:{format, entry |
+ [["@@Presentations.ContainerStart(\"div\",", "\"", entry.Name, "\",", "\"",
+    ["Depth0","Depth1","Depth2","Depth3","Depth4","Depth5", "Depth6","Depth7"].
+	Item(entry.GetProperty("Depth").AsInteger), "\")@@"].ToOneString, Newline, 
+     Presentations.Link(federation.LinkMaker.SimpleLinkTo(
+        ["default.aspx/", namespace.Name, "/", topic.Name, ".html?format=", format, "&entry=", 
+		entry.GetProperty("ParentThread")].ToOneString), entry.GetProperty("Title")), " - ", 
+		entry.LastModifiedBy, " (", entry.LastModified.LocalFormat, ")", Newline,
+ Presentations.ContainerEnd("div"), ]
+}
+
+:CountPosts:{ author, keys |
+   namespace.Topics.Select{ each |
+     each.Keywords.Contains(keys)}.Select {each | each.LastModifiedBy.Equals(author)}.Select {each |
+     each.HasProperty("Depth")}.Count
+}
+
+:ShowFirstPageLinks:{format |
+     [Newline, Presentations.ContainerStart("div", "pageLinks"),
+	CreatePageLink(format, 1, "Next Page"), "&nbsp;&nbsp;",
+        GetTotalNumberThreads(topic.Keywords).Divide(10).GreaterThan(1).IfFalseIfTrue({""},{
+        CreatePageLink(format, GetTotalNumberThreads(topic.Keywords).Divide(10), "Last Page")}),
+     Presentations.ContainerEnd("div")]
+}
+:ShowLastPageLinks:{format |
+     [Newline, Presentations.ContainerStart("div", "pageLinks"),
+	CreatePageLink(format, 0, "First Page"), "&nbsp;&nbsp;",
+        GetTotalNumberThreads(topic.Keywords).Divide(10).GreaterThan(1).IfFalseIfTrue({""},{
+        CreatePageLink(format, GetTotalNumberThreads(topic.Keywords).Divide(10).Subtract(1), "Prev Page")}),
+     Presentations.ContainerEnd("div")]
+}
+:ShowPageLinks:{format, page |
+     [Newline, Presentations.ContainerStart("div", "pageLinks"),
+      page.GreaterThan(0).IfFalseIfTrue({""},{[CreatePageLink(format, 0, "First Page"), "&nbsp;&nbsp;",]}), 
+      page.GreaterThan(1).IfFalseIfTrue({""},{[CreatePageLink(format, page.Subtract(1), "Prev Page"), "&nbsp;&nbsp;",]}), 
+     page.LessThan(GetTotalNumberThreads(topic.Keywords).Divide(10).Subtract(1)).IfFalseIfTrue({""},{
+	[CreatePageLink(format, page.Add(1), "Next Page"), "&nbsp;&nbsp;",]}),
+     page.LessThan(GetTotalNumberThreads(topic.Keywords).Divide(10)).IfFalseIfTrue({""},{
+	CreatePageLink(format,GetTotalNumberThreads(topic.Keywords).Divide(10), "Last Page")}),
+     Presentations.ContainerEnd("div")]
+}
+:CreatePageLink:{format, pageLink, label |
+     Presentations.Link(federation.LinkMaker.SimpleLinkTo(
+        ["default.aspx/", namespace.Name, "/", topic.Name, ".html?format=", format, "&page=", pageLink].ToOneString), label)
+} 

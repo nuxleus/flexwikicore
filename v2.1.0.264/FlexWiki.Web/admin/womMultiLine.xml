@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Context>
+  <Rule Name="wikiMultiline">
+    <Rules>
+      <Rule Name="ScriptData" Pattern="&lt;script [\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n\&lt;\&gt;/%&amp;;]+&lt;/script&gt;" />
+      <Rule Name="wikiMultilineText" Pattern="{[\p{L}\p{N}\p{C}\p{S}\p{Z}]+^}(?=\r\n)" Optimization="" Elements="" />
+    </Rules>
+  </Rule>
+</Context>
