@@ -21,6 +21,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
+using FlexWiki.Formatting;
+
 namespace FlexWiki.Web
 {
     /// <summary>
@@ -142,6 +144,15 @@ namespace FlexWiki.Web
                 Response.Write("<b>Topic (" + newName + ") already exists.  Choose another name...</b>");
                 return;
             }
+
+            // See if the new name is valid
+            bool isValidName = Formatter.extractWikiNames.IsMatch("[" + newName + "]");
+            if (!isValidName)
+            {
+                Response.Write("Topic Name not valid for this wiki: " + newName + "\nPlease go back and choose a different name.");
+                return;
+            }
+
 
             bool fixup = Fixup == "on";
             bool fixupDisabled = FlexWikiWebApplication.ApplicationConfiguration.DisableRenameFixup;
