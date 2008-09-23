@@ -126,6 +126,7 @@
     <Compile Include="Formatting\TableFormattingTests.cs" />
     <Compile Include="Formatting\WikiPagePropertyTests.cs" />
     <Compile Include="IMockWikiApplication.cs" />
+    <Compile Include="KeywordInfoTests.cs" />
     <Compile Include="MockTopicStorePermissions.cs" />
     <Compile Include="Parser\ParserContextTests.cs" />
     <Compile Include="Parser\ParserEngineTests.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Security\TransportSecurityRequirementTestConfiguration.cs" />
     <Compile Include="SqlProvider\TestDataSets.cs" />
     <Compile Include="TestParameters.cs" />
+    <Compile Include="TopicInfoTest.cs" />
     <Compile Include="UnqualifiedTopicNameTests.cs" />
     <Compile Include="MockTopicCollection.cs" />
     <Compile Include="MockTopicRevision.cs" />

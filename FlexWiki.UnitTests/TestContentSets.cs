@@ -41,6 +41,32 @@ namespace FlexWiki.UnitTests
                 );
             }
         }
+        internal static TestContentSet MultipleTopicsWithKeywords
+        {
+            get
+            {
+                return new TestContentSet(
+                    new TestNamespace("NamespaceOne",
+                        new TestTopic("TopicOne", "author1", @"PropertyOne: Value one
+Keywords: Test, Data, Topic
+OtherProperty: Some value
+OtherProperty: Some other value"),
+                        new TestTopic("TopicTwo", "author2", @"PropertyTwo: Value two
+Keywords: Data, Test
+OtherProperty: Some other value"),
+                        new TestTopic("TopicThree", "author3", @"PropertyThree: Value three, 
+KeywordsX: Topic, Data"),
+                        new TestTopic("TopicFour", "author3", @"PropertyThree: Value three, 
+Keywords: Topic, Data"),
+                        new TestTopic("_ContentBaseDefinition", "author", @"Import: NamespaceTwo")
+                    ),
+                    new TestNamespace("NamespaceTwo",
+                        new TestTopic("TopicOne", "author1-2", @"PropertyOne: Value one"),
+                        new TestTopic("TopicFour", "author4-1", @"PropertyFive: Value five")
+                    )
+                );
+            }
+        }
         internal static TestContentSet MultipleTopicsWithProperties
         {
             get
@@ -55,11 +81,11 @@ OtherProperty: Some other value"),
 PropertyThree: Value three
 OtherProperty: Some other value"),
                         new TestTopic("TopicThree", "author3", @"PropertyThree: Value three, 
-PropertyFour: Value four"), 
+PropertyFour: Value four"),
                         new TestTopic("_ContentBaseDefinition", "author", @"Import: NamespaceTwo")
-                    ), 
-                    new TestNamespace("NamespaceTwo", 
-                        new TestTopic("TopicOne", "author1-2", @"PropertyOne: Value one"), 
+                    ),
+                    new TestNamespace("NamespaceTwo",
+                        new TestTopic("TopicOne", "author1-2", @"PropertyOne: Value one"),
                         new TestTopic("TopicFour", "author4-1", @"PropertyFive: Value five")
                     )
                 );

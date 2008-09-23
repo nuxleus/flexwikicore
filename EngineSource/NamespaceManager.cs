@@ -385,6 +385,36 @@ namespace FlexWiki
                 return ContentProviderChain.IsReadOnly;
             }
         }
+        [ExposedMethod(ExposedMethodFlags.NeedContext, "Gets the array of KeywordInfos for this namespace")]
+        public KeywordInfoArray KeywordInfos(ExecutionContext ctx)
+        {
+            KeywordInfoArray KeywordsArray = new KeywordInfoArray();
+            TopicInfoArray TopicsArray = RetrieveAllTopicsWith("Keywords", null, ImportPolicy.DoNotIncludeImports);
+
+            for (int x = 0; x < TopicsArray.Count; x++)
+            {
+                TopicVersionInfo topicInfo = (TopicVersionInfo) TopicsArray.Item(x);
+                ArrayList KeywordsList = topicInfo.KeywordsList;
+                foreach (string keyword in KeywordsList)
+                {
+                    KeywordInfo keywordInfo = new KeywordInfo();
+                    keywordInfo.KeywordName(keyword);
+                    if (KeywordsArray.Array.BinarySearch(keywordInfo) < 0)
+                    {
+                        keywordInfo.IncrementKeywordCount();
+                        KeywordsArray.Add(keywordInfo);
+                        KeywordsArray.Array.Sort();
+                    }
+                    else
+                    {
+                        KeywordInfo keywordFound = (KeywordInfo)KeywordsArray.Item(KeywordsArray.Array.BinarySearch(keywordInfo));
+                        keywordFound.IncrementKeywordCount();
+                    }
+                }
+            }
+
+            return KeywordsArray;
+        }
         /// <summary>
         /// Answer the namespace for this ContentProviderChain
         /// </summary>
