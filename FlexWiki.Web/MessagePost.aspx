@@ -51,9 +51,42 @@
             <div style="width: 759px; height: 26px; position: static;" class="UserInfo">
                 <asp:Label ID="UserLbl" runat="server" Text="User:" Width="66px"></asp:Label>
                 <asp:TextBox ID="UserText" runat="server" OnTextChanged="TextBox1_TextChanged" Width="337px"></asp:TextBox></div>
-            <div id="Div1" class="MessageButtons" style="width: 241px; height: 28px; position: static;">
+            <asp:Panel ID="CaptchaPanel" runat="server" Height="125px" Width="300px">    
+            <div id="CaptchaTile" class="CaptchaInfo">
+                <asp:Table ID="CaptchaTable" CssClass="SidebarTile" runat="server" CellPadding="2" CellSpacing="0" BorderWidth="0">
+                    <asp:TableHeaderRow runat="server">
+                        <asp:TableHeaderCell runat="server" CssClass="SidebarTileTitle" VerticalAlign="Middle">Spam Prevention</asp:TableHeaderCell>
+                    </asp:TableHeaderRow>
+                    <asp:TableRow runat="server" CssClass="SidebarTileBody" VerticalAlign="Middle">
+                        <asp:TableCell runat="server" >
+                            <div>
+                                <asp:Label ID="ErrorMessageCaptcha" runat="server" CssClass="ErrorMessageBody">To prevent automated spam attacks, you must properly enter the code shown below. Please 
+                                enter the number you see in the box and then click Save.</asp:Label>
+                                <span>Before saving, please enter the code you see below.</span>
+                                <br />
+                                <asp:HyperLink runat="server" ID="AboutCaptcha" NavigateUrl="~/AboutCaptcha.html" Target="_blank">Whats's this?</asp:HyperLink>
+                                <br />
+                                <asp:Image ID="CaptchaCode" runat="server" AlternateText="Enter this code in the box to the right." />
+                                <br />
+                                <asp:TextBox ID="CaptchaEnteredText" runat="server" Width="100px"></asp:TextBox>
+                                <br />
+                                <asp:HiddenField ID="CaptchaContext" runat="server" />
+                                <asp:CustomValidator ID="CaptchaEnteredValCntl" runat="server" ControlToValidate="CaptchaEnteredText" EnableClientScript="false" ErrorMessage="Value entered is incorrect" ValidateEmptyText="true"></asp:CustomValidator>
+                             </div>
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
+            </div> 
+            </asp:Panel> 
+            <br />  
+            <asp:Panel ID="Panel4" runat="server">
+            <div id="Div1" class="MessageButtons" style="width: 241px; height: 60px;">
+                <br />
                 <asp:Button ID="CancelBtn" runat="server" Text="Cancel" />
-                <asp:Button ID="SaveBtn" Text="Save" CommandName="Save" runat="server" /></div>
+                <asp:Button ID="SaveBtn" Text="Save" CommandName="Save" runat="server" />
+                <asp:Button ID="PreviewPost" Text="PreviewPost" OnClientClick="javascript:previewPost()" runat="server" />
+            </div>
+            </asp:Panel>
             <div class="MessageValidation" style="width: 100px; height: 100px">
             <asp:Panel ID="Panel3" runat="server" Height="84px" Width="494px">
                 &nbsp;<asp:ValidationSummary ID="ValidationSummary1" runat="server" HeaderText="Errors:" />  
@@ -61,6 +94,6 @@
             &nbsp;
         </div>
     </form>
-    </div>
 	<%= BuildPageTwo() %>
-
+	
+        

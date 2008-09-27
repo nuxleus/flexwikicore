@@ -33,6 +33,7 @@ namespace FlexWiki.Web
 
         protected CheckBox NewForumCheck;
 
+        protected Label ErrorMessageCaptcha;
         protected Label ForumKeyLbl;
         protected Label ForumNamespaceLbl;
         protected Label MessageTitleLbl;
@@ -40,7 +41,12 @@ namespace FlexWiki.Web
 
         protected Panel Panel1;    // holds controls for a new forum
         protected Panel Panel2;    // holds a message for when messaging is disabled
+        protected Panel CaptchaPanel;  // holds the Captcha stuff
 
+        protected HiddenField CaptchaContext;
+        protected Image CaptchaCode;
+
+        protected TextBox CaptchaEnteredText;
         protected TextBox ForumKeyText;
         protected TextBox ForumNamespaceText;
         protected TextBox ForumNameText;
@@ -48,12 +54,15 @@ namespace FlexWiki.Web
         protected TextBox MessageTitleText;
         protected TextBox UserText;
 
+        protected CustomValidator CaptchaEnteredValCntl;
         protected CustomValidator ForumKeyValCntl;
         protected CustomValidator ForumNamespaceValCntl;
         protected CustomValidator ForumNameValCntl;
         protected CustomValidator MsgBodyValCntl;
         protected CustomValidator MsgTitleValCntl;
 
+        private string _captchaContext;
+        private string _captchaEnteredText;
         private string _depth;
         private string _errorMessage;
         private string _forumKey;
@@ -65,6 +74,7 @@ namespace FlexWiki.Web
         private string _parentThread;
         private string _userText;
 
+        private bool _isCaptchaRequired;
         private bool _isNewDiscuss;
         private bool _isNewTrackBack;
         private bool _newForum;
@@ -183,6 +193,43 @@ namespace FlexWiki.Web
             }
         }
 
+        private bool IsCaptchaRequired
+        {
+            get
+            {
+                CaptchaRequired requirement = FlexWikiWebApplication.ApplicationConfiguration.RequireCaptchaOnEdit;
+
+                if (requirement == CaptchaRequired.Always)
+                {
+                    _isCaptchaRequired = true;
+                    return _isCaptchaRequired;
+                }
+
+                if (requirement == CaptchaRequired.IfAnonymous)
+                {
+                    _isCaptchaRequired = !(User.Identity.IsAuthenticated);
+                    return _isCaptchaRequired;
+                }
+
+                if (requirement == CaptchaRequired.WhenOverLinkThreshold)
+                {
+                    if (!IsPost)
+                    {
+                        _isCaptchaRequired = false;
+                        return _isCaptchaRequired;
+                    }
+
+                    int submittedLinkcount = CountLinks(_messageText);
+                    if (submittedLinkcount >= FlexWikiWebApplication.ApplicationConfiguration.CaptchaLinkThreshold)
+                    {
+                        _isCaptchaRequired = true;
+                        return _isCaptchaRequired;
+                    }
+                }
+                _isCaptchaRequired = false;
+                return _isCaptchaRequired;
+            }
+        }
         private bool IsNewDiscuss
         {
             get
@@ -332,7 +379,10 @@ namespace FlexWiki.Web
                 return _userText;
             }
         }
-
+        private int CountLinks(string text)
+        {
+            return TopicParser.CountExternalLinks(text);
+        }
         public void ForumKeyValidator(object source, ServerValidateEventArgs args)
         {
             if (IsNewForum && ForumNamespaceValCntl.IsValid)
@@ -345,6 +395,42 @@ namespace FlexWiki.Web
                     args.IsValid = (Federation.NamespaceManagerForNamespace(ForumNamespace).
                         TopicsWith(ctx,"Keywords",key).Count == 0);
 
+                }
+                catch (Exception ex)
+                {
+                    args.IsValid = false;
+                    _errorMessage = ex.Message;
+                }
+            }
+            else
+            {
+                args.IsValid = true;
+            }
+        }
+        private string GenerateNewCaptchaCode()
+        {
+            string code = CaptchaImage.GenerateRandomCode();
+            string encryptedCode = Security.Encrypt(code, FlexWikiWebApplication.ApplicationConfiguration.CaptchaKey);
+            return encryptedCode;
+        }
+        public void CaptchaValidator(object source, ServerValidateEventArgs args)
+        {
+            if (IsCaptchaRequired)
+            {
+                try
+                {
+                    _captchaEnteredText = args.Value;
+                    string captchaContext = CaptchaContext.Value;
+                    string expectedValue = Security.Decrypt(captchaContext,
+                        FlexWikiWebApplication.ApplicationConfiguration.CaptchaKey);
+                    bool captchaVerified = (_captchaEnteredText.Equals(expectedValue, StringComparison.InvariantCultureIgnoreCase));
+                    if (!captchaVerified)
+                    {
+                        _captchaContext = GenerateNewCaptchaCode();
+                        CaptchaContext.Value = _captchaContext;
+                        CaptchaCode.ImageUrl = "~/CaptchaImage.ashx/" + _captchaContext;
+                    }
+                    args.IsValid = captchaVerified;
                 }
                 catch (Exception ex)
                 {
@@ -559,6 +645,8 @@ namespace FlexWiki.Web
         }
         private void Page_Load(object sender, System.EventArgs e)
 		{
+            CaptchaEnteredValCntl.ServerValidate +=
+                new ServerValidateEventHandler(this.CaptchaValidator);
             ForumNamespaceValCntl.ServerValidate +=
                 new ServerValidateEventHandler(this.NamespaceValidator);
             ForumKeyValCntl.ServerValidate +=
@@ -569,6 +657,7 @@ namespace FlexWiki.Web
                 new ServerValidateEventHandler(this.MsgBodyValidator);
             MsgTitleValCntl.ServerValidate +=
                 new ServerValidateEventHandler(this.MsgTitleValidator);
+            
 
             CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             SaveBtn.Click += new System.EventHandler(this.SaveBtn_Click);
@@ -584,6 +673,7 @@ namespace FlexWiki.Web
                 UserLbl.Visible = false;
 
                 Panel2.Visible = true;
+                CaptchaPanel.Visible = false;
             }
             else
             {
@@ -595,6 +685,19 @@ namespace FlexWiki.Web
                 }
                 if (!IsPostBack)
                 {
+                    if (IsCaptchaRequired)
+                    {
+                        _captchaContext = GenerateNewCaptchaCode();
+                        CaptchaContext.Value = _captchaContext;
+                        CaptchaCode.ImageUrl = "~/CaptchaImage.ashx/" + _captchaContext;
+                        ErrorMessageCaptcha.Visible = false;
+                        CaptchaPanel.Visible = true;
+                    }
+                    else
+                    {
+                        CaptchaPanel.Visible = false;
+                    }
+
                     NewForumCheck.Checked = false;
                     if (!String.IsNullOrEmpty(Request.QueryString["title"]))
                     {
@@ -722,10 +825,10 @@ namespace FlexWiki.Web
             strbldr.AppendFormat("<input  type=\"text\" id=\"Text2\" name=\"topic\" value =\"{0}\" />", "PreviewPost");
 
             strbldr.AppendLine("</form>");
-            strbldr.AppendLine("</div>");
-            strbldr.AppendFormat("<div id=\"previewBtn\" style=\"display: block;\">");
-            strbldr.AppendLine("<button onclick=\"javascript:previewPost()\" id=\"button1\">Preview Post</button>");
-            strbldr.AppendLine("</div>");
+            strbldr.AppendLine("</div></div>");
+            //strbldr.AppendFormat("<div id=\"previewBtn\" style=\"display: inline\">");
+            //strbldr.AppendLine("<button onclick=\"javascript:previewPost()\" id=\"button1\">Preview Post</button>");
+            //strbldr.AppendLine("</div></div>");
 
             return strbldr.ToString();
 
