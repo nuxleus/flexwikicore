@@ -13,6 +13,7 @@
 using System;
 using NUnit.Framework;
 using FlexWiki.Formatting;
+using FlexWiki.Security;
 
 
 namespace FlexWiki.UnitTests
@@ -21,7 +22,7 @@ namespace FlexWiki.UnitTests
     /// Summary description for ScopeTests.
     /// </summary>
     [TestFixture]
-    [Ignore("This test disabled during the 2.0 upgrade. Re-enable as functionality is implemented.")]
+    //[Ignore("This test disabled during the 2.0 upgrade. Re-enable as functionality is implemented.")]
     public class ScopeTests : IWikiToPresentation
     {
         private const string _base = "http://boo/";
@@ -41,10 +42,16 @@ namespace FlexWiki.UnitTests
         public void Init()
         {
             _lm = new LinkMaker(_base);
-            MockWikiApplication application = new MockWikiApplication(null,
+            FederationConfiguration configuration = new FederationConfiguration();
+            AuthorizationRule rule = new AuthorizationRule(new AuthorizationRuleWho(AuthorizationRuleWhoType.GenericAll, null),
+                AuthorizationRulePolarity.Allow, AuthorizationRuleScope.Wiki, SecurableAction.ManageNamespace, 0);
+            configuration.AuthorizationRules.Add(new WikiAuthorizationRule(rule));
+            MockWikiApplication application = new MockWikiApplication(
+                configuration,
                 _lm,
                 OutputFormat.HTML,
                 new MockTimeProvider(TimeSpan.FromSeconds(1)));
+
             Federation = new Federation(application);
             Federation.WikiTalkVersion = 1;
 
@@ -122,6 +129,17 @@ nscount=@@federation.Namespaces.Count@@
 color=@@this.Color@@
 Color: red
 ", _user);
+            WikiTestUtilities.WriteTestTopicAndNewVersion(_namespaceManager, "WikiTalkHomeObject", @"
+@@topics@@
+namespace=@@namespace@@
+federation=@@federation@@
+color=@@this.Color@@
+Color: red
+true = @@true@@
+empty = @@empty@@(this is empty)
+false = @@false@@
+null = @@null@@
+", _user);
 
         }
 
@@ -152,6 +170,18 @@ Color: red
             ConfirmTopicContains("FlexWiki.ThisTests", "FlexWiki");
             ConfirmTopicContains("FlexWiki.ThisTests", "color=red");
             ConfirmTopicContains("FlexWiki.ThisTests", "nscount=2");
+        }
+        [Test]
+        public void TestHomeObjectWikiTalk()
+        {
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", "color=red");
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", ".Federation");
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", "(namespace FlexWiki)");
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", "true = true");
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", "false = false");
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", @"empty = 
+(this is empty)");
+            ConfirmTopicContains("FlexWiki.WikiTalkHomeObject", "null = null");
         }
 
         [Test]
