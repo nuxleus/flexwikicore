@@ -51,7 +51,7 @@ namespace FlexWiki
 
 		public override IOutputSequence ToOutputSequence()
 		{
-			return new WikiSequence("(namespace \"\'" + Namespace + "\"\")");
+			return new WikiSequence("(namespace \"\"" + Namespace + "\"\")");
 		}
 
 		public DynamicTopic DynamicTopicFor(string topic)
