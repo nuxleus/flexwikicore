@@ -1,0 +1,2 @@
+C:\Windows\Microsoft.NET\Framework\v2.0.50727\webdev.webserver /port:9999 /path:C:\Windows\Microsoft.NET\Framework\v2.0.50727\asp.netwebadminfiles /vpath:fwadmin
+start "http://localhost:9999/fwadmin?applicationPhysicalPath=C:\data\projects\flexwiki\flexwikicore-20\flexwiki.web&applicationUrl=/flexwiki"
