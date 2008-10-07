@@ -360,6 +360,9 @@
 
     <LocalDateFormat>yyyy-MM-dd</LocalDateFormat>
     <LocaltimeFormat>HH:mm</LocaltimeFormat>
+    
+    <!-- Allows a local javascript file to be included along with the standard javascript files-->
+    <!-- <LocalJavascript>my-scripts.js</LocalJavascript> -->
 
     <!-- If set to 'true', FlexWiki will decorate external hyperlinks (that is, hyperlinks that
          start with http:// or https:// with the rel='nofollow' attribute. This is an anti-spam
@@ -500,6 +503,8 @@
         tag into the <head> of every page, allowing the admin to override any
         CSS styles. The value below becomes the href attribute of the <LINK>. -->
   <!-- <OverrideStylesheet>http://yourserver/path/to/wiki/example-href.css</OverrideStylesheet> -->
+  <!-- Use the form below when the stylesheet is in the root FlexWiki directory -->
+  <!-- <OverrideStylesheet>example-href.css</OverrideStylesheet> -->
 
   <!-- If set, when a user tries to edit a page to include a URL from the URL blacklist 
         (see <BlackListedExternalLinks> above), an email about the event is sent to the 

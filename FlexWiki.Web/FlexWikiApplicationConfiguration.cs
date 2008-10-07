@@ -48,7 +48,8 @@ namespace FlexWiki.Web
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
-        private string _log4NetConfigPath; 
+        private string _log4NetConfigPath;
+        private string _localJavascript;
         private NewsletterConfiguration _newsletterConfiguration;
         private string _overrideBordersScope = "None";
         private string _overrideStylesheet;
@@ -180,6 +181,11 @@ namespace FlexWiki.Web
         {
             get { return _enableNewParser; }
             set { _enableNewParser = value; }
+        }
+        public string LocalJavascript
+        {
+            get { return _localJavascript; }
+            set { _localJavascript = value; }
         }
         public bool RemoveListItemWhitespace
         {

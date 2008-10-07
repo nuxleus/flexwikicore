@@ -358,6 +358,7 @@ namespace FlexWiki.Web
             this["DisableThreadedMessaging"] = _applicationConfiguration.DisableThreadedMessaging;
             this["EnableBordersAllPages"] = _applicationConfiguration.EnableBordersAllPages;
             this["EnableNewParser"] = _applicationConfiguration.EnableNewParser;
+            this["LocalJavascript"] = _applicationConfiguration.LocalJavascript;
             this["OverrideBordersScope"] = _applicationConfiguration.OverrideBordersScope;
             this["OverrideStylesheet"] = _applicationConfiguration.OverrideStylesheet;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;

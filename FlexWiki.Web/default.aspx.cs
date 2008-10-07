@@ -252,6 +252,11 @@ namespace FlexWiki.Web
                 headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiTopicBar.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
                 headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiMenu.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
                 headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}WikiThreads.js\" type=\"text/javascript\"></script>\r\n", RootUrl);
+                if (!String.IsNullOrEmpty(FlexWikiWebApplication.ApplicationConfiguration.LocalJavascript))
+                {
+                    headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}{1}\" type=\"text/javascript\"></script>\r\n", RootUrl,
+                        FlexWikiWebApplication.ApplicationConfiguration.LocalJavascript);
+                }
                 headbldr.AppendLine("<script type=\"text/javascript\">");
                 headbldr.AppendLine("function showChanges()");
                 headbldr.AppendLine("{");
