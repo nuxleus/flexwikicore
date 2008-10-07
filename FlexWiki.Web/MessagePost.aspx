@@ -13,45 +13,45 @@
     <title>Create Message</title>
 <%= BuildPageOne() %>
     <form id="Form1" runat="server">
-        <div id="MessagePost" class="MessagePost" style="width: 849px; height: 382px">
-            <asp:Panel ID="Panel2" runat="server" Height="36px" Width="840px">
+        <div id="MessagePost" class="MessagePost" style="width: 520px; height: 800px">
+            <asp:Panel ID="Panel2" runat="server" Height="36px" Width="520px">
                 <asp:Literal ID="MessagingDisabled" runat="server" Text="The use of Forums, Threaded Messages or Talkback capabilities has been prohibited by an Administrator policy"></asp:Literal></asp:Panel>
-            <div id="ForumInfo" class="ForumInfo" style="width: 882px; height: 134px">
+            <div id="ForumInfo" class="ForumInfo" style="width: 320px; height: 164px">
                 <asp:CheckBox ID="NewForumCheck" runat="server" AutoPostBack="True" Text="Create New Forum"
                     Width="151px" />
-                <asp:Panel ID="Panel1" runat="server" Height="101px" Width="840px">
-                <div id="ForumName" class="ForumName" style="width: 707px; height: 30px">
+                <asp:Panel ID="Panel1" runat="server" Height="131px" Width="520px">
+                <div id="ForumName" class="ForumName" style="width: 320px; height: 36px">
                 <asp:Label ID="ForumNameLbl" runat="server" Text="Forum Name:" Width="118px"></asp:Label>
-                <asp:TextBox ID="ForumNameText" runat="server" Width="337px"></asp:TextBox>
+                <asp:TextBox ID="ForumNameText" runat="server" Width="320px"></asp:TextBox>
                     <asp:CustomValidator ID="ForumNameValCntl" runat="server" ControlToValidate="ForumNameText"
                         EnableClientScript="False" ErrorMessage="Forum Name provided is already in use"
                         ValidateEmptyText="True" Width="224px"></asp:CustomValidator></div>
-                <div id="ForumNamespace" class="ForumNamespace" style="width: 709px; height: 33px">
+                <div id="ForumNamespace" class="ForumNamespace" style="width: 320px; height: 36px">
                     <asp:Label ID="FormumNamespaceLbl" runat="server" Text="Forum Namespace:" Width="121px"></asp:Label>
-                    <asp:TextBox ID="ForumNamespaceText" runat="server" Width="336px"></asp:TextBox>
+                    <asp:TextBox ID="ForumNamespaceText" runat="server" Width="320px"></asp:TextBox>
                 <asp:CustomValidator ID="ForumNamespaceValCntl" runat="server" ErrorMessage="Namespace provided does not exist." ControlToValidate="ForumNamespaceText" EnableClientScript="False" ValidateEmptyText="True"></asp:CustomValidator></div>
-                <div id="ForumKey" class="ForumKey" style="width: 809px; height: 32px">
+                <div id="ForumKey" class="ForumKey" style="width: 320px; height: 36px">
                     <asp:Label ID="ForumKeyLbl" runat="server" Text="ForumKey:" Width="120px"></asp:Label>
-                    <asp:TextBox ID="ForumKeyText" runat="server" Width="334px"></asp:TextBox>
+                    <asp:TextBox ID="ForumKeyText" runat="server" Width="320px"></asp:TextBox>
                     <asp:CustomValidator ID="ForumKeyValCntl" runat="server" ControlToValidate="ForumKeyText"
                         EnableClientScript="False" ErrorMessage="ForumKey provided is already in use, or is empty"
                         ValidateEmptyText="True"></asp:CustomValidator></div>
                 </asp:Panel>
             </div>
-            <div class="MessageTitle" style="width: 918px; height: 33px">
+            <div class="MessageTitle" style="width: 320px; height: 36px">
                 <asp:Label ID="MessageTitleLbl" runat="server" Text="Message Title:" Width="110px"></asp:Label>
-                <asp:TextBox ID="MessageTitleText" runat="server" Width="593px"></asp:TextBox>
+                <asp:TextBox ID="MessageTitleText" runat="server" Width="320px"></asp:TextBox>
                 <asp:CustomValidator ID="MsgTitleValCntl" runat="server" ControlToValidate="MessageTitleText"
                     EnableClientScript="False" ErrorMessage="Message Title is Empty" ValidateEmptyText="True"></asp:CustomValidator></div>
-            <div class="MessageBody" style="width: 95%; height: 226px">
+            <div class="MessageBody" style="width: 520px; height: 226px">
                 <asp:TextBox ID="MessageText" runat="server" Height="191px" Rows="15" TextMode="MultiLine"
-                    Width="711px"></asp:TextBox>
+                    Width="520px"></asp:TextBox>
                 <asp:CustomValidator ID="MsgBodyValCntl" runat="server" ControlToValidate="MessageText"
                     EnableClientScript="False" ErrorMessage="The message has no text" ValidateEmptyText="True"></asp:CustomValidator></div>
-            <div style="width: 759px; height: 26px; position: static;" class="UserInfo">
+            <div style="width: 320px; height: 26px; position: static;" class="UserInfo">
                 <asp:Label ID="UserLbl" runat="server" Text="User:" Width="66px"></asp:Label>
-                <asp:TextBox ID="UserText" runat="server" OnTextChanged="TextBox1_TextChanged" Width="337px"></asp:TextBox></div>
-            <asp:Panel ID="CaptchaPanel" runat="server" Height="125px" Width="300px">    
+                <asp:TextBox ID="UserText" runat="server" OnTextChanged="TextBox1_TextChanged" Width="320px"></asp:TextBox></div>
+            <asp:Panel ID="CaptchaPanel" runat="server" Height="125px" Width="520px">    
             <div id="CaptchaTile" class="CaptchaInfo">
                 <asp:Table ID="CaptchaTable" CssClass="SidebarTile" runat="server" CellPadding="2" CellSpacing="0" BorderWidth="0">
                     <asp:TableHeaderRow runat="server">
@@ -88,7 +88,7 @@
             </div>
             </asp:Panel>
             <div class="MessageValidation" style="width: 100px; height: 100px">
-            <asp:Panel ID="Panel3" runat="server" Height="84px" Width="494px">
+            <asp:Panel ID="Panel3" runat="server" Height="84px" Width="520px">
                 &nbsp;<asp:ValidationSummary ID="ValidationSummary1" runat="server" HeaderText="Errors:" />  
             </asp:Panel></div>
             &nbsp;

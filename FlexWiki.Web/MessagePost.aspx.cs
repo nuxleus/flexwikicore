@@ -591,6 +591,14 @@ namespace FlexWiki.Web
             strbldr.AppendLine(@"@@DoInfoBoxForum()@@");
             strbldr.AppendLine(":Keywords: " + ForumKey);
             strbldr.AppendLine(":Title: " + MessagePostFix(MessageTitle));
+            if (_isNewDiscuss)
+            {
+                strbldr.AppendLine(":DiscussionForum: Active");
+            }
+            else if (_isNewTrackBack)
+            {
+                strbldr.AppendLine(":TbackDiscuss: Active");
+            }
             if (!String.IsNullOrEmpty(FlexWikiWebApplication.ApplicationConfiguration.ThreadedMessagingEditPermissions))
             {
                 strbldr.AppendLine(":DenyEdit: all");
