@@ -1,0 +1,265 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8CDE54DE-515A-4896-9772-EDDD13DDBF9B}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FlexWiki.UnitTests</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FlexWiki.UnitTests</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\tools\nunit\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\EngineSource\FlexWikiEngine.csproj">
+      <Name>FlexWikiEngine</Name>
+      <Project>{7362F597-DAB3-437E-8A07-37D8D2FE6E56}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\FlexWiki.Web\FlexWiki.Web.csproj">
+      <Project>{0EE80D53-C65E-4AFE-953A-AB9160521890}</Project>
+      <Name>FlexWiki.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="postbuild.cmd" />
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>SharedAssemblyInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BuiltinTopicsProviderTests.cs" />
+    <Compile Include="CachingTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Caching\DependencyRecorderTests.cs" />
+    <Compile Include="Caching\MockCache.cs" />
+    <Compile Include="Caching\ModificationRecorderTests.cs" />
+    <Compile Include="Caching\TopicCacheProviderTests.cs" />
+    <Compile Include="FederationConfigurationSerializationTests.cs" />
+    <Compile Include="Formatting\BehaviorTests.cs" />
+    <Compile Include="Formatting\FormattingTestsBase.cs" />
+    <Compile Include="Formatting\FormSelectFieldPresentationTests.cs" />
+    <Compile Include="Formatting\HyperLinkTests.cs" />
+    <Compile Include="Formatting\NonExistentNamespaceTests.cs" />
+    <Compile Include="Formatting\TableFormattingTests.cs" />
+    <Compile Include="Formatting\WikiPagePropertyTests.cs" />
+    <Compile Include="IMockWikiApplication.cs" />
+    <Compile Include="KeywordInfoTests.cs" />
+    <Compile Include="MockTopicStorePermissions.cs" />
+    <Compile Include="Parser\ParserContextTests.cs" />
+    <Compile Include="Parser\ParserEngineTests.cs" />
+    <Compile Include="Parser\WomDocumentTests.cs" />
+    <Compile Include="ParsingProviderTests.cs" />
+    <Compile Include="RequestContextTests.cs" />
+    <Compile Include="Security\AuthorizationProviderTests.cs" />
+    <Compile Include="MockDirectory.cs" />
+    <Compile Include="MockFile.cs" />
+    <Compile Include="MockFileCollection.cs" />
+    <Compile Include="MockFileInformation.cs" />
+    <Compile Include="MockFileSystem.cs" />
+    <Compile Include="QualifiedTopicRevisionTests.cs" />
+    <Compile Include="Security\AuthorizationRules.cs" />
+    <Compile Include="Security\AuthorizationTestContentSets.cs" />
+    <Compile Include="Security\TestAnonymousIdentity.cs" />
+    <Compile Include="Security\TestIdentity.cs" />
+    <Compile Include="Security\TestSecurityContext.cs" />
+    <Compile Include="SqlProvider\MockDatabase.cs" />
+    <Compile Include="SqlProvider\MockDataReader.cs" />
+    <Compile Include="SqlProvider\SqlStoreTests.cs" />
+    <Compile Include="Security\TransportSecurityRequirement.cs" />
+    <Compile Include="Security\TransportSecurityRequirementProviderTests.cs" />
+    <Compile Include="Security\TransportSecurityRequirementTestConfiguration.cs" />
+    <Compile Include="SqlProvider\TestDataSets.cs" />
+    <Compile Include="TestParameters.cs" />
+    <Compile Include="TopicInfoTest.cs" />
+    <Compile Include="UnqualifiedTopicNameTests.cs" />
+    <Compile Include="MockTopicCollection.cs" />
+    <Compile Include="MockTopicRevision.cs" />
+    <Compile Include="MockTopicRevisionCollection.cs" />
+    <Compile Include="MockWikiApplication.cs" />
+    <Compile Include="NamespaceManagerTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dummy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExecutionTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FederationTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FileSystemStoreTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Formatting\FormatterTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Formatting\FormattingServicesTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InfiniteRecursionTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MockAnonymousIdentity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MockAnonymousPrincipal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MockContentStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MockSetupOptions.cs" />
+    <Compile Include="MockTimeProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MockTopic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MoreNamespaceManagerTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QualifiedTopicNameTests.cs" />
+    <Compile Include="RegistryTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScannerTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScopeTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestContent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestContentSets.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestNamespace.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestTopic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicInfoArrayTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicNameTests.cs" />
+    <Compile Include="TopicRevisionTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicParserTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TopicPropertyTests.cs" />
+    <Compile Include="TraceContentStore.cs" />
+    <Compile Include="UnqualifiedTopicRevisionTests.cs" />
+    <Compile Include="WikiTalk\BelArraySortTests.cs" />
+    <Compile Include="WikiTalk\BelArrayTests.cs" />
+    <Compile Include="WikiTalk\BelArrayUniqueTests.cs" />
+    <Compile Include="WikiTalk\BelDateTimeDaysInMonthTests.cs" />
+    <Compile Include="WikiTalk\BelDateTimeInstanceTests.cs" />
+    <Compile Include="WikiTalk\BelDateTimeWeeksInMontTests.cs" />
+    <Compile Include="WikiTalk\BelIntegerArithmeticTests.cs" />
+    <Compile Include="WikiTalk\BelIntegerComparisonTests.cs" />
+    <Compile Include="WikiTalk\BelIntegerRandomTests.cs" />
+    <Compile Include="WikiTalk\BelIntegerStaticArithmeticTests.cs" />
+    <Compile Include="WikiTalk\BelTimeSpanInstanceTests.cs" />
+    <Compile Include="WikiTalk\HomeTests.cs" />
+    <Compile Include="WikiTestUtilities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="TestContent\meerkat.rss.xml" />
+    <EmbeddedResource Include="TestContent\rsstest.xml" />
+    <EmbeddedResource Include="TestContent\rsstest.xsl" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>cmd.exe /c $(ProjectDir)postbuild.cmd $(ProjectDir) $(TargetDir) $(TargetPath)</PostBuildEvent>
+  </PropertyGroup>
+</Project>
