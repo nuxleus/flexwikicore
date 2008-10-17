@@ -853,6 +853,7 @@ namespace FlexWiki.Web
                         DateTime dt = DateTime.Now;
                         TimeSpan ts = new TimeSpan(100, 0, 0, 0, 0);		// make it stick for 100 days
                         cookie.Expires = dt.Add(ts);
+                        cookie.HttpOnly = true;
                         Response.Cookies.Add(cookie);
                     }
                 }

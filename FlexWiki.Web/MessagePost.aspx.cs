@@ -44,6 +44,8 @@ namespace FlexWiki.Web
         protected Panel CaptchaPanel;  // holds the Captcha stuff
 
         protected HiddenField CaptchaContext;
+        protected HiddenField CookieId;
+        protected HiddenField Nonce;
         protected Image CaptchaCode;
 
         protected TextBox CaptchaEnteredText;
@@ -379,6 +381,37 @@ namespace FlexWiki.Web
                 return _userText;
             }
         }
+        private bool IsXsrfProtected
+        {
+            get
+            {
+                string cookieId = Request.Form["CookieId"];
+                if (!String.IsNullOrEmpty(cookieId))
+                {
+                    if (Request.Cookies[cookieId] != null)
+                    {
+                        string cookieNonce = Request.Cookies[cookieId].Value;
+                        if (!String.IsNullOrEmpty(cookieNonce))
+                        {
+                            string formNonce = Request.Form["Nonce"];
+                            return (String.Equals(formNonce, cookieNonce)); //return true if matches, otherwise fail
+                        }
+                        else
+                        {
+                            return false; //did not get a usable value from the cookie to validate, so fail
+                        }
+                    }
+                    else
+                    {
+                        return false; //the cookie may have expired, so fail
+                    }
+                }
+                else
+                {
+                    return false;  //did not find any reference to an xsrf cookie, so fail
+                }
+            }
+        }
         private int CountLinks(string text)
         {
             return TopicParser.CountExternalLinks(text);
@@ -451,6 +484,23 @@ namespace FlexWiki.Web
                 {
                     string msgBody = args.Value;
                     args.IsValid = (!String.IsNullOrEmpty(msgBody));
+
+                    if (!IsXsrfProtected)
+                    {
+                        args.IsValid = false;
+
+                        //set up protection from Cross Site Request Forgery (XSRF)
+                        Random rand = new Random();
+                        string nonce = rand.Next().ToString();
+                        string cookieId = Guid.NewGuid().ToString();
+                        CookieId.Value = cookieId;
+                        Nonce.Value = nonce;
+                        HttpCookie xsrf = new HttpCookie(cookieId);
+                        xsrf.HttpOnly = true;
+                        xsrf.Value = nonce;
+                        xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
+                        Response.Cookies.Add(xsrf);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -530,7 +580,30 @@ namespace FlexWiki.Web
                 args.IsValid = true;
             }
         }
+        public void NonceValidator(object source, ServerValidateEventArgs args)
+        {
+            if (!IsXsrfProtected)
+            {
+                args.IsValid = false;
 
+                //set up protection from Cross Site Request Forgery (XSRF)
+                Random rand = new Random();
+                string nonce = rand.Next().ToString();
+                string cookieId = Guid.NewGuid().ToString();
+                CookieId.Value = cookieId;
+                Nonce.Value = nonce;
+                HttpCookie xsrf = new HttpCookie(cookieId);
+                xsrf.HttpOnly = true;
+                xsrf.Value = nonce;
+                xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
+                Response.Cookies.Add(xsrf);
+
+            }
+            else
+            {
+                args.IsValid = true;
+            }
+        }
         protected void CancelBtn_Click(Object sender, System.EventArgs e)
         {
             Response.Redirect(TheLinkMaker.LinkToTopic(TheTopic.ToString()));
@@ -705,6 +778,17 @@ namespace FlexWiki.Web
                     {
                         CaptchaPanel.Visible = false;
                     }
+                    //set up protection from Cross Site Request Forgery (XSRF)
+                    Random rand = new Random();
+                    string nonce = rand.Next().ToString();
+                    string cookieId = Guid.NewGuid().ToString();
+                    CookieId.Value = cookieId;
+                    Nonce.Value = nonce;
+                    HttpCookie xsrf = new HttpCookie(cookieId);
+                    xsrf.HttpOnly = true;
+                    xsrf.Value = nonce;
+                    xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
+                    Response.Cookies.Add(xsrf);
 
                     NewForumCheck.Checked = false;
                     if (!String.IsNullOrEmpty(Request.QueryString["title"]))

@@ -380,13 +380,43 @@ namespace FlexWiki.Web
                 return topicbody ?? "";
             }
         }
-
+        private bool IsXsrfProtected
+        {
+            get
+            {
+                string cookieId = Request.Form["CookieId"];
+                if (!String.IsNullOrEmpty(cookieId))
+                {
+                    if (Request.Cookies[cookieId] != null)
+                    {
+                        string cookieNonce = Request.Cookies[cookieId].Value;
+                        if (!String.IsNullOrEmpty(cookieNonce))
+                        {
+                            string formNonce = Request.Form["Nonce"];
+                            return (String.Equals(formNonce, cookieNonce)); //return true if matches, otherwise fail
+                        }
+                        else
+                        {
+                            return false; //did not get a usable value from the cookie to validate, so fail
+                        }
+                    }
+                    else
+                    {
+                        return false; //the cookie may have expired, so fail
+                    }
+                }
+                else
+                {
+                    return false;  //did not find any reference to an xsrf cookie, so fail
+                }
+            }
+        }
 
         protected void DoPage()
         {
             if (IsPost && !IsConflictingChange && !IsBanned)
             {
-                if (IsCaptchaVerified)
+                if (IsCaptchaVerified && IsXsrfProtected)
                 {
                     ProcessPost();
                 }
@@ -947,6 +977,18 @@ Add your wiki text here.
                 }
             }
 
+            //set up protection from Cross Site Request Forgery (XSRF)
+            Random rand = new Random();
+            string nonce = rand.Next().ToString();
+            string cookieId = Guid.NewGuid().ToString();
+            Response.Write("<input type=\"text\" style=\"display:none\" name=\"CookieId\" value =\"" + cookieId + "\" />");
+            Response.Write("<input type=\"text\" style=\"display:none\" name=\"Nonce\" value =\"" + nonce + "\" />");
+            HttpCookie xsrf = new HttpCookie(cookieId);
+            xsrf.HttpOnly = true;
+            xsrf.Value = nonce;
+            xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
+            Response.Cookies.Add(xsrf);
+
             Response.Write(@"</form></div>");
 
             Response.Write("</div></td>");
@@ -1168,6 +1210,10 @@ Add your wiki text here.
                     strbldr.AppendLine("<div>");
                     string captchaCode = GenerateNewCaptchaCode();
                     string aboutHref = TheLinkMaker.SimpleLinkTo("AboutCaptcha.html");
+                    if (IsPost && !IsXsrfProtected)
+                    {
+                        strbldr.AppendLine("<span class=\"ErrorMessageBody\">Form submission exceed XSRF protection timeout. Please resubmit by clicking Save. </span>");
+                    }
                     if (IsPost && !IsCaptchaVerified)
                     {
                         strbldr.AppendLine("<span class=\"ErrorMessageBody\">To prevent automated spam attacks, you must properly enter the code shown below. Please enter the number you see in the box and then click Save. </span>");
@@ -1189,6 +1235,10 @@ Add your wiki text here.
                     strbldr.AppendLine("</tr>");
                     strbldr.AppendLine("</tbody>");
                     strbldr.AppendLine("</table>");
+                }
+                if (IsPost && !IsXsrfProtected)
+                {
+                    strbldr.AppendLine("<span class=\"ErrorMessageBody\">Form submission exceeded XSRF protection timeout. Please resubmit by clicking Save. </span>");
                 }
 
                 // generate cancel, save, search, preview, and Save&Return buttons

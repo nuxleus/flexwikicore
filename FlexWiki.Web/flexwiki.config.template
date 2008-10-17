@@ -297,6 +297,15 @@
             
        If this key is blank or not present then these properties will not be added -->
   <ThreadedMessagingEditPermissions>role:WikiManagers</ThreadedMessagingEditPermissions>
+
+  <!-- The forms for WikiEdit and MessagePost that submit data for topics are protected
+         by a nonce and cookie combination that reduce the exposure via a Cross Site
+         Request Forgery (XSRF). This ensures that a submission of data only comes from
+         an approved browser request. The submission must happen within the time frame of the
+         cookie validity. Cookie validity is set toa default of 10 minutes for MessagePost and
+         15 minutes for WikiEdit.-->
+  <XsrfProtectionMessagePostTimeout>10</XsrfProtectionMessagePostTimeout>
+  <XsrfProtectionWikiEditTimeout>15</XsrfProtectionWikiEditTimeout>
   
   <!-- When set to true, a user can double-click a topic web page to go to the edit page. 
         When set to false, a user must click the Edit link to go to the edit page. Note that

@@ -45,6 +45,8 @@ namespace FlexWiki.Web
         private bool _enableNewParser = false;
         private bool _removeListItemWhitespace = false;
         private string _threadedMessagingEditPermissions;
+        private int _xsrfProtectionMessagePostTimeout = 10;
+        private int _xsrfProtectionWikiEditTimeout = 15;
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
@@ -196,6 +198,16 @@ namespace FlexWiki.Web
         {
             get { return _threadedMessagingEditPermissions; }
             set { _threadedMessagingEditPermissions = value; }
+        }
+        public int XsrfProtectionMessagePostTimeout
+        {
+            get { return _xsrfProtectionMessagePostTimeout; }
+            set { _xsrfProtectionMessagePostTimeout = value; }
+        }
+        public int XsrfProtectionWikiEditTimeout
+        {
+            get { return _xsrfProtectionWikiEditTimeout; }
+            set { _xsrfProtectionWikiEditTimeout = value; }
         }
         public bool EditOnDoubleClick
         {

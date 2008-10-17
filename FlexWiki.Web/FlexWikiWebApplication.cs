@@ -367,6 +367,8 @@ namespace FlexWiki.Web
             this["HatchStyleCAPTCHA"] = _applicationConfiguration.HatchStyleCAPTCHA;
             this["ObscuringLinesCAPTCHA"] = _applicationConfiguration.ObscuringLinesCAPTCHA;
             this["WarpModeCAPTCHA"] = _applicationConfiguration.WarpModeCAPTCHA;
+            this["XsrfProtectionMessagePostTimeout"] = _applicationConfiguration.XsrfProtectionMessagePostTimeout;
+            this["XsrfProtectionWikiEditTimeout"] = _applicationConfiguration.XsrfProtectionWikiEditTimeout;
 			if (_applicationConfiguration.AlternateStylesheets.Length > 0)
 			{
 				string[] titles = new string[_applicationConfiguration.AlternateStylesheets.Length+1];

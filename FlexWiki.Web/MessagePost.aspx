@@ -47,7 +47,7 @@
                 <asp:TextBox ID="MessageText" runat="server" Height="191px" Rows="15" TextMode="MultiLine"
                     Width="520px"></asp:TextBox>
                 <asp:CustomValidator ID="MsgBodyValCntl" runat="server" ControlToValidate="MessageText"
-                    EnableClientScript="False" ErrorMessage="The message has no text" ValidateEmptyText="True"></asp:CustomValidator></div>
+                    EnableClientScript="False" ErrorMessage="Form exceeded the XSRF timeout or the message has no text." ValidateEmptyText="True"></asp:CustomValidator></div>
             <div style="width: 320px; height: 26px; position: static;" class="UserInfo">
                 <asp:Label ID="UserLbl" runat="server" Text="User:" Width="66px"></asp:Label>
                 <asp:TextBox ID="UserText" runat="server" OnTextChanged="TextBox1_TextChanged" Width="320px"></asp:TextBox></div>
@@ -82,6 +82,8 @@
             <asp:Panel ID="Panel4" runat="server">
             <div id="Div1" class="MessageButtons" style="width: 241px; height: 60px;">
                 <br />
+                <asp:HiddenField ID="CookieId" runat="server" />
+                <asp:HiddenField ID="Nonce" runat="server" />
                 <asp:Button ID="CancelBtn" runat="server" Text="Cancel" />
                 <asp:Button ID="SaveBtn" Text="Save" CommandName="Save" runat="server" />
                 <asp:Button ID="PreviewPost" Text="PreviewPost" OnClientClick="javascript:previewPost()" runat="server" />
@@ -95,5 +97,6 @@
         </div>
     </form>
 	<%= BuildPageTwo() %>
+	
 	
         

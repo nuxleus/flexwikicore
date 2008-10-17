@@ -59,6 +59,16 @@ namespace FlexWiki.Web
             AuthenticationSection section = 
                 WebConfigurationManager.GetWebApplicationSection("system.web/authentication") as AuthenticationSection;
 
+            //clear the existing session id cookie when the user logs in to eliminate XSS vulnerability
+            if (!Page.User.Identity.IsAuthenticated)
+            {
+                if (Page.Request.Cookies["ASP.NET_SessionId"] != null)
+                {
+                    Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddYears(-30);
+                }
+                Session.Abandon();
+            }
+
             if (section != null)
             {
                 // If we're set up for Windows authentication, let the web server and the 
@@ -74,8 +84,9 @@ namespace FlexWiki.Web
                         // a 401 on every request that isn't authenticated. We do so by 
                         // setting this cookie, which is detected in Application_BeginRequest
                         Response.Clear();
-                        Response.Cookies.Add(
-                            new HttpCookie(FlexWikiWebApplication.ForceWindowsAuthenticationCookieName, "true")); 
+                        HttpCookie cookie = new HttpCookie(FlexWikiWebApplication.ForceWindowsAuthenticationCookieName, "true");
+                        cookie.HttpOnly = true;
+                        Response.Cookies.Add(cookie); 
                         Response.StatusCode = 401;
                         Response.StatusDescription = "Unauthorized";
                         Response.End();

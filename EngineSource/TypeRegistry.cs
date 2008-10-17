@@ -61,6 +61,10 @@ namespace FlexWiki
 		private void RegisterTypesFromAssembly(Assembly a)
 		{
 			IEnumerable types = null;
+            //if (a.FullName.StartsWith("System.Xml.Xsl.CompiledQuery"))
+            //{
+            //    return; //dynamic assembly that doesn't let you enum types
+            //}
 			try
 			{
 				types = a.GetExportedTypes();
