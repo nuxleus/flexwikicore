@@ -44,9 +44,14 @@ namespace FlexWiki.Web
         }
         internal static string Decrypt(byte[] ciphertext, byte[] masterKey)
         {
-            RC2CryptoServiceProvider alg = new RC2CryptoServiceProvider();
+            PasswordDeriveBytes cdk = new PasswordDeriveBytes(masterKey, new MD5CryptoServiceProvider().ComputeHash(masterKey));
+            byte[] key = cdk.GetBytes(32);
+            byte[] iv = cdk.GetBytes(16);
+
+            RijndaelManaged alg = new RijndaelManaged();
             alg.Mode = CipherMode.ECB;
-            alg.Key = masterKey;
+            alg.Key = key;
+            alg.IV = iv;
             MemoryStream media = new MemoryStream(ciphertext);
             CryptoStream cryptoStream = new CryptoStream(media, alg.CreateDecryptor(), CryptoStreamMode.Read);
             StreamReader reader = new StreamReader(cryptoStream, Encoding.UTF8);
@@ -56,9 +61,14 @@ namespace FlexWiki.Web
         }
         internal static byte[] Encrypt(string plaintext, byte[] masterKey)
         {
-            RC2CryptoServiceProvider alg = new RC2CryptoServiceProvider();
+            PasswordDeriveBytes cdk = new PasswordDeriveBytes(masterKey, new MD5CryptoServiceProvider().ComputeHash(masterKey));
+            byte[] key = cdk.GetBytes(32);
+            byte[] iv = cdk.GetBytes(16);
+
+            RijndaelManaged alg = new RijndaelManaged();
             alg.Mode = CipherMode.ECB;
-            alg.Key = masterKey;
+            alg.Key = key;
+            alg.IV = iv;
             MemoryStream media = new MemoryStream();
             CryptoStream cryptoStream = new CryptoStream(media, alg.CreateEncryptor(), CryptoStreamMode.Write);
             StreamWriter writer = new StreamWriter(cryptoStream, Encoding.UTF8);
@@ -72,9 +82,14 @@ namespace FlexWiki.Web
         }
         internal static byte[] Encrypt(byte[] plaintext, byte[] masterKey)
         {
-            RC2CryptoServiceProvider alg = new RC2CryptoServiceProvider();
+            PasswordDeriveBytes cdk = new PasswordDeriveBytes(masterKey, new MD5CryptoServiceProvider().ComputeHash(masterKey));
+            byte[] key = cdk.GetBytes(32);
+            byte[] iv = cdk.GetBytes(16);
+
+            RijndaelManaged alg = new RijndaelManaged();
             alg.Mode = CipherMode.ECB;
-            alg.Key = masterKey;
+            alg.Key = key;
+            alg.IV = iv;
             MemoryStream media = new MemoryStream();
             CryptoStream cryptoStream = new CryptoStream(media, alg.CreateEncryptor(), CryptoStreamMode.Write);
             cryptoStream.Write(plaintext, 0, plaintext.Length);

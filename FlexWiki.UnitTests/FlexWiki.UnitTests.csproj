@@ -142,6 +142,7 @@
     <Compile Include="QualifiedTopicRevisionTests.cs" />
     <Compile Include="Security\AuthorizationRules.cs" />
     <Compile Include="Security\AuthorizationTestContentSets.cs" />
+    <Compile Include="Security\CrytpographicSecurityTests.cs" />
     <Compile Include="Security\TestAnonymousIdentity.cs" />
     <Compile Include="Security\TestIdentity.cs" />
     <Compile Include="Security\TestSecurityContext.cs" />

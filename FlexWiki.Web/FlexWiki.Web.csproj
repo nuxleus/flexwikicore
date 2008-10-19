@@ -350,6 +350,7 @@
     <Content Include="wiki.css" />
     <Content Include="WikiDefault.js" />
     <Content Include="WikiEdit.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="WikiEdit.js" />
     <Content Include="WikiMenu.js" />
