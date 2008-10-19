@@ -306,6 +306,11 @@
          15 minutes for WikiEdit.-->
   <XsrfProtectionMessagePostTimeout>10</XsrfProtectionMessagePostTimeout>
   <XsrfProtectionWikiEditTimeout>15</XsrfProtectionWikiEditTimeout>
+
+  <!--   Ensusre the XsrfProtection Passphrases are populated with unique instances of a 
+          16-byte or 32-byte hexidecimal number (valid values are 0-9 and A-F) -->
+  <XsrfProtectionNoncePassphrase>0123456789ABCDEF0123456789ABCDEF</XsrfProtectionNoncePassphrase>
+  <XsrfProtectionCookiePassphrase>FEDCBA9876543210FEDCBA9876543210</XsrfProtectionCookiePassphrase>
   
   <!-- When set to true, a user can double-click a topic web page to go to the edit page. 
         When set to false, a user must click the Edit link to go to the edit page. Note that

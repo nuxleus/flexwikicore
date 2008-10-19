@@ -394,7 +394,11 @@ namespace FlexWiki.Web
                         if (!String.IsNullOrEmpty(cookieNonce))
                         {
                             string formNonce = Request.Form["Nonce"];
-                            return (String.Equals(formNonce, cookieNonce)); //return true if matches, otherwise fail
+                            string nonceKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionNoncePassphrase;
+                            string cookieKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionCookiePassphrase;
+                            string decryptNonce = FlexWiki.Web.Security.Decrypt(formNonce, nonceKey);
+                            string decryptCookie = FlexWiki.Web.Security.Decrypt(cookieNonce, cookieKey);
+                            return (String.Equals(decryptNonce, decryptCookie)); //return true if matches, otherwise fail
                         }
                         else
                         {
@@ -493,11 +497,15 @@ namespace FlexWiki.Web
                         Random rand = new Random();
                         string nonce = rand.Next().ToString();
                         string cookieId = Guid.NewGuid().ToString();
+                        string nonceKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionNoncePassphrase;
+                        string cookieKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionCookiePassphrase;
+                        string encryptedNonce = FlexWiki.Web.Security.Encrypt(nonce, nonceKey);
+                        string encryptedCookie = FlexWiki.Web.Security.Encrypt(nonce, cookieKey);
                         CookieId.Value = cookieId;
-                        Nonce.Value = nonce;
+                        Nonce.Value = encryptedNonce;
                         HttpCookie xsrf = new HttpCookie(cookieId);
                         xsrf.HttpOnly = true;
-                        xsrf.Value = nonce;
+                        xsrf.Value = encryptedCookie;
                         xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
                         Response.Cookies.Add(xsrf);
                     }
@@ -590,11 +598,15 @@ namespace FlexWiki.Web
                 Random rand = new Random();
                 string nonce = rand.Next().ToString();
                 string cookieId = Guid.NewGuid().ToString();
+                string nonceKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionNoncePassphrase;
+                string cookieKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionCookiePassphrase;
+                string encryptedNonce = FlexWiki.Web.Security.Encrypt(nonce, nonceKey);
+                string encryptedCookie = FlexWiki.Web.Security.Encrypt(nonce, cookieKey);
                 CookieId.Value = cookieId;
-                Nonce.Value = nonce;
+                Nonce.Value = encryptedNonce;
                 HttpCookie xsrf = new HttpCookie(cookieId);
                 xsrf.HttpOnly = true;
-                xsrf.Value = nonce;
+                xsrf.Value = encryptedCookie;
                 xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
                 Response.Cookies.Add(xsrf);
 
@@ -782,11 +794,15 @@ namespace FlexWiki.Web
                     Random rand = new Random();
                     string nonce = rand.Next().ToString();
                     string cookieId = Guid.NewGuid().ToString();
+                    string nonceKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionNoncePassphrase;
+                    string cookieKey = FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionCookiePassphrase;
+                    string encryptedNonce = FlexWiki.Web.Security.Encrypt(nonce, nonceKey);
+                    string encryptedCookie = FlexWiki.Web.Security.Encrypt(nonce, cookieKey);
                     CookieId.Value = cookieId;
-                    Nonce.Value = nonce;
+                    Nonce.Value = encryptedNonce;
                     HttpCookie xsrf = new HttpCookie(cookieId);
                     xsrf.HttpOnly = true;
-                    xsrf.Value = nonce;
+                    xsrf.Value = encryptedCookie;
                     xsrf.Expires = DateTime.Now.AddMinutes(FlexWikiWebApplication.ApplicationConfiguration.XsrfProtectionWikiEditTimeout);
                     Response.Cookies.Add(xsrf);
 

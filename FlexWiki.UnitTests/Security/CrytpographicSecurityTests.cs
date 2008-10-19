@@ -24,6 +24,18 @@ namespace FlexWiki.UnitTests.Security
             Assert.AreEqual(decryptedVal, testCode, "Ensure decrypted value is equal to original value");
 
         }
+        [Test]
+        public void EncryptAndDecryptLargeKey()
+        {
+            string testKey = "0123456789ABCDEFFEDCBA0123456789";
+            string testCode = "98765";
+            string encryptedVal = FlexWiki.Web.Security.Encrypt(testCode, testKey);
+            Assert.AreEqual(32, encryptedVal.Length, "Ensure the cypher text returned by Encrypt is 32 bytes in length.");
+            Assert.AreEqual("EDAB4DB31F6F18F65D16B2B55A8A87B2", encryptedVal, "Ensure encrypted value is equal to the specified cyphertext");
+            string decryptedVal = FlexWiki.Web.Security.Decrypt(encryptedVal, testKey);
+            Assert.AreEqual(decryptedVal, testCode, "Ensure decrypted value is equal to original value");
+
+        }
 
     }
 }

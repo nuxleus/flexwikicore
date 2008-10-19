@@ -47,6 +47,8 @@ namespace FlexWiki.Web
         private string _threadedMessagingEditPermissions;
         private int _xsrfProtectionMessagePostTimeout = 10;
         private int _xsrfProtectionWikiEditTimeout = 15;
+        private string _xsrfProtectionNoncePassphrase = "0123456789FEDCBA";
+        private string _xsrfProtectionCookiePassphrase = "FEDCBA0123456789";
         private bool _editOnDoubleClick = true;    // Required for legacy support - new properties should default to false
         private FederationConfiguration _federationConfiguration;
         private string _logPath;
@@ -208,6 +210,16 @@ namespace FlexWiki.Web
         {
             get { return _xsrfProtectionWikiEditTimeout; }
             set { _xsrfProtectionWikiEditTimeout = value; }
+        }
+        public string XsrfProtectionNoncePassphrase
+        {
+            get { return _xsrfProtectionNoncePassphrase; }
+            set { _xsrfProtectionNoncePassphrase = value; }
+        }
+        public string XsrfProtectionCookiePassphrase
+        {
+            get { return _xsrfProtectionCookiePassphrase; }
+            set { _xsrfProtectionCookiePassphrase = value; }
         }
         public bool EditOnDoubleClick
         {
