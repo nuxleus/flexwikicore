@@ -49,11 +49,15 @@ namespace FlexWiki
 		[ExposedMethod(ExposedMethodFlags.NeedContext, "Answer an instance of a DateTime")]
 		public static DateTime InstanceFromString(ExecutionContext ctx, string s)
 		{
-			DateTime answer = DateTime.MinValue;
-			answer = DateTime.Parse(s);
-			return answer;
-		}
-
+            return InstanceFromString2(s);
+        }
+        public static DateTime InstanceFromString2(string s)
+        {
+            DateTime answer = DateTime.MinValue;
+            //answer = DateTime.Parse(s);
+            bool test = DateTime.TryParse(s, out answer);
+            return answer;
+        }
 		[ExposedMethod(ExposedMethodFlags.NeedContext, "Answer an instance of a DateTime")]
 		public static DateTime Instance(ExecutionContext ctx, int year, int month, int day, 
 			[ExposedParameter(true)] int hour, [ExposedParameter(true)] int minute, 

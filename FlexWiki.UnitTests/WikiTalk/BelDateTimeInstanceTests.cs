@@ -44,5 +44,31 @@ namespace FlexWiki.UnitTests.WikiTalk
                 expectedDateTime.Hour, expectedDateTime.Minute, expectedDateTime.Second, expectedDateTime.Millisecond);
             Assert.AreEqual(expectedDateTime, resultDateTime, "Checking that the resulting DateTime is the same as DateTime.MaxValue.");
         }
+        [Test]
+        public void DateTimeInstanceFromString()
+        {
+            DateTime expectedDateTime = new DateTime(2008, 10, 25, 0, 0, 0);
+            DateTime resultDateTime = BELDateTime.InstanceFromString2("2008-10-25");
+            Assert.AreEqual(expectedDateTime, resultDateTime, "1. Checking that the resulting DateTime is 25-Oct-2008");
+
+            resultDateTime = BELDateTime.InstanceFromString2("10/25/2008");
+            Assert.AreEqual(expectedDateTime, resultDateTime, "2. Checking that the resulting DateTime is 25-Oct-2008");
+            resultDateTime = BELDateTime.InstanceFromString2("25-Oct-2008");
+            Assert.AreEqual(expectedDateTime, resultDateTime, "3. Checking that the resulting DateTime is 25-Oct-2008");
+            resultDateTime = BELDateTime.InstanceFromString2("2008-Oct-25");
+            Assert.AreEqual(expectedDateTime, resultDateTime, "4. Checking that the resulting DateTime is 25-Oct-2008");
+            resultDateTime = BELDateTime.InstanceFromString2("Oct 25, 2008");
+            Assert.AreEqual(expectedDateTime, resultDateTime, "5. Checking that the resulting DateTime is 25-Oct-2008");
+
+            resultDateTime = BELDateTime.InstanceFromString2("25-10-2008");
+            Assert.AreNotEqual(expectedDateTime, resultDateTime, "10. Checking that the resulting DateTime is not 25-Oct-2008");
+            resultDateTime = BELDateTime.InstanceFromString2("25/10/2008");
+            Assert.AreNotEqual(expectedDateTime, resultDateTime, "11. Checking that the resulting DateTime is 25-Oct-2008");
+
+            expectedDateTime = new DateTime(2008, 10, 25, 13, 45, 55);
+            resultDateTime = BELDateTime.InstanceFromString2("10/25/2008 1:45:55 PM");
+            Assert.AreEqual(expectedDateTime, resultDateTime, "20. Checking that the resulting DateTime is 25-Oct-2008 13:45:55");
+
+        }
     }
 }
