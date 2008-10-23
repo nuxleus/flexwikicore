@@ -98,8 +98,8 @@ namespace FlexWiki.Web
                     feedInit = true;
                 }
                 string entryUUID = storeManager.GetTopicProperty(entryTopicName, "EntryUUID").LastValue;
-                string entryLink = BaseUrl + lm.LinkToTopic(entryTopicName);
                 QualifiedTopicRevision entryTopicRev = new QualifiedTopicRevision(entryTopicName, storeManager.Namespace);
+                string entryLink = BaseUrl + lm.LinkToTopic(entryTopicRev);
 
                 string body = storeManager.GetTopicInfo(entryTopicName).GetProperty("_Body").ToString();
                 WomDocument xmldoc = _parser.ProcessText(body, entryTopicRev, storeManager, true, 600);
