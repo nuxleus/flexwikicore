@@ -85,7 +85,7 @@ namespace FlexWiki.Web
                 if (!feedInit)
                 {
                     feed.AppendFormat(@"<title>{0}</title>", feedTitle);
-                    feed.AppendFormat(@"<link href=""{0}"" />", feedLink);
+                    feed.AppendFormat(@"<link href=""{0}"" rel=""self"" type=""application/atom+xml"" />", feedLink);
                     feed.AppendFormat(@"<updated>{0:s}Z</updated>", lastModified);
                     feed.AppendLine(@"<author>");
                     feed.AppendFormat(@"<name>{0}</name>", author);
@@ -111,8 +111,8 @@ namespace FlexWiki.Web
                 feed.AppendFormat(@"<link href=""{0}"" />", entryLink);
                 feed.AppendFormat(@"<id>urn:uuid:{0}</id>", entryUUID);
                 feed.AppendFormat(@"<updated>{0:s}Z</updated>", lastModified);
-                feed.AppendLine(@"<content>");
-                //feed.AppendLine(@"<content type=""html"">");
+                //feed.AppendLine(@"<content>");
+                feed.AppendLine(@"<content type=""xhtml"">");
                 feed.AppendLine(@"<div xmlns=""http://www.w3.org/1999/xhtml"">");
                 feed.Append(entryContent);
                 feed.AppendLine("</div>");
