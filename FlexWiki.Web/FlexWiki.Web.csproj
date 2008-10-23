@@ -155,6 +155,9 @@
     <Content Include="admin\womStyledText.xml" />
     <Content Include="admin\womTableStyle.xml" />
     <Content Include="admin\womText.xml" />
+    <Content Include="AtomFeed.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Blade.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -261,6 +264,9 @@
     <Compile Include="Analysis\Island.cs" />
     <Compile Include="Analysis\Ocean.cs" />
     <Compile Include="AspNetWikiCache.cs" />
+    <Compile Include="AtomFeed.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="AttachmentIconConfiguration.cs" />
     <Compile Include="BaseHttpHandler.cs" />
     <Compile Include="CachedRenderCallback.cs" />
@@ -315,6 +321,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Print.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="QuickLink.aspx">
       <SubType>ASPXCodeBehind</SubType>

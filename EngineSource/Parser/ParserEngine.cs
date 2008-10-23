@@ -554,7 +554,7 @@ namespace FlexWiki.Formatting
             //_stopwatch.Stop();
             if (chunkcnt > 1)
             {
-                _mgr.SetProcessTextSize(topic.AsUnqualifiedTopicRevision(), chunk * chunkcnt);
+                mgr.SetProcessTextSize(topic.AsUnqualifiedTopicRevision(), chunk * chunkcnt);
             }
             
             return _womDocument;

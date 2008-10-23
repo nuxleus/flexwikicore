@@ -47,7 +47,14 @@ namespace FlexWiki
 		{
 			return new ErrorMessage(title, body);
 		}
-
+        [ExposedMethod(ExposedMethodFlags.Default, "Create GUID for pasting into a property - should be implemented on a form")]
+        public string Guid
+        {
+            get
+            {
+                return System.Guid.NewGuid().ToString();
+            }
+        }
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer a newline")]
 		public string Newline
 		{

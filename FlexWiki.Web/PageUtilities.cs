@@ -23,6 +23,16 @@ namespace FlexWiki.Web
     public static class PageUtilities
     {
 		public const string DefaultStylesheet = "Site Default";
+
+        public static string BaseUrl
+        {
+            //a link string inlcuding the web protocol and server information
+            get
+            {
+                string url = HttpContext.Current.Request.Url.AbsoluteUri;
+                return url.Substring(0, url.IndexOf(RootUrl));
+            }
+        }
         public static string RootUrl
         {
             get

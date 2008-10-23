@@ -257,6 +257,14 @@ namespace FlexWiki.Web
                     headbldr.AppendFormat("<script language=\"javascript\" src=\"{0}{1}\" type=\"text/javascript\"></script>\r\n", RootUrl,
                         FlexWikiWebApplication.ApplicationConfiguration.LocalJavascript);
                 }
+                if (manager.GetTopicInfo(topic.LocalName).HasProperty("CreateAtomFeedLink"))
+                {
+                    if (manager.GetTopicProperty(topic.LocalName, "CreateAtomFeedLink").LastValue.ToLower() == "true")
+                    {
+                        string atomLink = BaseUrl + RootUrl + "AtomFeed.aspx/" + topic.DottedName;
+                        headbldr.AppendLine(@"<link rel=""alternate"" type=""application/atom+xml"" title=""" + topic.FormattedName + @""" href=""" + atomLink + @""" />");
+                    }
+                }
                 headbldr.AppendLine("<script type=\"text/javascript\">");
                 headbldr.AppendLine("function showChanges()");
                 headbldr.AppendLine("{");

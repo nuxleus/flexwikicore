@@ -43,6 +43,7 @@ namespace FlexWiki.Web
         private UIResponse _uiResponse;
         private string _userPrefix;
 
+
         protected bool _metaTags = false;
         protected bool _javaScript = false;
         protected bool _incTopBorder = false;
@@ -76,6 +77,13 @@ namespace FlexWiki.Web
                 HttpContext.Current.Request.Url.ToString(),
                 UserId(),
                 id);
+        }
+        protected string BaseUrl
+        {
+            get
+            {
+                return PageUtilities.BaseUrl;
+            }
         }
         /// <summary>
         /// Returns the URL suitable for composition with FlexWiki web pages to create
