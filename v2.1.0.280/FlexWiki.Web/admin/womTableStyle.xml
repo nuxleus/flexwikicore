@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Context>
+  <Rule Name="womTableStyle">
+    <Rules>
+      <!-- Optimized to remove unnecessary characters -->
+      <Rule Name="StyleHexColor" Pattern="\*\#[0-9a-fA-F]{6}\*|\*\#[0-9a-fA-F]{3}\*" />
+
+
+      <!-- todo:Need to optimize to remove unnecessary characters  and include in xslt-->
+      <!-- <Rule Name="StyleColorWhite" Pattern="\*white\*" />   Consider conversion to hex values in womDocument output2-->
+      <!-- or do it as below   -->
+      <Rule Name="CellStyleColor" Pattern="\*white\*|\*black\*|\*red\*|\*green\*|\*blue\*|\*gray\*|\*violet\*|\*orange\*|\*purple\*|\*yellow\*|\*silver\*|\*maroon\*|\*navy\*|\*lightred\*|\*lightgreen\*|\*lightblue\*|\*lightgrey\*|\*lightviolet\*|\*lightorange\*|\*lightpurple\*|\*lightyellow\*|\*lemonchiffon\*|\*royalblue\*|\*darkslateblue\*|\*mediumblue\*" Optimization="" Elements="" />
+
+      <Rule Name="StyleHexTextColor" Pattern="%\#[0-9a-fA-F]{6}%|%\#[0-9a-fA-F]{3}%" />
+      <Rule Name="CellTextColor" Pattern="%white%|%black%|%red%|%green%|%blue%|%gray%|%violet%|%orange%|%purple%|%yellow%|%silver%|%maroon%|%navy%" />
+
+      <!-- todo:Need to optimize to remove unnecessary characters  and include in xslt-->
+      <Rule Name="BorderlessTable" Pattern="T-" Optimization="" Elements="" />
+      <Rule Name="TableCenter" Pattern="T\^" Optimization="" Elements="" />
+      <Rule Name="TableFloatLeft" Pattern="T\[" Optimization="" Elements="" />
+      <Rule Name="TableFloatRight" Pattern="T]" Optimization="" Elements="" />
+      <Rule Name="TableWidth" Pattern="TW[0-9]{1,2}" Optimization="" Elements="" />
+      <Rule Name="RowSpan" Pattern="R[0-9]{1,2}" Optimization="" Elements="" />
+      <Rule Name="ColumnSpan" Pattern="C[0-9]{1,2}" Optimization="" Elements="" />
+      <Rule Name="ColumnCenter" Pattern="\^" Optimization="" Elements="" />
+      <Rule Name="ColumnLeft" Pattern="\[" Optimization="" Elements="" />
+      <Rule Name="ColumnRight" Pattern="]" Optimization="" Elements="" />
+      <Rule Name="CellHighlight" Pattern="!" Optimization="" Elements="" />
+      <Rule Name="CellWidth" Pattern="W[0-9]{1,2}" Optimization="" Elements="" />
+      <Rule Name="CellNoWrap" Pattern="\+" Optimization="" Elements="" />
+      <Rule Name="VerticalAlign" Pattern="V[tmbl]{1}" />
+      <!-- This eliminates the call to TableCellInfo.cs   -->
+      <Rule Name="TableStyleError" Pattern=".+" Optimization="" Elements="" />
+    </Rules>
+  </Rule>
+</Context>
