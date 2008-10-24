@@ -123,7 +123,7 @@ namespace FlexWiki.Web
                 feed.AppendLine("</content>");
                 if (storeManager.GetTopicInfo(entryTopicName).HasProperty("Keywords"))
                 {
-                    ArrayList keywordsList = storeManager.GetTopicInfo(topic.LocalName).KeywordsList;
+                    ArrayList keywordsList = storeManager.GetTopicInfo(entryTopicName).KeywordsList;
                     foreach (string keyword in keywordsList)
                     {
                         feed.AppendFormat(@"<category term=""{0}"" />", keyword);
