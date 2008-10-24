@@ -62,6 +62,8 @@ namespace FlexWiki.Web
             string feedTitle = storeManager.GetTopicProperty(topic.LocalName, "Title").LastValue;
             string feedLink = BaseUrl + lm.LinkToTopic(topic);
             string feedUUID = storeManager.GetTopicProperty(topic.LocalName, "FeedUUID").LastValue;
+            string feedLogo = storeManager.GetTopicProperty(topic.LocalName, "FeedLogo").LastValue;
+            string feedIcon = storeManager.GetTopicProperty(topic.LocalName, "FeedIcon").LastValue;
             string blogCategory = storeManager.GetTopicProperty(topic.LocalName, "BlogCategory").LastValue;
             ArrayList entryList = storeManager.GetTopicInfo(topic.LocalName).GetListProperty("BlogTopics");
 
@@ -87,6 +89,8 @@ namespace FlexWiki.Web
                     feed.AppendFormat(@"<title>{0}</title>", feedTitle);
                     feed.AppendFormat(@"<link href=""{0}"" rel=""self"" type=""application/atom+xml"" />", feedLink);
                     feed.AppendFormat(@"<updated>{0:s}Z</updated>", lastModified);
+                    feed.AppendFormat(@"<icon>{0}</icon>", feedIcon);
+                    feed.AppendFormat(@"<logo>{0}</logo>", feedLogo);
                     feed.AppendLine(@"<author>");
                     feed.AppendFormat(@"<name>{0}</name>", author);
                     feed.AppendLine(@"</author>");
@@ -117,6 +121,14 @@ namespace FlexWiki.Web
                 feed.Append(entryContent);
                 feed.AppendLine("</div>");
                 feed.AppendLine("</content>");
+                if (storeManager.GetTopicInfo(entryTopicName).HasProperty("Keywords"))
+                {
+                    ArrayList keywordsList = storeManager.GetTopicInfo(topic.LocalName).KeywordsList;
+                    foreach (string keyword in keywordsList)
+                    {
+                        feed.AppendFormat(@"<category term=""{0}"" />", keyword);
+                    }
+                }
                 feed.AppendLine("</entry>");
 
             }
