@@ -937,9 +937,13 @@
       <xsl:attribute name="name">
         <xsl:value-of select="Name"/>
       </xsl:attribute>
-      <xsl:attribute name="id">
-        <xsl:value-of select="Name"/>
-      </xsl:attribute>
+      <xsl:if test="Attribute">
+        <xsl:if test="Attribute/AttributeName">
+          <xsl:attribute name="{Attribute/AttributeName}">
+            <xsl:value-of select="Attribute/AttributeValue"/>
+          </xsl:attribute>
+        </xsl:if>
+      </xsl:if>
       <xsl:attribute name="value">
         <xsl:value-of select="Value"/>
       </xsl:attribute>

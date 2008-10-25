@@ -269,8 +269,8 @@ namespace FlexWiki.Formatting
             _behaviorTopic = topic;
 
             //Normally get data from the cache, but when debugging Womdocument need to avoid using cached data
-            //string wom = _mgr.GetTopicProperty(topic.AsUnqualifiedTopicRevision(), "_Wom").LastValue;
-            string wom = "";
+            string wom = _mgr.GetTopicProperty(topic.AsUnqualifiedTopicRevision(), "_Wom").LastValue;
+            //string wom = "";
 
             if (!String.IsNullOrEmpty(wom))
             {
@@ -309,8 +309,8 @@ namespace FlexWiki.Formatting
                         WomDocument xmldoc = ProcessText(wikitext, topic, _mgr, false, size);
                         string womdoc = xmldoc.ParsedDocument;
                         _mgr.SetWomCache(topic.AsUnqualifiedTopicRevision(), womdoc);
-                        womdoc = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
-                        xmldoc.ParsedDocument = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
+                        string firstPass = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
+                        xmldoc.ParsedDocument = findWikiBehavior.Replace(firstPass, new MatchEvaluator(wikiBehaviorMatch));
                         
                         _behaviorTopic = null;
 
@@ -334,7 +334,57 @@ namespace FlexWiki.Formatting
             _processBehaviorToText = false;
             return interpreted;
         }
+        //this is where fragments are prepped for parsing
+        public WomDocument FormatTextFragment(string wikiInput, QualifiedTopicRevision topic, NamespaceManager mgr, bool fragment, int sizeIn)
+        {
+            WomDocument xmldoc = new WomDocument(null);
+            string wikitext = "";
+            _mgr = mgr;
+            _topic = topic;
+            WomDocument.ResetTableOfContents();
+            WomDocument.anchors = new string[25];
+            _processBehaviorToText = true;
+            _behaviorTopic = topic;
 
+            wikitext = escape(wikiInput);
+            int size = 0;
+            bool done = false;
+            while (!done)
+            {
+                try
+                {
+                    string tempsize = _mgr.GetTopicProperty(topic.AsUnqualifiedTopicRevision(), "_ProcessTextSize").LastValue;
+                    Int32.TryParse(tempsize, out size);
+                    if (size == 0)
+                    {
+                        size = sizeIn;
+                    }
+                    xmldoc = ProcessText(wikitext, topic, _mgr, fragment, size);
+                    string womdoc = xmldoc.ParsedDocument;
+                    string firstPass = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
+                    xmldoc.ParsedDocument = findWikiBehavior.Replace(firstPass, new MatchEvaluator(wikiBehaviorMatch));
+
+                    _behaviorTopic = null;
+
+                    if (findIncludedTopic.IsMatch(xmldoc.ParsedDocument))
+                    {
+                        string included = xmldoc.ParsedDocument;
+                        included = findIncludedTopic.Replace(included, new MatchEvaluator(wikiIncludedTopic));
+                        xmldoc.ParsedDocument = included;
+                    }
+                    done = true;
+                    //interpreted = xmldoc.ParsedDocument;
+                    //xmldoc = null;
+                }
+                catch (XmlException ex)
+                {
+                    _mgr.SetProcessTextSize(topic.AsUnqualifiedTopicRevision(), size * (chunkcnt + 1));
+                    string error = "<Error>" + ex.ToString() + "</Error>";
+                    xmldoc.ParsedDocument = error;
+                }
+            }
+            return xmldoc;
+        }
         //this is the main body where the real parsing work is done < 30 lines of code
         public WomDocument ProcessText(string wikiInput, QualifiedTopicRevision topic, NamespaceManager mgr, bool fragment, int size)
         {
@@ -597,6 +647,8 @@ namespace FlexWiki.Formatting
             string replacement = match.ToString();
             string linestart = match.Groups["LineStart"].Value;
             string lineend = match.Groups["LineEnd"].Value;
+            string expr = match.Groups["Behavior"].Value;
+            match = null;
 
             bool doBehavior = false;
             if (insideTable.IsMatch(linestart))
@@ -610,7 +662,6 @@ namespace FlexWiki.Formatting
 
             if (doBehavior)
             {
-                string expr = match.Groups["Behavior"].Value;
                 TopicContext tc = new TopicContext(_fed, _mgr, new TopicVersionInfo(_fed, _behaviorTopic));
                 BehaviorInterpreter interpreter = new BehaviorInterpreter(_behaviorTopic == null ? "" : _behaviorTopic.DottedName, expr, _fed, _fed.WikiTalkVersion, this);
                 if (!interpreter.Parse())

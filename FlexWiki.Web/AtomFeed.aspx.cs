@@ -67,7 +67,8 @@ namespace FlexWiki.Web
             string blogCategory = storeManager.GetTopicProperty(topic.LocalName, "BlogCategory").LastValue;
             ArrayList entryList = storeManager.GetTopicInfo(topic.LocalName).GetListProperty("BlogTopics");
 
-            ParserEngine _parser = storeManager.Federation.Parser;
+            ParserEngine _parser = new ParserEngine(storeManager.Federation);
+            //_parser = storeManager.Federation.Parser;
 
             foreach (string entryTopicName in entryList)
             {
@@ -106,8 +107,9 @@ namespace FlexWiki.Web
                 string entryLink = BaseUrl + lm.LinkToTopic(entryTopicRev);
 
                 string body = storeManager.GetTopicInfo(entryTopicName).GetProperty("_Body").ToString();
-                WomDocument xmldoc = _parser.ProcessText(body, entryTopicRev, storeManager, true, 600);
-                xmldoc.ParsedDocument = @"<div><div>" + xmldoc.ParsedDocument + "</div></div>";
+                WomDocument xmldoc = new WomDocument(null);
+                xmldoc = _parser.FormatTextFragment(body, entryTopicRev, storeManager, true, 600);
+                xmldoc.ParsedDocument = @"<div id=""womDocRoot"">" + xmldoc.ParsedDocument + "</div>";
                 string entryContent = _parser.WikiToPresentation(xmldoc.XmlDoc);
                 //string entryContent = Formatter.FormattedTopic(entryTopicRev, OutputFormat.HTML, null, storeManager.Federation, lm);
                 feed.AppendLine(@"<entry>");

@@ -29,7 +29,7 @@ namespace FlexWiki.Formatting
         private Random _rn;
         private string _defaultns;
 
-        private static string womElementStart = @"(?<StartElement>(<Para>|<SinglelineProperty>|<MultilineProperty>|<WikiTalkMethod>|<WikiForm>|<PreformattedSingleLine>|<AltPreformattedSinglelineProperty>|<ExtendedCode>|<PreformattedMultiline>|<PreformattedMultilineKeyed>|<list |<womCell>|<womMultilineCell>|<Header ))";
+        private static string womElementStart = @"(?<StartElement>(<Para>|<SinglelineProperty>|<MultilineProperty>|<WikiTalkMethod>|<WikiForm>|<FormHiddenField>|<PreformattedSingleLine>|<AltPreformattedSinglelineProperty>|<ExtendedCode>|<PreformattedMultiline>|<PreformattedMultilineKeyed>|<list |<womCell>|<womMultilineCell>|<Header ))";
         private static Regex womElementStartRegex = new Regex(womElementStart, RegexOptions.Compiled);
 
         private static string textileRegexString = @"('''[^']+''')|(''[^']+'')|(\?\?[^\?]+(?<! )\?\?)|( @[^@]+(?<! )@ )|((?<= )-(?! )[^-]+(?<! )-)|((?<= )_(?! )[^_]+(?<! )_(?= ))|(``(?! )[^`]+(?<! )``)|((?<= )\+(?! )[^\+]+(?<! )\+)|((?<= )~(?! )[^~]+(?<! )~)|((?<= )\^(?! )[^\^]+(?<! )\^)|(\*(?! )[^\*\r\n]+\*)";
@@ -382,7 +382,7 @@ namespace FlexWiki.Formatting
                 {
                     if (_lastWom.Contains("PreformattedSingleLine"))
                     {
-                        WriteWom("<Para>");
+                        WriteWom("\r\n<Para>");
                         //womElement = "Para";
                     }
                     else
@@ -393,7 +393,7 @@ namespace FlexWiki.Formatting
                         }
                         else
                         {
-                            WriteWom("<Para>");
+                            WriteWom("\r\n<Para>");
                         }
                     }
                 }

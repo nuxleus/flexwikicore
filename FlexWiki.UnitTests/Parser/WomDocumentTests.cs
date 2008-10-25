@@ -228,11 +228,13 @@ It is on multiple lines.
             test = test.Replace("        ", "\t");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <list type=""unordered""><item>
 <womListText> List item 1</womListText></item>
 <item>
 <womListText> List item 2</womListText></item></list>
+
 <Para><paraText>\r\n</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -255,7 +257,8 @@ This is some other text after the list.
             test = test.Replace("        ", "\t");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <list type=""unordered""><item>
 <womListText> List item 1</womListText></item>
 <item>
@@ -274,7 +277,9 @@ This is some other text after the list.
 <womListText> List item 3</womListText><list type=""unordered""><item>
 <womListText> New List 2 item 1</womListText></item></list>
 </item></list>
+
 <Para><paraText>This is some other text after the list.</paraText></Para>
+
 <Para><paraText>\r\n</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -289,11 +294,13 @@ This is some other text after the list.
             test = test.Replace("        ", "\t");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <list type=""ordered""><item>
 <womListText> List item 1</womListText></item>
 <item>
 <womListText> List item 2</womListText></item></list>
+
 <Para><paraText>\r\n</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -316,7 +323,8 @@ This is some other text after the list.
             test = test.Replace("        ", "\t");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <list type=""ordered""><item>
 <womListText> List item 1</womListText></item>
 <item>
@@ -335,7 +343,9 @@ This is some other text after the list.
 <womListText> List item 3</womListText><list type=""ordered""><item>
 <womListText> New List 2 item 1</womListText></item></list>
 </item></list>
+
 <Para><paraText>This is some other text after the list.</paraText></Para>
+
 <Para><paraText>\r\n</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -358,7 +368,8 @@ This is some other text after the list.
             test = test.Replace("        ", "\t");
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <list type=""ordered""><item>
 <womListText> List item 1</womListText></item>
 <item>
@@ -377,7 +388,9 @@ This is some other text after the list.
 <womListText> List item 3</womListText><list type=""ordered""><item>
 <womListText> New List 2 item 1</womListText></item></list>
 </item></list>
+
 <Para><paraText>This is some other text after the list.</paraText></Para>
+
 <Para><paraText>\r\n</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -391,9 +404,11 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <Header level=""1"">
-<womHeaderText> Header One text</womHeaderText><AnchorText>_1__Header_One_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>"));
+<womHeaderText> Header One text</womHeaderText><AnchorText>_1__Header_One_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -412,13 +427,17 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <Header level=""2"">
-<womHeaderText> Header Two text</womHeaderText><AnchorText>_1__Header_Two_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>
+<womHeaderText> Header Two text</womHeaderText><AnchorText>_1__Header_Two_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>
 <Header level=""3"">
-<womHeaderText> Header Three text</womHeaderText><AnchorText>_2__Header_Three_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>
+<womHeaderText> Header Three text</womHeaderText><AnchorText>_2__Header_Three_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>
 <Header level=""5"">
-<womHeaderText> Header Five text</womHeaderText><AnchorText>_3__Header_Five_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>"));
+<womHeaderText> Header Five text</womHeaderText><AnchorText>_3__Header_Five_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -437,13 +456,17 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <Header level=""4"">
-<womHeaderText> Header Four text</womHeaderText><AnchorText>_1__Header_Four_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>
+<womHeaderText> Header Four text</womHeaderText><AnchorText>_1__Header_Four_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>
 <Header level=""6"">
-<womHeaderText> Header Six text</womHeaderText><AnchorText>_2__Header_Six_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>
+<womHeaderText> Header Six text</womHeaderText><AnchorText>_2__Header_Six_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>
 <Header level=""7"">
-<womHeaderText> Header Seven text</womHeaderText><AnchorText>_3__Header_Seven_text</AnchorText></Header><Para><paraText>Here is some more text.</paraText></Para>"));
+<womHeaderText> Header Seven text</womHeaderText><AnchorText>_3__Header_Seven_text</AnchorText></Header>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -477,22 +500,39 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><HttpImageDisplayJpg>http://www.flexwiki.com/fwlogo.jpg</HttpImageDisplayJpg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpImageDisplayGif>http://io9.com/test.gif</HttpImageDisplayGif></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpImageDisplayJpeg>http://127.0.0.1/mypic.jpeg</HttpImageDisplayJpeg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpImageDisplayPng>http://www.example.com:8080/my_graphic.png</HttpImageDisplayPng></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpsImageDisplayJpg>https://www.flexwiki.com/somedir/fwlogo.jpg</HttpsImageDisplayJpg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpsImageDisplayGif>https://io9.com/first/second/third/fourth/fifth/sixth/test.gif</HttpsImageDisplayGif></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpsImageDisplayJpeg>https://127.0.0.1/mypic.jpeg</HttpsImageDisplayJpeg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><HttpsImageDisplayPng>https://www.example.com/mygraphic.png</HttpsImageDisplayPng></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -527,22 +567,39 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><FreeLinkToHttpImageDisplayJpg><HttpImageDisplayJpg>http://www.flexwiki.com/fwlogo.jpg</HttpImageDisplayJpg><WebLink>https://www.flexwiki.com</WebLink></FreeLinkToHttpImageDisplayJpg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpImageDisplayGif><HttpImageDisplayGif>http://io9.com/test.gif</HttpImageDisplayGif><WebLink>http://io9.com</WebLink></FreeLinkToHttpImageDisplayGif></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpImageDisplayJpeg><HttpImageDisplayJpeg>http://127.0.0.1/mypic.jpeg</HttpImageDisplayJpeg><WebLink>http://localhost/webpage.html</WebLink></FreeLinkToHttpImageDisplayJpeg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpImageDisplayPng><HttpImageDisplayPng>http://www.example.com:8080/my_graphic.png</HttpImageDisplayPng><WebLink>http://www.example.com:8080/</WebLink></FreeLinkToHttpImageDisplayPng></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpsImageDisplayJpg><HttpsImageDisplayJpg>https://www.flexwiki.com/somedir/fwlogo.jpg</HttpsImageDisplayJpg><WebLink>https://www.flexwiki.com</WebLink></FreeLinkToHttpsImageDisplayJpg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpsImageDisplayGif><HttpsImageDisplayGif>https://io9.com/first/second/third/fourth/fifth/sixth/test.gif</HttpsImageDisplayGif><WebLink>https://io9.com/first/second/third/fourth/fifth/sixth/test.gif</WebLink></FreeLinkToHttpsImageDisplayGif></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpsImageDisplayJpeg><HttpsImageDisplayJpeg>https://127.0.0.1/mypic.jpeg</HttpsImageDisplayJpeg><WebLink>http://localhost/mypic.png</WebLink></FreeLinkToHttpsImageDisplayJpeg></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><FreeLinkToHttpsImageDisplayPng><HttpsImageDisplayPng>https://www.example.com/mygraphic.png</HttpsImageDisplayPng><WebLink>http://www.example.com/text.htm</WebLink></FreeLinkToHttpsImageDisplayPng></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -559,10 +616,15 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><CreateNewTopic><Topic>GoodTopic</Topic><Namespace>NamespaceOne</Namespace></CreateNewTopic></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>
+
 <Para><CreateNewTopic><Topic>AnotherGoodTopic</Topic><Namespace>NamespaceOne</Namespace><DisplayText>Anchor Display Text</DisplayText></CreateNewTopic></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -579,8 +641,11 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line contains a link to a </paraText><TopicExists><Namespace>NamespaceOne</Namespace><Topic>HomePage</Topic><TipId>id1</TipId><DisplayText>HomePage</DisplayText><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExists><paraText> in it</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -597,9 +662,13 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line contains a link to a </paraText><CreateNewTopic><StartsWithOneCap>BadTopic</StartsWithOneCap><Namespace>NamespaceOne</Namespace></CreateNewTopic><paraText> in it</paraText></Para>
+
 <Para><paraText>Here is some more text with a link </paraText><CreateNewTopic><StartsWithMulticaps>MULTIcapsBadTopic</StartsWithMulticaps><Namespace>NamespaceOne</Namespace></CreateNewTopic><paraText> in the line</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -618,12 +687,16 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line contains a link to a </paraText><NamespaceTopicExists><Namespace>OdsWiki</Namespace><Topic>GoodTopic</Topic><TipId>id1</TipId><TipData><TipIdData>id1</TipIdData><TipText>This is just some text</TipText><TipStat>5/22/2008 12:06:58 PM - -76.70.99.195</TipStat></TipData></NamespaceTopicExists><paraText> in it</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text with a link </paraText><NamespaceTopicExists><Namespace>OdsWiki</Namespace><Topic>MULTIcapsGoodTopic</Topic><TipId>id2</TipId><TipData><TipIdData>id2</TipIdData><TipText>This is just some text</TipText><TipStat>5/22/2008 12:06:58 PM - -76.70.99.195</TipStat></TipData></NamespaceTopicExists><paraText> in the line</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -642,12 +715,16 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line contains a link to a </paraText><CreateNamespaceTopic><NamespaceTopic>OdsWiki.BadTopic</NamespaceTopic><CreateTopic>BadTopic</CreateTopic></CreateNamespaceTopic><paraText> in it</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text with a link </paraText><CreateNamespaceTopic><NamespaceMulticapsTopic>OdsWiki.MULTIcapsBadTopic</NamespaceMulticapsTopic><CreateTopic>MULTIcapsBadTopic</CreateTopic></CreateNamespaceTopic><paraText> in the line</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -665,9 +742,13 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line contains a link to a </paraText><paraText>BadWiki.GoodTopic</paraText><paraText> in it</paraText></Para>
+
 <Para><paraText>Here is some more text with a link </paraText><paraText>BadWiki.MULTIcapsGoodTopic</paraText><paraText> in the line</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -691,17 +772,26 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             //TODO: Break this into individual tests after fixing formats by adding end pattern and jump references:
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line (1) contains </paraText><Italics>italic text</Italics><paraText> and a </paraText><Strong>strong text</Strong><paraText> in it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line (2) contains </paraText><Italics>italic text with embedded <Strong>strong text</Strong> and some <TextileSuperscriptInLine>superscript</TextileSuperscriptInLine> in</Italics><paraText> it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line (3) has </paraText><TextileStrong><womStrongText>strong text</womStrongText></TextileStrong><paraText> by itself</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line (1) contains </paraText><Italics>italic text</Italics><paraText> and a </paraText><Strong>strong text</Strong><paraText> in it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line (2) contains </paraText><Italics>italic text with embedded <Strong>strong text</Strong> and some <TextileSuperscriptInLine>superscript</TextileSuperscriptInLine> in</Italics><paraText> it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line (3) has </paraText><TextileStrong><womStrongText>strong text</womStrongText></TextileStrong><paraText> by itself</paraText></Para>"));
 
             // The remaining *strong* part will be picked up by an additional processor at the end of the WomDocument, just before Emoticon processing
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line (4) has</paraText><TextileSuperscriptInLine>superscript text with <Strong>strong text</Strong> embedded</TextileSuperscriptInLine><paraText> in it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line (5) contains a</paraText><TextileCitationInLine>citation text</TextileCitationInLine><paraText> in it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line ( 6 ) has a section of</paraText><TextileDeletionInLine>deleted terxt</TextileDeletionInLine><paraText> and a section of</paraText><TextileInsertedInLine>inserted text</TextileInsertedInLine><paraText> in it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This line (7) has</paraText><TextileEmphasisInLine>emphasized text</TextileEmphasisInLine><paraText> in it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>While this ( 8 ) line has a mix of</paraText><TextileSuperscriptInLine>superscript</TextileSuperscriptInLine><paraText> and</paraText><TextileSubscriptInLine>subscript</TextileSubscriptInLine><paraText> in it</paraText></Para>"));
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This (9) is a</paraText><TextileCodeLineInLine>section of code</TextileCodeLineInLine><paraText> in the text</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line (4) has</paraText><TextileSuperscriptInLine>superscript text with <Strong>strong text</Strong> embedded</TextileSuperscriptInLine><paraText> in it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line (5) contains a</paraText><TextileCitationInLine>citation text</TextileCitationInLine><paraText> in it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line ( 6 ) has a section of</paraText><TextileDeletionInLine>deleted terxt</TextileDeletionInLine><paraText> and a section of</paraText><TextileInsertedInLine>inserted text</TextileInsertedInLine><paraText> in it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This line (7) has</paraText><TextileEmphasisInLine>emphasized text</TextileEmphasisInLine><paraText> in it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>While this ( 8 ) line has a mix of</paraText><TextileSuperscriptInLine>superscript</TextileSuperscriptInLine><paraText> and</paraText><TextileSubscriptInLine>subscript</TextileSubscriptInLine><paraText> in it</paraText></Para>"));
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This (9) is a</paraText><TextileCodeLineInLine>section of code</TextileCodeLineInLine><paraText> in the text</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -746,10 +836,14 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line contains a link to a </paraText><CreateNewTopic><StartsWithOneCap>BadTopic</StartsWithOneCap><Namespace>NamespaceOne</Namespace></CreateNewTopic><paraText> in it</paraText></Para>
+
 <Para><paraText>Here is some more text with a page rule (hr) below</paraText></Para>
 <PageRule/>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -766,12 +860,14 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 
 <WikiTalkMethod><Name>TopicForMethodCreate</Name><CreateNewTopic><WikiTalkMethod>TopicForMethodCreate</WikiTalkMethod><Namespace>NamespaceOne</Namespace></CreateNewTopic><wikiTalkMultiline>{ selected |
 	selected.IfNull{ ShowNamespaceSelectHelper(namespace.Name) }
 	Else{ ShowNamespaceSelectHelper(selected) }
-}</wikiTalkMultiline></WikiTalkMethod><Para><paraText>Here is some more text.</paraText></Para>"));
+}</wikiTalkMultiline></WikiTalkMethod>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -788,12 +884,14 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 
 <WikiTalkMethod><Name>HomePage</Name><TopicExists><Namespace>NamespaceOne</Namespace><Topic>HomePage</Topic><TipId>id1</TipId><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExists><wikiTalkMultiline>{ selected |
 	selected.IfNull{ ShowNamespaceSelectHelper(namespace.Name) }
 	Else{ ShowNamespaceSelectHelper(selected) }
-}</wikiTalkMultiline></WikiTalkMethod><Para><paraText>Here is some more text.</paraText></Para>"));
+}</wikiTalkMultiline></WikiTalkMethod>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -809,12 +907,14 @@ Here is some more text.
 ";
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
-            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+            Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"
+<Para><paraText>This is some text.</paraText></Para>
 <HiddenWikiTalkMethod><Name>ShowNamespaceSelect</Name>
 <wikiTalkMultiline>{ selected |
 	selected.IfNull{ ShowNamespaceSelectHelper(namespace.Name) }
 	Else{ ShowNamespaceSelectHelper(selected) }
 }</wikiTalkMultiline></HiddenWikiTalkMethod>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -830,7 +930,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><HttpLink>http://www.flexwiki.com/default.aspx/FlexWiki/HomePage.html</HttpLink></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -846,7 +948,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><HttpsLink>https://www.flexwiki.com/default.aspx/FlexWiki/HomePage.html</HttpsLink></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -863,7 +967,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line contains a link to a </paraText><TopicExists><Namespace>NamespaceOne</Namespace><Topic>HomePage</Topic><TipId>id1</TipId><DisplayText>HomePage</DisplayText><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExists><paraText> in it</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -880,7 +986,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line contains a link to a </paraText><CreateNewTopic><MalformedTopic>BadTopic</MalformedTopic><Namespace>NamespaceOne</Namespace></CreateNewTopic><paraText> in it</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -896,7 +1004,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><FreeLinkToHttpLink><FreeLink>FlexWiki HomePage</FreeLink><HttpLink>http://www.flexwiki.com/default.aspx/FlexWiki/HomePage.html</HttpLink></FreeLinkToHttpLink></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -912,7 +1022,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><FreeLinkToHttpsLink><FreeLink>Secure FlexWiki HomePage</FreeLink><HttpsLink>https://www.flexwiki.com/default.aspx/FlexWiki/HomePage.html</HttpsLink></FreeLinkToHttpsLink></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -929,7 +1041,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><TopicExists><Namespace>NamespaceOne</Namespace><Topic>HomePage</Topic><TipId>id1</TipId><DisplayText>FlexWiki TopicExists</DisplayText><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExists></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -946,8 +1060,11 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><CreateNewTopic><Topic>BadTopic</Topic><Namespace>NamespaceOne</Namespace><DisplayText>FlexWiki CreateTopic</DisplayText></CreateNewTopic></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
+
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -963,7 +1080,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><TopicExists><Namespace>NamespaceOne</Namespace><Topic>MULTIcapsGoodTopic</Topic><TipId>id1</TipId><DisplayText>FlexWiki TopicExists</DisplayText><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExists></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -980,7 +1099,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><CreateNewTopic><Topic>MULTIcapsBadTopic</Topic><Namespace>NamespaceOne</Namespace><DisplayText>FlexWiki CreateTopic</DisplayText></CreateNewTopic></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -997,9 +1118,10 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><TopicExists><Namespace>NamespaceOne</Namespace><Topic>HomePage</Topic><TipId>id1</TipId><DisplayText>FlexWiki TopicExists</DisplayText><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExists></Para>
-<Para><paraText>Here is some more text.</paraText></Para>
-"));
+
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -1015,7 +1137,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a link to </paraText><CreateNewTopic><Topic>BadTopic</Topic><Namespace>NamespaceOne</Namespace><DisplayText>FlexWiki CreateTopic</DisplayText></CreateNewTopic></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1032,7 +1156,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a </paraText><EscapedNoFormatText>NoFormatText</EscapedNoFormatText><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1049,7 +1175,9 @@ Here is some more text.
             QualifiedTopicRevision topic = new QualifiedTopicRevision("NamespaceOne.TestDocument");
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has an anchor to </paraText><TopicExistsAnchor><Namespace>NamespaceOne</Namespace><Topic>HomePage</Topic><Anchor>Summary</Anchor><TipId>id1</TipId><DisplayText>HomePage</DisplayText><TipData><TipIdData>id1</TipIdData><TipText></TipText><TipStat>1/1/0001 12:00:00 AM</TipStat></TipData></TopicExistsAnchor><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1066,7 +1194,9 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has an anchor to </paraText><CreateNewTopic><Topic>BadTopic</Topic><Namespace>NamespaceOne</Namespace></CreateNewTopic><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1085,8 +1215,10 @@ Here is some more text.
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line has an freelink to </paraText><TopicExists><Namespace>OdsWiki</Namespace><Topic>GoodTopic</Topic><TipId>id1</TipId><DisplayText>My FreeLink</DisplayText><TipData><TipIdData>id1</TipIdData><TipText>This is just some text</TipText><TipStat>5/22/2008 12:06:58 PM - -76.70.99.195</TipStat></TipData></TopicExists><paraText> in it.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -1106,8 +1238,10 @@ Here is some more text.
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line has an freelink to </paraText><CreateNewTopic><Topic>BadTopic</Topic><Namespace>OdsWiki</Namespace><DisplayText>My FreeLink</DisplayText></CreateNewTopic><paraText> in it.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -1127,8 +1261,10 @@ Here is some more text.
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line has an freelink to </paraText><FreeLinkToNamespaceTopic>""My FreeLink"":FlexWiki.GoodTopic</FreeLinkToNamespaceTopic><paraText> in it.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -1148,8 +1284,10 @@ Here is some more text.
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line has an freelink to </paraText><TopicExists><Namespace>OdsWiki</Namespace><Topic>goodtopic</Topic><TipId>id1</TipId><DisplayText>My FreeLink</DisplayText><TipData><TipIdData>id1</TipIdData><TipText>This is just some text</TipText><TipStat>5/22/2008 12:06:58 PM - -76.70.99.195</TipStat></TipData></TopicExists><paraText> in it.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -1169,8 +1307,10 @@ Here is some more text.
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>This line has an freelink to </paraText><CreateNewTopic><Topic>badtopic</Topic><Namespace>OdsWiki</Namespace><DisplayText>My FreeLink</DisplayText></CreateNewTopic><paraText> in it.</paraText></Para>
 <EmptyLine />
+
 <Para><paraText>Here is some more text.</paraText></Para>
 "));
         }
@@ -1188,7 +1328,9 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has an freelink to </paraText><paraText>""My FreeLink"":FlexWiki.[goodtopic]</paraText><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1207,9 +1349,13 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a mailto to </paraText><MailtoLink>mailto:jwdavidson@gmail.com</MailtoLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>This line has a mailto to </paraText><MailtoLink>mailto:jwdavidson@gmail.com;somebodyelse@example.com</MailtoLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>This line has a mailto to </paraText><MailtoLink>mailto:jwdavidson@gmail.com?subject=FlexWiki%20Development</MailtoLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1228,9 +1374,13 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a mailto to </paraText><FreeLinkToMailto><FreeLinkMail>JW Davidson</FreeLinkMail><Mailto>mailto:jwdavidson@gmail.com</Mailto></FreeLinkToMailto><paraText> in it.</paraText></Para>
+
 <Para><paraText>This line has a mailto to </paraText><FreeLinkToMailto><FreeLinkMail>JW Davidson + Somebodyelse</FreeLinkMail><Mailto>mailto:jwdavidson@gmail.com;somebodyelse@example.com</Mailto></FreeLinkToMailto><paraText> in it.</paraText></Para>
+
 <Para><paraText>This line has a mailto to </paraText><FreeLinkToMailto><FreeLinkMail>FlexWiki Development</FreeLinkMail><Mailto>mailto:jwdavidson@gmail.com?subject=FlexWiki%20Development</Mailto></FreeLinkToMailto><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1248,8 +1398,11 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a file link to </paraText><FileLink>file:\\someserver\share</FileLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>This line has a file link to </paraText><FileLink>file:\\someserver\share\test.gif</FileLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1267,8 +1420,11 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a file link to </paraText><AltFileLink>file:\\someserver\share</AltFileLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>This line has a file link to </paraText><AltFileLink>file:\\someserver\share\test.gif</AltFileLink><paraText> in it.</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1314,7 +1470,8 @@ Here is some more text.
 			]
 	}
 ]
-@@</WikiTalkString><Para><paraText>Here is some more text.</paraText></Para>"));
+@@</WikiTalkString>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -1335,12 +1492,19 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>Some text </paraText><WikiStyling><StyleColor>red</StyleColor><womWikiStyledText> some text in red</womWikiStyledText></WikiStyling></Para>
+
 <Para><paraText>Some text </paraText><WikiStyling><StyleColor>blue</StyleColor><womWikiStyledText> some text in blue</womWikiStyledText></WikiStyling><paraText> now it is normal</paraText></Para>
+
 <Para><paraText>Some text </paraText><WikiStyling><StyleSizeBig/><StyleColor>blue</StyleColor><womWikiStyledText> some text in blue</womWikiStyledText></WikiStyling><paraText> now it is normal</paraText></Para>
+
 <Para><paraText>Some text </paraText><WikiStyling><StyleColor>blue</StyleColor><StyleSizeSmall/><womWikiStyledText> some text in blue</womWikiStyledText></WikiStyling><paraText> now it is normal</paraText></Para>
+
 <Para><paraText>Some text </paraText><WikiStyling><StyleSizeBig/><StyleColor>blue</StyleColor><StyleSizeBig/><womWikiStyledText> some text in blue</womWikiStyledText></WikiStyling><paraText> now it is normal</paraText></Para>
+
 <Para><paraText>Some </paraText><WikiStyling><StyleColor>blue</StyleColor><womWikiStyledText> blue text</womWikiStyledText></WikiStyling><paraText> with some </paraText><WikiStyling><StyleColor>red</StyleColor><womWikiStyledText> red text.</womWikiStyledText></WikiStyling></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1369,6 +1533,7 @@ Here is some more text.
 <womCell>West</womCell></womCellText><womCellText>
 <womCell>$500</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1397,6 +1562,7 @@ Here is some more text.
 <womCell>West</womCell></womCellText><womCellText>
 <womCell>$500</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1425,6 +1591,7 @@ Here is some more text.
 <womCell>West</womCell></womCellText><womCellText>
 <womCell>$500</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1453,6 +1620,7 @@ Here is some more text.
 <womCell>West</womCell></womCellText><womCellText>
 <womCell>$500</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1481,6 +1649,7 @@ Here is some more text.
 <womCell>West</womCell></womCellText><womCellText>
 <womCell>$500</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1509,6 +1678,7 @@ Here is some more text.
 <womCell>West</womCell></womCellText><womCellText>
 <womCell>$500</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1543,6 +1713,7 @@ Here is some more text.
 <womCell>$500</womCell></womCellText><womCellText>
 <womCell>$9000</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1574,6 +1745,7 @@ Here is some more text.
 <womCell>$500</womCell></womCellText><womCellText>
 <womCell>$9000</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1605,6 +1777,7 @@ Here is some more text.
 <womCell>$500</womCell></womCellText><womCellText>
 <womCell>$9000</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1636,6 +1809,7 @@ Here is some more text.
 <womCell>$500</womCell></womCellText><womCellText>
 <womCell>$9000</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1667,6 +1841,7 @@ Here is some more text.
 <womCell>$500</womCell></womCellText><womCellText>
 <TableStyle><CellHighlight>!</CellHighlight></TableStyle><womCell>$9000</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1701,6 +1876,7 @@ Here is some more text.
 <womCell>$500</womCell></womCellText><womCellText>
 <womCell>$900</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1721,6 +1897,7 @@ Here is some more text.
 <TableStyle><CellNoWrap>+</CellNoWrap></TableStyle><womCell> The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. </womCell></womCellText><womCellText>
 <womCell> The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. </womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1746,6 +1923,7 @@ Here is some more text.
 <TableRow><womCellText>
 <TableStyle><StyleHexColor>#c0c0c0</StyleHexColor></TableStyle><womCell>LIGHT GREY</womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1768,6 +1946,7 @@ Here is some more text.
 <PreformattedSingleLine> ||Region||Sales||
  ||East||$100||
  ||West||$500||</PreformattedSingleLine>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1790,6 +1969,7 @@ Here is some more text.
 <PreformattedSingleLine>    ||Region||Sales||
     ||East||$100||
     ||West||$500||</PreformattedSingleLine>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1813,7 +1993,8 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
-<ExtendedCode><womStyledCode>&nbsp;&nbsp;&nbsp;</womStyledCode><WikiStyling><StyleColor>blue</StyleColor><womWikiStyledText>public void</womWikiStyledText></WikiStyling><womStyledCode>&nbsp;Foo()<Break />&nbsp;&nbsp;&nbsp;{<Break />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</womStyledCode><WikiStyling><StyleColor>green</StyleColor><womWikiStyledText>// comment here</womWikiStyledText></WikiStyling><womStyledCode><Break />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</womStyledCode><WikiStyling><StyleColor>blue</StyleColor><womWikiStyledText>string</womWikiStyledText></WikiStyling><womStyledCode>&nbsp;s;<Break />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</womStyledCode><TextileStrongInLine>...</TextileStrongInLine><womStyledCode><Break />&nbsp;&nbsp;&nbsp;}</womStyledCode></ExtendedCode><Para><paraText>Here is some more text.</paraText></Para>"));
+<ExtendedCode><womStyledCode>&nbsp;&nbsp;&nbsp;</womStyledCode><WikiStyling><StyleColor>blue</StyleColor><womWikiStyledText>public void</womWikiStyledText></WikiStyling><womStyledCode>&nbsp;Foo()<Break />&nbsp;&nbsp;&nbsp;{<Break />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</womStyledCode><WikiStyling><StyleColor>green</StyleColor><womWikiStyledText>// comment here</womWikiStyledText></WikiStyling><womStyledCode><Break />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</womStyledCode><WikiStyling><StyleColor>blue</StyleColor><womWikiStyledText>string</womWikiStyledText></WikiStyling><womStyledCode>&nbsp;s;<Break />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</womStyledCode><TextileStrongInLine>...</TextileStrongInLine><womStyledCode><Break />&nbsp;&nbsp;&nbsp;}</womStyledCode></ExtendedCode>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -1836,7 +2017,8 @@ Here is some more text.
 your text goes
 here and it does not have to start with space or tab
 </womMultilineCode>
-</PreformattedMultiline><Para><paraText>Here is some more text.</paraText></Para>"));
+</PreformattedMultiline>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -1858,7 +2040,8 @@ Here is some more text.
 <PreformattedMultilineKeyed><womMultilineCode>
 your text goes
 here and it does not have to start with space or tab</womMultilineCode>
-</PreformattedMultilineKeyed><Para><paraText>Here is some more text.</paraText></Para>"));
+</PreformattedMultilineKeyed>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -1888,7 +2071,8 @@ here and it does not have to start with space or tab
 an embedded preformatted section
 }@
 this is some text</womMultilineCode>
-</PreformattedMultilineKeyed><Para><paraText>Here is some more text.</paraText></Para>"));
+</PreformattedMultilineKeyed>
+<Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         [Test]
@@ -1906,9 +2090,13 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has a thumbs up at the end <Emoticon>emoticons/thumbs_up.gif</Emoticon></paraText></Para>
+
 <Para><paraText>This line has <Emoticon>emoticons/thumbs_down.gif</Emoticon> a thumbs down in it</paraText></Para>
+
 <Para><paraText>This line has a <Emoticon>emoticons/confused_smile.gif</Emoticon> confused smile</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1925,7 +2113,9 @@ Here is some more text.
             WomDocument.ResetUniqueIdentifier();
             parser.ProcessText(test, topic, manager, true, 600);
             Assert.IsTrue(parser.WomDocument.ParsedDocument.Contains(@"<Para><paraText>This is some text.</paraText></Para>
+
 <Para><paraText>This line has <Emoticon>emoticons/thumbs_down.gif</Emoticon> a thumbs down and a thumbs up <Emoticon>emoticons/thumbs_up.gif</Emoticon> in it</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2134,29 +2324,51 @@ Here is some more text.
 <womCell>   </womCell></womCellText><womCellText>
 <womCell>   </womCell></womCellText></TableRow>
 </Table>
+
 <Para><paraText>I need a little flag (red maybe <Emoticon>emoticons/regular_smile.gif</Emoticon>)</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/regular_smile.gif</Emoticon></paraText></Para>
+
 <Para><paraText>:D</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/teeth_smile.gif</Emoticon></paraText></Para>
+
 <Para><paraText>:/</paraText></Para>
+
 <Para><paraText>:-/</paraText></Para>
+
 <Para><paraText>:\</paraText></Para>
+
 <Para><paraText>:-\</paraText></Para>
+
 <Para><paraText>:p</paraText></Para>
+
 <Para><paraText>:-p</paraText></Para>
+
 <Para><paraText>:P</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/tounge_smile.gif</Emoticon></paraText></Para>
+
 <Para><paraText>(`) (1) (2) (3) (4) (5) <Emoticon>emoticons/devil_smile.gif</Emoticon> (7) <Emoticon>emoticons/musical_note.gif</Emoticon> (9) (0) (-) (=)</paraText></Para>
+
 <Para><paraText>(q) <Emoticon>emoticons/wilted_rose.gif</Emoticon> <Emoticon>emoticons/envelope.gif</Emoticon> (r) <Emoticon>emoticons/phone.gif</Emoticon> <Emoticon>emoticons/y.gif</Emoticon> <Emoticon>emoticons/broken_heart.gif</Emoticon> <Emoticon>emoticons/lightbulb.gif</Emoticon> <Emoticon>emoticons/clock.gif</Emoticon> <Emoticon>emoticons/camera.gif</Emoticon> ([) (]) (\)</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/angel_smile.gif</Emoticon> (s) <Emoticon>emoticons/martini_shaken.gif</Emoticon> <Emoticon>emoticons/rose.gif</Emoticon> <Emoticon>emoticons/present.gif</Emoticon> <Emoticon>emoticons/shades_smile.gif</Emoticon> (j) <Emoticon>emoticons/kiss.gif</Emoticon> <Emoticon>emoticons/heart.gif</Emoticon> (<Emoticon>emoticons/wink_smile.gif</Emoticon> (')</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/guy_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/girl_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/coffee.gif</Emoticon> (v) <Emoticon>emoticons/beer_yum.gif</Emoticon> <Emoticon>emoticons/n.gif</Emoticon> <Emoticon>emoticons/messenger.gif</Emoticon> (,) (.) (/)</paraText></Para>
 
 <PreformattedSingleLine> </PreformattedSingleLine>
+
 <Para><paraText>() () () () () () () () () () () () () </paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/film.gif</Emoticon> (!) <Emoticon>emoticons/kittykay.gif</Emoticon> ($) (%) <Emoticon>emoticons/cake.gif</Emoticon> (&) <Emoticon>emoticons/star.gif</Emoticon> (() ()) (_) (+)</paraText></Para>
+
 <Para><paraText>(Q) <Emoticon>emoticons/wilted_rose.gif</Emoticon> <Emoticon>emoticons/envelope.gif</Emoticon> (R) <Emoticon>emoticons/phone.gif</Emoticon> <Emoticon>emoticons/thumbs_up.gif</Emoticon> <Emoticon>emoticons/broken_heart.gif</Emoticon> <Emoticon>emoticons/lightbulb.gif</Emoticon> <Emoticon>emoticons/clock.gif</Emoticon> <Emoticon>emoticons/camera.gif</Emoticon> <Emoticon>emoticons/dude_hug.gif</Emoticon> <Emoticon>emoticons/girl_hug.gif</Emoticon> (|)</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/angel_smile.gif</Emoticon> <Emoticon>emoticons/moon.gif</Emoticon> <Emoticon>emoticons/martini_shaken.gif</Emoticon> <Emoticon>emoticons/rose.gif</Emoticon> <Emoticon>emoticons/present.gif</Emoticon> <Emoticon>emoticons/shades_smile.gif</Emoticon> (J) <Emoticon>emoticons/kiss.gif</Emoticon> <Emoticon>emoticons/heart.gif</Emoticon> (<Emoticon>emoticons/regular_smile.gif</Emoticon> ("")</paraText></Para>
+
 <Para><paraText><Emoticon>emoticons/guy_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/girl_handsacrossamerica.gif</Emoticon> <Emoticon>emoticons/coffee.gif</Emoticon> (V) <Emoticon>emoticons/beer_yum.gif</Emoticon> <Emoticon>emoticons/thumbs_down.gif</Emoticon> <Emoticon>emoticons/messenger.gif</Emoticon> (<) (>) (?)</paraText></Para>
+
 <Para><paraText>Here is some more text.</paraText></Para>"));
         }
     }
