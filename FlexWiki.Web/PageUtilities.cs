@@ -30,7 +30,7 @@ namespace FlexWiki.Web
             get
             {
                 string url = HttpContext.Current.Request.Url.AbsoluteUri;
-                return url.Substring(0, url.IndexOf(RootUrl));
+                return url.Substring(0, url.IndexOf(RootUrl,8));
             }
         }
         public static string RootUrl
