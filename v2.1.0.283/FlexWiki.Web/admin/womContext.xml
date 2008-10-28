@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Context>
+  <Rule Name ="WikiText">
+    <Rules>
+      <Rule Name="PreformattedMultilineKeyed" Pattern="^&lt;PreformattedMultilineKeyed&gt;|\r\n&lt;PreformattedMultilineKeyed&gt;" End="&lt;/PreformattedMultilineKeyed&gt;" Jump="womMultilineCode"  Optimization="" Elements=""/>
+      <Rule Name="WikiTalkString" Pattern="@@[^@]+?@@" />
+      <Rule Name="HiddenExternalRef" Pattern="@[\p{L}\p{N}\p{P}\p{S}\p{Z}]+=[\p{L}\p{N}\p{P}\p{S}\p{Z}]+\$\$\$[^\r\n]*" />
+
+      <Rule Name="FreeLinkToHttpDisplayImage" Pattern="&lt;FreeLinkToHttpDisplayImage&gt;[^\r\n]+?&lt;/FreeLinkToHttpDisplayImage&gt;" Optimization="" Elements=""/>
+      <Rule Name="WikiTalkLink" Pattern="&lt;WikiTalkLink&gt;[^\r\n]+?&lt;/WikiTalkLink&gt;" Optimization="" Elements=""/>
+      <Rule Name="HttpDisplayImage" Pattern="&lt;HttpDisplayImage&gt;[^\r\n]+?&lt;/HttpDisplayImage&gt;" Optimization="" Elements=""/>
+      <Rule Name="Containerdiv" Pattern="^&lt;Containerdiv&gt;[\p{L}\p{N}\p{P}\p{Z}\p{S}\&lt;\&gt;/]+?\r\n" Optimization="" Elements=""/>
+      <Rule Name="Containerspan" Pattern="^&lt;Containerspan&gt;[\p{L}\p{N}\p{P}\p{Z}\p{S}\&lt;\&gt;/]+?\r\n" Optimization="" Elements=""/>
+      <Rule Name="ContainerEnddiv" Pattern="^&lt;/Containerdiv&gt;[\p{L}\p{N}\p{P}\p{Z}\p{S}\&lt;\&gt;/]*?\r\n" Optimization="" Elements=""/>
+      <Rule Name="ContainerEndspan" Pattern="^&lt;/Containerspan&gt;[\p{L}\p{N}\p{P}\p{Z}\p{S}\&lt;\&gt;/]*?\r\n" Optimization="" Elements=""/>
+      <Rule Name="ErrorMessage" Pattern="&lt;ErrorMessage&gt;[\p{L}\p{N}\p{P}\p{Z}\p{S}]+&lt;/ErrorMessage&gt;" Optimization="" Elements=""/>
+      <Rule Name="WikiForm" Pattern="&lt;WikiForm&gt;[\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n]+?&lt;/WikiForm&gt;" Optimization="" Elements=""/>
+      <Rule Name="ScriptData" Pattern="&lt;script [\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n\&lt;\&gt;/%&amp;;]+?&lt;/script&gt;\r\n" />
+      <Rule Name="ExternalWikiLink" Pattern="&lt;a class=\&quot;ExternalLink\&quot;[\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n\&gt;/-[&lt;]]+&lt;/a&gt;" />
+
+      <!-- OrderedList and UnorderList optimized to properly nest opening and closing tags with proper nesting of listitems-->
+      <!--     processing to accomplish this is the most complex of all optimizations covering about 20 lines of code-->
+      <Rule Name="UnorderedList" Pattern="^\t{7}\*|^\t{6}\*|^\t{5}\*|^\t{4}\*|^\t{3}\*|^\t{2}\*|^\t\*|\r\n\t{7}\*|\r\n\t{6}\*|\r\n\t{5}\*|\r\n\t{4}\*|\r\n\t{3}\*|\r\n\t{2}\*|\r\n\t\*" End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements=""/>
+      <Rule Name="OrderedList" Pattern="^\t{7}1\.|^\t{6}1\.|^\t{5}1\.|^\t{4}1\.|^\t{3}1\.|^\t{2}1\.|^\t1\.|\r\n\t{7}1\.|\r\n\t{6}1\.|\r\n\t{5}1\.|\r\n\t{4}1\.|\r\n\t{3}1\.|\r\n\t{2}1\.|\r\n\t1\." End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements="" />
+      <Rule Name="OrderedListForContinuation" Pattern="^\t{7}\#|^\t{6}\#|^\t{5}\#|^\t{4}\#|^\t{3}\#|^\t{2}\#|^\t\#|\r\n\t{7}\#|\r\n\t{6}\#|\r\n\t{5}\#|\r\n\t{4}\#|\r\n\t{3}\#|\r\n\t{2}\#|\r\n\t\#" End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements=""/>
+      <Rule Name="OrderedListContinued" Pattern="^\t{7}\#\^|^\t{6}\#\^|^\t{5}\#\^|^\t{4}\#\^|^\t{3}\#\^|^\t{2}\#\^|^\t\#\^|\r\n\t{7}\#\^|\r\n\t{6}\#\^|\r\n\t{5}\#\^|\r\n\t{4}\#\^|\r\n\t{3}\#\^|\r\n\t{2}\#\^|\r\n\t\#\^" End="(?:\{\|{2}\r\n|\r\n|\{\|{2}|\{\|{2}\})" Jump="womListText" Optimization="" Elements=""/>
+
+      <!-- Header optimized to drop the exclamation (!) remarks from the output and to just identify the level in an attribute -->
+      <Rule Name="Header" Pattern="^!{7}|^!{6}|^!{5}|^!{4}|^!{3}|^!{2}|^!(?!\r\n)|\r\n!{7}|\r\n!{6}|\r\n!{5}|\r\n!{4}|\r\n!{3}|\r\n!{2}|\r\n!" End="(?:\r\n)" Jump="womHeaderText"  Optimization="" Elements=""/>
+
+      <Rule Name="ExtendedCode" Pattern="^{\+\r\n" End="\r\n}\+\r\n" Jump="womStyledCode" Optimization="" Elements=""/>
+
+     <!-- <Rule Name="PreformattedMultiline" Pattern="(?&lt;=^){@" End="^}@\r\n|^}@\w+\r\n" Jump="womMultilineCode"  Optimization="" Elements=""/>  -->
+      <Rule Name="PreformattedMultiline" Pattern="^{@|\r\n{@" End="^}@\r\n|^}@\w+(?:\r\n)" Jump="womMultilineCode"  Optimization="" Elements=""/>
+
+      <Rule Name="HiddenWikiTalkMethod" Pattern="^:[\p{Lu}][\p{L}\p{Nd}]*:(?={)|\r\n:[\p{Lu}][\p{L}\p{Nd}]*:(?={)" End="(?&lt;=\r\n})(?:\r\n)" Jump="wikiTalkMultiline"  Optimization="(?&lt;Name&gt;[\p{Lu}][\p{L}\p{Nd}]*)" Elements="'&lt;{0}&gt;
+        &lt;{1}&gt;{2}&lt;/{1}&gt;\r\n', womElement,GroupName, Match"/>
+      
+      <!-- WikiTalkMethod optimized by enclosing the pattern in <Name> tags-->
+      <Rule Name="WikiTalkMethod" Pattern="^[\p{Lu}][\p{L}\p{Nd}]*:(?={)|\r\n[\p{Lu}][\p{L}\p{Nd}]*:(?={)" End="(?&lt;=\r\n})(?:\r\n)" Jump="wikiTalkMultiline" Optimization="(?&lt;Name&gt;^[\p{Lu}][\p{L}\p{Nd}]*)" Elements="'&lt;{0}&gt;
+        &lt;{1}&gt;{2}&lt;/{1}&gt;\r\n', womElement,GroupName, Match"/>
+
+      <Rule Name="PreformattedSingleLine" Pattern="\r\n[ ]{1,}(?![ \t\*1])[^\r\n]*|^[ ]{1,}(?![ \t\*1])[^\r\n]*"  Optimization="" Elements=""/>
+      <Rule Name="AltPreformattedSingleLine" Pattern="\r\n[\t]{1,}(?![\*1]{1,})[^\r\n]*|^[\t]{1,}(?![\*1]{1,})[^\r\n]*"  Optimization="" Elements=""/>
+      
+      <!-- EmptyLine optimized to just output an empty <EmptyLine /> tag-->
+      <Rule Name="EmptyLine" Pattern="\r\n(?:\r\n)|\r\n\r\n(?:\r\n)" />
+
+      <!-- HiddenMultilineProperty optimized by enclosing the pattern in <Name> tags-->
+ <!--     <Rule Name="HiddenMultilineProperty" Pattern="^:[A-Z][A-Za-z0-9]*:\[|\r\n:[A-Z][A-Za-z0-9]*:\[" End="^\](?:\r\n)" Jump="womPropertyText"  Optimization="(?&lt;Name&gt;[\p{Lu}][\p{L}\p{Nd}]*)" Elements="'&lt;{0}&gt;
+        &lt;{1}&gt;{2}&lt;/{1}&gt;\r\n', womElement,GroupName, Match"/>   -->
+      <Rule Name="HiddenMultilineProperty" Pattern="^:[A-Z][A-Za-z0-9]*:\[[\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n\&lt;\>/%\&amp;;-[\]]]+\r\n\](?:\r\n)|\r\n:[A-Z][A-Za-z0-9]*:\[+[\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n\&lt;\>/%\&amp;;-[\]]]+\r\n\](?:\r\n)" Optimization="" Elements="" />
+
+      <!-- MultilineProperty optimized by enclosing the pattern in <Name> tags-->
+      <Rule Name="MultilineProperty" Pattern="^[\p{Lu}][\p{L}\p{N}]+:\[[\r\n]*|\r\n[\p{Lu}][\p{L}\p{N}]+:\[[\r\n]*" End="\r\n\]\r\n" Jump="womPropertyText"  Optimization="(?&lt;Name&gt;^[\p{Lu}][\p{L}\p{Nd}]*)" Elements="'&lt;{0}&gt;
+        &lt;{1}&gt;{2}&lt;/{1}&gt;\r\n', womElement,GroupName, Match"/>
+      
+      <!--  HiddenSinglelineProperty optimized by enclosing the pattern in <Name> tags -->
+      <Rule Name="HiddenSinglelineProperty" Pattern="^:[\p{Lu}][\p{L}\p{Nd}]*:(?!{)|\r\n:[\p{Lu}][\p{L}\p{Nd}]*:(?!{)" End="(?:\r\n)" Jump="womPropertyText"  Optimization="(?&lt;Name&gt;[\p{Lu}][\p{L}\p{Nd}]*)" Elements="'&lt;{0}&gt;
+        &lt;{1}&gt;{2}&lt;/{1}&gt;\r\n', womElement,GroupName, Match"/>
+
+      <!--  SinglelineProperty optimized by enclosing the pattern in <Name> tags -->
+      <Rule Name="SinglelineProperty" Pattern="^[\&quot;]{0,2}[\p{Lu}][\p{L}\p{Nd}]*[\&quot;]{0,2}: |^[\p{Lu}][\p{L}\p{N}]+:|\r\n[\p{Lu}][\p{L}\p{N}]+: |\r\n[\&quot;]{0,2}[\p{Lu}][\p{L}\p{N}]+[\&quot;]{0,2}: " End="\r\n" Jump="womPropertyText"  Optimization="(?&lt;Name&gt;^[\p{Lu}][\p{L}\p{Nd}]*)" Elements="'&lt;{0}&gt;
+        &lt;{1}&gt;{2}&lt;/{1}&gt;\r\n', womElement,GroupName, Match"/>
+      
+      
+      <!-- <Rule Name="IncludeTopic" Pattern="^\{{2}|^\t{1}\{{2}|^\t{2}\{{2}|^\t{3}\{{2}|^\t{4}\{{2}|^\t{5}\{{2}|^\t{6}\{{2}|^\t{7}\{{2}" End="}{2}(?:\r\n)" 
+                Jump="womIncludeTopicName"  Optimization="" Elements=""/> -->
+      
+      <!-- TableRow processing optimized to identify an opening <Table> tag and to identify a closing </Table> tag -->
+      <Rule Name="MultilineTableRow" Pattern="\r\n\|{2}\}|^\|{2}\}" End="\{\|{2}(?:\r\n)" Jump="womMultilineCell"  Optimization="" Elements=""/>
+      <Rule Name="TableRow" Pattern="\r\n\|{2}|^\|{2}" End="\|{2}(?:\r\n)" Jump="womCell"  Optimization="" Elements=""/>
+
+      <!-- WikiStyling is optimized to remove extraneous characters from output -->
+      <!-- <Rule Name="WikiStyling" Pattern="%[\p{Ll}\p{Nd} #]{3,}%" End="\r\n|%%" Jump="womWikiStyledText" Optimization="%(?&lt;StyleType&gt;[^%]+)%" Elements="" />  -->
+
+      <!-- PageRule optimized to just output an empty <PageRule /> tag-->
+      <Rule Name="PageRule" Pattern="^-{4}(?:\r\n)|\r\n-{4}(?:\r\n)" Optimization="" Elements="PageRule" />
+      <Rule Name="Para" Pattern="\r\n(?=.[^\r\n]+)|^(?=.[^\r\n]+)" End="(?:\r\n|&lt;/Container)" Jump="paraText" Optimization="" Elements="Para" />
+
+      <!-- EscapeNoFormatText optimized to strip extraneous output characters -->
+      <Rule Name="EscapedNoFormatText" Pattern="\&quot;\&quot;[^\r\n]+\&quot;\&quot;" Optimization="\&quot;\&quot;(?&lt;EscapedNoFormatText&gt;[^\r\n]+)\&quot;\&quot;" Elements="EscapedNoFormatText" />
+
+
+      <!-- todo: add to WomDocument and xslt-->
+<!--      <Rule Name="LinkToAnchor" Pattern="[A-Z][a-zA-Z0-9_]+\#\w+" Optimization="(?&lt;Topic&gt;[\p{L}\p{N}\p{P}]+)#(?&lt;Anchor&gt;[\p{L}\p{N}\p{P}]+)" Elements="" />
+      <Rule Name="FreeLinkToAnchor" Pattern="\&quot;[^\r\n]+\&quot;:[A-Z][a-zA-Z0-9_]+\#\w+" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;Topic&gt;[\p{L}\p{N}\p{P}]+)#(?&lt;Anchor&gt;[\p{L}\p{N}\p{P}]+)" Elements="" />
+      <Rule Name="FreeLinkToNamespaceTopic" Pattern="\&quot;[^\r\n]+\&quot;:[A-Z][a-zA-Z0-9]+\.[A-Z][a-z0-9]+[A-Z]+[a-zA-Z0-9]+" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;Namespace&gt;[A-Z][a-zA-Z0-9]+)\.(?&lt;Topic&gt;[\p{L}\p{N}\p{P}]+)" Elements="" />
+      <Rule Name="FreeLinkToNamespaceMalformedTopic" Pattern="\&quot;[^\r\n]+\&quot;:[A-Z][a-zA-Z0-9]+\.\[[\p{L}\p{N}\p{Zs}\p{Pc}\p{Pd}\P{Pe}-[/\.]]+\]" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;Namespace&gt;[A-Z][a-zA-Z0-9]+)\.\[(?&lt;Topic&gt;[\p{L}\p{N}\p{P} ]+)\]" Elements="" />
+-->
+
+      <!-- Items have been optimized to create links to valid topics with topic tip info or to create links to create a topic when necessary -->
+      <!--     Uses the default namespace -->
+<!--      <Rule Name="FreeLinkToTopic" Pattern="\&quot;[^\r\n]+\&quot;:[A-Z][a-z0-9]+[A-Z]+[a-zA-Z0-9]+" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;Topic&gt;[\p{L}\p{N}\p{P}]+)" Elements="" />
+      <Rule Name="FreeLinkToMultiCapsTopic" Pattern="\&quot;[^\r\n]+\&quot;:[A-Z]{2,}[a-zA-Z0-9]+" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;Topic&gt;[\p{L}\p{N}\p{P}]+)" Elements="" />
+      <Rule Name="FreeLinkToMalformedTopic" Pattern="\&quot;[^\r\n]+\&quot;:\[[\p{L}\p{N}\p{Zs}\p{Pc}\p{Pd}\P{Pe}-[/\.]]+\]" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:\[(?&lt;Topic&gt;[\p{L}\p{N}\p{P}]+)\]" Elements="" />
+-->
+      <!--  Various FreeLinkTo.. below have been optimized to remove the quotations and colon and break the pattern into a freelink part and a link part -->
+<!--      <Rule Name="FreeLinkToHttpImageDisplayGif" Pattern="\&quot;http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.gif\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]"  Optimization="\&quot;(?&lt;HttpImageDisplayGif&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpsImageDisplayGif" Pattern="\&quot;https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.gif\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpsImageDisplayGif&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpImageDisplayJpg" Pattern="\&quot;http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpg\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpImageDisplayJpg&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpsImageDisplayJpg" Pattern="\&quot;https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpg\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpsImageDisplayJpg&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpImageDisplayJpeg" Pattern="\&quot;http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpeg\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpImageDisplayJpeg&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpsImageDisplayJpeg" Pattern="\&quot;https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpeg\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpsImageDisplayJpeg&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpImageDisplayPng" Pattern="\&quot;http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.png\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpImageDisplayPng&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpsImageDisplayPng" Pattern="\&quot;https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.png\&quot;:[htps]{4,}://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;HttpsImageDisplayPng&gt;[^\&quot;]+)\&quot;:(?&lt;WebLink&gt;[htps]{4,}://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpLink" Pattern="&quot;[^&quot;]+&quot;:http://[\p{L}\p{N}\p{P}\p{S}]+" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;HttpLink&gt;http://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+      <Rule Name="FreeLinkToHttpsLink" Pattern="\&quot;[^\r\n]+\&quot;:https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;FreeLink&gt;[^\&quot;]+)\&quot;:(?&lt;HttpsLink&gt;https://[\p{L}\p{N}\p{P}]+)" Elements=""/>
+-->
+      <!-- Items in group below have no optimization -->
+<!--      <Rule Name="HttpImageDisplayGif" Pattern="http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.gif" Optimization="" Elements="" />
+      <Rule Name="HttpsImageDisplayGif" Pattern="https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.gif" Optimization="" Elements="" />
+      <Rule Name="HttpImageDisplayJpg" Pattern="http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpg" Optimization="" Elements="" />
+      <Rule Name="HttpsImageDisplayJpg" Pattern="https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpg" Optimization="" Elements="" />
+      <Rule Name="HttpImageDisplayJpeg" Pattern="http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpeg" Optimization="" Elements="" />
+      <Rule Name="HttpsImageDisplayJpeg" Pattern="https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.jpeg" Optimization="" Elements="" />
+      <Rule Name="HttpImageDisplayPng" Pattern="http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.png" Optimization="" Elements="" />
+      <Rule Name="HttpsImageDisplayPng" Pattern="https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*\.png" Optimization="" Elements="" />
+      <Rule Name="HttpLink" Pattern="http://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="" Elements="" />
+      <Rule Name="HttpsLink" Pattern="https://[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="" Elements="" />
+-->
+      <!-- todo: add to WomDocument and xslt-->
+<!--      <Rule Name="FreeLinkToMailto" Pattern="\&quot;[^\r\n]+\&quot;:mailto:[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="\&quot;(?&lt;FreeLinkMail&gt;[^\&quot;]+)\&quot;:(?&lt;Mailto&gt;mailto:.+)" Elements="" />
+      <Rule Name="MailtoLink" Pattern="mailto:[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;/?:@&amp;=]*[a-zA-Z0-9/]" Optimization="" Elements="" />
+      <Rule Name="AltFileLink" Pattern="\[file:\\\\[-_.+$ a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;\\/?:@&amp;=]*[a-zA-Z0-9/\\]\]" Optimization="\[(?&lt;FileLink&gt;[^\]]+)\]" Elements="" />
+      <Rule Name="FileLink" Pattern="file:\\\\[-_.+$a-zA-Z0-9!*'(){}|\^~\[\]&lt;&gt;#%\&quot;;\\/?:@&amp;=]*[a-zA-Z0-9/\\]" Optimization="" Elements="" />
+-->
+      <!-- NamespaceTopic has been optimized to identify valid namespaces and valid topics within namespaces and to control the output tags-->
+      <!--    based on the results. Outputs may include a link to the edit page to create a topic when the topic does not exist and the -->
+      <!--    namespace is valid, or a link to the topic page when it is valid with topic tip information, or just text output when namespace is not valid -->
+<!--      <Rule Name="NamespaceTopic" Pattern="[A-Z][a-zA-Z0-9]+\.[A-Z][a-z0-9]+[A-Z]+[a-zA-Z0-9]+" Optimization="" Elements="" />
+-->
+      <!-- NamespaceName is not optimized -->
+<!--      <Rule Name="NamespaceMulticapsTopic" Pattern="[A-Z][a-zA-Z0-9]+\.[\p{Lu}]{2,}[\p{L}\p{Nd}_]+" Optimization="" Elements="" />
+-->      
+      <!-- Items have been optimized to create links to valid topics with topic tip info or to create links to create a topic when necessary -->
+      <!--     Uses the default namespace -->
+<!--      <Rule Name="StartsWithMulticaps" Pattern=" [\p{Lu}]{2,}[\p{Ll}\p{Nd}]+[\p{L}\p{Nd}]*" Optimization="" Elements="" />
+      <Rule Name="StartsWithOneCap" Pattern=" [\p{Lu}][\p{Ll}\p{Nd}]+[\p{Lu}]+[\p{L}\p{Nd}]*" Optimization="" Elements="" />
+-->      
+      <!-- Items below optimized to strip extraneous characters -->
+<!--      <Rule Name="Italics" Pattern="''[^'\r\n]+''" Optimization="''(?&lt;Italics&gt;[^']+)''" Elements="Italics" />
+      <Rule Name="Strong" Pattern="'''[^'\r\n]+'''" Optimization="'''(?&lt;Strong&gt;[^']+)'''" Elements="Strong" />
+-->
+      <!-- texttile items optimized to remove format characters and leave relevant text in tag-->
+<!--      <Rule Name="TextileCitationInLine" Pattern=" \?\?[^\?\r\n]+(?&lt;! )\?\?(?=[ \r\n]+?)" Optimization="\?\?(?&lt;TextileCitationInLine&gt;[^\?]+)\?\?" Elements="TextileCitationInLine" />
+      <Rule Name="TextileCodeLineInLine" Pattern=" @[^@\r\n]+(?&lt;! )@(?=[ \r\n]+?)" Optimization="@(?&lt;TextileCodeLineInLine&gt;[^@]+)@" Elements="TextileCodeLineInLine" />
+      <Rule Name="TextileDeletionInLine" Pattern=" -(?! )[^-\r\n]+(?&lt;! )-(?=[ \r\n]+?)" Optimization="-(?&lt;TextileDeletionInLine&gt;[^-]+)-" Elements="TextileDeletionInLine" />
+      <Rule Name="TextileEmphasisInLine" Pattern=" _(?! )[^_\r\n]+(?&lt;! )_(?=[ \r\n]+?)" Optimization="_(?&lt;TextileEmphasisInLine&gt;[^_]+)_" Elements="TextileEmphasisInLine" />
+      <Rule Name="TextileDeemphasisInLine" Pattern="``(?! )[^`\r\n]+(?&lt;! )``(?=[ \r\n]+?)" Optimization="``(?&lt;TextileDeemphasisInLine&gt;[^`]+)``" Elements="TextileDeemphasisInLine" />
+      <Rule Name="TextileInsertedInLine" Pattern=" \+(?! )[^\+\r\n]+(?&lt;! )\+(?=[ \r\n]+?)" Optimization="\+(?&lt;TextileInsertedInLine&gt;[^\+]+)\+" Elements="TextileInsertedInLine" />
+      <Rule Name="TextileSubscriptInLine" Pattern=" ~(?! )[^~\r\n]+(?&lt;! )~(?=[ \r\n]+?)" Optimization="\~(?&lt;TextileSubscriptInLine&gt;[^\~]+)\~" Elements="TextileSubscriptInLine" />
+      <Rule Name="TextileSuperscriptInLine" Pattern=" \^(?! )[^\^\r\n]+(?&lt;! )\^(?=[ \r\n]+?)" Optimization="\^(?&lt;TextileSuperscriptInLine&gt;[^\^]+)\^" Elements="TextileSuperscriptInLine" />
+-->     <!-- <Rule Name="TextileStrongInLine" Pattern=" \*(?! )[^\*\r\n]+(?&lt;! )\*(?=[ \r\n\p{P}]+?)" Optimization="\*(?&lt;TextileStrongInLine&gt;[^\*]+)\*" Elements="TextileStrongInLine" />  -->
+<!--      <Rule Name="TextileStrong" Pattern="(?&lt;!\t|\()\*(?! |\||\))(?=[^\r\n]+\*)" End="\*" Jump="womStrongText" Optimization="" Elements="" />
+
+      <Rule Name="TextileCitationLineStart" Pattern="\r\n\?\?[^\?\r\n]+(?&lt;! )\?\?(?=[ \r\n]+?)" Optimization="\?\?(?&lt;TextileCitationLineStart&gt;[^\?]+)\?\?" Elements="TextileCitationLineStart" />
+      <Rule Name="TextileCodeLineStart" Pattern="\r\n@[^@\r\n]+(?&lt;! )@(?=[ \r\n]+?)" Optimization="@(?&lt;TextileCodeLineStart&gt;[^@]+)@" Elements="TextileCodeLineStart" />
+      <Rule Name="TextileDeletionLineStart" Pattern="\r\n-(?! )[^-\r\n]+(?&lt;! )-(?=[ \r\n]+?)" Optimization="-(?&lt;TextileDeletionLineStart&gt;[^-]+)-" Elements="TextileDeletionLineStart" />
+      <Rule Name="TextileEmphasisLineStart" Pattern="\r\n_(?! )[^_\r\n]+(?&lt;! )_(?=[ \r\n]+?)" Optimization="_(?&lt;TextileEmphasisLineStart&gt;[^_]+)_" Elements="TextileEmphasisLineStart" />
+      <Rule Name="TextileDeemphasisInStart" Pattern="\r\n``(?! )[^`\r\n]+(?&lt;! )``(?=[ \r\n]+?)" Optimization="``(?&lt;TextileDeemphasisInStart&gt;[^`]+)``" Elements="TextileDeemphasisInLine" />
+      <Rule Name="TextileSubscriptLineStart" Pattern="\r\n~(?! )[^~\r\n]+(?&lt;! )~(?=[ \r\n]+?)" Optimization="\~(?&lt;TextileSubscriptLineStart&gt;[^\~]+)\~" Elements="TextileSubscriptLineStart" />
+      <Rule Name="TextileSuperscriptLineStart" Pattern="\r\n\^(?! )[^\^\r\n]+(?&lt;! )\^(?=[ \r\n]+?)" Optimization="\^(?&lt;TextileSuperscriptLineStart&gt;[^\^]+)\^" Elements="TextileSuperscriptLineStart" />
+      <Rule Name="TextileStrongLineStart" Pattern="\r\n\*(?! )[^\*\r\n]+(?&lt;! )\*(?=[ \r\n\p{P}]+?)" Optimization="\*(?&lt;TextileStrongLineStart&gt;[^\*]+)\*" Elements="TextileStrongLineStart" />
+-->
+
+      <!-- Items have been optimized to create links to valid topics with topic tip info or to create links to create a topic when necessary -->
+      <!--     Uses the default namespace -->
+      <Rule Name="MalformedTopic" Pattern="(?&lt;!\|\|)\[[\p{L}\p{N}\p{Zs}\p{Pc}\p{Pd}\P{Pe}-[/\.\^,]]+\](?!\|\|)" Optimization="\[(?&lt;MalformedTopic&gt;[\p{L}\p{N}\p{P}\p{Zs}]+)\]" Elements="MalformedTopic" />
+    </Rules>
+  </Rule>
+</Context>
