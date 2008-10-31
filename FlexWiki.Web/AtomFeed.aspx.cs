@@ -68,6 +68,8 @@ namespace FlexWiki.Web
 
 
             feed.AppendLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
+            feed.AppendLine(@"<!DOCTYPE message [");
+            feed.AppendLine("<!ENTITY nbsp \"&#160;\"> ]>");
             feed.AppendLine(@"<feed xmlns=""http://www.w3.org/2005/Atom"">");
 
             errFeed.AppendLine(@"<pre id=""Error"" class=""Error"" style=""background: #F00;"">");
@@ -245,7 +247,10 @@ namespace FlexWiki.Web
                         string body = storeManager.GetTopicInfo(entryTopicName).GetProperty("_Body").ToString();
                         WomDocument xmldoc = new WomDocument(null);
                         xmldoc = _parser.FormatTextFragment(body, entryTopicRev, storeManager, true, 600);
-                        xmldoc.ParsedDocument = @"<div id=""womDocRoot"">" + xmldoc.ParsedDocument + "</div>";
+                        xmldoc.ParsedDocument = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<!DOCTYPE message [
+<!ENTITY nbsp ""&#160;""> ]>
+             <div id=""womDocRoot"">" + xmldoc.ParsedDocument + "</div>";
                         entryContent = _parser.WikiToPresentation(xmldoc.XmlDoc);
                         //string entryContent = Formatter.FormattedTopic(entryTopicRev, OutputFormat.HTML, null, storeManager.Federation, lm);
                         feed.AppendLine(@"<entry>");
