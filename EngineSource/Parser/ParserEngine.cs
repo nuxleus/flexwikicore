@@ -307,10 +307,14 @@ namespace FlexWiki.Formatting
                             size = _chunk;
                         }
                         WomDocument xmldoc = ProcessText(wikitext, topic, _mgr, false, size);
-                        string womdoc = xmldoc.ParsedDocument;
-                        _mgr.SetWomCache(topic.AsUnqualifiedTopicRevision(), womdoc);
-                        string firstPass = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
-                        xmldoc.ParsedDocument = findWikiBehavior.Replace(firstPass, new MatchEvaluator(wikiBehaviorMatch));
+                        //string womdoc = xmldoc.ParsedDocument;
+                        _mgr.SetWomCache(topic.AsUnqualifiedTopicRevision(), xmldoc.ParsedDocument);
+                        //string firstPass = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
+                        //xmldoc.ParsedDocument = findWikiBehavior.Replace(firstPass, new MatchEvaluator(wikiBehaviorMatch));
+                        while (findWikiBehavior.IsMatch(xmldoc.ParsedDocument))
+                        {
+                            xmldoc.ParsedDocument = findWikiBehavior.Replace(xmldoc.ParsedDocument, new MatchEvaluator(wikiBehaviorMatch));
+                        }
                         
                         _behaviorTopic = null;
 
@@ -360,9 +364,13 @@ namespace FlexWiki.Formatting
                         size = sizeIn;
                     }
                     xmldoc = ProcessText(wikitext, topic, _mgr, fragment, size);
-                    string womdoc = xmldoc.ParsedDocument;
-                    string firstPass = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
-                    xmldoc.ParsedDocument = findWikiBehavior.Replace(firstPass, new MatchEvaluator(wikiBehaviorMatch));
+                    //string womdoc = xmldoc.ParsedDocument;
+                    //string firstPass = findWikiBehavior.Replace(womdoc, new MatchEvaluator(wikiBehaviorMatch));
+                    //xmldoc.ParsedDocument = findWikiBehavior.Replace(firstPass, new MatchEvaluator(wikiBehaviorMatch));
+                    while (findWikiBehavior.IsMatch(xmldoc.ParsedDocument))
+                    {
+                        xmldoc.ParsedDocument = findWikiBehavior.Replace(xmldoc.ParsedDocument, new MatchEvaluator(wikiBehaviorMatch));
+                    }
 
                     _behaviorTopic = null;
 
