@@ -1,0 +1,87 @@
+
+Summary: a library of functions for displaying a Forum
+
+:GetNodes:{keys | namespace.Topics.Select{ each |
+        each.Keywords.Contains(keys)}.Select{each | each.HasProperty("ParentThread")}.IfNotNullElse({namespace.Topics.Select{each | each.Keywords.Contains(keys)}
+	.Select{each | each.HasProperty("ParentThread")}.SortBy{each | each.GetProperty("ParentThread")}},{""})
+}
+&nbsp;
+
+:GetTopLevelNumber:{ keys | namespace.Topics.Select { each |
+	each.Keywords.Contains(keys)}.Select { each | each.GetProperty("Depth").Equals("0")}
+		.Count
+}
+:GetTotalNumberThreads:{keys | namespace.Topics.Select{ each |
+	each.Keywords.Contains(keys)}.Select { each | each.HasProperty("Depth")}.Count
+}
+:OriginalThreadDate:{keys | namespace.TopicsWith("Keywords", keys).Count
+	.GreaterThan(1).IfTrueIfFalse({namespace.TopicsWith("Keywords", keys).Select
+	{each | each.GetProperty("Depth").Equals("0")}.SortBy { each | each.Name }.Item(0).Created.LocalFormat},{""})
+}
+:LatestThreadDate:{keys | namespace.TopicsWith("Keywords", keys).Count
+	.GreaterThan(1).IfTrueIfFalse({namespace.TopicsWith("Keywords", keys).Select
+	{each | each.HasProperty("Depth")}.SortBy { each | DateTime.Now.SpanBetween(each.Created)}.Item(0).Created.LocalFormat}, {""})
+}
+:DoInfoBoxForum:{
+      [ Presentations.ContainerStart("div", "InfoBoxProgrammer"), 
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Top Level Threads: ", Presentations.ContainerEnd("span"), "&nbsp;",
+	Presentations.ContainerStart("span", "InfoBoxValue"), GetTopLevelNumber(topic.Keywords), Presentations.ContainerEnd("span"), Newline,
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Total Threads: ", Presentations.ContainerEnd("span"), "&nbsp;", 
+	Presentations.ContainerStart("span", "InfoBoxList"), GetTotalNumberThreads(topic.Keywords), Presentations.ContainerEnd("span"), Newline,
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Original Thread Created: ", Presentations.ContainerEnd("span"), Newline, 
+	Presentations.ContainerStart("span", "InfoBoxList"), OriginalThreadDate(topic.Keywords), Presentations.ContainerEnd("span"), Newline,
+	Presentations.ContainerStart("span", "InfoBoxHdr"), "Latest Thread Created: ", Presentations.ContainerEnd("span"), Newline, 
+	Presentations.ContainerStart("span", "InfoBoxValue"), LatestThreadDate(topic.Keywords), Presentations.ContainerEnd("span"),
+	Presentations.ContainerEnd("div"), Newline,
+    ]
+}
+
+:ShowEntry:{entry |
+[["@@Presentations.ContainerStart(\"div\",", "\"", entry.Name, "\",", "\"",
+    ["Depth0","Depth1","Depth2","Depth3","Depth4","Depth5", "Depth6","Depth7"].Item(entry.GetProperty("Depth").AsInteger), "\")@@"].ToOneString, Newline,
+"!!!!", entry.GetProperty("Title"), Newline, ControlView(entry.GetProperty("ParentThread")), "&nbsp;", "&nbsp;", "&nbsp;",
+    entry.LastModifiedBy, " (", entry.LastModified.LocalFormat, ")", Newline, 
+["@@Presentations.ContainerStart(\"div\",", "\"Thread_", entry.GetProperty("ParentThread"), "\")@@"].ToOneString, Newline, 
+entry.GetProperty("_Body"), Newline,
+["@@Presentations.Link(federation.LinkMaker.SimpleLinkTo(\"MessagePost.aspx?topic=", namespace.Name, ".", 
+			entry.GetProperty("Keywords"), "&forumKey=", entry.GetProperty("Keywords"), "&parentThread="
+,entry.GetProperty("ParentThread"),"&title=",entry.GetProperty("Title"),"\"),\"Reply To This\")@@"].ToOneString, Newline,
+["@@Presentations.ContainerEnd(\"div\")@@"], ["@@Presentations.ContainerEnd(\"div\")@@"], Newline,
+"----", Newline]
+}
+
+:ControlView:{id |
+ [["@@Presentations.Link(\"javascript:ToggleDisplay('", id, "')\",", "\"Hide Thread\",", "\"Toggle Thread View\",", "\"id=\\\"Link_", id, "\\\"\")@@",].ToOneString,]
+}
+
+:Swap:[
+<style type="text/css">
+<!--
+.Depth0, .Depth1, .Depth2, .Depth3, .Depth4, .Depth5, .Depth6, .Depth7{
+	border-color: #FFFFFF;
+	border-width: 0.2em;
+	border-style: solid;
+}
+.Depth0:hover, .Depth1:hover, .Depth2:hover, .Depth3:hover, .Depth4:hover, .Depth5:hover, .Depth6:hover, .Depth7:hover {
+	border-color: #E6F7F7;
+	border-width: 0.2em;
+	border-style: solid;
+}
+Div#TopicBody .Rule {
+	border-color: #E6F7F7;
+	border-width: 0.05em;
+}
+#InfoBoxProgrammer {
+        -moz-border-radius: 1em;
+        -webkit-border-radius: 1em;
+}
+#BorderTile {
+       -moz-border-radius-bottomright: 1em;
+       -moz-border-radius-bottomleft: 1em;
+       -webkit-border-bottom-left-radius: 1em;
+       -webkit-border-bottom-right-radius: 1em;
+}
+-->
+</style>
+]
+
