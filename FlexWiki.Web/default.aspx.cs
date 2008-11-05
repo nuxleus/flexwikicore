@@ -187,7 +187,26 @@ namespace FlexWiki.Web
                 {
                     // Must be a topic name
                     string trimmed = redir.Trim();
-                    QualifiedTopicNameCollection all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
+                    QualifiedTopicNameCollection all = new QualifiedTopicNameCollection();
+                    if (trimmed.Contains("."))
+                    {
+                        try
+                        {
+                            string topicName = trimmed.Substring(trimmed.IndexOf(".") + 1);
+                            string nsName = trimmed.Substring(0, trimmed.IndexOf("."));
+                            TopicName redirTopic = new TopicName(topicName, nsName);
+                            NamespaceManager redirMgr = Federation.NamespaceManagerForNamespace(nsName);
+                            all = redirMgr.AllQualifiedTopicNamesThatExist(topicName);
+                        }
+                        catch (Exception ex)
+                        {
+                            headbldr.AppendLine("<!-- Exception: " + ex.Message + " -->\n");
+                        }
+                    }
+                    else
+                    {
+                        all = Federation.NamespaceManagerForTopic(GetTopicVersionKey()).AllQualifiedTopicNamesThatExist(trimmed);
+                    }
 
                     if (all.Count == 1)
                     {
