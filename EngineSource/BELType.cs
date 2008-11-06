@@ -305,7 +305,7 @@ namespace FlexWiki
 		[ExposedMethod(ExposedMethodFlags.Default, "Answer the type given a name.")]
 		public BELType TypeForName(string typeName)
 		{
-			return (BELType)(new TypeRegistry().Registry[typeName]);
+			return (BELType)(TypeRegistry.Instance.Registry[typeName]);
 		}
 
 	}

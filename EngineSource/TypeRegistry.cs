@@ -22,13 +22,24 @@ namespace FlexWiki
 	/// </summary>
 	public class TypeRegistry : DynamicObject
 	{
-    private ArrayList _AllMetaTypes;
-    private ArrayList _AllTypes;
-    private Hashtable _Registry = null;
-    
-    public TypeRegistry()
+        private ArrayList _AllMetaTypes;
+        private ArrayList _AllTypes;
+        private Hashtable _Registry = null;
+        private static readonly TypeRegistry instance = new TypeRegistry();
+
+        
+        static TypeRegistry()
 		{
 		}
+
+        private TypeRegistry()
+        {
+        }
+
+        public static TypeRegistry Instance
+        {
+            get { return instance; }
+        }
 
 
 		private void Reg(Hashtable hash, Type t)
@@ -61,10 +72,15 @@ namespace FlexWiki
 		private void RegisterTypesFromAssembly(Assembly a)
 		{
 			IEnumerable types = null;
-            //if (a.FullName.StartsWith("System.Xml.Xsl.CompiledQuery"))
-            //{
-            //    return; //dynamic assembly that doesn't let you enum types
-            //}
+            if (a.FullName.StartsWith("System.Xml.Xsl.CompiledQuery"))
+            {
+                return; //dynamic assembly that doesn't let you enum types
+            }
+            Module[] allMod = a.GetModules();
+            if (allMod.Length != 0 && allMod[0] is System.Reflection.Emit.ModuleBuilder)
+            {
+                return;
+            }
 			try
 			{
 				types = a.GetExportedTypes();

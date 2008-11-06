@@ -34,7 +34,7 @@ namespace FlexWiki
         private Home _home;
         private ArrayList _locationStack = new ArrayList();
         private IWikiToPresentation _presenter;
-        private TypeRegistry _typeRegistry = new TypeRegistry();
+        private static TypeRegistry _typeRegistry = TypeRegistry.Instance;
         private int _wikiTalkVersion = 1;
 
         // Constructors
