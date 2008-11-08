@@ -22,7 +22,6 @@
                 OnLoginError="Login1_LoginError" 
                 OnLoggedIn="Login1_LoggedIn"
                 PasswordRecoveryText="Forgot your password?" 
-                PasswordRecoveryUrl="~/RecoverPassword.aspx"
                 CreateUserText="Register as a new user" 
                 CreateUserUrl="~/RegisterUser.aspx">
             <TitleTextStyle BackColor="#1C5E55" Font-Bold="True" Font-Size="0.9em" ForeColor="White" />

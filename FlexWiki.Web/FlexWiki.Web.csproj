@@ -174,10 +174,14 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="MessagePost.js" />
+    <Content Include="PasswordReset.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="RegisterUser.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="RecoverPassword.aspx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="default.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -288,6 +292,9 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="PageUtilities.cs" />
+    <Compile Include="PasswordReset.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="RegisterUser.aspx.cs">
       <DependentUpon>RegisterUser.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

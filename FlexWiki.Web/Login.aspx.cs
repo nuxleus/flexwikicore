@@ -56,6 +56,8 @@ namespace FlexWiki.Web
         }
 		private void Page_Load(object sender, System.EventArgs e)
 		{
+            Login1.PasswordRecoveryUrl = FlexWikiWebApplication.ApplicationConfiguration.PasswordResetUrl;
+
             AuthenticationSection section = 
                 WebConfigurationManager.GetWebApplicationSection("system.web/authentication") as AuthenticationSection;
 

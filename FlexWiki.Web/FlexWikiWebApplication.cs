@@ -361,6 +361,7 @@ namespace FlexWiki.Web
             this["LocalJavascript"] = _applicationConfiguration.LocalJavascript;
             this["OverrideBordersScope"] = _applicationConfiguration.OverrideBordersScope;
             this["OverrideStylesheet"] = _applicationConfiguration.OverrideStylesheet;
+            this["PasswordResetUrl"] = _applicationConfiguration.PasswordResetUrl;
             this["RemoveListItemWhitespace"] = _applicationConfiguration.RemoveListItemWhitespace;
             this["ForegroundColorCAPTCHA"] = _applicationConfiguration.ForegroundColorCAPTCHA;
             this["BackgroundColorCAPTCHA"] = _applicationConfiguration.BackgroundColorCAPTCHA;

@@ -57,6 +57,7 @@ namespace FlexWiki.Web
         private NewsletterConfiguration _newsletterConfiguration;
         private string _overrideBordersScope = "None";
         private string _overrideStylesheet;
+        private string _passwordResetUrl = "~/RecoverPassword.aspx";
         private CaptchaRequired _requireCaptchaOnEdit; 
         private string _sendBanNotificationsToMailAddress;
         private string _sendNamespaceCreationMailFrom;
@@ -255,6 +256,11 @@ namespace FlexWiki.Web
         {
             get { return _overrideStylesheet; }
             set { _overrideStylesheet = value; }
+        }
+        public string PasswordResetUrl
+        {
+            get { return _passwordResetUrl; }
+            set { _passwordResetUrl = value; }
         }
         public CaptchaRequired RequireCaptchaOnEdit
         {

@@ -9,7 +9,7 @@
     <form runat="server" action="">
         <asp:CreateUserWizard ID="CreateUserWizard1" runat="server" ActiveStepIndex="0" BackColor="#E3EAEB"
             BorderColor="#E6E2D8" BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana"
-            Font-Size="14pt" DisableCreatedUser="true" LoginCreatedUser="false">
+            Font-Size="14pt" DisableCreatedUser="false" LoginCreatedUser="true">
             <WizardSteps>
                 <asp:CreateUserWizardStep runat="server">
                 </asp:CreateUserWizardStep>

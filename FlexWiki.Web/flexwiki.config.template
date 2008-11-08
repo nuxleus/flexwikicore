@@ -249,6 +249,16 @@
     * {{FlexWikiBottomBorder}}: optional placeholder to allow flexWiki to include a wikiTalk generated TopBorder, as per operation without the skin
                                                                                                                               -->
   <OverrideBordersScope>None</OverrideBordersScope>
+
+  <!-- The standard password recovery facility, supplied as part of the asp logins controls, uses the
+         url - '~/PasswordRecovery.aspx'. This standard facility requires the web server be connected 
+         to an email server so that the new password can be forwarded to the user to then login and 
+         change the supplied password. This url is the default value.
+       An alternate password reset facility is now provided as a custom solution that works with a web 
+       server that does not have an email connect. The url for this is at '~/PasswordReset.aspx'. This 
+       facility is not as secure as the supplied standard control, but uses the security question to validate
+       the user. The use of this control is only acceptable when full accountability is not aconcern. -->
+  <PasswordResetUrl>~/RecoverPassword.aspx</PasswordResetUrl>
   
   <!-- In working with lists the following input when this value is set to false (original pre 2.0.0.188)
   
